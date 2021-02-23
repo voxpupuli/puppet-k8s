@@ -33,8 +33,8 @@ class k8s(
     }
 
     package { 'k8s container manager':
-      package => $pkg,
       ensure  => installed,
+      package => $pkg,
     }
   }
 

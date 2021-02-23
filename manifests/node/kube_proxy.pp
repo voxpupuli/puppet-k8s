@@ -4,7 +4,4 @@ class k8s::node::kube_proxy(
   k8s::binary { 'kube-proxy':
     ensure => $ensure,
   }
-
-  
 }
-

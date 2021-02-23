@@ -4,6 +4,4 @@ class k8s::server::apiserver(
   k8s::binary { 'kube-apiserver':
     ensure => $ensure,
   }
-
-  
 }

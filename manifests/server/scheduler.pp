@@ -4,6 +4,4 @@ class k8s::server::scheduler(
   k8s::binary { 'kube-scheduler':
     ensure => $ensure,
   }
-
-  
 }

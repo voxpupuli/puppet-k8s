@@ -4,6 +4,4 @@ class k8s::server::controller_manager(
   k8s::binary { 'kube-controller-manager':
     ensure => $ensure,
   }
-
-  
 }

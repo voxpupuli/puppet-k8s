@@ -4,7 +4,4 @@ class k8s::node::kubelet(
   k8s::binary { 'kubelet':
     ensure => $ensure,
   }
-
-  
 }
-

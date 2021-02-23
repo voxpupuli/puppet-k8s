@@ -58,7 +58,7 @@ define k8s::binary(
         component => $_component,
         binary    => $name,
       })
-      file { "${target}/${game}":
+      file { "${target}/${name}":
         ensure => $ensure,
         mode   => '0755',
         source => $_url,
@@ -83,9 +83,12 @@ define k8s::binary(
         target => "${target}/${k8s::hyperkube_name}",
       }
     }
+    default: {
+      fail('Invalid packaging specified')
+    }
   }
 
-  if $active and !($packaging in ['container', 'package']) {
+  if $active and !($k8s::packaging in ['container', 'package']) {
     file { "/usr/bin/${name}":
       ensure => $ensure,
       target => "${target}/${name}",
