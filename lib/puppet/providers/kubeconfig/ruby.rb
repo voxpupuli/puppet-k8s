@@ -29,7 +29,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     FileUtils.rm_f(resource[:path]) if File.exist?(resource[:path])
     @kubeconfig_hash = 0
   end
-  
+
   def save
     File.write(resource[:path], Psych.dump(kubeconfig_content))
     @kubeconfig_hash = @kubeconfig_content.hash
@@ -44,7 +44,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     kubeconfig_content['clusters'] << (cluster = {}) unless cluster
     cluster
   end
-  
+
   def find_context
     context = kubeconfig_content['contexts'].find { |c| c['name'] == resource[:context] }
     kubeconfig_content['contexts'] << (context = {}) unless context
@@ -88,12 +88,12 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     cluster['cluster']['insecure-skip-tls-verify'] = resource[:skip_tls_verify] == :true if resource[:skip_tls_verify]
     cluster['cluster']['tls-server-name'] = resource[:tls_server_name] if resource[:tls_server_name]
 
-    if resource[:ca_cert]
-      if resource[:embed_certs] == :true
-        cluster['cluster']['certificate-authority-data'] = Base64.strict_encode64(File.read(resource[:ca_cert]))
-      else
-        cluster['cluster']['certificate-authority'] = resource[:ca_cert]
-      end
+    return unless resource[:ca_cert]
+
+    if resource[:embed_certs] == :true
+      cluster['cluster']['certificate-authority-data'] = Base64.strict_encode64(File.read(resource[:ca_cert]))
+    else
+      cluster['cluster']['certificate-authority'] = resource[:ca_cert]
     end
   end
 
@@ -180,18 +180,18 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
   end
 
   def kubeconfig_content
-    if File.exist? resource[:path]
-      @kubeconfig_content ||= Psych.load(File.read(resource[:path]))
+    @kubeconfig_content ||= if File.exist? resource[:path]
+      Psych.load(File.read(resource[:path]))
     else
-      @kubeconfig_content ||= {
+      {
         'apiVersion' => 'v1',
         'clusters' => [],
         'contexts' => [],
         'users' => [],
         'current-context' => resource[:context],
         'kind' => 'Config',
-        'preferences' => {}
-      } 
+        'preferences' => {},
+      }
     end
     @kubeconfig_hash ||= @kubeconfig_content.hash
     @kubeconfig_content
