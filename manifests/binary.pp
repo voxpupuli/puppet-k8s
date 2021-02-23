@@ -46,7 +46,7 @@ define k8s::binary(
       }
       if $ensure == 'present' {
         exec { "Extract ${name} from k8s tarball":
-          command  => "tar -C '${target}' -xf '${_file}' --transform 's/.*\\///' --wildcards '*${name}'"
+          command  => "tar -C '${target}' -xf '${_file}' --transform 's/.*\\///' --wildcards '*${name}'",
           creates  => "${target}/${name}",
           path     => ['/usr/bin', '/bin'],
           requires => File[$_file],
