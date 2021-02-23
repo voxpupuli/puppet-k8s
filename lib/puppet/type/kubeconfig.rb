@@ -9,7 +9,7 @@ Puppet::Type.newtype(:kubeconfig) do
         token   => 'utility-token',
       }
   DOC
-  
+
   ensurable
 
   newparam(:path, namevar: true) do
@@ -45,7 +45,6 @@ Puppet::Type.newtype(:kubeconfig) do
     desc 'The namespace to default to'
     defaultto 'default'
   end
-
 
   newparam(:server) do
   end

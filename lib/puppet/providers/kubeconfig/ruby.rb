@@ -141,7 +141,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
       end
     end
     return false if resource[:token] && user['user']['token'] != resource[:token]
-    return false if resource[:token_file] && user['user']['token'] != File.read(resource[:token_file].strip
+    return false if resource[:token_file] && user['user']['token'] != File.read(resource[:token_file].strip)
     return false if resource[:username] && user['user']['username'] != resource[:username]
     return false if resource[:password] && user['user']['password'] != resource[:password]
 

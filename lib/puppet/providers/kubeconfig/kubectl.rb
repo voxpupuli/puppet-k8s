@@ -1,5 +1,5 @@
 Puppet::Type.type(:kubeconfig).provide(:kubectl, parent: :ruby) do
-  commands :kubectl => 'kubectl'
+  commands kubectl: 'kubectl'
 
   def update_cluster
     params = []
