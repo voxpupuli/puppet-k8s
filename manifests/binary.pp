@@ -1,6 +1,5 @@
 define k8s::binary(
   Enum['present', 'absent'] $ensure = $k8s::ensure,
-  String[1] $name = $title,
   String[1] $target = "/op/k8s/${k8s::version}",
   String[1] $tarball_target = $target,
 
