@@ -67,7 +67,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     return false if resource[:tls_server_name] && cluster['cluster']['tls-server-name'] != resource[:tls_server_name]
 
     if resource[:ca_cert]
-      if resource[:embed_certs] == :true then
+      if resource[:embed_certs] == :true
         wanted = Base64.strict_encode64(File.read(resource[:ca_cert]))
         return false unless cluster['cluster']['certificate-authority-data'] == wanted
       else
@@ -88,8 +88,8 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     cluster['cluster']['insecure-skip-tls-verify'] = resource[:skip_tls_verify] == :true if resource[:skip_tls_verify]
     cluster['cluster']['tls-server-name'] = resource[:tls_server_name] if resource[:tls_server_name]
 
-    if resource[:ca_cert] then
-      if resource[:embed_certs] == :true then
+    if resource[:ca_cert]
+      if resource[:embed_certs] == :true
         cluster['cluster']['certificate-authority-data'] = Base64.strict_encode64(File.read(resource[:ca_cert]))
       else
         cluster['cluster']['certificate-authority'] = resource[:ca_cert]
@@ -124,16 +124,16 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
 
     return false unless user['name'] == resource[:user]
     return false unless user['user']
-    if resource[:client_cert] then
-      if resource[:embed_certs] == :true then
+    if resource[:client_cert]
+      if resource[:embed_certs] == :true
         wanted = Base64.strict_encode64(File.read(resource[:client_cert]))
         return false unless user['user']['client-certificate-data'] == wanted
       else
         return false unless user['user']['client-certificate'] == resource[:client_cert]
       end
     end
-    if resource[:client_key] then
-      if resource[:embed_certs] == :true then
+    if resource[:client_key]
+      if resource[:embed_certs] == :true
         wanted = Base64.strict_encode64(File.read(resource[:client_key]))
         return false unless user['user']['client-key-data'] == wanted
       else
@@ -154,15 +154,15 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     user['name'] = resource[:user]
     context['user'] ||= {}
 
-    if resource[:client_cert] then
-      if resource[:embed_certs] == :true then
+    if resource[:client_cert]
+      if resource[:embed_certs] == :true
         user['user']['client-certificate-data'] = Base64.strict_encode64(File.read(resource[:client_cert]))
       else
         user['user']['client-certificate'] = resource[:client_cert]
       end
     end
-    if resource[:client_key] then
-      if resource[:embed_certs] == :true then
+    if resource[:client_key]
+      if resource[:embed_certs] == :true
         user['user']['client-key-data'] = Base64.strict_encode64(File.read(resource[:client_key]))
       else
         user['user']['client-key'] = resource[:client_key]

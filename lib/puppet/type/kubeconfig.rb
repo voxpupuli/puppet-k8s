@@ -103,7 +103,7 @@ Puppet::Type.newtype(:kubeconfig) do
   end
 
   validate do
-    if self[:token] && self[:token_file] then
+    if self[:token] && self[:token_file]
       raise Puppet::Error, "Can't specify both token and token_file for the same kubeconfig entry"
     end
   end
