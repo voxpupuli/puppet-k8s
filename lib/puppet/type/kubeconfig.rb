@@ -106,6 +106,9 @@ Puppet::Type.newtype(:kubeconfig) do
     if self[:token] && self[:token_file]
       raise Puppet::Error, "Can't specify both token and token_file for the same kubeconfig entry"
     end
+    unless self[:path]
+      raise(Puppet::Error, 'path is a required attribute')
+    end
   end
 
   # Ensure the file or directory exists

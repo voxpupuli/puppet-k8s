@@ -36,7 +36,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
   end
 
   def chown
-    FileUtil.chown(resource[:patħ], resource[:owner], resource[:group])
+    FileUtils.chown(resource[:owner], resource[:group], resource[:path])
   end
 
   def find_cluster
@@ -148,11 +148,11 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     true
   end
 
-  def set_credentials
-    user = find_user
+  def update_credentials
+    user = find_credentials
 
     user['name'] = resource[:user]
-    context['user'] ||= {}
+    user['user'] ||= {}
 
     if resource[:client_cert]
       if resource[:embed_certs] == :true
@@ -169,10 +169,10 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
       end
     end
 
-    context['user']['token'] = resource[:token] if resource[:token]
-    context['user']['token'] = File.read(resource[:token_file]).strip if resource[:token_file]
-    context['user']['username'] = resource[:username] if resource[:username]
-    context['user']['password'] = resource[:password] if resource[:password]
+    user['user']['token'] = resource[:token] if resource[:token]
+    user['user']['token'] = File.read(resource[:token_file]).strip if resource[:token_file]
+    user['user']['username'] = resource[:username] if resource[:username]
+    user['user']['password'] = resource[:password] if resource[:password]
   end
 
   def changed?
