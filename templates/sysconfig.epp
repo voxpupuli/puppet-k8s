@@ -1,0 +1,17 @@
+<%- |
+  String $comment,
+  Hash[String,String] $environment_variables,
+| -%>
+### NB: File managed by Puppet.
+###     Any changes will be overwritten.
+#
+## <%= $comment %>
+#
+
+<%-
+$environment_variables.each |$key, $value| {
+-%>
+<%= $key %>="<%= regsubst($value, '"', '\"', 'G') %>"
+<%-
+}
+-%>
