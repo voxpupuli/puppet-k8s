@@ -100,7 +100,7 @@ class k8s(
 
   if $role == 'server' {
     include ::k8s::server
-  } elif $role == 'node' {
+  } elsif $role == 'node' {
     include ::k8s::node
   }
 }
