@@ -7,7 +7,7 @@ RSpec.describe ruby_provider do
 
   describe 'ruby provider' do
     include PuppetlabsSpec::Files
-    let :tmpfile do
+    let(:tmpfile) do
       tmpfilename('kubeconfig_test')
     end
 
@@ -15,7 +15,7 @@ RSpec.describe ruby_provider do
     let(:resource_properties) do
       {
         name: name,
-        server: 'https://kubernetes.home.lan:6443'
+        server: 'https://kubernetes.home.lan:6443',
       }
     end
     let(:default_kubeconfig) do
@@ -58,7 +58,7 @@ RSpec.describe ruby_provider do
       let(:resource_properties) do
         {
           name: name,
-          server: 'https://kubernetes.home.lan:6443'
+          server: 'https://kubernetes.home.lan:6443',
         }
       end
 
@@ -86,7 +86,7 @@ RSpec.describe ruby_provider do
         conf
       end
 
-      before do
+      before(:each) do
         File.write(catmpfile, 'ca.crt')
       end
 

@@ -5,7 +5,7 @@ describe Puppet::Type.type(:kubeconfig) do
   let(:resource) do
     Puppet::Type.type(:kubeconfig).new(
       path: '/tmp/kubeconfig',
-      server: 'https://kubernetes.home.lan:6443'
+      server: 'https://kubernetes.home.lan:6443',
     )
   end
 
@@ -16,38 +16,28 @@ describe Puppet::Type.type(:kubeconfig) do
     it { expect(resource[:context]).to eq 'default' }
     it { expect(resource[:user]).to eq 'default' }
     it { expect(resource[:namespace]).to eq 'default' }
-    it { expect(resource[:skip_tls_verify]).to_not eq :true }
+    it { expect(resource[:skip_tls_verify]).not_to eq :true }
     it { expect(resource[:embed_certs]).to eq :true }
   end
 
   it 'verify resource[:path] is absolute filepath' do
-    expect do
-      resource[:path] = 'relative/file'
-    end.to raise_error(Puppet::Error, %r{File paths must be fully qualified, not 'relative/file'})
+    expect { resource[:path] = 'relative/file' }.to raise_error(Puppet::Error, %r{File paths must be fully qualified, not 'relative/file'})
   end
 
   it 'verify resource[:ca_cert] is absolute filepath' do
-    expect do
-      resource[:ca_cert] = 'relative/file'
-    end.to raise_error(Puppet::Error, %r{File paths must be fully qualified, not 'relative/file'})
+    expect { resource[:ca_cert] = 'relative/file' }.to raise_error(Puppet::Error, %r{File paths must be fully qualified, not 'relative/file'})
   end
 
   it 'verify resource[:client_cert] is absolute filepath' do
-    expect do
-      resource[:client_cert] = 'relative/file'
-    end.to raise_error(Puppet::Error, %r{File paths must be fully qualified, not 'relative/file'})
+    expect { resource[:client_cert] = 'relative/file' }.to raise_error(Puppet::Error, %r{File paths must be fully qualified, not 'relative/file'})
   end
 
   it 'verify resource[:client_key] is absolute filepath' do
-    expect do
-      resource[:client_key] = 'relative/file'
-    end.to raise_error(Puppet::Error, %r{File paths must be fully qualified, not 'relative/file'})
+    expect { resource[:client_key] = 'relative/file' }.to raise_error(Puppet::Error, %r{File paths must be fully qualified, not 'relative/file'})
   end
 
   it 'verify resource[:token_file] is absolute filepath' do
-    expect do
-      resource[:token_file] = 'relative/file'
-    end.to raise_error(Puppet::Error, %r{File paths must be fully qualified, not 'relative/file'})
+    expect { resource[:token_file] = 'relative/file' }.to raise_error(Puppet::Error, %r{File paths must be fully qualified, not 'relative/file'})
   end
 
   describe 'archive autorequire' do
@@ -55,7 +45,7 @@ describe Puppet::Type.type(:kubeconfig) do
     let(:kubeconfig_resource) do
       described_class.new(
         path: '/tmp/kubeconfig',
-        server: 'https://kubernetes.home.lan:6443'
+        server: 'https://kubernetes.home.lan:6443',
       )
     end
 

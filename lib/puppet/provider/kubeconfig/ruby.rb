@@ -11,7 +11,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
 
     return false unless cluster_valid?
     return false unless context_valid?
-    return false unless user_valid?
+    return false unless credentials_valid?
 
     true
   end
@@ -176,7 +176,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
   end
 
   def changed?
-    kubeconfig_content != @kubeconfig_hash
+    kubeconfig_content.hash != @kubeconfig_hash
   end
 
   def kubeconfig_content
