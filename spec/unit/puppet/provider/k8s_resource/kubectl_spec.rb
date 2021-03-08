@@ -98,7 +98,7 @@ RSpec.describe kubectl_provider do
       end
 
       it 'writes the resource hash to file' do
-        file = Object.new
+        file = double('file')
         expect(file).to receive(:path).and_return('/tmp/k8s_resource')
         expect(file).to receive(:write).with(provider.resource_hash.to_json)
         expect(file).to receive(:close!)

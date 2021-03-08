@@ -35,6 +35,8 @@ Puppet::Type.newtype(:k8s_resource) do
       provider.destroy
     end
 
+    defaultto(:present)
+
     def change_to_s(currentvalue, newvalue)
       if currentvalue == :absent || currentvalue.nil?
         if provider.resource_diff

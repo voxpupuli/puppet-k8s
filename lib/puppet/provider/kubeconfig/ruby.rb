@@ -8,10 +8,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     find_credentials
 
     return false if changed?
-
-    return false unless cluster_valid?
-    return false unless context_valid?
-    return false unless credentials_valid?
+    return false unless valid?
 
     true
   end
@@ -20,6 +17,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     update_cluster
     update_context
     update_credentials
+    update_current_context if resource[:current_context]
 
     save if changed?
     chown
@@ -55,6 +53,15 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     user = kubeconfig_content['users'].find { |c| c['name'] == resource[:context] }
     kubeconfig_content['users'] << (user = {}) unless user
     user
+  end
+
+  def valid?
+    valid = true
+    valid &&= cluster_valid?
+    valid &&= context_valid?
+    valid &&= credentials_valid?
+    valid &&= current_context_valid? if resource[:current_context]
+    valid
   end
 
   def cluster_valid?
@@ -175,6 +182,13 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     user['user']['password'] = resource[:password] if resource[:password]
   end
 
+  def current_context_valid?
+    kubeconfig_content['current-context'] == resource[:current_context]
+  end
+  def update_current_context
+    kubeconfig_content['current-context'] = resource[:current_context]
+  end
+
   def changed?
     kubeconfig_content.hash != @kubeconfig_hash
   end
@@ -189,7 +203,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
           'clusters' => [],
           'contexts' => [],
           'users' => [],
-          'current-context' => resource[:context],
+          'current-context' => '',
           'kind' => 'Config',
           'preferences' => {},
         }

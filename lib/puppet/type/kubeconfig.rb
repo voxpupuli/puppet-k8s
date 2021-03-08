@@ -19,6 +19,22 @@ Puppet::Type.newtype(:kubeconfig) do
       provider.destroy
     end
 
+    defaultto(:present)
+
+    def change_to_s(currentvalue, newvalue)
+      if currentvalue == :absent || currentvalue.nil?
+        if provider.exists? && !provider.valid?
+          "updated"
+        else
+          "created"
+        end
+      elsif newvalue == :absent
+        "removed"
+      else
+        super
+      end
+    end
+
     def retrieve
       prov = @resource.provider
       raise Puppet::Error, 'Could not find provider' unless prov
@@ -59,6 +75,9 @@ Puppet::Type.newtype(:kubeconfig) do
   newparam(:namespace) do
     desc 'The namespace to default to'
     defaultto 'default'
+  end
+  newparam(:current_context) do
+    desc 'The current context to set'
   end
 
   newparam(:server) do
