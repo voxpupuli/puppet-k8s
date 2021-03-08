@@ -26,7 +26,40 @@ Puppet::Type.newtype(:k8s_resource) do
       }
   DOC
 
-  ensurable
+  ensurable do
+    newvalue(:present) do
+      provider.create if !provider.exists?
+    end
+
+    newvalue(:absent) do
+      provider.destroy
+    end
+
+    def change_to_s(currentvalue, newvalue)
+      if currentvalue == :absent || currentvalue.nil?
+        if provider.resource_diff
+          if resource[:show_diff]
+            "update #{resource[:kind]} #{resource[:namespace]}/#{resource[:name]} with #{provider.resource_diff.inspect}"
+          else
+            "update #{resource[:kind]} #{resource[:namespace]}/#{resource[:name]}"
+          end
+        else
+          "create #{resource[:kind]} #{resource[:namespace]}/#{resource[:name]}"
+        end
+      elsif newvalue == :absent
+        "remove #{resource[:kind]} #{resource[:namespace]}/#{resource[:name]}"
+      else
+        super
+      end
+    end
+
+    def retrieve
+      prov = @resource.provider
+      raise Puppet::Error, 'Could not find provider' unless prov
+
+      prov.exists? ? :present : :absent
+    end
+  end
 
   newparam(:name) do
     desc 'The name of the resource'
@@ -67,12 +100,18 @@ Puppet::Type.newtype(:k8s_resource) do
   end
 
   newparam(:update, :boolean => true, :parent => Puppet::Parameter::Boolean) do
-    desc 'Update the resource if the content differs?'
+    desc 'Whether to update the resource if the content differs'
+    defaultto(:true)
+  end
+
+  newparam(:show_diff, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+    desc 'Whether to display the difference when the resource changes'
     defaultto(:true)
   end
 
   newparam(:content) do
     desc 'The resource content, will be used as the base for the resulting Kubernetes resource'
+    defaultto({})
 
     validate do |value|
       unless value.is_a? Hash
@@ -83,6 +122,12 @@ Puppet::Type.newtype(:k8s_resource) do
         raise Puppet::Error, "Can't specify apiVersion or kind in content"
       end
     end
+  end
+
+  validate do
+    raise Puppet::Error, 'Namespace is required' unless self[:namespace]
+    raise Puppet::Error, 'API version is required' unless self[:api_version]
+    raise Puppet::Error, 'Kind is required' unless self[:kind]
   end
 
   autorequire(:file) do

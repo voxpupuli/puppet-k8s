@@ -19,6 +19,7 @@ describe Puppet::Type.type(:k8s_resource) do
   end
 
   context 'resource defaults' do
+    it { expect(resource[:kubeconfig]).to eq nil }
     it { expect(resource[:update]).to eq true }
   end
 

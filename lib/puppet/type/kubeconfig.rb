@@ -10,7 +10,22 @@ Puppet::Type.newtype(:kubeconfig) do
       }
   DOC
 
-  ensurable
+  ensurable do
+    newvalue(:present) do
+      provider.create if !provider.exists?
+    end
+
+    newvalue(:absent) do
+      provider.destroy
+    end
+
+    def retrieve
+      prov = @resource.provider
+      raise Puppet::Error, 'Could not find provider' unless prov
+
+      prov.exists? ? :present : :absent
+    end
+  end
 
   newparam(:path, namevar: true) do
     desc 'An arbitrary path used as the identity of the resource.'

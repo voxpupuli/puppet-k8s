@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+RSpec.configure do |c|
+  c.mock_with :rspec
+end
+
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec-puppet-facts'
 
@@ -33,9 +37,6 @@ default_facts.each do |fact, value|
 end
 
 RSpec.configure do |c|
-  c.add_setting :puppet_future
-  c.puppet_future = Puppet.version.to_f >= 4.0
-
   c.default_facts = default_facts
   c.before :each do
     # set to strictest setting for testing
@@ -58,6 +59,3 @@ def ensure_module_defined(module_name)
 end
 
 # 'spec_overrides' from sync.yml will appear below this line
-
-# Require all support files
-Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
