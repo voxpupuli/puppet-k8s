@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 Puppet::Type.newtype(:k8s_resource) do
-  def validate_k8s_name(name)
-    return if %r{^[a-z0-9-.]{0,253}$}.match? name
-
-    raise Puppet::Error, 'Name must match Kubernetes requirements (only a-z, 0-9, -, and ., max 253 chars)'
-  end
-
   desc <<-DOC
   Example:
 
@@ -34,11 +28,13 @@ Puppet::Type.newtype(:k8s_resource) do
 
   ensurable
 
-  newparam(:name, namevar: true) do
+  newparam(:name) do
     desc 'The name of the resource'
 
     validate do |value|
-      validate_k8s_name value
+      unless value =~ %r{^[a-z0-9.-]{0,253}$}
+        raise Puppet::Error, 'Name must be valid'
+      end
     end
   end
 
@@ -46,7 +42,9 @@ Puppet::Type.newtype(:k8s_resource) do
     desc 'The namespace the resource is contained in'
 
     validate do |value|
-      validate_k8s_name value
+      unless value =~ %r{^[a-z0-9.-]{0,253}$}
+        raise Puppet::Error, 'Namespace must be valid'
+      end
     end
   end
 
@@ -70,6 +68,7 @@ Puppet::Type.newtype(:k8s_resource) do
 
   newparam(:content) do
     desc 'The resource content, will be used as the base for the resulting Kubernetes resource'
+
     validate do |value|
       unless value.is_a? Hash
         raise Puppet::Error, 'Content must be a valid content hash'
