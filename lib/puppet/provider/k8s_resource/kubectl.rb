@@ -6,7 +6,7 @@ Puppet::Type.type(:k8s_resource).provide(:kubectl) do
   def exists?
     data = kubectl_get
     return false unless data
-    return true if resource[:ensure].to_s == 'absent'
+    return true if resource[:ensure].to_s == 'absent' || resource[:update] == :false
 
     verify_content data
   end

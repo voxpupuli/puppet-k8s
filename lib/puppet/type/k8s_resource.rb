@@ -66,6 +66,11 @@ Puppet::Type.newtype(:k8s_resource) do
     desc 'The kind of the resource'
   end
 
+  newparam(:update, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+    desc 'Update the resource if the content differs?'
+    defaultto(:true)
+  end
+
   newparam(:content) do
     desc 'The resource content, will be used as the base for the resulting Kubernetes resource'
 

@@ -5,7 +5,7 @@ describe Puppet::Type.type(:k8s_resource) do
   let(:resource) do
     Puppet::Type.type(:k8s_resource).new(
       name: 'bootstrap-token-example',
-      #namespace: 'kube-system',
+      namespace: 'kube-system',
 
       api_version: 'v1',
       kind: 'Secret',
@@ -16,6 +16,10 @@ describe Puppet::Type.type(:k8s_resource) do
         'usage-bootstrap-authentication': 'true'
       }
     )
+  end
+
+  context 'resource defaults' do
+    it { expect(resource[:update]).to eq true }
   end
 
   %w[
