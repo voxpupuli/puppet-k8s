@@ -1,4 +1,4 @@
-Puppet::Functions.create_function(:k8s_format_binary) do
+Puppet::Functions.create_function(:'k8s::format_url') do
   dispatch :k8s_format_binary do
     param 'String[1]', :url
     param 'Hash[String,Data]', :components
@@ -18,6 +18,8 @@ Puppet::Functions.create_function(:k8s_format_binary) do
     dash_arch_suffix = "-#{arch}" unless arch == 'amd64'
 
     kernel = facts['kernel'].downcase
+    kernel_ext = 'zip'
+    kernel_ext = 'tar.gz' if kernel == 'linux'
 
     url % components.merge(
       arch: arch,
@@ -25,6 +27,7 @@ Puppet::Functions.create_function(:k8s_format_binary) do
       dash_arch_suffix: dash_arch_suffix,
       k3s_arch: k3s_arch,
       kernel: kernel,
+      kernel_ext: kernel_ext,
     )
   end
 end

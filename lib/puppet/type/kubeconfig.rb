@@ -47,6 +47,7 @@ Puppet::Type.newtype(:kubeconfig) do
   end
 
   newparam(:server) do
+    desc 'The server URL for the cluster'
   end
 
   newparam(:skip_tls_verify) do
@@ -87,6 +88,7 @@ Puppet::Type.newtype(:kubeconfig) do
   end
 
   newparam(:token) do
+    desc 'An authentication token for a user'
   end
 
   newparam(:token_file) do

@@ -1,0 +1,81 @@
+<%- |
+  String[1] $etcd_name,
+  Stdlib::Unixpath $data_dir,
+  Optional[Stdlib::Unixpath] $wal_dir = undef,
+
+  Enum['on','off','readonly'] $proxy,
+
+  Array[Stdlib::HTTPUrl] $listen_client_urls,
+  Array[Stdlib::HTTPUrl] $advertise_client_urls,
+  Array[Stdlib::HTTPUrl] $listen_peer_urls,
+  Array[Stdlib::HTTPUrl] $initial_advertise_peer_urls,
+
+  Boolean $enable_v2 = false,
+
+  Optional[Stdlib::Unixpath] $cert_file = undef,
+  Optional[Stdlib::Unixpath] $key_file = undef,
+  Optional[Stdlib::Unixpath] $trusted_ca_file = undef,
+  Boolean $client_cert_auth = false,
+
+  Optional[Stdlib::Unixpath] $peer_cert_file = undef,
+  Optional[Stdlib::Unixpath] $peer_key_file = undef,
+  Optional[Stdlib::Unixpath] $peer_trusted_ca_file = undef,
+  Boolean $peer_client_cert_auth = false,
+
+  Optional[Integer] $auto_compaction_retention = undef,
+  Optional[Enum['existing', 'new']] $initial_cluster_state = undef,
+  Optional[String] $initial_cluster_token = undef,
+
+  Boolean $debug = false,
+| -%>
+# Managed by Puppet
+
+#[member]
+ETCD_NAME="<%= $etcd_name %>"
+ETCD_DATA_DIR="<%= $data_dir %>"
+ETCD_WAL_DIR="<%= $wal_dir %>"
+ETCD_LISTEN_PEER_URLS="<%= $listen_peer_urls.join(',') %>"
+ETCD_LISTEN_CLIENT_URLS="<%= $listen_client_urls.join(',') %>"
+
+#[cluster]
+ETCD_INITIAL_ADVERTISE_PEER_URLS="<%= $initial_advertise_peer_urls.join(',') %>"
+# ETCD_INITIAL_CLUSTER="..." # Configured in /etc/etcd/cluster.conf
+<% if $initial_cluster_state { -%>
+ETCD_INITIAL_CLUSTER_STATE="<%= $initial_cluster_state %>"
+<% } -%>
+<% if $initial_cluster_token { -%>
+ETCD_INITIAL_CLUSTER_TOKEN="<%= $initial_cluster_token %>"
+<% } -%>
+ETCD_ADVERTISE_CLIENT_URLS="<%= $advertise_client_urls.join(',') %>"
+<% if $auto_compaction_retention { -%>
+ETCD_AUTO_COMPACTION_RETENTION=<%= $auto_compaction_retention %>
+<% } -%>
+ETCD_ENABLE_V2=<%= $enable_v2 %>
+
+#[proxy]
+ETCD_PROXY="<%= $proxy %>"
+
+#[security]
+<% if $cert_file { -%>
+ETCD_CERT_FILE="<%= $cert_file %>"
+<% } -%>
+<% if $key_file { -%>
+ETCD_KEY_FILE="<%= $key_file %>"
+<% } -%>
+ETCD_CLIENT_CERT_AUTH=<%= $client_cert_auth %>
+<% if $trusted_ca_file { -%>
+ETCD_TRUSTED_CA_FILE="<%= $trusted_ca_file %>"
+<% } -%>
+<% if $peer_cert_file { -%>
+ETCD_PEER_CERT_FILE="<%= $peer_cert_file %>"
+<% } -%>
+<% if $peer_key_file { -%>
+ETCD_PEER_KEY_FILE="<%= $peer_key_file %>"
+<% } -%>
+ETCD_PEER_CLIENT_CERT_AUTH=<%= $peer_client_cert_auth %>
+<% if $peer_trusted_ca_file { -%>
+ETCD_PEER_TRUSTED_CA_FILE="<%= $peer_trusted_ca_file %>"
+<% } -%>
+
+#[logging]
+ETCD_DEBUG=<%= $debug %>

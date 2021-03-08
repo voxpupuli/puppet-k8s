@@ -1,0 +1,6 @@
+<% |
+  Array[String] $initial_cluster,
+  | -%>
+# Managed by Puppet
+
+ETCD_INITIAL_CLUSTER=<%= join($initial_cluster, ',') %>

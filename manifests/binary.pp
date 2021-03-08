@@ -1,7 +1,8 @@
 define k8s::binary(
   Enum['present', 'absent'] $ensure = $k8s::ensure,
-  String[1] $target = "/op/k8s/${k8s::version}",
-  String[1] $tarball_target = $target,
+  String[1] $packaging = $k8s::packaging,
+  String[1] $target = "/opt/k8s/${k8s::version}",
+  String[1] $tarball_target = "/opt/k8s/archives",
 
   Boolean $active = true,
 
@@ -15,12 +16,19 @@ define k8s::binary(
     $_component = pick($component, 'client')
   }
 
-  case $k8s::packaging {
+  # Kubelet and kubectl aren't valid to run in a container,
+  # so fall back to loose files
+  # XXX Do this differently?
+  if $name in ['kubelet', 'kubectl'] and $packaging == 'container' {
+    $_packaging = 'loose'
+  }
+
+  case $_packaging {
     'container': {
       fail('Container management not done yet')
     }
     'package': {
-      $_name = k8s_format_binary($k8s::package_template, {
+      $_name = k8s::format_url($k8s::package_template, {
         version => $k8s::version,
         component => $_component,
       })
@@ -30,30 +38,40 @@ define k8s::binary(
       }
     }
     'tarball': {
-      $_url = k8s_format_binary($k8s::tarball_url_template, {
+      $_url = k8s::format_url($k8s::tarball_url_template, {
         version => $k8s::version,
         component => $_component,
       })
       $_file = "${tarball_target}/${basename($_url)}"
-      if !defined(File[$_file]) {
-        file { $_file:
-          ensure  => $ensure,
-          backup  => false,
-          replace => false,
-          source  => $_url,
+      if !defined(File[$tarball_target]) {
+        file { $tarball_target:
+          ensure  => $ensure ? {
+            present => 'directory',
+            default => absent,
+          },
+          purge   => true,
+          recurse => true,
         }
       }
-      if $ensure == 'present' {
-        exec { "Extract ${name} from k8s tarball":
-          command  => "tar -C '${target}' -xf '${_file}' --transform 's/.*\\///' --wildcards '*${name}'",
-          creates  => "${target}/${name}",
-          path     => ['/usr/bin', '/bin'],
-          requires => File[$_file],
+
+      archive { "${name} from ${_file}":
+        ensure          => $ensure,
+        path            => $_file,
+        source          => $_url,
+        extract         => true,
+        extract_command => "tar -C '${target}' -xf %s --transform 's/.*\\///' --wildcards '*${name}'",
+        extract_path    => $target,
+        cleanup         => true,
+        creates         => "${target}/${name}",
+      }
+      if $ensure == 'absent' {
+        file { "${target}/${name}":
+          ensure => absent,
         }
       }
     }
     'loose': {
-      $_url = k8s_format_binary($k8s::native_url_template, {
+      $_url = k8s::format_url($k8s::native_url_template, {
         version   => $k8s::version,
         component => $_component,
         binary    => $name,
@@ -65,7 +83,7 @@ define k8s::binary(
       }
     }
     'hyperkube': {
-      $_url = k8s_format_binary($k8s::native_url_template, {
+      $_url = k8s::format_url($k8s::native_url_template, {
         version   => $k8s::version,
         component => $_component,
         binary    => $k8s::hyperkube_name,
@@ -82,6 +100,9 @@ define k8s::binary(
         mode   => '0755',
         target => "${target}/${k8s::hyperkube_name}",
       }
+    }
+    'manual': {
+      # User is expected to have created ${target}/${name} now
     }
     default: {
       fail('Invalid packaging specified')
