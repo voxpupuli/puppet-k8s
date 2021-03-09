@@ -45,10 +45,10 @@ define k8s::binary(
       $_file = "${tarball_target}/${basename($_url)}"
       if !defined(File[$tarball_target]) {
         file { $tarball_target:
-          ensure  => $ensure ? {
+          ensure  => ($ensure ? {
             present => 'directory',
             default => absent,
-          },
+          }),
           purge   => true,
           recurse => true,
         }

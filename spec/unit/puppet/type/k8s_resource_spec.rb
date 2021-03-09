@@ -14,7 +14,7 @@ describe Puppet::Type.type(:k8s_resource) do
         'token-id': 'id',
         'token-secret': 'secret',
         'usage-bootstrap-authentication': 'true',
-      }
+      },
     )
   end
 
