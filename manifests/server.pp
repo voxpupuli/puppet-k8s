@@ -1,5 +1,5 @@
 class k8s::server(
-  Boolean $generate_ca = false,
+  Boolean $manage_certs = true,
   Boolean $node_on_server = true,
 ) {
   include k8s::server::etcd

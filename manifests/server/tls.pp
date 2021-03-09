@@ -1,6 +1,7 @@
 class k8s::server::tls(
   Enum['present', 'absent'] $ensure = 'present',
-  Boolean $generate_ca = $k8s::server::generate_ca,
+  Boolean $generate_ca = false,
+  Boolean $manage_certs = $k8s::server::manage_certs,
 
   Array[
     Variant[
@@ -18,73 +19,87 @@ class k8s::server::tls(
   Stdlib::Unixpath $ca_key = "${cert_path}/ca.key",
   Stdlib::Unixpath $ca_cert = "${cert_path}/ca.pem",
 ) {
-  ensure_packages(['openssl'])
+  if $manage_certs or $ensure == 'absent' {
+    ensure_packages(['openssl'])
 
-  if $generate_ca {
+    if !defined(File[$cert_path]) {
+      file { $cert_path:
+        ensure => ($ensure ? {
+          present => directory,
+          default => absent,
+        }),
+        owner  => 'kube',
+        group  => 'kube',
+      }
+    }
+
     # Generate K8s CA
     k8s::server::tls::ca { 'kube-ca':
-      key   => $ca_key,
-      cert  => $ca_cert,
-      owner => 'kube',
-      group => 'kube',
+      ensure   => $ensure,
+      key      => $ca_key,
+      cert     => $ca_cert,
+      owner    => 'kube',
+      group    => 'kube',
+      generate => $generate_ca,
     }
-  }
 
-  k8s::server::tls::cert {
-    default:
-      cert_path => $cert_path,
-      ca_key    => $ca_key,
-      ca_cert   => $ca_cert,
-      owner     => 'kube',
-      group     => 'kube';
+    k8s::server::tls::cert {
+      default:
+        ensure    => $ensure,
+        cert_path => $cert_path,
+        ca_key    => $ca_key,
+        ca_cert   => $ca_cert,
+        owner     => 'kube',
+        group     => 'kube';
 
-    'kube-apiserver':
-      addn_names         => [
-        'kubernetes',
-        'kubernetes.default',
-        'kubernetes.default.svc',
-        "kubernetes.default.svc.${cluster_domain}",
-        'kubernetes.service.discover',
-        fact('networking.fqdn'),
-        $api_address,
-        fact('networking.ip'),
-        fact('networking.ip6'),
-      ],
-      distinguished_name => {
-        commonName => 'kube-apiserver',
-      };
+      'kube-apiserver':
+        addn_names         => [
+          'kubernetes',
+          'kubernetes.default',
+          'kubernetes.default.svc',
+          "kubernetes.default.svc.${cluster_domain}",
+          'kubernetes.service.discover',
+          fact('networking.fqdn'),
+          $api_address,
+          fact('networking.ip'),
+          fact('networking.ip6'),
+        ],
+        distinguished_name => {
+          commonName => 'kube-apiserver',
+        };
 
-    'kube-controller-manager':
-      distinguished_name => {
-        commonName => 'system:kube-controller-manager',
-      };
+      'kube-controller-manager':
+        distinguished_name => {
+          commonName => 'system:kube-controller-manager',
+        };
 
-    'kube-scheduler':
-      distinguished_name => {
-        commonName => 'system:kube-scheduler',
-      };
+      'kube-scheduler':
+        distinguished_name => {
+          commonName => 'system:kube-scheduler',
+        };
 
-    'kube-proxy':
-      distinguished_name => {
-        commonName => 'system:kube-proxy',
-      };
+      'kube-proxy':
+        distinguished_name => {
+          commonName => 'system:kube-proxy',
+        };
 
-    'node':
-      extended_key_usage => ['clientAuth', 'serverAuth'],
-      addn_names         => [
-        fact('networking.fqdn'),
-        fact('networking.ip'),
-        fact('networking.ip6'),
-      ],
-      distinguished_name => {
-        organizationName => 'system:nodes',
-        commonName       => "system:node:${fact('networking.fqdn')}",
-      };
+      'node':
+        extended_key_usage => ['clientAuth', 'serverAuth'],
+        addn_names         => [
+          fact('networking.fqdn'),
+          fact('networking.ip'),
+          fact('networking.ip6'),
+        ],
+        distinguished_name => {
+          organizationName => 'system:nodes',
+          commonName       => "system:node:${fact('networking.fqdn')}",
+        };
 
-    'admin':
-      distinguished_name => {
-        organizationName => 'system:masters',
-        commonName       => 'kube-admin',
-      };
+      'admin':
+        distinguished_name => {
+          organizationName => 'system:masters',
+          commonName       => 'kube-admin',
+        };
+    }
   }
 }

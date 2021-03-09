@@ -1,5 +1,5 @@
 class k8s::server::etcd::setup(
-  Enum['present','absent'] $ensure = 'present',
+  Enum['present','absent'] $ensure = $k8s::server::etcd::ensure,
   Enum['archive','package'] $install = 'archive',
   String[1] $package = 'etcd',
   String[1] $version = $k8s::etcd_version,
@@ -18,17 +18,17 @@ class k8s::server::etcd::setup(
   Array[Stdlib::HTTPUrl] $listen_peer_urls = ['http://localhost:2380'],
   Array[Stdlib::HTTPUrl] $initial_advertise_peer_urls = ['http://localhost:2380'],
 
-  Optional[Stdlib::Unixpath] $cert_file = undef,
-  Optional[Stdlib::Unixpath] $key_file = undef,
-  Optional[Stdlib::Unixpath] $trusted_ca_file = undef,
-  Boolean $client_cert_auth = false,
-  Boolean $auto_tls = $k8s::server::etcd::self_signed_tls,
-
   Optional[Stdlib::Unixpath] $peer_cert_file = undef,
   Optional[Stdlib::Unixpath] $peer_key_file = undef,
   Optional[Stdlib::Unixpath] $peer_trusted_ca_file = undef,
   Boolean $peer_client_cert_auth = false,
   Boolean $peer_auto_tls = $k8s::server::etcd::self_signed_tls,
+
+  Optional[Stdlib::Unixpath] $cert_file = undef,
+  Optional[Stdlib::Unixpath] $key_file = undef,
+  Optional[Stdlib::Unixpath] $trusted_ca_file = undef,
+  Boolean $client_cert_auth = false,
+  Boolean $auto_tls = $k8s::server::etcd::self_signed_tls,
 
   Optional[Integer] $auto_compaction_retention = undef,
   Optional[Enum['existing', 'new']] $initial_cluster_state = undef,
@@ -84,6 +84,28 @@ class k8s::server::etcd::setup(
       group => 'etcd';
   }
 
+  # Use generated certs by default
+  if !$k8s::server::etcd::self_signed_tls and $k8s::server::etcd::manage_certs {
+    $_dir = '/var/lib/etcd/certs'
+    $_cert_file = pick($cert_file, "${_dir}/etcd-client.pem")
+    $_key_file = pick($key_file, "${_dir}/etcd-client.key")
+    $_trusted_ca_file = pick($trusted_ca_file, "${_dir}/client-ca.pem")
+    $_client_cert_auth = pick($client_cert_auth, true)
+    $_peer_cert_file = pick($peer_cert_file, "${_dir}/etcd-peer.pem")
+    $_peer_key_file = pick($peer_key_file, "${_dir}/etcd-peer.key")
+    $_peer_trusted_ca_file = pick($peer_trusted_ca_file, "${_dir}/peer-ca.pem")
+    $_peer_client_cert_auth = pick($peer_client_cert_auth, true)
+  } else {
+    $_cert_file = $cert_file
+    $_key_file = $key_file
+    $_trusted_ca_file = $trusted_ca_file
+    $_client_cert_auth = $client_cert_auth
+    $_peer_cert_file = $peer_cert_file
+    $_peer_key_file = $peer_key_file
+    $_peer_trusted_ca_file = $peer_trusted_ca_file
+    $_peer_client_cert_auth = $peer_client_cert_auth
+  }
+
   file {
     default:
       ensure => $ensure,
@@ -99,14 +121,14 @@ class k8s::server::etcd::setup(
         advertise_client_urls       => $advertise_client_urls,
         listen_peer_urls            => $listen_peer_urls,
         initial_advertise_peer_urls => $initial_advertise_peer_urls,
-        cert_file                   => $cert_file,
-        key_file                    => $key_file,
-        trusted_ca_file             => $trusted_ca_file,
-        client_cert_auth            => $client_cert_auth,
-        peer_cert_file              => $peer_cert_file,
-        peer_key_file               => $peer_key_file,
-        peer_trusted_ca_file        => $peer_trusted_ca_file,
-        peer_client_cert_auth       => $peer_client_cert_auth,
+        cert_file                   => $_cert_file,
+        key_file                    => $_key_file,
+        trusted_ca_file             => $_trusted_ca_file,
+        client_cert_auth            => $_client_cert_auth,
+        peer_cert_file              => $_peer_cert_file,
+        peer_key_file               => $_peer_key_file,
+        peer_trusted_ca_file        => $_peer_trusted_ca_file,
+        peer_client_cert_auth       => $_peer_client_cert_auth,
         auto_compaction_retention   => $auto_compaction_retention,
         initial_cluster_state       => $initial_cluster_state,
         initial_cluster_token       => $initial_cluster_token,

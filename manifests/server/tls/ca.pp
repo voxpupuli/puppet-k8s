@@ -10,9 +10,9 @@ define k8s::server::tls::ca(
 
   Enum[2048, 4096, 8192] $key_bytes = $k8s::server::tls::key_bytes,
   Integer[1] $valid_days = $k8s::server::tls::valid_days,
-
+  Boolean $generate = true,
 ) {
-  if $ensure == 'present' {
+  if $ensure == 'present' and $generate {
     exec {
       default:
         path    => ['/usr/bin'],

@@ -1,8 +1,11 @@
 class k8s::server::etcd(
+  Enum['present', 'absent'] $ensure = 'present',
+
   Boolean $manage_members = false,
   String[1] $cluster_name = 'default',
 
   Boolean $self_signed_tls = false,
+  Boolean $manage_certs = $k8s::server::manage_certs,
   Boolean $generate_ca = false,
   Stdlib::Unixpath $cert_path = '/var/lib/etcd/certs',
   Stdlib::Unixpath $peer_ca_key = "${cert_path}/peer-ca.key",
@@ -10,24 +13,37 @@ class k8s::server::etcd(
   Stdlib::Unixpath $client_ca_key = "${cert_path}/client-ca.key",
   Stdlib::Unixpath $client_ca_cert = "${cert_path}/client-ca.pem",
 ) {
-  if !$self_signed_tls {
-    if $generate_ca {
-      k8s::server::tls::ca { 'etcd-peer-ca':
-        key   => $peer_ca_key,
-        cert  => $peer_ca_cert,
-        owner => 'etcd',
-        group => 'etcd',
+  if (!$self_signed_tls and $manage_certs) or $ensure == 'absent' {
+    if !defined(File[$cert_path]) {
+      file { $cert_path:
+        ensure => ($ensure ? {
+          present => directory,
+          default => absent,
+        }),
+        owner  => 'etcd',
+        group  => 'etcd',
       }
-      k8s::server::tls::ca { 'etcd-client-ca':
-        key   => $client_ca_key,
-        cert  => $client_ca_cert,
-        owner => 'etcd',
-        group => 'etcd',
-      }
+    }
+
+    k8s::server::tls::ca {
+      default:
+        ensure   => $ensure,
+        owner    => 'etcd',
+        group    => 'etcd',
+        generate => $generate_ca;
+
+      'etcd-peer-ca':
+        key  => $peer_ca_key,
+        cert => $peer_ca_cert;
+
+      'etcd-client-ca':
+        key  => $client_ca_key,
+        cert => $client_ca_cert;
     }
 
     k8s::server::tls::cert {
       default:
+        ensure    => $ensure,
         owner     => 'etcd',
         group     => 'etcd',
         cert_path => $cert_path;
@@ -56,7 +72,7 @@ class k8s::server::etcd(
 
   include k8s::server::etcd::setup
 
-  if $manage_members {
+  if $ensure == 'present' and $manage_members {
     # Needs the PuppetDB terminus installed
     $pql_query = @("PQL")
     resources[certname,parameters] {
