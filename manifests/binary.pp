@@ -24,9 +24,7 @@ define k8s::binary(
   }
 
   case $_packaging {
-    'container': {
-      fail('Container management not done yet')
-    }
+    'container': { }
     'package': {
       $_name = k8s::format_url($k8s::package_template, {
         version => $k8s::version,

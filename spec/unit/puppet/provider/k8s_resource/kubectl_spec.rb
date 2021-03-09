@@ -52,6 +52,8 @@ RSpec.describe kubectl_provider do
 
     before(:each) do
       resource.provider = provider
+
+      allow(kubectl_provider).to receive(:suitable?).and_return(true)
     end
 
     context 'when identical' do
@@ -270,6 +272,7 @@ RSpec.describe kubectl_provider do
         catalog = Puppet::Resource::Catalog.new
         catalog.add_resource(resource)
         logs = catalog.apply.report.logs
+
 
         expect(logs.first.source).to eq('/K8s_resource[bootstrap-token-example]/ensure')
         expect(logs.first.message).to eq('remove Secret kube-system/bootstrap-token-example')
