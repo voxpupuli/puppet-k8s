@@ -24,8 +24,9 @@ class k8s(
 
   Stdlib::HTTPUrl $master = 'https://kubernetes',
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
-  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $service_cluster_ip_range = '10.1.0.0/24',
+  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $service_cluster_cidr = '10.1.0.0/24',
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $cluster_cidr = '10.0.0.0/16',
+  Stdlib::IP::Address::Nosubnet $api_address = k8s::first_ip_in_cidr($service_cluster_cidr),
 
   Enum['node','server','none'] $role = 'none',
 ) {
