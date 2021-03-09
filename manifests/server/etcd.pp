@@ -2,39 +2,56 @@ class k8s::server::etcd(
   Boolean $manage_members = false,
   String[1] $cluster_name = 'default',
 
+  Boolean $self_signed_tls = false,
   Boolean $generate_ca = false,
   Stdlib::Unixpath $cert_path = '/var/lib/etcd/certs',
-  Stdlib::Unixpath $ca_key = "${cert_path}/ca.key",
-  Stdlib::Unixpath $ca_cert = "${cert_path}/ca.pem",
+  Stdlib::Unixpath $peer_ca_key = "${cert_path}/peer-ca.key",
+  Stdlib::Unixpath $peer_ca_cert = "${cert_path}/peer-ca.pem",
+  Stdlib::Unixpath $client_ca_key = "${cert_path}/client-ca.key",
+  Stdlib::Unixpath $client_ca_cert = "${cert_path}/client-ca.pem",
 ) {
-  if $generate_ca {
-    k8s::server::tls::ca { 'etcd-ca':
-      key  => $ca_key,
-      cert => $ca_cert,
+  if !$self_signed_tls {
+    if $generate_ca {
+      k8s::server::tls::ca { 'etcd-peer-ca':
+        key   => $peer_ca_key,
+        cert  => $peer_ca_cert,
+        owner => 'etcd',
+        group => 'etcd',
+      }
+      k8s::server::tls::ca { 'etcd-client-ca':
+        key   => $client_ca_key,
+        cert  => $client_ca_cert,
+        owner => 'etcd',
+        group => 'etcd',
+      }
     }
-  }
 
-  k8s::server::tls::cert {
-    default:
-      cert_path => $cert_path,
-      ca_key    => $ca_key,
-      ca_cert   => $ca_cert;
+    k8s::server::tls::cert {
+      default:
+        owner     => 'etcd',
+        group     => 'etcd',
+        cert_path => $cert_path;
 
-    'etcd-peer':
-      addn_names         => [
-        fact('networking.fqdn'),
-        fact('networking.ip'),
-        fact('networking.ip6'),
-      ],
-      distinguished_name => {
-        commonName => fact('networking.fqdn'),
-      },
-      extended_key_usage => ['clientAuth', 'serverAuth'];
+      'etcd-peer':
+        ca_key             => $peer_ca_key,
+        ca_cert            => $peer_ca_cert,
+        addn_names         => [
+          fact('networking.fqdn'),
+          fact('networking.ip'),
+          fact('networking.ip6'),
+        ],
+        distinguished_name => {
+          commonName => fact('networking.fqdn'),
+        },
+        extended_key_usage => ['clientAuth', 'serverAuth'];
 
-    'etcd-client':
-      distinguished_name => {
-        commonName => fact('networking.fqdn'),
-      };
+      'etcd-client':
+        ca_key             => $client_ca_key,
+        ca_cert            => $client_ca_cert,
+        distinguished_name => {
+          commonName => fact('networking.fqdn'),
+        };
+    }
   }
 
   include k8s::server::etcd::setup

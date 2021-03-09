@@ -6,6 +6,7 @@ class k8s::server::etcd::setup(
   String[1] $etcd_name = fact('hostname'),
   String[1] $fqdn = fact('networking.fqdn'),
 
+
   Stdlib::HTTPUrl $archive_template = 'https://storage.googleapis.com/etcd/v%{version}/etcd-v%{version}-%{kernel}-%{arch}.%{kernel_ext}',
 
   Stdlib::Unixpath $data_dir = "${etcd_name}.etcd",
@@ -21,11 +22,13 @@ class k8s::server::etcd::setup(
   Optional[Stdlib::Unixpath] $key_file = undef,
   Optional[Stdlib::Unixpath] $trusted_ca_file = undef,
   Boolean $client_cert_auth = false,
+  Boolean $auto_tls = $k8s::server::etcd::self_signed_tls,
 
   Optional[Stdlib::Unixpath] $peer_cert_file = undef,
   Optional[Stdlib::Unixpath] $peer_key_file = undef,
   Optional[Stdlib::Unixpath] $peer_trusted_ca_file = undef,
   Boolean $peer_client_cert_auth = false,
+  Boolean $peer_auto_tls = $k8s::server::etcd::self_signed_tls,
 
   Optional[Integer] $auto_compaction_retention = undef,
   Optional[Enum['existing', 'new']] $initial_cluster_state = undef,

@@ -22,8 +22,8 @@ define k8s::server::tls::cert(
   Stdlib::Unixpath $csr = "${cert_path}/${title}.key",
   Stdlib::Unixpath $cert = "${cert_path}/${title}.pem",
 
-  String[1] $owner = 'kube',
-  String[1] $group = 'kube',
+  String[1] $owner = 'root',
+  String[1] $group = 'root',
 ) {
   $_ip_altnames = $addn_names.filter |$ip| {
     $ip =~ Stdlib::IP::Address

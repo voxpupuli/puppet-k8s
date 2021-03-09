@@ -16,11 +16,13 @@
   Optional[Stdlib::Unixpath] $key_file = undef,
   Optional[Stdlib::Unixpath] $trusted_ca_file = undef,
   Boolean $client_cert_auth = false,
+  Boolean $auto_tls = false,
 
   Optional[Stdlib::Unixpath] $peer_cert_file = undef,
   Optional[Stdlib::Unixpath] $peer_key_file = undef,
   Optional[Stdlib::Unixpath] $peer_trusted_ca_file = undef,
   Boolean $peer_client_cert_auth = false,
+  Boolean $peer_auto_tls = false,
 
   Optional[Integer] $auto_compaction_retention = undef,
   Optional[Enum['existing', 'new']] $initial_cluster_state = undef,
@@ -66,6 +68,9 @@ ETCD_CLIENT_CERT_AUTH=<%= $client_cert_auth %>
 <% if $trusted_ca_file { -%>
 ETCD_TRUSTED_CA_FILE="<%= $trusted_ca_file %>"
 <% } -%>
+<% if $auto_tls { -%>
+ETCD_AUTO_TLS="<%= $auto_tls %>"
+<% } -%>
 <% if $peer_cert_file { -%>
 ETCD_PEER_CERT_FILE="<%= $peer_cert_file %>"
 <% } -%>
@@ -75,6 +80,9 @@ ETCD_PEER_KEY_FILE="<%= $peer_key_file %>"
 ETCD_PEER_CLIENT_CERT_AUTH=<%= $peer_client_cert_auth %>
 <% if $peer_trusted_ca_file { -%>
 ETCD_PEER_TRUSTED_CA_FILE="<%= $peer_trusted_ca_file %>"
+<% } -%>
+<% if $peer_auto_tls { -%>
+ETCD_PEER_AUTO_TLS="<%= $peer_auto_tls %>"
 <% } -%>
 
 #[logging]

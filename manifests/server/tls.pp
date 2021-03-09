@@ -23,8 +23,10 @@ class k8s::server::tls(
   if $generate_ca {
     # Generate K8s CA
     k8s::server::tls::ca { 'kube-ca':
-      key  => $ca_key,
-      cert => $ca_cert,
+      key   => $ca_key,
+      cert  => $ca_cert,
+      owner => 'kube',
+      group => 'kube',
     }
   }
 
@@ -32,7 +34,9 @@ class k8s::server::tls(
     default:
       cert_path => $cert_path,
       ca_key    => $ca_key,
-      ca_cert   => $ca_cert;
+      ca_cert   => $ca_cert,
+      owner     => 'kube',
+      group     => 'kube';
 
     'kube-apiserver':
       addn_names         => [

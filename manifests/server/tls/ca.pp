@@ -3,8 +3,8 @@ define k8s::server::tls::ca(
   Stdlib::Unixpath $cert,
   String[1] $subject = "/CN=${title}",
 
-  String[1] $owner = 'kube',
-  String[1] $group = 'kube',
+  String[1] $owner = 'root',
+  String[1] $group = 'root',
 
   Enum['present', 'absent'] $ensure = $k8s::server::tls::ensure,
 
