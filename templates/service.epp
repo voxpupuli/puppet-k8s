@@ -1,0 +1,36 @@
+<%- |
+  String[1] $name,
+  String[1] $bin,
+  Optional[String[1]] $desc = undef,
+  Optional[String[1]] $doc = undef,
+  Array[String[1]] $needs = [],
+  Optional[Stdlib::Unixpath] $dir = undef,
+  String $target = 'multi-user.target',
+
+  Stdlib::Unixpath $bindir = "/opt/k8s/${k8s::version}",
+| -%>
+[Unit]
+Description=<%= pick($desc, $name) %>
+<%- if $doc { -%>
+Documentation=<%= $doc %>
+<%- } -%>
+After=<%= $needs.join(' ') %>
+Requires=<%= $needs.join(' ') %>
+
+[Service]
+<%- if $dir { -%>
+WorkingDirectory=<%= $dir %>
+<%- } -%>
+EnvironmentFile=-/etc/sysconfig/k8s-common
+EnvironmentFile=-/etc/sysconfig/<%= $name %>
+ExecStart=<%= $bindir %>/<%= $bin %> \
+            $KUBE_LOGTOSTDERR \
+            $KUBE_LOG_LEVEL \
+            $KUBE_<%= $name.upcase() %>_ARGS
+Restart=on-failure
+KillMode=process
+CPUAccounting=true
+MemoryAccounting=true
+
+[Install]
+WantedBy=<%= $target %>

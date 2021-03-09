@@ -22,11 +22,14 @@ class k8s(
   String[1] $package_template = 'kubernetes-%{component}',
   String[1] $hyperkube_name = 'hyperkube',
 
+  Enum['cert', 'token', 'bootstrap'] $node_auth = 'bootstrap',
+
   Stdlib::HTTPUrl $master = 'https://kubernetes',
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $service_cluster_cidr = '10.1.0.0/24',
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $cluster_cidr = '10.0.0.0/16',
-  Stdlib::IP::Address::Nosubnet $api_address = k8s::first_ip_in_cidr($service_cluster_cidr),
+  Stdlib::IP::Address::Nosubnet $api_service_address = k8s::first_ip_in_cidr($service_cluster_cidr),
+  Stdlib::Fqdn $cluster_domain = 'cluster.local',
 
   Enum['node','server','none'] $role = 'none',
 ) {
@@ -96,11 +99,19 @@ class k8s(
     '/etc/kubernetes/manifests':
       purge   => $purge_manifests,
       recurse => true;
-    '/srv/kubernetes': ;
+    '/root/.kube': ;
+    '/srv/kubernetes':
+      owner => 'kube',
+      group => 'kube';
     '/srv/kubernetes/certs':
+      owner   => 'kube',
+      group   => 'kube',
       purge   => true,
       recurse => true;
-    '/var/lib/kubernetes': ;
+    '/usr/libexec/kubernetes': ;
+    '/var/lib/kublet':
+      owner => 'kube',
+      group => 'kube';
   }
 
   if $role == 'server' {

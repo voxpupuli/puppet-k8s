@@ -10,7 +10,7 @@ class k8s::server::tls(
     ]
   ] $api_addn_names = [],
   String[1] $cluster_domain = $k8s::cluster_domain,
-  Stdlib::IP::Address::Nosubnet $api_address = $k8s::api_address,
+  Stdlib::IP::Address::Nosubnet $api_service_address = $k8s::api_service_address,
 
   Stdlib::Unixpath $cert_path = '/srv/kubernetes/certs',
   Enum[2048, 4096, 8192] $key_bytes = 2048,
@@ -59,8 +59,11 @@ class k8s::server::tls(
           'kubernetes.default.svc',
           "kubernetes.default.svc.${cluster_domain}",
           'kubernetes.service.discover',
+          'localhost',
           fact('networking.fqdn'),
-          $api_address,
+          $api_service_address,
+          '127.0.0.1',
+          '::1',
           fact('networking.ip'),
           fact('networking.ip6'),
         ],
