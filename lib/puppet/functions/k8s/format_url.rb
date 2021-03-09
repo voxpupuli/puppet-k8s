@@ -9,9 +9,9 @@ Puppet::Functions.create_function(:'k8s::format_url') do
     arch = 'amd64' if arch == %r{x(86_)?64}
     arch = 'arm64' if arch == %r{arm64.*|aarch64}
     k3s_arch = arch
-    k3s_arch = 'armhf' if arch =~ %r{armv.*}
+    k3s_arch = 'armhf' if arch.match? %r{armv.*}
     k3s_arch = nil if arch == 'amd64'
-    arch = 'arm' if arch =~ %r{armv.*}
+    arch = 'arm' if arch.match? %r{armv.*}
     arch = '386' if arch == 'i386'
 
     underscore_arch_suffix = "_#{arch}" unless arch == 'amd64'

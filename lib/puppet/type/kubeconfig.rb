@@ -12,7 +12,7 @@ Puppet::Type.newtype(:kubeconfig) do
 
   ensurable do
     newvalue(:present) do
-      provider.create if !provider.exists?
+      provider.create unless provider.exists?
     end
 
     newvalue(:absent) do
@@ -24,12 +24,12 @@ Puppet::Type.newtype(:kubeconfig) do
     def change_to_s(currentvalue, newvalue)
       if currentvalue == :absent || currentvalue.nil?
         if provider.exists? && !provider.valid?
-          "updated"
+          'updated'
         else
-          "created"
+          'created'
         end
       elsif newvalue == :absent
-        "removed"
+        'removed'
       else
         super
       end

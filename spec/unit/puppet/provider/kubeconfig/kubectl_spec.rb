@@ -6,9 +6,11 @@ module MakeMakefile::Logging
   def self::open
     yield
   end
+
   def self::postpone
     yield File.open('/dev/null', 'wb')
   end
+
   def self::message(*_); end
 end
 
@@ -68,21 +70,21 @@ RSpec.describe kubectl_provider do
       }
     end
 
-    before do
+    before(:each) do
       resource.provider = provider
     end
 
     context 'without a local kubectl binary' do
       it 'creates default config, updates components' do
-        expect(provider).to receive(:kubectl).with(*[
+        expect(provider).to receive(:kubectl).with(
           '--kubeconfig',
           resource[:path],
           'config',
           'set-cluster',
           resource[:cluster],
           "--server=#{resource[:server]}",
-        ])
-        expect(provider).to receive(:kubectl).with(*[
+        )
+        expect(provider).to receive(:kubectl).with(
           '--kubeconfig',
           resource[:path],
           'config',
@@ -91,21 +93,21 @@ RSpec.describe kubectl_provider do
           "--cluster=#{resource[:cluster]}",
           "--user=#{resource[:user]}",
           "--namespace=#{resource[:namespace]}",
-        ])
-        expect(provider).to receive(:kubectl).with(*[
+        )
+        expect(provider).to receive(:kubectl).with(
           '--kubeconfig',
           resource[:path],
           'config',
           'set-credentials',
           resource[:user],
-        ])
-        expect(provider).to receive(:kubectl).with(*[
+        )
+        expect(provider).to receive(:kubectl).with(
           '--kubeconfig',
           resource[:path],
           'config',
           'use-context',
           resource[:current_context],
-        ])
+        )
         expect(FileUtils).to receive(:chown).with(resource[:owner], resource[:group], resource[:path])
 
         provider.create

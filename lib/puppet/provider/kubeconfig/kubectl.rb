@@ -46,7 +46,7 @@ Puppet::Type.type(:kubeconfig).provide(:kubectl, parent: :ruby) do
       *params
     )
   end
-  
+
   def update_current_context
     kubectl_call(
       'config', 'use-context',
@@ -63,5 +63,4 @@ Puppet::Type.type(:kubeconfig).provide(:kubectl, parent: :ruby) do
     ]
     kubectl(*params, *args)
   end
-
 end

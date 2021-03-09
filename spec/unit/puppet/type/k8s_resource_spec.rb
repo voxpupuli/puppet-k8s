@@ -13,7 +13,7 @@ describe Puppet::Type.type(:k8s_resource) do
       content: {
         'token-id': 'id',
         'token-secret': 'secret',
-        'usage-bootstrap-authentication': 'true'
+        'usage-bootstrap-authentication': 'true',
       }
     )
   end
@@ -23,10 +23,10 @@ describe Puppet::Type.type(:k8s_resource) do
     it { expect(resource[:update]).to eq true }
   end
 
-  %w[
-    simplename
-    default-token-6mqpl
-    metrics-server-7cb45bbfd5-gz4t6
+  [
+    'simplename',
+    'default-token-6mqpl',
+    'metrics-server-7cb45bbfd5-gz4t6',
   ].each do |name|
     it 'accepts valid names' do
       expect { resource[:name] = name }.not_to raise_error
@@ -44,10 +44,10 @@ describe Puppet::Type.type(:k8s_resource) do
     end
   end
 
-  %w[
-    default
-    kube-system
-    some-ridiculously-long-name-thats-still-inside-of-the-limitations-kubernetes-has
+  [
+    'default',
+    'kube-system',
+    'some-ridiculously-long-name-thats-still-inside-of-the-limitations-kubernetes-has',
   ].each do |name|
     it 'accepts valid namespaces' do
       expect { resource[:namespace] = name }.not_to raise_error
@@ -65,8 +65,8 @@ describe Puppet::Type.type(:k8s_resource) do
     end
   end
 
-  it 'rejects invalid namespaces' do
-    expect { resource[:namespace] = "x"*254 }.to raise_error(Puppet::Error, %r{Namespace must be valid})
+  it 'rejects too long namespaces' do
+    expect { resource[:namespace] = 'x' * 254 }.to raise_error(Puppet::Error, %r{Namespace must be valid})
   end
 
   it 'verify resource[:kubeconfig] is absolute filepath' do

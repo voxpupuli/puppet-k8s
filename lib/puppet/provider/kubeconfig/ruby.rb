@@ -185,6 +185,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
   def current_context_valid?
     kubeconfig_content['current-context'] == resource[:current_context]
   end
+
   def update_current_context
     kubeconfig_content['current-context'] = resource[:current_context]
   end

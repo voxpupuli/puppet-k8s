@@ -28,7 +28,7 @@ Puppet::Type.newtype(:k8s_resource) do
 
   ensurable do
     newvalue(:present) do
-      provider.create if !provider.exists?
+      provider.create unless provider.exists?
     end
 
     newvalue(:absent) do
@@ -67,7 +67,7 @@ Puppet::Type.newtype(:k8s_resource) do
     desc 'The name of the resource'
 
     validate do |value|
-      unless value =~ %r{^[a-z0-9.-]{0,253}$}
+      unless value.match? %r{^[a-z0-9.-]{0,253}$}
         raise Puppet::Error, 'Name must be valid'
       end
     end
@@ -77,7 +77,7 @@ Puppet::Type.newtype(:k8s_resource) do
     desc 'The namespace the resource is contained in'
 
     validate do |value|
-      unless value =~ %r{^[a-z0-9.-]{0,253}$}
+      unless value.match? %r{^[a-z0-9.-]{0,253}$}
         raise Puppet::Error, 'Namespace must be valid'
       end
     end
@@ -101,12 +101,12 @@ Puppet::Type.newtype(:k8s_resource) do
     desc 'The kind of the resource'
   end
 
-  newparam(:update, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+  newparam(:update, boolean: true, parent: Puppet::Parameter::Boolean) do
     desc 'Whether to update the resource if the content differs'
     defaultto(:true)
   end
 
-  newparam(:show_diff, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+  newparam(:show_diff, boolean: true, parent: Puppet::Parameter::Boolean) do
     desc 'Whether to display the difference when the resource changes'
     defaultto(:true)
   end

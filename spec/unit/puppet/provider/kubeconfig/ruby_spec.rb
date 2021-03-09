@@ -54,7 +54,7 @@ RSpec.describe ruby_provider do
     let(:resource) { Puppet::Type::Kubeconfig.new(resource_properties) }
     let(:provider) { ruby_provider.new(resource) }
 
-    before do
+    before(:each) do
       resource.provider = provider
     end
 
@@ -97,18 +97,6 @@ RSpec.describe ruby_provider do
     context 'when applied' do
       it 'applies correctly' do
         allow(Puppet::Util::Storage).to receive(:store)
-        expect(File.exists?(name)).to eq(false)
-
-        catalog = Puppet::Resource::Catalog.new
-        catalog.add_resource(resource)
-        catalog.apply
-
-        expect(Psych.load(File.read(tmpfile))).to eq default_kubeconfig
-      end
-
-      it 'updates correctly' do
-        allow(Puppet::Util::Storage).to receive(:store)
-        expect(File.exists?(name)).to eq(false)
 
         catalog = Puppet::Resource::Catalog.new
         catalog.add_resource(resource)

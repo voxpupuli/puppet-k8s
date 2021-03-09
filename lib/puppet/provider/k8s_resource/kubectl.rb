@@ -35,14 +35,14 @@ Puppet::Type.type(:k8s_resource).provide(:kubectl) do
         if target_value.is_a?(Hash) && value.is_a?(Hash) && value.any? && target_value.any?
           delete_merge.call(target_value, value)
         elsif value.is_a?(Array) && target_value.is_a?(Array) && value.any? && target_value.any?
-          value.each_with_index do |x, i| 
+          value.each_with_index do |x, i|
             delete_merge.call(target_value[i], x)
           end
           hash1[key] = target_value - [{}]
         else
-          hash1.delete(key) if hash1.has_key?(key) && target_value == value
+          hash1.delete(key) if hash1.key?(key) && target_value == value
         end
-        hash1.delete(key) if hash1.has_key?(key) && hash1[key].empty?
+        hash1.delete(key) if hash1.key?(key) && hash1[key].empty?
       end
 
       hash1

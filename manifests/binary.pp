@@ -2,7 +2,7 @@ define k8s::binary(
   Enum['present', 'absent'] $ensure = $k8s::ensure,
   String[1] $packaging = $k8s::packaging,
   String[1] $target = "/opt/k8s/${k8s::version}",
-  String[1] $tarball_target = "/opt/k8s/archives",
+  String[1] $tarball_target = '/opt/k8s/archives',
 
   Boolean $active = true,
 
