@@ -37,6 +37,10 @@ RSpec.describe kubectl_provider do
     let(:resource) { Puppet::Type::Kubeconfig.new(resource_properties) }
     let(:provider) { kubectl_provider.new(resource) }
 
+    before(:each) do
+      resource.provider = provider
+    end
+
     let(:default_kubeconfig) do
       {
         'apiVersion' => 'v1',
@@ -68,10 +72,6 @@ RSpec.describe kubectl_provider do
         'kind' => 'Config',
         'preferences' => {},
       }
-    end
-
-    before(:each) do
-      resource.provider = provider
     end
 
     context 'without a local kubectl binary' do

@@ -48,7 +48,11 @@ RSpec.describe kubectl_provider do
     end
 
     let(:resource) { Puppet::Type::K8s_resource.new(resource_properties) }
-    let(:provider) { resource.provider }
+    let(:provider) { kubectl_provider.new(resource) }
+
+    before(:each) do
+      resource.provider = provider
+    end
 
     context 'when identical' do
       let(:upstream_data) do
