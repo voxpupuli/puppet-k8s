@@ -39,8 +39,8 @@ Puppet::Type.type(:k8s_resource).provide(:kubectl) do
             delete_merge.call(target_value[i], x)
           end
           hash1[key] = target_value - [{}]
-        else
-          hash1.delete(key) if hash1.key?(key) && target_value == value
+        elsif hash1.key?(key) && target_value == value
+          hash1.delete(key)
         end
         hash1.delete(key) if hash1.key?(key) && hash1[key].empty?
       end
