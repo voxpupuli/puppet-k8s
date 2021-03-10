@@ -38,7 +38,10 @@ class k8s::server(
         },
       },
     },
-    require            => K8s::Binary['kubectl'],
+    require            => [
+      K8s::Binary['kubectl'],
+      Service['kube-apiserver'],
+    ],
   }
 
   if $node_on_server {
