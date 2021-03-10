@@ -50,6 +50,7 @@ class k8s::server(
     class { 'k8s::node':
       master     => "https://localhost:${api_port}",
       node_auth  => 'cert',
+      proxy_auth => 'cert',
       ca_cert    => $k8s::server::tls::ca_cert,
       node_cert  => "${_dir}/node.pem",
       node_key   => "${_dir}/node.key",

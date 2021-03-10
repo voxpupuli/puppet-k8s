@@ -6,43 +6,46 @@ class k8s::node::kubelet(
   Hash[String, Data] $addn_config = {},
   Array[String] $addn_args = [],
 
-  Enum['cert', 'token', 'bootstrap'] $node_auth = $k8s::node_auth,
+  Enum['cert', 'token', 'bootstrap'] $auth = $k8s::node::node_auth,
 
   # For cert auth
-  Optional[Stdlib::Unixpath] $ca_cert = undef,
-  Optional[Stdlib::Unixpath] $node_cert = undef,
-  Optional[Stdlib::Unixpath] $node_key = undef,
+  Optional[Stdlib::Unixpath] $ca_cert = k8s::node::ca_cert,
+  Optional[Stdlib::Unixpath] $cert = k8s::node::node_cert,
+  Optional[Stdlib::Unixpath] $key = k8s::node::node_key,
 
   # For token and bootstrap auth
-  Optional[Stdlib::Unixpath] $node_token = undef,
+  Optional[Stdlib::Unixpath] $token = k8s::node::node_token,
 ) {
   k8s::binary { 'kubelet':
     ensure    => $ensure,
   }
 
-  case $node_auth {
+  case $auth {
     'bootstrap': {
       kubeconfig { '/srv/kubernetes/bootstrap-kubelet.kubeconf':
+        ensure          => $ensure,
         server          => $master,
-        token           => $node_token,
+        token           => $token,
         skip_tls_verify => true,
       }
       $_rotate_cert = true
     }
     'token': {
       kubeconfig { '/srv/kubernetes/kubelet.kubeconf':
+        ensure => $ensure,
         server => $master,
-        token  => $node_token,
+        token  => $token,
       }
       $_rotate_cert = false
     }
     'cert': {
       kubeconfig { '/srv/kubernetes/kubelet.kubeconf':
+        ensure      => $ensure,
         server      => $master,
 
         ca_cert     => $ca_cert,
-        client_cert => $node_cert,
-        client_key  => $node_key,
+        client_cert => $cert,
+        client_key  => $key,
       }
       $_rotate_cert = false
     }
@@ -54,10 +57,10 @@ class k8s::node::kubelet(
     'kind'               => 'KubeletConfiguration',
 
     'staticPodPath'      => '/etc/kubernetes/manifests',
-    'tlsCertFile'        => $node_cert,
-    'tlsPrivateKeyFile'  => $node_key,
+    'tlsCertFile'        => $cert,
+    'tlsPrivateKeyFile'  => $key,
     'rotateCertificates' => $_rotate_cert,
-    'serverTLSBootstrap' => $node_auth == 'bootstrap',
+    'serverTLSBootstrap' => $auth == 'bootstrap',
     'clusterDomain'      => $k8s::cluster_domain,
     'cgroupDriver'       => 'systemd',
   }

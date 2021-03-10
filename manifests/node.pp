@@ -1,8 +1,9 @@
 class k8s::node(
   Enum['present', 'absent'] $ensure = $k8s::ensure,
+
   Stdlib::HTTPUrl $master = $k8s::master,
   Enum['cert', 'token', 'bootstrap'] $node_auth = $k8s::node_auth,
-  Enum['cert', 'token', 'bootstrap'] $proxy_auth = $k8s::node_auth,
+  Enum['cert', 'token', 'incluster'] $proxy_auth = 'cert',
 
   # For cert auth
   Optional[Stdlib::Unixpath] $ca_cert = undef,

@@ -1,7 +1,54 @@
 class k8s::node::kube_proxy(
   Enum['present', 'absent'] $ensure = $k8s::ensure,
+  Enum['container', 'package', 'tarball', 'loose', 'hyperkube', 'manual'] $packaging = $k8s::packaging,
+
+  Stdlib::HTTPUrl $master = $k8s::node::master,
+
+  Hash[String, Data] $addn_config = {},
+  Array[String] $addn_args = [],
+
+  Enum['cert', 'token', 'incluster'] $auth = $k8s::node::proxy_auth,
+
+  # For cert auth
+  Optional[Stdlib::Unixpath] $ca_cert = $k8s::node::ca_cert,
+  Optional[Stdlib::Unixpath] $cert = $k8s::node::proxy_cert,
+  Optional[Stdlib::Unixpath] $key = $k8s::node::proxy_key,
+
+  # For token and bootstrap auth
+  Optional[Stdlib::Unixpath] $token = $k8s::node::proxy_token,
 ) {
   k8s::binary { 'kube-proxy':
-    ensure => $ensure,
+    ensure    => $ensure,
+    packaging => $packaging,
   }
+
+  case $auth {
+    'token': {
+      kubeconfig { '/srv/kubernetes/kube-proxy.kubeconf':
+        ensure => $ensure,
+        server => $master,
+        token  => $token,
+      }
+      $_rotate_cert = false
+    }
+    'cert': {
+      kubeconfig { '/srv/kubernetes/kube-proxy.kubeconf':
+        ensure      => $ensure,
+        server      => $master,
+
+        ca_cert     => $ca_cert,
+        client_cert => $cert,
+        client_key  => $key,
+      }
+      $_rotate_cert = false
+    }
+    'incluster': {
+      if $packaging != 'container' {
+        fail('Can only use incluster auth when running as a containerized srevice')
+      }
+    }
+    default: {}
+  }
+
+
 }
