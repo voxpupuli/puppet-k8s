@@ -25,7 +25,7 @@ class k8s::server(
     require     => K8s::Binary['kubectl'],
   }
 
-  k8s::server::bootstrap_token { fqdn_rand_string(6):
+  k8s::server::bootstrap_token { 'puppet':
     kubeconfig         => '/root/.kube/config',
 
     description        => 'Puppet generated token',
