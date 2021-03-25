@@ -1,9 +1,66 @@
 class k8s::server::apiserver(
   Enum['present', 'absent'] $ensure = $k8s::ensure,
 
-  Hash[String,Data] $flags = {},
+  Hash[String, Data] $arguments = {},
+
+  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $service_cluster_cidr = $k8s::service_cluster_cidr,
+
+  Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
+  Stdlib::Unixpath $ca_cert = $k8s::server::tls::ca_cert,
+  Stdlib::Unixpath $aggregator_ca_cert = $k8s::server::tls::aggregator_ca_cert,
+  Stdlib::Unixpath $serviceaccount_public = "${cert_path}/service-account.pub",
+  Stdlib::Unixpath $apiserver_cert = "${cert_path}/kube-apiserver.pem",
+  Stdlib::Unixpath $apiserver_key = "${cert_path}/kube-apiserver.key",
+  Stdlib::Unixpath $front_proxy_cert = "${cert_path}/front-proxy-client.pem",
+  Stdlib::Unixpath $front_proxy_key = "${cert_path}/front-proxy-client.key",
+  Stdlib::Unixpath $apiserver_client_cert = "${cert_path}/apiserver-kubelet-client.pem",
+  Stdlib::Unixpath $apiserver_client_key = "${cert_path}/apiserver-kubelet-client.key",
+  Stdlib::Unixpath $etcd_ca = "${cert_path}/etcd-ca.pem",
+  Stdlib::Unixpath $etcd_cert = "${cert_path}/etcd-client.pem",
+  Stdlib::Unixpath $etcd_key = "${cert_path}/etcd-client.key",
 ) {
   k8s::binary { 'kube-apiserver':
     ensure => $ensure,
   }
+
+  $args = k8s::format_arguments({
+      enable_admission_plugins           => [
+        'NamespaceLifecycle',
+        'LimitRanger',
+        'ServiceAccount',
+        'PersistentVolumeClaimResize',
+        'DefaultStorageClass',
+        'DefaultTolerationSeconds',
+        'MutatingAdmissionWebhook',
+        'ResourceQuota',
+        'Priority',
+        'NodeRestriction',
+      ],
+      advertise_address                  => fact('networking.ip'),
+      allow_privileged                   => true,
+      anonymous_auth                     => false,
+      authorization_mode                 => [ 'Node', 'RBAC' ],
+      bind_address                       => '::',
+      client_ca_file                     => $ca_cert,
+      requestheader_client_ca_file       => $aggregator_ca_cert,
+      requestheader_allowed_names        => 'front-proxy-client',
+      requestheader_extra_headers_prefix => 'X-Remote-Extra-',
+      requestheader_group_headers        => 'X-Remote-Group',
+      requestheader_uername_headers      => 'X-Remote-Uer',
+      proxy_client_cert_file             => $front_proxy_cert,
+      proxy_client_key_file              => $front_proxy_key,
+      enable_bootstrap_token_auth        => true,
+      etcd_cafile                        => $etcd_ca,
+      etcd_certfile                      => $etcd_cert,
+      etcd_keyfile                       => $etcd_key,
+      etcd_servers                       => [],
+      insecure_port                      => 0,
+      kubelet_client_certificate         => $apiserver_client_cert,
+      kubelet_client_key                 => $apiserver_client_key,
+      secure_port                        => 6443,
+      service_account_key_file           => $serviceaccount_public,
+      service_cluster_ip_range           => $service_cluster_cidr,
+      tls_cert_file                      => $apiserver_cert,
+      tls_private_key_file               => $apiserver_key,
+  } + $arguments)
 }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-Puppet::Type.newtype(:k8s_resource) do
+Puppet::Type.newtype(:kubectl_apply) do
   desc <<-DOC
   Example:
 
@@ -8,7 +8,7 @@ Puppet::Type.newtype(:k8s_resource) do
 
       $tokenid = 'tokenid'
       $tokensecret = 'tokensecret'
-      k8s_resource { "bootstrap-token-${tokenid}":
+      kubectl_apply { "bootstrap-token-${tokenid}":
         namespace   => 'kube-system',
         kubeconfig  => '/root/.kube/config',
 
@@ -41,15 +41,15 @@ Puppet::Type.newtype(:k8s_resource) do
       if currentvalue == :absent || currentvalue.nil?
         if provider.resource_diff
           if resource[:show_diff]
-            "update #{resource[:kind]} #{resource[:namespace]}/#{resource[:name]} with #{provider.resource_diff.inspect}"
+            "update #{resource[:kind]} #{resource.nice_name} with #{provider.resource_diff.inspect}"
           else
-            "update #{resource[:kind]} #{resource[:namespace]}/#{resource[:name]}"
+            "update #{resource[:kind]} #{resource.nice_name}"
           end
         else
-          "create #{resource[:kind]} #{resource[:namespace]}/#{resource[:name]}"
+          "create #{resource[:kind]} #{resource.nice_name}"
         end
       elsif newvalue == :absent
-        "remove #{resource[:kind]} #{resource[:namespace]}/#{resource[:name]}"
+        "remove #{resource[:kind]} #{resource.nice_name}"
       else
         super
       end
@@ -92,6 +92,15 @@ Puppet::Type.newtype(:k8s_resource) do
       end
     end
   end
+  newparam(:file) do
+    desc 'The local file for the resource'
+
+    validate do |value|
+      unless Puppet::Util.absolute_path?(value)
+        raise Puppet::Error, 'File path must be fully qualified'
+      end
+    end
+  end
 
   newparam(:api_version) do
     desc 'The apiVersion of the resource'
@@ -127,14 +136,23 @@ Puppet::Type.newtype(:k8s_resource) do
   end
 
   validate do
-    raise Puppet::Error, 'Namespace is required' unless self[:namespace]
     raise Puppet::Error, 'API version is required' unless self[:api_version]
     raise Puppet::Error, 'Kind is required' unless self[:kind]
   end
 
+  autorequire(:kubeconfig) do
+    [ self[:kubeconfig] ]
+  end
   autorequire(:file) do
     [
       self[:kubeconfig],
+      self[:file],
     ]
+  end
+
+  def nice_name
+    return self[:name] unless self[:namespace]
+
+    "#{self[:namespace]}/#{self[:name]}"
   end
 end

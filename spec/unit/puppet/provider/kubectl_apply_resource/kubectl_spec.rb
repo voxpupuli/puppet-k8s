@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-kubectl_provider = Puppet::Type.type(:k8s_resource).provider(:kubectl)
+kubectl_provider = Puppet::Type.type(:kubectl_apply).provider(:kubectl)
 
 RSpec.describe kubectl_provider do
   describe 'kubectl provider' do
@@ -47,7 +47,7 @@ RSpec.describe kubectl_provider do
       ]
     end
 
-    let(:resource) { Puppet::Type::K8s_resource.new(resource_properties) }
+    let(:resource) { Puppet::Type::Kubectl_apply.new(resource_properties) }
     let(:provider) { kubectl_provider.new(resource) }
 
     before(:each) do
@@ -95,26 +95,26 @@ RSpec.describe kubectl_provider do
 
       it 'calls kubectl to retrieve resource' do
         expect(provider).to receive(:kubectl).with(*kubectl_params).and_return upstream_data.to_json
-        expect(provider.kubectl_get).to eq JSON.parse(upstream_data.to_json)
+        expect(provider.send(:kubectl_get)).to eq JSON.parse(upstream_data.to_json)
       end
 
       it 'correctly verifies the expanded upstream resource hash' do
         expect(provider.content_diff(upstream_data)).to eq({})
       end
 
-      it 'writes the resource hash to file' do
+      it 'creates the resource if not existing' do
         file = instance_double('Tempfile')
-        expect(file).to receive(:path).and_return('/tmp/k8s_resource')
+        expect(file).to receive(:path).and_return('/tmp/kubectl_apply')
         expect(file).to receive(:write).with(provider.resource_hash.to_json)
         expect(file).to receive(:close!)
-        expect(Tempfile).to receive(:new).with('k8s_resource').and_return(file)
+        expect(Tempfile).to receive(:new).with('kubectl_apply').and_return(file)
 
-        expect(provider).to receive(:kubectl).with('--namespace', 'kube-system', 'apply', '-f', '/tmp/k8s_resource')
+        expect(provider).to receive(:kubectl).with('--namespace', 'kube-system', 'create', '-f', '/tmp/kubectl_apply')
 
-        expect { provider.create }.not_to raise_error
+        provider.create
       end
 
-      it 'applies without action' do
+      it 'applies without action if exists' do
         expect(provider).to receive(:kubectl).never
         expect(provider).to receive(:exists?).and_return(true)
         expect(provider).to receive(:create).never
@@ -160,6 +160,19 @@ RSpec.describe kubectl_provider do
         expect(provider.content_diff(upstream_data)).not_to eq({})
       end
 
+      it 'applies with a patch' do
+        file = instance_double('Tempfile')
+        expect(file).to receive(:path).and_return('/tmp/kubectl_apply')
+        expect(file).to receive(:write).with(provider.resource_hash.to_json)
+        expect(file).to receive(:close!)
+        expect(Tempfile).to receive(:new).with('kubectl_apply').and_return(file)
+
+        allow(provider).to receive(:resource_diff).and_return(provider.content_diff(upstream_data))
+        expect(provider).to receive(:kubectl).with('--namespace', 'kube-system', 'patch', '-f', '/tmp/kubectl_apply', '-p', '{"data":{"token-id":"tokenid"}}')
+
+        provider.create
+      end
+
       it 'returns a reasonable difference output' do
         expect(provider).to receive(:kubectl).never
         allow(provider).to receive(:exists?).and_return(false)
@@ -170,10 +183,11 @@ RSpec.describe kubectl_provider do
 
         catalog = Puppet::Resource::Catalog.new
         catalog.add_resource(resource)
-        logs = catalog.apply.report.logs
+        report = catalog.apply.report
+        logs = report.logs
 
-        expect(logs.first.source).to eq('/K8s_resource[bootstrap-token-example]/ensure')
-        expect(logs.first.message).to eq('update Secret kube-system/bootstrap-token-example with {:data=>{:"token-id"=>"tokenid"}}')
+        expect(logs.first.source).to eq('/Kubectl_apply[bootstrap-token-example]/ensure')
+        expect(logs.first.message).to eq('update Secret kube-system/bootstrap-token-example with {"data"=>{"token-id"=>"tokenid"}}')
       end
     end
 
@@ -243,9 +257,9 @@ RSpec.describe kubectl_provider do
       end
 
       it 'calls kubectl to retrieve resource' do
-        expect(provider).to receive(:kubectl).with(*kubectl_params)
+        expect(provider).to receive(:kubectl).with(*kubectl_params).and_return({ data: 'value' }.to_json)
 
-        expect { provider.kubectl_get }.not_to raise_error
+        expect(provider.send(:kubectl_get)).to eq({ 'data' => 'value' })
       end
     end
 
@@ -273,7 +287,7 @@ RSpec.describe kubectl_provider do
         catalog.add_resource(resource)
         logs = catalog.apply.report.logs
 
-        expect(logs.first.source).to eq('/K8s_resource[bootstrap-token-example]/ensure')
+        expect(logs.first.source).to eq('/Kubectl_apply[bootstrap-token-example]/ensure')
         expect(logs.first.message).to eq('remove Secret kube-system/bootstrap-token-example')
       end
     end

@@ -3,8 +3,8 @@ class k8s::node::kubelet(
 
   Stdlib::HTTPUrl $master = $k8s::node::master,
 
-  Hash[String, Data] $addn_config = {},
-  Array[String] $addn_args = [],
+  Hash[String, Data] $config = {},
+  Hash[String, Data] $arguments = {},
 
   Enum['cert', 'token', 'bootstrap'] $auth = $k8s::node::node_auth,
 
@@ -67,7 +67,7 @@ class k8s::node::kubelet(
 
   file { '/etc/kubernetes/kubelet.conf':
     ensure  => $ensure,
-    content => to_yaml($config_hash + $addn_config),
+    content => to_yaml($config_hash + $config),
     owner   => 'kube',
     group   => 'kube',
   }
@@ -86,7 +86,9 @@ class k8s::node::kubelet(
 
       dir   => '/var/lib/kubelet',
       bin   => 'kubelet',
-      args  => [ '--config=/etc/kubernetes/kubelet.conf' ] + $addn_args,
+      args  =>  k8s::format_arguments({
+          config => '/etc/kubernetes/kubelet.conf',
+      } + $arguments),
     }),
     require => [
       File['/etc/kubernetes/kubelet.conf'],

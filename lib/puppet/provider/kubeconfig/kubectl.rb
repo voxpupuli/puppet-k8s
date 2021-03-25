@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.type(:kubeconfig).provide(:kubectl, parent: :ruby) do
   commands kubectl: 'kubectl'
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.type(:kubeconfig).provide(:ruby) do
   def exists?
     return false unless File.exist? resource[:path]

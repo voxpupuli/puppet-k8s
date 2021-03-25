@@ -17,6 +17,8 @@ class k8s::node(
   Optional[Stdlib::Unixpath] $node_token = undef,
   Optional[Stdlib::Unixpath] $proxy_token = undef,
 ) {
-  include ::k8s::node::kubelet
-  include ::k8s::node::kube_proxy
+  include k8s
+
+  include k8s::node::kubelet
+  include k8s::node::kube_proxy
 }

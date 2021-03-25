@@ -26,7 +26,8 @@ define k8s::server::bootstrap_token(
     [$k, Binary.new($v, '%s')]
   })
 
-  k8s_resource { "bootstrap-token-${id}":
+  kubectl_apply { "bootstrap-token-${id}":
+    kubeconfig  => $kubeconfig,
     namespace   => 'kube-system',
 
     api_version => 'v1',

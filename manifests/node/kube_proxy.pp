@@ -4,8 +4,9 @@ class k8s::node::kube_proxy(
 
   Stdlib::HTTPUrl $master = $k8s::node::master,
 
-  Hash[String, Data] $addn_config = {},
-  Array[String] $addn_args = [],
+  Hash[String, Data] $arguments = {},
+
+  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $cluster_cidr = $k8s::cluster_cidr,
 
   Enum['cert', 'token', 'incluster'] $auth = $k8s::node::proxy_auth,
 
@@ -22,9 +23,10 @@ class k8s::node::kube_proxy(
     packaging => $packaging,
   }
 
+  $kubeconfig = '/srv/kubernetes/kube-proxy.kubeconf'
   case $auth {
     'token': {
-      kubeconfig { '/srv/kubernetes/kube-proxy.kubeconf':
+      kubeconfig { $kubeconfig:
         ensure => $ensure,
         server => $master,
         token  => $token,
@@ -32,7 +34,7 @@ class k8s::node::kube_proxy(
       $_rotate_cert = false
     }
     'cert': {
-      kubeconfig { '/srv/kubernetes/kube-proxy.kubeconf':
+      kubeconfig { $kubeconfig:
         ensure      => $ensure,
         server      => $master,
 
@@ -50,5 +52,14 @@ class k8s::node::kube_proxy(
     default: {}
   }
 
+  $args = k8s::format_arguments({
+      cluster_cidr      => $cluster_cidr,
+      hostname_override => fact('networking.fqdn'),
+      kubeconfig        => $kubeconfig,
+      proxy_mode        => 'iptables',
+  } + $arguments)
 
+  file { '/etc/sysconfig/kube-proxy':
+    ensure => $ensure,
+  }
 }

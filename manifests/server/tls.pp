@@ -12,12 +12,14 @@ class k8s::server::tls(
   String[1] $cluster_domain = $k8s::cluster_domain,
   Stdlib::IP::Address::Nosubnet $api_service_address = $k8s::api_service_address,
 
-  Stdlib::Unixpath $cert_path = '/srv/kubernetes/certs',
+  Stdlib::Unixpath $cert_path = '/etc/kubernetes/certs',
   Enum[2048, 4096, 8192] $key_bytes = 2048,
   Integer[1] $valid_days = 10000,
 
   Stdlib::Unixpath $ca_key = "${cert_path}/ca.key",
   Stdlib::Unixpath $ca_cert = "${cert_path}/ca.pem",
+  Stdlib::Unixpath $aggregator_ca_key = "${cert_path}/aggregator-ca.key",
+  Stdlib::Unixpath $aggregator_ca_cert = "${cert_path}/aggregator-ca.pem",
 ) {
   if $manage_certs or $ensure == 'absent' {
     ensure_packages(['openssl'])
@@ -33,14 +35,41 @@ class k8s::server::tls(
       }
     }
 
+    # Additional non-CA certs that should also only be generated on one node
+    if $generate_ca {
+      exec {
+        default:
+          path    => ['/usr/bin'],
+          require => Package['openssl'];
+
+        'Create service account private key':
+          command => "openssl genrsa -out '${cert_path}/service-account.key' ${key_bytes}",
+          creates => "${cert_path}/service-account.key",
+          before  => File["${cert_path}/service-account.key"];
+
+        'Gets service account public key':
+          command => "openssl pkey -pubout -in '${cert_path}/service-account.key' -out '${cert_path}/service-account.pub'",
+          creates => "${cert_path}/service-account.pub",
+          before  => File["${cert_path}/service-account.pub"];
+      }
+    }
+
     # Generate K8s CA
-    k8s::server::tls::ca { 'kube-ca':
-      ensure   => $ensure,
-      key      => $ca_key,
-      cert     => $ca_cert,
-      owner    => 'kube',
-      group    => 'kube',
-      generate => $generate_ca,
+    k8s::server::tls::ca {
+      default:
+        ensure   => $ensure,
+        owner    => 'kube',
+        group    => 'kube',
+        generate => $generate_ca;
+
+      'kube-ca':
+        key  => $ca_key,
+        cert => $ca_cert;
+
+      'aggregator-ca':
+        subject => '/CN=front-proxy',
+        key     => $aggregator_ca_key,
+        cert    => $aggregator_ca_cert;
     }
 
     k8s::server::tls::cert {
@@ -53,6 +82,7 @@ class k8s::server::tls(
         group     => 'kube';
 
       'kube-apiserver':
+        extended_key_usage => ['serverAuth'],
         addn_names         => [
           'kubernetes',
           'kubernetes.default',
@@ -69,6 +99,19 @@ class k8s::server::tls(
         ],
         distinguished_name => {
           commonName => 'kube-apiserver',
+        };
+
+      'front-proxy-client':
+        ca_key             => $aggregator_ca_key,
+        ca_cert            => $aggregator_ca_cert,
+        distinguished_name => {
+          commonName => 'front-proxy-client',
+        };
+
+      'apiserver-kubelet-client':
+        distinguished_name => {
+          commonName       => 'apiserver-kubelet-client',
+          organizationName => 'system:masters',
         };
 
       'kube-controller-manager':
@@ -103,6 +146,41 @@ class k8s::server::tls(
           organizationName => 'system:masters',
           commonName       => 'kube-admin',
         };
+    }
+
+    file {
+      default:
+        ensure  => $ensure,
+        owner   => 'kube',
+        group   => 'kube',
+        require => Class['k8s::server::etcd'];
+
+      "${cert_path}/etcd-ca.pem":
+        source => 'file:///var/lib/etcd/certs/client-ca.pem';
+
+      "${cert_path}/etcd.pem":
+        source => 'file:///var/lib/etcd/certs/etcd-client.pem';
+
+      "${cert_path}/etcd.key":
+        mode   => '0640',
+        source => 'file:///var/lib/etcd/certs/etcd-client.key';
+    }
+
+    if !defined(File["${cert_path}/service-account.key"]) {
+      file { "${cert_path}/service-account.key":
+        owner   => kube,
+        group   => kube,
+        replace => false,
+        mode    => '0600',
+      }
+    }
+    if !defined(File["${cert_path}/service-account.pub"]) {
+      file { "${cert_path}/service-account.pub":
+        owner   => kube,
+        group   => kube,
+        replace => false,
+        mode    => '0640',
+      }
     }
   }
 }

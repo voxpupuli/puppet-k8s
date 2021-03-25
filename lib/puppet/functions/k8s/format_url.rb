@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Functions.create_function(:'k8s::format_url') do
   dispatch :k8s_format_binary do
     param 'String[1]', :url

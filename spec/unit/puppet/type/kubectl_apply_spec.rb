@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'puppet'
 
-describe Puppet::Type.type(:k8s_resource) do
+describe Puppet::Type.type(:kubectl_apply) do
   let(:resource) do
-    Puppet::Type.type(:k8s_resource).new(
+    Puppet::Type.type(:kubectl_apply).new(
       name: 'bootstrap-token-example',
       namespace: 'kube-system',
 
@@ -84,7 +84,7 @@ describe Puppet::Type.type(:k8s_resource) do
 
   describe 'file autorequire' do
     let(:file_resource) { Puppet::Type.type(:file).new(name: '/root/.kube/config') }
-    let(:k8s_resource) do
+    let(:kubectl_apply_resource) do
       described_class.new(
         name: 'blah',
         namespace: 'default',
@@ -97,16 +97,16 @@ describe Puppet::Type.type(:k8s_resource) do
     let(:auto_req) do
       catalog = Puppet::Resource::Catalog.new
       catalog.add_resource file_resource
-      catalog.add_resource k8s_resource
+      catalog.add_resource kubectl_apply_resource
 
-      k8s_resource.autorequire
+      kubectl_apply_resource.autorequire
     end
 
     it 'creates relationship' do
       expect(auto_req.size).to be 1
     end
     it 'links to file resource' do
-      expect(auto_req[0].target).to eql k8s_resource
+      expect(auto_req[0].target).to eql kubectl_apply_resource
     end
   end
 end
