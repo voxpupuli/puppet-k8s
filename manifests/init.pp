@@ -1,8 +1,9 @@
 class k8s(
-  Enum['present', 'absent'] $ensure = 'present',
-  Enum['container', 'package', 'tarball', 'loose', 'hyperkube', 'manual'] $packaging = 'tarball',
-  String[1] $version = '1.18.16',
-  String[1] $etcd_version = '3.4.15',
+  Enum['present', 'absent'] $ensure,
+  Enum['container', 'native'] $packaging,
+  Enum['package', 'tarball', 'loose', 'hyperkube', 'manual'] $native_packaging,
+  String[1] $version,
+  String[1] $etcd_version,
 
   String[1] $container_registry = 'gcr.io/google_containers',
   String[1] $container_image = 'hyperkube',
@@ -50,15 +51,17 @@ class k8s(
   group { 'kube':
     ensure => present,
     system => true,
+    gid    => 888,
   }
   user { 'kube':
     ensure     => present,
     comment    => 'Kubernetes user',
     gid        => 'kube',
-    home       => '/opt/k8s',
+    home       => '/srv/kubernetes',
     managehome => false,
     shell      => '/sbin/nologin',
     system     => true,
+    uid        => 888,
   }
 
   file {

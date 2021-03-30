@@ -1,6 +1,7 @@
 class k8s::server::etcd(
-  Enum['present', 'absent'] $ensure = 'present',
+  Enum['present', 'absent'] $ensure = $k8s::server::ensure,
 
+  Boolean $manage_setup = true,
   Boolean $manage_members = false,
   String[1] $cluster_name = 'default',
 
@@ -70,7 +71,9 @@ class k8s::server::etcd(
     }
   }
 
-  include k8s::server::etcd::setup
+  if $manage_setup {
+    include k8s::server::etcd::setup
+  }
 
   if $ensure == 'present' and $manage_members {
     # Needs the PuppetDB terminus installed

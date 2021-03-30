@@ -1,11 +1,13 @@
 define k8s::server::bootstrap_token(
+  Enum['present', 'absent'] $ensure = 'present',
   Stdlib::Unixpath $kubeconfig,
 
   String[6,6] $id = $name,
   String[16,16] $secret = fqdn_rand_string(16),
+  Boolean $use_authentication = true,
+
   Optional[String] $description = undef,
   Optional[K8s::Timestamp] $expiration = undef,
-  Optional[Boolean] $use_authentication = undef,
   Optional[Boolean] $use_signing = undef,
   Optional[Array[String]] $extra_groups = undef,
 
@@ -21,19 +23,20 @@ define k8s::server::bootstrap_token(
     'usage-bootstrap-signing'        => $use_signing,
     'auth-extra-groups'              => $_extra_groups,
   }.filter |$k, $v| {
-    $v =~ String[1]
+    $v != undef and $v != ''
   }.map |$k, $v| {
-    [$k, Binary.new($v, '%s')]
+    [$k, "${Binary.new("${v}", '%s')}"]
   })
 
   kubectl_apply { "bootstrap-token-${id}":
+    ensure      => $ensure,
     kubeconfig  => $kubeconfig,
     namespace   => 'kube-system',
 
     api_version => 'v1',
     kind        => 'Secret',
 
-    data        => {
+    content     => {
       'type' => 'bootstrap.kubernetes.io/token',
       'data' => $_secret_data,
     } + $addn_data,

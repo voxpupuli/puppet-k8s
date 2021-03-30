@@ -41,4 +41,51 @@ class k8s::server::controller_manager(
       root_ca_file                     => $ca_cert,
       service_account_private_key_file => "${cert_path}/service-account.key",
   } + $arguments)
+
+  if $packaging == 'container' {
+    fail('Not implemented yet')
+    $_kubeconfig = '/root/.kube/config',
+    $_image = "${k8s::container_registry}/${k8s::container_image}:${pick($k8s::container_image_tag, $k8s::version)}"
+    kubectl_apply { 'kube-controller-manager':
+      kubeconfig  => $_kubeconfig,
+      api_version => 'apps/v1',
+      kind        => 'Deployment',
+      namespace   => 'kube-system',
+      content     => {},
+    }
+  } else {
+    file { '/etc/sysconfig/k8s-controller-manager':
+      content => epp('k8s/sysconfig.epp', {
+          comment               => 'Kubernetes Controller Manager configuration',
+          environment_variables => {
+            'K8S_CONTROLLER_MANAGER_ARGS' => $_args.join(' '),
+          },
+      }),
+      notify  => Service['k8s-controller-manager'],
+    }
+    systemd::unit_file { 'k8s-controller-manager.service':
+      ensure  => $ensure,
+      content => epp('k8s/service.epp', {
+        name  => 'k8s-controller-manager',
+
+        desc  => 'Kubernetes Controller Manager',
+        doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
+
+        dir   => '/srv/kubernetes',
+        bin   => 'kube-controller-manager',
+        needs => ['k8s-apiserver.service'],
+        user  => kube,
+        group => kube,
+      }),
+      require => [
+        File['/etc/sysconfig/k8s-scheduler'],
+        User['kube'],
+      ],
+      notify  => Service['k8s-controller-manager'],
+    }
+    service { 'k8s-controller-manager':
+      ensure => stdlib::ensure($ensure, 'service'),
+      enable => true,
+    }
+  }
 }

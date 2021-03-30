@@ -7,9 +7,11 @@ Puppet::Functions.create_function(:'k8s::format_url') do
   end
 
   def k8s_format_binary(url, components)
-    arch = facts.dig('os', 'architecture')
-    arch = 'amd64' if arch == %r{x(86_)?64}
-    arch = 'arm64' if arch == %r{arm64.*|aarch64}
+    scope = closure_scope
+
+    arch = scope['facts'].dig('os', 'architecture')
+    arch = 'amd64' if arch.match? %r{x(86_)?64}
+    arch = 'arm64' if arch.match? %r{arm64.*|aarch64}
     k3s_arch = arch
     k3s_arch = 'armhf' if arch.match? %r{armv.*}
     k3s_arch = nil if arch == 'amd64'
@@ -19,11 +21,11 @@ Puppet::Functions.create_function(:'k8s::format_url') do
     underscore_arch_suffix = "_#{arch}" unless arch == 'amd64'
     dash_arch_suffix = "-#{arch}" unless arch == 'amd64'
 
-    kernel = facts['kernel'].downcase
+    kernel = scope['facts']['kernel'].downcase
     kernel_ext = 'zip'
     kernel_ext = 'tar.gz' if kernel == 'linux'
 
-    url % components.merge(
+    components = Hash[components.map { |k,v| [k.to_sym, v] }].merge(
       arch: arch,
       underscore_arch_suffix: underscore_arch_suffix,
       dash_arch_suffix: dash_arch_suffix,
@@ -31,5 +33,7 @@ Puppet::Functions.create_function(:'k8s::format_url') do
       kernel: kernel,
       kernel_ext: kernel_ext,
     )
+
+    url % components
   end
 end

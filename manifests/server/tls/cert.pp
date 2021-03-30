@@ -1,19 +1,21 @@
 define k8s::server::tls::cert(
+  Enum['present', 'absent'] $ensure = present,
+
   Hash[String, String] $distinguished_name,
   Stdlib::Unixpath $cert_path,
   Stdlib::Unixpath $ca_key,
   Stdlib::Unixpath $ca_cert,
 
-  Enum['present', 'absent'] $ensure = $k8s::server::tls::ensure,
-
-  Enum[2048, 4096, 8192] $key_bytes = $k8s::server::tls::key_bytes,
-  Integer[1] $valid_days = $k8s::server::tls::valid_days,
+  Integer[512] $key_bits = 2048,
+  Integer[1] $valid_days = 10000,
   Array[Enum['clientAuth','serverAuth']] $extended_key_usage = ['clientAuth'],
 
   Array[
-    Variant[
-      Stdlib::Fqdn,
-      Stdlib::IP::Address::Nosubnet,
+    Optional[
+      Variant[
+        Stdlib::Fqdn,
+        Stdlib::IP::Address::Nosubnet,
+      ]
     ]
   ] $addn_names = [],
 
@@ -46,13 +48,13 @@ define k8s::server::tls::cert(
   }
 
   if $ensure == 'present' {
-    exec {
+    Package <| title == 'openssl' |>
+    -> exec {
       default:
-        path    => ['/usr/bin'],
-        require => Package['openssl'];
+        path    => ['/usr/bin'];
 
       "Create K8s ${title} key":
-        command => "openssl genrsa -out '${key}' ${key_bytes}",
+        command => "openssl genrsa -out '${key}' ${key_bits}",
         creates => $key,
         before  => File[$key];
 
@@ -69,9 +71,9 @@ define k8s::server::tls::cert(
           -out '${cert}' -days '${valid_days}' \
           -extensions v3_req -extfile '${config}'",
         creates => $cert,
-        require => File[$ca_key, $ca_cert],
         before  => File[$cert];
     }
+    File <| title == $ca_key or title == $ca_cert |> -> Exec["Sign K8s ${title} cert"]
   }
 
   if !defined(File[$key]) {
@@ -79,7 +81,7 @@ define k8s::server::tls::cert(
       ensure  => $ensure,
       owner   => $owner,
       group   => $group,
-      mode    => '0640',
+      mode    => '0600',
       replace => false,
     }
   }
@@ -88,6 +90,7 @@ define k8s::server::tls::cert(
       ensure  => $ensure,
       owner   => $owner,
       group   => $group,
+      mode    => '0640',
       replace => false,
     }
   }
@@ -96,6 +99,7 @@ define k8s::server::tls::cert(
       ensure  => $ensure,
       owner   => $owner,
       group   => $group,
+      mode    => '0640',
       replace => false,
     }
   }

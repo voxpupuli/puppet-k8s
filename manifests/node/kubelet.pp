@@ -1,45 +1,54 @@
 class k8s::node::kubelet(
-  Enum['present', 'absent'] $ensure = $k8s::node::ensure,
+  Enum['present', 'absent'] $ensure = lookup('k8s::node::ensure', 'k8s::ensure'),
 
-  Stdlib::HTTPUrl $master = $k8s::node::master,
+  Stdlib::HTTPUrl $master = lookup('k8s::node::master', 'k8s::master'),
 
   Hash[String, Data] $config = {},
   Hash[String, Data] $arguments = {},
 
-  Enum['cert', 'token', 'bootstrap'] $auth = $k8s::node::node_auth,
+  Enum['cert', 'token', 'bootstrap'] $auth = lookup('k8s::node::node_auth'),
+
+  Stdlib::Unixpath $cert_path = $k8s::node::cert_path,
 
   # For cert auth
-  Optional[Stdlib::Unixpath] $ca_cert = k8s::node::ca_cert,
-  Optional[Stdlib::Unixpath] $cert = k8s::node::node_cert,
-  Optional[Stdlib::Unixpath] $key = k8s::node::node_key,
+  Optional[Stdlib::Unixpath] $ca_cert = lookup('k8s::node::ca_cert'),
+  Optional[Stdlib::Unixpath] $cert = lookup('k8s::node::node_cert'),
+  Optional[Stdlib::Unixpath] $key = lookup('k8s::node::node_key'),
 
   # For token and bootstrap auth
-  Optional[Stdlib::Unixpath] $token = k8s::node::node_token,
+  Optional[Stdlib::Unixpath] $token = lookup('k8s::node::node_token'),
 ) {
+  include k8s::node
+
   k8s::binary { 'kubelet':
     ensure    => $ensure,
   }
 
+  $_kubeconfig = '/srv/kubernetes/kubelet.kubeconf'
+  if $auth == 'bootstrap' {
+    $_bootstrap_kubeconfig = '/srv/kubernetes/bootstrap-kubelet.kubeconf'
+  } else {
+    $_bootstrap_kubeconfig = undef
+  }
+
   case $auth {
     'bootstrap': {
-      kubeconfig { '/srv/kubernetes/bootstrap-kubelet.kubeconf':
+      kubeconfig { $_bootstrap_kubeconfig:
         ensure          => $ensure,
         server          => $master,
         token           => $token,
         skip_tls_verify => true,
       }
-      $_rotate_cert = true
     }
     'token': {
-      kubeconfig { '/srv/kubernetes/kubelet.kubeconf':
+      kubeconfig { $_kubeconfig:
         ensure => $ensure,
         server => $master,
         token  => $token,
       }
-      $_rotate_cert = false
     }
     'cert': {
-      kubeconfig { '/srv/kubernetes/kubelet.kubeconf':
+      kubeconfig { $_kubeconfig:
         ensure      => $ensure,
         server      => $master,
 
@@ -47,9 +56,8 @@ class k8s::node::kubelet(
         client_cert => $cert,
         client_key  => $key,
       }
-      $_rotate_cert = false
     }
-    default: {}
+    default: { }
   }
 
   $config_hash = {
@@ -59,7 +67,7 @@ class k8s::node::kubelet(
     'staticPodPath'      => '/etc/kubernetes/manifests',
     'tlsCertFile'        => $cert,
     'tlsPrivateKeyFile'  => $key,
-    'rotateCertificates' => $_rotate_cert,
+    'rotateCertificates' => $auth == 'bootstrap',
     'serverTLSBootstrap' => $auth == 'bootstrap',
     'clusterDomain'      => $k8s::cluster_domain,
     'cgroupDriver'       => 'systemd',
@@ -70,6 +78,23 @@ class k8s::node::kubelet(
     content => to_yaml($config_hash + $config),
     owner   => 'kube',
     group   => 'kube',
+  }
+
+  $_args = k8s::format_arguments({
+      config               => '/etc/kubernetes/kubelet.conf',
+      kubeconfig           => $_kubeconfig,
+      bootstrap_kubeconfig => $_bootstrap_kubeconfig,
+      cert_dir             => $cert_path,
+  } + $arguments)
+
+  file { '/etc/sysconfig/kubelet':
+    content => epp('k8s/sysconfig.epp', {
+        comment               => 'Kubernetes Kubelet configuration',
+        environment_variables => {
+          'KUBELET_ARGS' => $_args.join(' '),
+        },
+    }),
+    notify  => Service['kubelet'],
   }
 
   $runtime = 'crio.service'
@@ -86,26 +111,17 @@ class k8s::node::kubelet(
 
       dir   => '/var/lib/kubelet',
       bin   => 'kubelet',
-      args  =>  k8s::format_arguments({
-          config => '/etc/kubernetes/kubelet.conf',
-      } + $arguments),
+      user  => kube,
+      group => kube,
     }),
     require => [
-      File['/etc/kubernetes/kubelet.conf'],
+      File['/etc/sysconfig/kubelet', '/etc/kubernetes/kubelet.conf'],
       User['kube'],
     ],
     notify  => Service['kubelet'],
   }
-  $_service_ensure = $ensure ? {
-    present => 'running',
-    default => 'stopped',
-  }
-  $_service_enable = $ensure ? {
-    present => true,
-    default => false,
-  }
   service { 'kubelet':
-    ensure => $_service_ensure,
-    enable => $_service_enable,
+    ensure => stdlib::ensure($ensure, 'service'),
+    enable => true,
   }
 }

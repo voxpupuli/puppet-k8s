@@ -6,17 +6,16 @@ class k8s::server::etcd::setup(
   String[1] $etcd_name = fact('hostname'),
   String[1] $fqdn = fact('networking.fqdn'),
 
-
   Stdlib::HTTPUrl $archive_template = 'https://storage.googleapis.com/etcd/v%{version}/etcd-v%{version}-%{kernel}-%{arch}.%{kernel_ext}',
 
-  Stdlib::Unixpath $data_dir = "${etcd_name}.etcd",
+  String[1] $data_dir = "${etcd_name}.etcd",
 
   Enum['on','off','readonly'] $proxy = 'off',
 
-  Array[Stdlib::HTTPUrl] $listen_client_urls = ['http://localhost:2379'],
-  Array[Stdlib::HTTPUrl] $advertise_client_urls = ['http://localhost:2379'],
-  Array[Stdlib::HTTPUrl] $listen_peer_urls = ['http://localhost:2380'],
-  Array[Stdlib::HTTPUrl] $initial_advertise_peer_urls = ['http://localhost:2380'],
+  Array[Stdlib::HTTPUrl] $listen_client_urls = ['https://0.0.0.0:2379', 'https://[::]:2379'],
+  Array[Stdlib::HTTPUrl] $advertise_client_urls = ["https://${fqdn}:2379"],
+  Array[Stdlib::HTTPUrl] $listen_peer_urls = ['https://0.0.0.0:2380', 'https://[::]:2380'],
+  Array[Stdlib::HTTPUrl] $initial_advertise_peer_urls = ["https://${fqdn}:2380"],
 
   Optional[Stdlib::Unixpath] $peer_cert_file = undef,
   Optional[Stdlib::Unixpath] $peer_key_file = undef,
@@ -40,7 +39,7 @@ class k8s::server::etcd::setup(
       version => $version,
     })
     $_file = basename($_url)
-    archive { $_file:
+    archive { "/var/tmp/${_file}":
       ensure          => $ensure,
       source          => $_url,
       extract         => true,
@@ -71,13 +70,10 @@ class k8s::server::etcd::setup(
     members => ['etcd'],
   }
 
-  $_dir_ensure = $ensure ? {
-    present => 'directory',
-    default => 'absent',
-  }
   file {
     default:
-      ensure => $_dir_ensure;
+      ensure => stdlib::ensure($ensure, 'directory');
+
     '/etc/etcd': ;
     '/var/lib/etcd':
       owner => 'etcd',
@@ -113,7 +109,7 @@ class k8s::server::etcd::setup(
       group  => 'root';
 
     '/etc/etcd/etcd.conf':
-      content => epp('server/etcd/etcd.conf.epp', {
+      content => epp('k8s/server/etcd/etcd.conf.epp', {
         etcd_name                   => $etcd_name,
         data_dir                    => $data_dir,
         proxy                       => $proxy,
@@ -138,8 +134,8 @@ class k8s::server::etcd::setup(
     # This avoids reloading the service when/if the initial cluster state changes,
     # as it only matters before the cluster has been established.
     '/etc/etcd/cluster.conf':
-      content => epp('server/etcd/cluster.conf.epp', {
-        initial_cluster => pick($initial_cluster, "${etcd_name}=${listen_peer_urls[0]}"),
+      content => epp('k8s/server/etcd/cluster.conf.epp', {
+        initial_cluster => pick($initial_cluster, ["${etcd_name}=${listen_peer_urls[0]}"]),
       });
   }
 
@@ -148,17 +144,9 @@ class k8s::server::etcd::setup(
     source => 'puppet:///modules/k8s/etcd.service',
     notify => Service['etcd'],
   }
-  $_service_ensure = $ensure ? {
-    present => 'running',
-    default => 'stopped',
-  }
-  $_service_enable = $ensure ? {
-    present => true,
-    default => false,
-  }
   service { 'etcd':
-    ensure    => $_service_ensure,
-    enable    => $_service_enable,
+    ensure    => stdlib::ensure($ensure, 'service'),
+    enable    => true,
     require   => User['etcd'],
     subscribe => File['/etc/etcd/etcd.conf'],
   }

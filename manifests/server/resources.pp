@@ -30,7 +30,6 @@ class k8s::server::resources(
         },
       },
       require            => [
-        K8s::Binary['kubectl'],
         Service['kube-apiserver'],
       ],
     }
@@ -42,7 +41,7 @@ class k8s::server::resources(
         kind        => 'ClusterRole';
 
       'system-bootstrap-node-bootstrapper':
-        data => {
+        content => {
           subjects => [
             {
               kind     => 'Group',
@@ -63,7 +62,7 @@ class k8s::server::resources(
         };
 
       'system-bootstrap-approve-node-client-csr':
-        data => {
+        content => {
           subjects => [
             {
               kind     => 'Group',
@@ -79,7 +78,7 @@ class k8s::server::resources(
         };
 
       'system-bootstrap-node-renewal':
-        data => {
+        content => {
           subjects => [
             {
               kind     => 'Group',
@@ -103,14 +102,14 @@ class k8s::server::resources(
       name        => 'coredns',
       namespace   => 'kube-system',
       kubeconfig  => $kubeconfig,
-      data        => {},
+      content     => {},
     }
     kubectl_apply { 'coredns ClusterRole':
       api_version => 'rbac.authorization.k8s.io/v1',
       kind        => 'ClusterRole',
       name        => 'system:coredns',
       kubeconfig  => $kubeconfig,
-      data        => {
+      content     => {
         metadata => {
           labels => {
             'kubernetes.io/bootstrapping' => 'rbac-defaults',
@@ -135,7 +134,7 @@ class k8s::server::resources(
       kind        => 'ClusterRoleBinding',
       name        => 'system:coredns',
       kubeconfig  => $kubeconfig,
-      data        => {
+      content     => {
         metadata => {
           annotations => {
             'rbac.authorization.kubernetes.io/autoupdate' => 'true',
@@ -164,7 +163,7 @@ class k8s::server::resources(
       name        => 'coredns',
       namespace   => 'kube-system',
       kubeconfig  => $kubeconfig,
-      data        => {
+      content     => {
         data => {
           'Corefile' => @("COREDNS"),
           .:53 {
@@ -195,7 +194,7 @@ class k8s::server::resources(
       name        => 'coredns',
       namespace   => 'kube-system',
       kubeconfig  => $kubeconfig,
-      data        => {
+      content     => {
         metadata => {
           labels => {
             'k8s-app'            => 'kube-dns',
@@ -351,7 +350,7 @@ class k8s::server::resources(
       name        => 'kube-dns',
       namespace   => 'kube-system',
       kubeconfig  => $kubeconfig,
-      data        => {
+      content     => {
         metadata => {
           annotations => {
             'prometheus.io/port'   => '9153',
@@ -391,7 +390,7 @@ class k8s::server::resources(
       kind        => 'ClusterRole',
       name        => 'flannel',
       kubeconfig  => $kubeconfig,
-      data        => {
+      content     => {
         rules => [
           {
             apiGroups => [''],
@@ -416,7 +415,7 @@ class k8s::server::resources(
       kind        => 'ClusterRoleBinding',
       name        => 'flannel',
       kubeconfig  => $kubeconfig,
-      data        => {
+      content     => {
         subjects => [
           {
             kind      => 'ServiceAccount',
@@ -437,7 +436,7 @@ class k8s::server::resources(
       name        => 'flannel',
       namespace   => 'kube-system',
       kubeconfig  => $kubeconfig,
-      data        => {},
+      content     => {},
     }
     kubectl_apply { 'flannel ConfigMap':
       api_version => 'v1',
@@ -445,7 +444,7 @@ class k8s::server::resources(
       name        => 'flannel',
       namespace   => 'kube-system',
       kubeconfig  => $kubeconfig,
-      data        => {
+      content     => {
         metadata => {
           labels => {
             tier      => 'node',
@@ -487,7 +486,7 @@ class k8s::server::resources(
       name        => 'kube-flannel',
       namespace   => 'kube-system',
       kubeconfig  => $kubeconfig,
-      data        => {
+      content     => {
         metadata => {
           labels => {
             'tier'    => 'node',
@@ -663,8 +662,8 @@ class k8s::server::resources(
     #   };
 
     'controller-manager RoleBinding':
-      name => 'controller-manager',
-      data => {
+      name    => 'controller-manager',
+      content => {
         subjects => [
           {
             kind      => 'ServiceAccount',
@@ -680,8 +679,8 @@ class k8s::server::resources(
       };
 
     'kube-proxy RoleBinding':
-      name => 'kube-proxy',
-      data => {
+      name    => 'kube-proxy',
+      content => {
         subjects => [
           {
             kind      => 'ServiceAccount',
@@ -699,6 +698,7 @@ class k8s::server::resources(
   # Service accounts
   kubectl_apply {
     default:
+      kubeconfig  => $kubeconfig,
       api_version => 'v1',
       namespace   => 'kube-system',
       kind        => 'ServiceAccount';
@@ -712,13 +712,14 @@ class k8s::server::resources(
   # Config maps
   kubectl_apply {
     default:
+      kubeconfig  => $kubeconfig,
       api_version => 'v1',
       kind        => 'ConfigMap',
       namespace   => 'kube-system',
       update      => false;
 
     'kubeconfig-in-cluster':
-      data => {
+      content => {
         data => {
           kubeconfig => to_yaml({
               apiVersion => 'v1',

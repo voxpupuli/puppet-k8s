@@ -1,7 +1,8 @@
 define k8s::binary(
   Enum['present', 'absent'] $ensure = $k8s::ensure,
+  String[1] $version = $k8s::version,
   String[1] $packaging = $k8s::packaging,
-  String[1] $target = "/opt/k8s/${k8s::version}",
+  String[1] $target = "/opt/k8s/${$version}",
   String[1] $tarball_target = '/opt/k8s/archives',
 
   Boolean $active = true,
@@ -16,37 +17,43 @@ define k8s::binary(
     $_component = pick($component, 'client')
   }
 
-  # Kubelet and kubectl aren't valid to run in a container,
-  # so fall back to loose files
-  # XXX Do this differently?
-  if $name in ['kubelet', 'kubectl'] and $packaging == 'container' {
-    $_packaging = 'loose'
+  if !defined(File[$target]) {
+    file { $target:
+      ensure => stdlib::ensure($ensure, 'directory'),
+    }
   }
 
-  case $_packaging {
-    'container': { }
+  case $packaging {
+    'container': {}
     'package': {
-      $_name = k8s::format_url($k8s::package_template, {
-        version => $k8s::version,
+      $_template = $k8s::package_template
+      $_name = k8s::format_url($_template, {
+        version => $version,
         component => $_component,
       })
       package { "kubernetes-${name}":
         ensure => $ensure,
         name   => $_name,
       }
+
+      if !defined(File["${target}/${name}"]) {
+        file { "${target}/${name}":
+          ensure => $ensure,
+          mode   => '0755',
+          target => "/usr/bin/${name}",
+        }
+      }
     }
     'tarball': {
-      $_url = k8s::format_url($k8s::tarball_url_template, {
-        version => $k8s::version,
+      $_template = $k8s::tarball_url_template
+      $_url = k8s::format_url($_template, {
+        version => $version,
         component => $_component,
       })
       $_file = "${tarball_target}/${basename($_url)}"
       if !defined(File[$tarball_target]) {
         file { $tarball_target:
-          ensure  => ($ensure ? {
-            present => 'directory',
-            default => absent,
-          }),
+          ensure  => stdlib::ensure($ensure, 'directory'),
           purge   => true,
           recurse => true,
         }
@@ -62,15 +69,18 @@ define k8s::binary(
         cleanup         => true,
         creates         => "${target}/${name}",
       }
-      if $ensure == 'absent' {
+      if !defined(File["${target}/${name}"]) {
         file { "${target}/${name}":
-          ensure => absent,
+          ensure  => $ensure,
+          mode    => '0755',
+          replace => false,
         }
       }
     }
     'loose': {
-      $_url = k8s::format_url($k8s::native_url_template, {
-        version   => $k8s::version,
+      $_template = $k8s::native_url_template
+      $_url = k8s::format_url($_template, {
+        version   => $version,
         component => $_component,
         binary    => $name,
       })
@@ -81,8 +91,9 @@ define k8s::binary(
       }
     }
     'hyperkube': {
-      $_url = k8s::format_url($k8s::native_url_template, {
-        version   => $k8s::version,
+      $_template = $k8s::native_url_template
+      $_url = k8s::format_url($_template, {
+        version   => $version,
         component => $_component,
         binary    => $k8s::hyperkube_name,
       })
@@ -101,16 +112,26 @@ define k8s::binary(
     }
     'manual': {
       # User is expected to have created ${target}/${name} now
+      File<| $title == "${target}/${name}" |> { }
     }
     default: {
       fail('Invalid packaging specified')
     }
   }
 
-  if $active and !($k8s::packaging in ['container', 'package']) {
-    file { "/usr/bin/${name}":
-      ensure => $ensure,
-      target => "${target}/${name}",
+  if $active and $packaging != 'container' and !defined(File["/usr/bin/${name}"]) {
+    if $packaging == 'package' {
+      file { "/usr/bin/${name}":
+        ensure  => $ensure,
+        mode    => '0755',
+        replace => false,
+      }
+    } else {
+      file { "/usr/bin/${name}":
+        ensure => $ensure,
+        mode   => '0755',
+        target => "${target}/${name}",
+      }
     }
   }
 }

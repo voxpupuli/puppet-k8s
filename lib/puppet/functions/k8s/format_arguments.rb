@@ -12,15 +12,15 @@ Puppet::Functions.create_function(:'k8s::format_arguments') do
   end
 
   def k8s_format_value(value)
-    case value.class
+    case value
     when String, Numeric, TrueClass, FalseClass
-      value.inspect
+      value
     when Array
       value.map { |data| k8s_format_value(data) }.join(',')
     when Hash
       value.map do |key, data|
         "#{key.tr('_', '-')}=#{k8s_format_value(data)}"
-      end
+      end.join(',')
     else
       raise ArgumentError, "Unable to format #{value.inspect} (#{value.class})"
     end
@@ -28,7 +28,7 @@ Puppet::Functions.create_function(:'k8s::format_arguments') do
 
   def k8s_format_arguments(arguments)
     arguments.map do |argument, value|
-      "--#{argument.tr('_', '-')}=#{k8s_format_value(value)}".join ' '
+      "--#{argument.tr('_', '-')}=#{k8s_format_value(value)}"
     end
   end
 end

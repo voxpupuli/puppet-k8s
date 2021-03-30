@@ -1,5 +1,5 @@
 Facter.add(:k8s_versions) do
-  ALL_COMPONENTS = [
+  all_components = [
     # Server components
     'kube-apiserver',
     'kube-controller-manager',
@@ -12,7 +12,7 @@ Facter.add(:k8s_versions) do
   ].freeze
 
   confine do
-    ALL_COMPONENTS.any? { |c| Facter::Core::Execution.which(c) }
+    all_components.any? { |c| Facter::Core::Execution.which(c) }
   end
 
   setcode do
@@ -22,7 +22,7 @@ Facter.add(:k8s_versions) do
       versions['kubectl'] = output.scan(%r{GitVersion:"(.+?)"}).flatten.first
     end
 
-    ALL_COMPONENTS.each do |comp|
+    all_components.each do |comp|
       next if comp == 'kubectl'
       next unless Facter::Core::Execution.which(comp)
 

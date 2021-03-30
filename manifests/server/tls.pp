@@ -12,14 +12,14 @@ class k8s::server::tls(
   String[1] $cluster_domain = $k8s::cluster_domain,
   Stdlib::IP::Address::Nosubnet $api_service_address = $k8s::api_service_address,
 
-  Stdlib::Unixpath $cert_path = '/etc/kubernetes/certs',
-  Enum[2048, 4096, 8192] $key_bytes = 2048,
+  Stdlib::Unixpath $cert_path = $k8s::server::cert_path,
+  Integer[512] $key_bits = 2048,
   Integer[1] $valid_days = 10000,
 
-  Stdlib::Unixpath $ca_key = "${cert_path}/ca.key",
-  Stdlib::Unixpath $ca_cert = "${cert_path}/ca.pem",
-  Stdlib::Unixpath $aggregator_ca_key = "${cert_path}/aggregator-ca.key",
-  Stdlib::Unixpath $aggregator_ca_cert = "${cert_path}/aggregator-ca.pem",
+  Stdlib::Unixpath $ca_key = $k8s::server::ca_key,
+  Stdlib::Unixpath $ca_cert = $k8s::server::ca_cert,
+  Stdlib::Unixpath $aggregator_ca_key = $k8s::server::aggregator_ca_key,
+  Stdlib::Unixpath $aggregator_ca_cert = $k8s::server::aggregator_ca_cert,
 ) {
   if $manage_certs or $ensure == 'absent' {
     ensure_packages(['openssl'])
@@ -43,7 +43,7 @@ class k8s::server::tls(
           require => Package['openssl'];
 
         'Create service account private key':
-          command => "openssl genrsa -out '${cert_path}/service-account.key' ${key_bytes}",
+          command => "openssl genrsa -out '${cert_path}/service-account.key' ${key_bits}",
           creates => "${cert_path}/service-account.key",
           before  => File["${cert_path}/service-account.key"];
 
@@ -57,10 +57,12 @@ class k8s::server::tls(
     # Generate K8s CA
     k8s::server::tls::ca {
       default:
-        ensure   => $ensure,
-        owner    => 'kube',
-        group    => 'kube',
-        generate => $generate_ca;
+        ensure     => $ensure,
+        owner      => 'kube',
+        group      => 'kube',
+        key_bits   => $key_bits,
+        valid_days => $valid_days,
+        generate   => $generate_ca;
 
       'kube-ca':
         key  => $ca_key,
@@ -152,8 +154,7 @@ class k8s::server::tls(
       default:
         ensure  => $ensure,
         owner   => 'kube',
-        group   => 'kube',
-        require => Class['k8s::server::etcd'];
+        group   => 'kube';
 
       "${cert_path}/etcd-ca.pem":
         source => 'file:///var/lib/etcd/certs/client-ca.pem';

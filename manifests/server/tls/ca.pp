@@ -1,4 +1,6 @@
 define k8s::server::tls::ca(
+  Enum['present', 'absent'] $ensure = present,
+
   Stdlib::Unixpath $key,
   Stdlib::Unixpath $cert,
   String[1] $subject = "/CN=${title}",
@@ -6,20 +8,18 @@ define k8s::server::tls::ca(
   String[1] $owner = 'root',
   String[1] $group = 'root',
 
-  Enum['present', 'absent'] $ensure = $k8s::server::tls::ensure,
-
-  Enum[2048, 4096, 8192] $key_bytes = $k8s::server::tls::key_bytes,
-  Integer[1] $valid_days = $k8s::server::tls::valid_days,
+  Integer[512] $key_bits = 2048,
+  Integer[1] $valid_days = 10000,
   Boolean $generate = true,
 ) {
   if $ensure == 'present' and $generate {
-    exec {
+    Package <| title == 'openssl' |>
+    -> exec {
       default:
-        path    => ['/usr/bin'],
-        require => Package['openssl'];
+        path    => ['/usr/bin'];
 
       "Create ${title} CA key":
-        command => "openssl genrsa -out '${key}' ${key_bytes}",
+        command => "openssl genrsa -out '${key}' ${key_bits}",
         creates => $key,
         before  => File[$key];
 
@@ -27,7 +27,7 @@ define k8s::server::tls::ca(
         command => "openssl req -x509 -new -nodes -key '${key}' \
           -days '${valid_days}' -out '${cert}' -subj '${subject}'",
         creates => $cert,
-        require => Exec['Create K8s CA key'],
+        require => Exec["Create ${title} CA key"],
         before  => File[$cert];
     }
   }
@@ -37,7 +37,7 @@ define k8s::server::tls::ca(
       ensure  => $ensure,
       owner   => $owner,
       group   => $group,
-      mode    => '0640',
+      mode    => '0600',
       replace => false,
     }
   }
@@ -46,7 +46,7 @@ define k8s::server::tls::ca(
       ensure  => $ensure,
       owner   => $owner,
       group   => $group,
-      mode    => '0644',
+      mode    => '0640',
       replace => false,
     }
   }

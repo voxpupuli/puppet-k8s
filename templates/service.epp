@@ -1,11 +1,15 @@
 <%- |
   String[1] $name,
+  String[1] $args_name = "${regsubst($name, '-', '_').upcase()}_ARGS",
   String[1] $bin,
   Optional[String[1]] $desc = undef,
   Optional[String[1]] $doc = undef,
   Array[String[1]] $needs = [],
   Optional[Stdlib::Unixpath] $dir = undef,
   String $target = 'multi-user.target',
+
+  Optional[String[1]] $user = undef,
+  Optional[String[1]] $group = undef,
 
   Stdlib::Unixpath $bindir = "/opt/k8s/${k8s::version}",
 | -%>
@@ -14,8 +18,10 @@ Description=<%= pick($desc, $name) %>
 <%- if $doc { -%>
 Documentation=<%= $doc %>
 <%- } -%>
-After=<%= $needs.join(' ') %>
-Requires=<%= $needs.join(' ') %>
+<%- if $needs { -%>
+Requires=<%= $_needs.join(' ') %>
+<%- } -%>
+After=network.target <%= $_needs.join(' ') %>
 
 [Service]
 <%- if $dir { -%>
@@ -24,9 +30,15 @@ WorkingDirectory=<%= $dir %>
 EnvironmentFile=-/etc/sysconfig/k8s-common
 EnvironmentFile=-/etc/sysconfig/<%= $name %>
 ExecStart=<%= $bindir %>/<%= $bin %> \
-            $KUBE_LOGTOSTDERR \
-            $KUBE_LOG_LEVEL \
-            $KUBE_<%= $name.upcase() %>_ARGS
+            $K8S_LOGTOSTDERR \
+            $K8S_LOG_LEVEL \
+            <%= $args_name %>
+<%- if $user { -%>
+User=<%= $user %>
+<%- } -%>
+<%- if $group { -%>
+Group=<%= $group %>
+<%- } -%>
 Restart=on-failure
 KillMode=process
 CPUAccounting=true

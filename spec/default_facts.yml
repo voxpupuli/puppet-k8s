@@ -3,6 +3,13 @@
 # Facts specified here will override the values provided by rspec-puppet-facts.
 ---
 ipaddress: "172.16.254.254"
-ipaddress6: "FE80:0000:0000:0000:AAAA:AAAA:AAAA"
+ipaddress6: "fe80:0000:0000:0000:aaaa:aaaa:aaaa:aaaa"
 is_pe: false
-macaddress: "AA:AA:AA:AA:AA:AA"
+macaddress: "aa:aa:aa:aa:aa:aa"
+kernel: Linux
+networking:
+  fqdn: 'node.example.com'
+  ip: '172.16.254.254'
+  ip6: "fe80:0000:0000:0000:aaaa:aaaa:aaaa:aaaa"
+os:
+  architecture: x86_64

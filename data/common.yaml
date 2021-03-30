@@ -1,1 +1,7 @@
 ---
+k8s::ensure: present
+k8s::packaging: container
+k8s::native_packaging: tarball
+
+k8s::version: 1.18.16
+k8s::etcd_version: 3.4.15

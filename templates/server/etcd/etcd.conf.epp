@@ -1,6 +1,6 @@
 <%- |
   String[1] $etcd_name,
-  Stdlib::Unixpath $data_dir,
+  String[1] $data_dir,
   Optional[Stdlib::Unixpath] $wal_dir = undef,
 
   Enum['on','off','readonly'] $proxy,

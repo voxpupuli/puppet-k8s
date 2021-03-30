@@ -1,5 +1,5 @@
 class k8s::node::kube_proxy(
-  Enum['present', 'absent'] $ensure = $k8s::ensure,
+  Enum['present', 'absent'] $ensure = $k8s::node::ensure,
   Enum['container', 'package', 'tarball', 'loose', 'hyperkube', 'manual'] $packaging = $k8s::packaging,
 
   Stdlib::HTTPUrl $master = $k8s::node::master,

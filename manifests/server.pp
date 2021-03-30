@@ -7,32 +7,59 @@ class k8s::server(
   String $cluster_domain = $k8s::cluster_domain,
   String $direct_master = "https://${fact('networking.ip')}:${api_port}",
 
+  Stdlib::Unixpath $cert_path = '/etc/kubernetes/certs',
+  Stdlib::Unixpath $ca_key = "${cert_path}/ca.key",
+  Stdlib::Unixpath $ca_cert = "${cert_path}/ca.pem",
+  Stdlib::Unixpath $aggregator_ca_key = "${cert_path}/aggregator-ca.key",
+  Stdlib::Unixpath $aggregator_ca_cert = "${cert_path}/aggregator-ca.pem",
+
   Boolean $manage_etcd = $k8s::manage_etcd,
   Boolean $manage_certs = true,
+  Boolean $manage_signing = false,
+  Boolean $manage_components = true,
+  Boolean $manage_resources = true,
   Boolean $node_on_server = true,
 ) {
-  include k8s
-
   if $manage_etcd {
     include k8s::server::etcd
   }
-  include k8s::server::tls
-  include k8s::server::apiserver
-  include k8s::server::controller_manager
-  include k8s::server::scheduler
-  include k8s::server::resources
+  if $manage_certs {
+    include k8s::server::tls
+  }
+  if $manage_components {
+    include k8s::server::apiserver
+    include k8s::server::controller_manager
+    include k8s::server::scheduler
+  }
+  if $manage_resources {
+    include k8s::server::resources
+  }
+  
+  if $ensure == 'present' and $manage_signing {
+    # Needs the PuppetDB terminus installed
+    $pql_query = @("PQL")
+    resources[certname] {
+      type = 'Class' and
+      title = 'K8s::Node::Kubelet'
+      order by certname
+    }
+    | - PQL
+
+    $cluster_nodes = puppetdb_query($pql_query)
+    $cluster_nodes.each |$node| {
+      k8s::server::tls::k8s_sign { $node['certname']:
+      }
+    }
+  }
 
   include k8s::node::kubectl
-  $_dir = $k8s::server::tls::cert_dir
   kubeconfig { '/root/.kube/config':
     ensure      => $ensure,
     server      => "https://localhost:${api_port}",
 
-    ca_cert     => $k8s::server::tls::ca_cert,
-    client_cert => "${_dir}/admin.pem",
-    client_key  => "${_dir}/admin.key",
-
-    require     => K8s::Binary['kubectl'],
+    ca_cert     => $ca_cert,
+    client_cert => "${cert_path}/admin.pem",
+    client_key  => "${cert_path}/admin.key",
   }
 
   if $node_on_server {
@@ -43,7 +70,7 @@ class k8s::server(
       master     => "https://localhost:${api_port}",
       node_auth  => 'cert',
       proxy_auth => 'cert',
-      ca_cert    => $k8s::server::tls::ca_cert,
+      ca_cert    => $ca_cert,
       node_cert  => "${_dir}/node.pem",
       node_key   => "${_dir}/node.key",
       proxy_cert => "${_dir}/kube-proxy.pem",

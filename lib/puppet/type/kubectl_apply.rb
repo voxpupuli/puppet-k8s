@@ -32,7 +32,7 @@ Puppet::Type.newtype(:kubectl_apply) do
     end
 
     newvalue(:absent) do
-      provider.destroy
+      provider.destroy if provider.exists?
     end
 
     defaultto(:present)
@@ -148,6 +148,9 @@ Puppet::Type.newtype(:kubectl_apply) do
       self[:kubeconfig],
       self[:file],
     ]
+  end
+  autorequire(:k8s__binary) do
+    [ 'kubectl' ]
   end
 
   def nice_name
