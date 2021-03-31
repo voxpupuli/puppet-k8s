@@ -15,6 +15,8 @@ class k8s::server::resources(
   String[1] $flannel_image = 'quay.io/coreos/flannel',
   String[1] $flannel_tag = 'v0.13.0',
 ) {
+  assert_private()
+
   if $manage_bootstrap {
     k8s::server::bootstrap_token { 'puppet':
       kubeconfig         => $kubeconfig,
@@ -29,9 +31,6 @@ class k8s::server::resources(
           },
         },
       },
-      require            => [
-        Service['kube-apiserver'],
-      ],
     }
 
     kubectl_apply{
@@ -96,544 +95,530 @@ class k8s::server::resources(
   }
 
   if $manage_coredns {
-    kubectl_apply { 'coredns ServiceAccount':
-      api_version => 'v1',
-      kind        => 'ServiceAccount',
-      name        => 'coredns',
-      namespace   => 'kube-system',
-      kubeconfig  => $kubeconfig,
-      content     => {},
-    }
-    kubectl_apply { 'coredns ClusterRole':
-      api_version => 'rbac.authorization.k8s.io/v1',
-      kind        => 'ClusterRole',
-      name        => 'system:coredns',
-      kubeconfig  => $kubeconfig,
-      content     => {
-        metadata => {
-          labels => {
-            'kubernetes.io/bootstrapping' => 'rbac-defaults',
-          },
-        },
-        rules    => [
-          {
-            apiGroups => [''],
-            resources => ['endpoints','services','pods','namespaces'],
-            verbs     => ['list','watch'],
-          },
-          {
-            apiGroups => ['discovery.k8s.io'],
-            resources => ['endpointslices'],
-            verbs     => ['list','watch'],
-          },
-        ],
-      },
-    }
-    kubectl_apply { 'coredns ClusterRoleBinding':
-      api_version => 'rbac.authorization.k8s.io/v1',
-      kind        => 'ClusterRoleBinding',
-      name        => 'system:coredns',
-      kubeconfig  => $kubeconfig,
-      content     => {
-        metadata => {
-          annotations => {
-            'rbac.authorization.kubernetes.io/autoupdate' => 'true',
-          },
-          labels      => {
-            'kubernetes.io/bootstrapping' => 'rbac-defaults',
-          },
-        },
-        subjects => [
-          {
-            kind      => 'ServiceAccount',
-            name      => 'coredns',
-            namespace => 'kube-system',
-          },
-        ],
-        roleRef  => {
-          kind     => 'ClusterRole',
-          name     => 'system:coredns',
-          apiGroup => 'rbac.authorization.k8s.io',
-        },
-      },
-    }
-    kubectl_apply { 'coredns ConfigMap':
-      api_version => 'v1',
-      kind        => 'ServiceAccount',
-      name        => 'coredns',
-      namespace   => 'kube-system',
-      kubeconfig  => $kubeconfig,
-      content     => {
-        data => {
-          'Corefile' => @("COREDNS"),
-          .:53 {
-            errors
-            health {
-              lameduck 5s
-            }
-            ready
-            kubernetes ${cluster_domain} in-addr.arpa ip6.arpa {
-              fallthrough in-adr.arpa ip6.arpa
-            }
-            prometheus :9153
-            forward . /etc/resolv.conf {
-              max_concurrent 1000
-            }
-            cache 30
-            loop
-            reload
-            loadbalance
-          }
-          |-COREDNS
-        },
-      },
-    }
-    kubectl_apply { 'coredns Deployment':
-      api_version => 'apps/v1',
-      kind        => 'Deployment',
-      name        => 'coredns',
-      namespace   => 'kube-system',
-      kubeconfig  => $kubeconfig,
-      content     => {
-        metadata => {
-          labels => {
-            'k8s-app'            => 'kube-dns',
-            'kubernetes.io/name' => 'CoreDNS',
-          },
-        },
-        spec     => {
-          replicas => 2,
-          strategy => {
-            type          => 'RollingUpdate',
-            rollingUpdate => {
-              maxUnavailable => 1,
+    kubectl_apply {
+      default:
+        resource_name => 'coredns',
+        namespace     => 'kube-system',
+        kubeconfig    => $kubeconfig;
+
+      'coredns ServiceAccount':
+        api_version   => 'v1',
+        kind          => 'ServiceAccount',
+        content       => {};
+
+      'coredns ClusterRole':
+        api_version   => 'rbac.authorization.k8s.io/v1',
+        kind          => 'ClusterRole',
+        resource_name => 'system:coredns',
+        content       => {
+          metadata => {
+            labels => {
+              'kubernetes.io/bootstrapping' => 'rbac-defaults',
             },
           },
-          selector => {
-            matchLabels => {
-              'k8s-app' => 'kube-dns',
+          rules    => [
+            {
+              apiGroups => [''],
+              resources => ['endpoints','services','pods','namespaces'],
+              verbs     => ['list','watch'],
+            },
+            {
+              apiGroups => ['discovery.k8s.io'],
+              resources => ['endpointslices'],
+              verbs     => ['list','watch'],
+            },
+          ],
+        };
+
+      'coredns ClusterRoleBinding':
+        api_version   => 'rbac.authorization.k8s.io/v1',
+        kind          => 'ClusterRoleBinding',
+        resource_name => 'system:coredns',
+        content       => {
+          metadata => {
+            annotations => {
+              'rbac.authorization.kubernetes.io/autoupdate' => 'true',
+            },
+            labels      => {
+              'kubernetes.io/bootstrapping' => 'rbac-defaults',
             },
           },
-          template => {
-            metadata => {
-              labels      => {
+          subjects => [
+            {
+              kind      => 'ServiceAccount',
+              name      => 'coredns',
+              namespace => 'kube-system',
+            },
+          ],
+          roleRef  => {
+            kind     => 'ClusterRole',
+            name     => 'system:coredns',
+            apiGroup => 'rbac.authorization.k8s.io',
+          },
+        };
+
+      'coredns ConfigMap':
+        api_version   => 'v1',
+        kind          => 'ServiceAccount',
+        content       => {
+          data => {
+            'Corefile' => @("COREDNS"),
+            .:53 {
+              errors
+              health {
+                lameduck 5s
+              }
+              ready
+              kubernetes ${cluster_domain} in-addr.arpa ip6.arpa {
+                fallthrough in-adr.arpa ip6.arpa
+              }
+              prometheus :9153
+              forward . /etc/resolv.conf {
+                max_concurrent 1000
+              }
+              cache 30
+              loop
+              reload
+              loadbalance
+            }
+            |-COREDNS
+          },
+        };
+
+      'coredns Deployment':
+        api_version => 'apps/v1',
+        kind        => 'Deployment',
+        content     => {
+          metadata => {
+            labels => {
+              'k8s-app'            => 'kube-dns',
+              'kubernetes.io/name' => 'CoreDNS',
+            },
+          },
+          spec     => {
+            replicas => 2,
+            strategy => {
+              type          => 'RollingUpdate',
+              rollingUpdate => {
+                maxUnavailable => 1,
+              },
+            },
+            selector => {
+              matchLabels => {
                 'k8s-app' => 'kube-dns',
               },
             },
-            spec     => {
-              affinity           => {
-                podAntiAffinity => {
-                  preferredDuringSchedulingIgnoredDuringExecution => [
-                    {
-                      weight          => 100,
-                      podAffinityTerm => {
-                        labelSelector => {
-                          matchExpressions => [
-                            {
-                              key      => 'k8s-app',
-                              operator => 'In',
-                              values   => [ 'coredns' ],
-                            },
-                          ],
-                        },
-                        topologyKey   => 'kubernetes.io/hostname',
-                      },
-                    },
-                  ],
+            template => {
+              metadata => {
+                labels      => {
+                  'k8s-app' => 'kube-dns',
                 },
               },
-              priorityClassName  => 'system-cluster-critical',
-              serviceAccountName => 'coredns',
-              tolerations        => [
-                {
-                  key      => 'CriticalAddonsOnly',
-                  operator => 'Exists',
-                },
-                {
-                  key    => 'node-role.kubernetes.io/master',
-                  effect => 'NoSchedule',
-                },
-              ],
-              nodeSelector       => {
-                'kubernetes.io/os' => 'linux',
-              },
-              containers         => [
-                {
-                  name            => 'coredns',
-                  image           => "${coredns_image}:${coredns_tag}",
-                  imagePullPolicy => 'IfNotPresent',
-                  resources       => {
-                    limits   => {
-                      memory => '170Mi',
-                    },
-                    requests => {
-                      cpu    => '100m',
-                      memory => '70Mi',
-                    },
-                  },
-                  args            => [ '-conf', '/etc/coredns/Corefile' ],
-                  volumeMounts    => [
-                    {
-                      name      => 'config-volume',
-                      mountPath => '/etc/coredns',
-                      readOnly  => true,
-                    },
-                  ],
-                  ports           => [
-                    {
-                      name          => 'dns',
-                      protocol      => 'UDP',
-                      containerPort => 53
-                    },
-                    {
-                      name          => 'dns-tcp',
-                      protocol      => 'TCP',
-                      containerPort => 53
-                    },
-                    {
-                      name          => 'metrics',
-                      protocol      => 'TCP',
-                      containerPort => 9153
-                    },
-                  ],
-                  livenessProbe   => {
-                    httpGet            => {
-                      path => '/health',
-                      port => 8080,
-                    },
-                    initialDelaySecond => 60,
-                    timeoutSeconds     => 5,
-                    successThreshold   => 1,
-                    failureThreshold   => 5,
-                  },
-                  readinessProbe  => {
-                    httpGget => '/ready',
-                    port     => 8181,
-                  },
-                  securityContext => {
-                    allowPrivilegeEscalation => false,
-                    capabilities             => {
-                      add  => [ 'NET_BIND_SERVICE' ],
-                      drop => [ 'all' ],
-                    },
-                    readOnlyRootFilesystem   => true,
-                  },
-                },
-              ],
-              dnsPolicy          => 'Default',
-              volumes            => [
-                {
-                  name      => 'config-volume',
-                  configMap => {
-                    name  => 'coredns',
-                    items => [
+              spec     => {
+                affinity           => {
+                  podAntiAffinity => {
+                    preferredDuringSchedulingIgnoredDuringExecution => [
                       {
-                        key  => 'Corefile',
-                        path => 'Corefile',
+                        weight          => 100,
+                        podAffinityTerm => {
+                          labelSelector => {
+                            matchExpressions => [
+                              {
+                                key      => 'k8s-app',
+                                operator => 'In',
+                                values   => [ 'coredns' ],
+                              },
+                            ],
+                          },
+                          topologyKey   => 'kubernetes.io/hostname',
+                        },
                       },
                     ],
                   },
                 },
-              ],
+                priorityClassName  => 'system-cluster-critical',
+                serviceAccountName => 'coredns',
+                tolerations        => [
+                  {
+                    key      => 'CriticalAddonsOnly',
+                    operator => 'Exists',
+                  },
+                  {
+                    key    => 'node-role.kubernetes.io/master',
+                    effect => 'NoSchedule',
+                  },
+                ],
+                nodeSelector       => {
+                  'kubernetes.io/os' => 'linux',
+                },
+                containers         => [
+                  {
+                    name            => 'coredns',
+                    image           => "${coredns_image}:${coredns_tag}",
+                    imagePullPolicy => 'IfNotPresent',
+                    resources       => {
+                      limits   => {
+                        memory => '170Mi',
+                      },
+                      requests => {
+                        cpu    => '100m',
+                        memory => '70Mi',
+                      },
+                    },
+                    args            => [ '-conf', '/etc/coredns/Corefile' ],
+                    volumeMounts    => [
+                      {
+                        name      => 'config-volume',
+                        mountPath => '/etc/coredns',
+                        readOnly  => true,
+                      },
+                    ],
+                    ports           => [
+                      {
+                        name          => 'dns',
+                        protocol      => 'UDP',
+                        containerPort => 53
+                      },
+                      {
+                        name          => 'dns-tcp',
+                        protocol      => 'TCP',
+                        containerPort => 53
+                      },
+                      {
+                        name          => 'metrics',
+                        protocol      => 'TCP',
+                        containerPort => 9153
+                      },
+                    ],
+                    livenessProbe   => {
+                      httpGet            => {
+                        path => '/health',
+                        port => 8080,
+                      },
+                      initialDelaySecond => 60,
+                      timeoutSeconds     => 5,
+                      successThreshold   => 1,
+                      failureThreshold   => 5,
+                    },
+                    readinessProbe  => {
+                      httpGget => '/ready',
+                      port     => 8181,
+                    },
+                    securityContext => {
+                      allowPrivilegeEscalation => false,
+                      capabilities             => {
+                        add  => [ 'NET_BIND_SERVICE' ],
+                        drop => [ 'all' ],
+                      },
+                      readOnlyRootFilesystem   => true,
+                    },
+                  },
+                ],
+                dnsPolicy          => 'Default',
+                volumes            => [
+                  {
+                    name      => 'config-volume',
+                    configMap => {
+                      name  => 'coredns',
+                      items => [
+                        {
+                          key  => 'Corefile',
+                          path => 'Corefile',
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
             },
           },
         },
-      },
-      require     => Kubectl_apply[
-        'coredns ServiceAccount',
-        'coredns ConfigMap',
-      ],
-    }
-    kubectl_apply { 'coredns Service':
-      api_version => 'v1',
-      kind        => 'Service',
-      name        => 'kube-dns',
-      namespace   => 'kube-system',
-      kubeconfig  => $kubeconfig,
-      content     => {
-        metadata => {
-          annotations => {
-            'prometheus.io/port'   => '9153',
-            'prometheus.io/scrape' => 'true',
-          },
-          labels      => {
-            'k8s-app'                       => 'kube-dns',
-            'kubernetes.io/cluster-service' => 'true',
-            'kubernetes.io/name'            => 'CoreDNS',
-          },
-        },
-        spec     => {
-          selector  => {
-            'k8s-app' => 'kube-dns',
-          },
-          clusterIP => $dns_service_address,
-          ports     => [
-            {
-              name     => 'dns',
-              port     => 53,
-              protocol => 'UDP',
+        require     => Kubectl_apply[
+          'coredns ServiceAccount',
+          'coredns ConfigMap',
+        ];
+
+      'coredns Service':
+        api_version   => 'v1',
+        kind          => 'Service',
+        resource_name => 'kube-dns',
+        content       => {
+          metadata => {
+            annotations => {
+              'prometheus.io/port'   => '9153',
+              'prometheus.io/scrape' => 'true',
             },
-            {
-              name     => 'dns-tcp',
-              port     => 53,
-              protocol => 'TCP',
-            }
-          ],
-        },
-      },
+            labels      => {
+              'k8s-app'                       => 'kube-dns',
+              'kubernetes.io/cluster-service' => 'true',
+              'kubernetes.io/name'            => 'CoreDNS',
+            },
+          },
+          spec     => {
+            selector  => {
+              'k8s-app' => 'kube-dns',
+            },
+            clusterIP => $dns_service_address,
+            ports     => [
+              {
+                name     => 'dns',
+                port     => 53,
+                protocol => 'UDP',
+              },
+              {
+                name     => 'dns-tcp',
+                port     => 53,
+                protocol => 'TCP',
+              }
+            ],
+          },
+        };
     }
   }
 
   if $manage_flannel {
-    kubectl_apply { 'flannel ClusterRole':
-      api_version => 'rbac.authorization.k8s.io/v1',
-      kind        => 'ClusterRole',
-      name        => 'flannel',
-      kubeconfig  => $kubeconfig,
-      content     => {
-        rules => [
-          {
-            apiGroups => [''],
-            resources => ['pods'],
-            verbs     => ['get'],
-          },
-          {
-            apiGroups => [''],
-            resources => ['nodes'],
-            verbs     => ['list','watch'],
-          },
-          {
-            apiGroups => [''],
-            resources => ['nodes/status'],
-            verbs     => ['patch'],
-          },
-        ],
-      },
-    }
-    kubectl_apply { 'flannel ClusterRoleBinding':
-      api_version => 'rbac.authorization.k8s.io/v1',
-      kind        => 'ClusterRoleBinding',
-      name        => 'flannel',
-      kubeconfig  => $kubeconfig,
-      content     => {
-        subjects => [
-          {
-            kind      => 'ServiceAccount',
-            name      => 'flannel',
-            namespace => 'kube-system',
-          },
-        ],
-        roleRef  => {
-          kind     => 'ClusterRole',
-          name     => 'flannel',
-          apiGroup => 'rbac.authorization.k8s.io',
-        },
-      },
-    }
-    kubectl_apply { 'flannel ServiceAccount':
-      api_version => 'v1',
-      kind        => 'ServiceAccount',
-      name        => 'flannel',
-      namespace   => 'kube-system',
-      kubeconfig  => $kubeconfig,
-      content     => {},
-    }
-    kubectl_apply { 'flannel ConfigMap':
-      api_version => 'v1',
-      kind        => 'ConfigMap',
-      name        => 'flannel',
-      namespace   => 'kube-system',
-      kubeconfig  => $kubeconfig,
-      content     => {
-        metadata => {
-          labels => {
-            tier      => 'node',
-            'k8s-app' => 'flannel',
-          }
-        },
-        data     => {
-          'cni-conf.json' => to_json({
-            name       => 'cbr0',
-            cniVersion => '0.3.1',
-            plugins    => [
-              {
-                type     => 'flannel',
-                delegate => {
-                  hairpinMode      => true,
-                  isDefaultGateway => true,
-                },
-              },
-              {
-                type         => 'portmap',
-                capabilities => {
-                  portMappings => true,
-                },
-              },
-            ],
-          }),
-          'net-conf.json' => to_json({
-            'Network' => $cluster_cidr,
-            'Backend' => {
-              'Type' => 'vxlan',
+    kubectl_apply {
+      default:
+        namespace     => 'kube-system',
+        resource_name => 'flannel',
+        kubeconfig    => $kubeconfig;
+
+      'flannel ClusterRole':
+        api_version => 'rbac.authorization.k8s.io/v1',
+        kind        => 'ClusterRole',
+        content     => {
+          rules => [
+            {
+              apiGroups => [''],
+              resources => ['pods'],
+              verbs     => ['get'],
             },
-          }),
-        },
-      },
-    }
-    kubectl_apply { 'flannel DaemonSet':
-      api_version => 'apps/v1',
-      kind        => 'DaemonSet',
-      name        => 'kube-flannel',
-      namespace   => 'kube-system',
-      kubeconfig  => $kubeconfig,
-      content     => {
-        metadata => {
-          labels => {
-            'tier'    => 'node',
-            'k8s-app' => 'flannel',
+            {
+              apiGroups => [''],
+              resources => ['nodes'],
+              verbs     => ['list','watch'],
+            },
+            {
+              apiGroups => [''],
+              resources => ['nodes/status'],
+              verbs     => ['patch'],
+            },
+          ],
+        };
+
+      'flannel ClusterRoleBinding':
+        api_version => 'rbac.authorization.k8s.io/v1',
+        kind        => 'ClusterRoleBinding',
+        content     => {
+          subjects => [
+            {
+              kind      => 'ServiceAccount',
+              name      => 'flannel',
+              namespace => 'kube-system',
+            },
+          ],
+          roleRef  => {
+            kind     => 'ClusterRole',
+            name     => 'flannel',
+            apiGroup => 'rbac.authorization.k8s.io',
           },
-        },
-        spec     => {
-          selector       => {
-            matchLabels => {
+        };
+
+      'flannel ServiceAccount':
+        api_version => 'v1',
+        kind        => 'ServiceAccount',
+        content     => {};
+
+      'flannel ConfigMap':
+        api_version => 'v1',
+        kind        => 'ConfigMap',
+        content     => {
+          metadata => {
+            labels => {
+              tier      => 'node',
+              'k8s-app' => 'flannel',
+            }
+          },
+          data     => {
+            'cni-conf.json' => to_json({
+              name       => 'cbr0',
+              cniVersion => '0.3.1',
+              plugins    => [
+                {
+                  type     => 'flannel',
+                  delegate => {
+                    hairpinMode      => true,
+                    isDefaultGateway => true,
+                  },
+                },
+                {
+                  type         => 'portmap',
+                  capabilities => {
+                    portMappings => true,
+                  },
+                },
+              ],
+            }),
+            'net-conf.json' => to_json({
+              'Network' => $cluster_cidr,
+              'Backend' => {
+                'Type' => 'vxlan',
+              },
+            }),
+          },
+        };
+
+      'flannel DaemonSet':
+        api_version => 'apps/v1',
+        kind        => 'DaemonSet',
+        content     => {
+          metadata => {
+            labels => {
               'tier'    => 'node',
               'k8s-app' => 'flannel',
             },
           },
-          template       => {
-            metadata => {
-              labels => {
+          spec     => {
+            selector       => {
+              matchLabels => {
                 'tier'    => 'node',
                 'k8s-app' => 'flannel',
               },
             },
-            spec     => {
-              hostNetwork        => true,
-              priorityClassName  => 'system-node-critical',
-              serviceAccountName => 'flannel',
-              tolerations        => [
-                {
-                  effect   => 'NoSchedule',
-                  operator => 'Exists',
+            template       => {
+              metadata => {
+                labels => {
+                  'tier'    => 'node',
+                  'k8s-app' => 'flannel',
                 },
-                {
-                  effect   => 'NoExecute',
-                  operator => 'Exists',
-                },
-              ],
-              nodeSelector       => {
-                'kubernetes.io/os' => 'linux',
               },
-              containers         => [
-                {
-                  name            => 'flannel',
-                  image           => "${flannel_image}:${flannel_tag}",
-                  command         => [ '/opt/bin/flanneld' ],
-                  args            => [ '--ip-masq', '--kube-subnet-mgr' ],
-                  resources       => {
-                    requests => {
-                      cpu    => '100m',
-                      memory => '50Mi',
-                    },
-                    limits   => {
-                      cpu    => '100m',
-                      memory => '50Mi',
-                    },
+              spec     => {
+                hostNetwork        => true,
+                priorityClassName  => 'system-node-critical',
+                serviceAccountName => 'flannel',
+                tolerations        => [
+                  {
+                    effect   => 'NoSchedule',
+                    operator => 'Exists',
                   },
-                  securityContext => {
-                    privileged   => false,
-                    capabilities => {
-                      add => [ 'NET_ADMIN', 'NET_RAW' ],
-                    },
+                  {
+                    effect   => 'NoExecute',
+                    operator => 'Exists',
                   },
-                  env             => [
-                    {
-                      name      => 'POD_NAME',
-                      valueFrom => {
-                        fieldRef => {
-                          fieldPath => 'metadata.name',
-                        },
+                ],
+                nodeSelector       => {
+                  'kubernetes.io/os' => 'linux',
+                },
+                containers         => [
+                  {
+                    name            => 'flannel',
+                    image           => "${flannel_image}:${flannel_tag}",
+                    command         => [ '/opt/bin/flanneld' ],
+                    args            => [ '--ip-masq', '--kube-subnet-mgr' ],
+                    resources       => {
+                      requests => {
+                        cpu    => '100m',
+                        memory => '50Mi',
+                      },
+                      limits   => {
+                        cpu    => '100m',
+                        memory => '50Mi',
                       },
                     },
-                    {
-                      name      => 'POD_NAMESPACE',
-                      valueFrom => {
-                        fieldRef => {
-                          fieldPath => 'metadata.namespace',
-                        },
+                    securityContext => {
+                      privileged   => false,
+                      capabilities => {
+                        add => [ 'NET_ADMIN', 'NET_RAW' ],
                       },
                     },
-                  ],
-                  volumeMounts    => [
-                    {
-                      name      => 'run',
-                      mountPath => '/run/flannel',
-                    },
-                    {
-                      name      => 'flannel-cfg',
-                      mountPath => '/etc/kube-flannel/',
-                    },
-                  ],
-                },
-              ],
-              initContainers     => [
-                {
-                  name         => 'install-cni',
-                  image        => "${flannel_image}:${flannel_tag}",
-                  command      => [ 'cp' ],
-                  args         => [
-                    '-f',
-                    '/etc/kube-flannel/cni.conf.json',
-                    '/etc/cni/net.d/10-flannel.conflits',
-                  ],
-                  volumeMounts => [
-                    {
-                      name      => 'cni',
-                      mountPath => '/etc/cni/net.d',
-                    },
-                    {
-                      name      => 'flannel-cfg',
-                      mountPath => '/etc/kube-flannel',
-                    },
-                  ],
-                },
-              ],
-              volumes            => [
-                {
-                  name     => 'run',
-                  hostPath => {
-                    path => '/run',
+                    env             => [
+                      {
+                        name      => 'POD_NAME',
+                        valueFrom => {
+                          fieldRef => {
+                            fieldPath => 'metadata.name',
+                          },
+                        },
+                      },
+                      {
+                        name      => 'POD_NAMESPACE',
+                        valueFrom => {
+                          fieldRef => {
+                            fieldPath => 'metadata.namespace',
+                          },
+                        },
+                      },
+                    ],
+                    volumeMounts    => [
+                      {
+                        name      => 'run',
+                        mountPath => '/run/flannel',
+                      },
+                      {
+                        name      => 'flannel-cfg',
+                        mountPath => '/etc/kube-flannel/',
+                      },
+                    ],
                   },
-                },
-                {
-                  name     => 'cni',
-                  hostPath => {
-                    path => '/etc/kubernetes/cni/net.d',
+                ],
+                initContainers     => [
+                  {
+                    name         => 'install-cni',
+                    image        => "${flannel_image}:${flannel_tag}",
+                    command      => [ 'cp' ],
+                    args         => [
+                      '-f',
+                      '/etc/kube-flannel/cni.conf.json',
+                      '/etc/cni/net.d/10-flannel.conflits',
+                    ],
+                    volumeMounts => [
+                      {
+                        name      => 'cni',
+                        mountPath => '/etc/cni/net.d',
+                      },
+                      {
+                        name      => 'flannel-cfg',
+                        mountPath => '/etc/kube-flannel',
+                      },
+                    ],
                   },
-                },
-                {
-                  name      => 'flannel-cfg',
-                  configMap => {
-                    name => 'kube-flannel-cfg',
+                ],
+                volumes            => [
+                  {
+                    name     => 'run',
+                    hostPath => {
+                      path => '/run',
+                    },
                   },
-                },
-                {
-                  name     => 'host-cni-bin',
-                  hostPath => {
-                    path => '/opt/cni/bin',
+                  {
+                    name     => 'cni',
+                    hostPath => {
+                      path => '/etc/kubernetes/cni/net.d',
+                    },
                   },
-                },
-              ],
+                  {
+                    name      => 'flannel-cfg',
+                    configMap => {
+                      name => 'kube-flannel-cfg',
+                    },
+                  },
+                  {
+                    name     => 'host-cni-bin',
+                    hostPath => {
+                      path => '/opt/cni/bin',
+                    },
+                  },
+                ],
+              },
+            },
+            updateStrategy => {
+              rollingUpdate => {
+                maxUnavailable => 1,
+              },
+              type          => 'RollingUpdate',
             },
           },
-          updateStrategy => {
-            rollingUpdate => {
-              maxUnavailable => 1,
-            },
-            type          => 'RollingUpdate',
-          },
-        },
-      },
+        };
     }
   }
 
@@ -662,8 +647,8 @@ class k8s::server::resources(
     #   };
 
     'controller-manager RoleBinding':
-      name    => 'controller-manager',
-      content => {
+      resource_name => 'controller-manager',
+      content       => {
         subjects => [
           {
             kind      => 'ServiceAccount',
@@ -679,8 +664,8 @@ class k8s::server::resources(
       };
 
     'kube-proxy RoleBinding':
-      name    => 'kube-proxy',
-      content => {
+      resource_name => 'kube-proxy',
+      content       => {
         subjects => [
           {
             kind      => 'ServiceAccount',
@@ -704,10 +689,10 @@ class k8s::server::resources(
       kind        => 'ServiceAccount';
 
     'kube-controller-manager SA':
-      name => 'kube-controller-manager';
+      resource_name => 'kube-controller-manager';
 
     'kube-proxy SA':
-      name => 'kube-proxy';
+      resource_name => 'kube-proxy';
   }
   # Config maps
   kubectl_apply {

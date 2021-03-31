@@ -28,7 +28,9 @@ Puppet::Functions.create_function(:'k8s::format_arguments') do
 
   def k8s_format_arguments(arguments)
     arguments.map do |argument, value|
+      next if value.nil?
+
       "--#{argument.tr('_', '-')}=#{k8s_format_value(value)}"
-    end
+    end.compact
   end
 end

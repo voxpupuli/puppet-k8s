@@ -37,7 +37,7 @@ Puppet::Type.type(:kubectl_apply).provide(:file) do
     hash['kind'] = resource[:kind]
 
     metadata = hash['metadata'] ||= {}
-    metadata['name'] = resource[:name]
+    metadata['name'] = resource[:resource_name]
     metadata['namespace'] = resource[:namespace] if resource[:namespace]
 
     hash

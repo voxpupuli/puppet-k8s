@@ -1,7 +1,7 @@
 class k8s(
-  Enum['present', 'absent'] $ensure,
-  Enum['container', 'native'] $packaging,
-  Enum['package', 'tarball', 'loose', 'hyperkube', 'manual'] $native_packaging,
+  Enum['present', 'absent'] $ensure = 'present',
+  Enum['container', 'native'] $packaging = 'native',
+  Enum['package', 'tarball', 'loose', 'hyperkube', 'manual'] $native_packaging = 'tarball',
   String[1] $version,
   String[1] $etcd_version,
 
@@ -25,7 +25,8 @@ class k8s(
 
   Enum['cert', 'token', 'bootstrap'] $node_auth = 'bootstrap',
 
-  Stdlib::HTTPUrl $master = 'https://kubernetes',
+  Stdlib::HTTPUrl $incluster_master = 'https://kubernetes.default.svc',
+  Stdlib::HTTPUrl $master = 'https://kubernetes:6443',
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $service_cluster_cidr = '10.1.0.0/24',
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $cluster_cidr = '10.0.0.0/16',

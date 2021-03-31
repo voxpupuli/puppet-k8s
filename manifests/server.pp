@@ -28,8 +28,19 @@ class k8s::server(
   }
   if $manage_components {
     include k8s::server::apiserver
-    include k8s::server::controller_manager
-    include k8s::server::scheduler
+
+    # XXX Think of a better way to do this
+    if $k8s::master == 'https://kubernetes:6443' {
+      class { 'k8s::server::controller_manager':
+        master => 'https://localhost:6443',
+      }
+      class { 'k8s::server::scheduler':
+        master => 'https://localhost:6443',
+      }
+    } else {
+      include k8s::server::controller_manager
+      include k8s::server::scheduler
+    }
   }
   if $manage_resources {
     include k8s::server::resources

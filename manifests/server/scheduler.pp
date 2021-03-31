@@ -1,7 +1,7 @@
 class k8s::server::scheduler(
-  Enum['present', 'absent'] $ensure = $k8s::ensure,
+  Enum['present', 'absent'] $ensure = $k8s::server::ensure,
 
-  Stdlib::HTTPUrl $master = $k8s::node::master,
+  Stdlib::HTTPUrl $master = $k8s::master,
 
   Hash[String, Data] $arguments = {},
 
@@ -10,37 +10,44 @@ class k8s::server::scheduler(
   Stdlib::Unixpath $cert = "${cert_path}/kube-scheduler.pem",
   Stdlib::Unixpath $key = "${cert_path}/kube-scheduler.key",
 ) {
+  assert_private()
+
   k8s::binary { 'kube-scheduler':
     ensure => $ensure,
   }
 
-  $kubeconfig = '/srv/kubernetes/kube-scheduler.kubeconf'
-  kubeconfig { $kubeconfig:
-    ensure      => $ensure,
-    server      => $master,
-
-    ca_cert     => $ca_cert,
-    client_cert => $cert,
-    client_key  => $key,
+  $_kubeconfig = '/srv/kubernetes/k8s-scheduler.kubeconf'
+  if $k8s::packaging != 'container' {
+    $_addn_args = {
+      kubeconfig => $_kubeconfig
+    }
+  } else {
+    $_addn_args = { }
   }
 
-  $args = k8s::format_arguments({
-      kubeconfig   => $kubeconfig,
+  $_args = k8s::format_arguments({
       leader_elect => true,
-  } + $arguments)
+  } + $_addn_args + $arguments)
 
-  if $packaging == 'container' {
+  if $k8s::packaging == 'container' {
     fail('Not implemented yet')
-    $_kubeconfig = '/root/.kube/config',
     $_image = "${k8s::container_registry}/${k8s::container_image}:${pick($k8s::container_image_tag, $k8s::version)}"
     kubectl_apply { 'kube-scheduler':
-      kubeconfig  => $_kubeconfig,
+      kubeconfig  => '/root/.kube/config',
       api_version => 'apps/v1',
       kind        => 'Deployment',
       namespace   => 'kube-system',
       content     => {},
     }
   } else {
+    kubeconfig { $_kubeconfig:
+      ensure      => $ensure,
+      server      => $master,
+
+      ca_cert     => $ca_cert,
+      client_cert => $cert,
+      client_key  => $key,
+    }
     file { '/etc/sysconfig/k8s-scheduler':
       content => epp('k8s/sysconfig.epp', {
           comment               => 'Kubernetes Scheduler configuration',

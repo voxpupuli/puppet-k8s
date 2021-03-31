@@ -1,7 +1,7 @@
 class k8s::server::controller_manager(
-  Enum['present', 'absent'] $ensure = $k8s::ensure,
+  Enum['present', 'absent'] $ensure = $k8s::server::ensure,
 
-  Stdlib::HTTPUrl $master = $k8s::node::master,
+  Stdlib::HTTPUrl $master = $k8s::master,
 
   Hash[String, Data] $arguments = {},
 
@@ -14,24 +14,24 @@ class k8s::server::controller_manager(
   Stdlib::Unixpath $cert = "${cert_path}/kube-controller-manager.pem",
   Stdlib::Unixpath $key = "${cert_path}/kube-controller-manager.key",
 ) {
+  assert_private()
+
   k8s::binary { 'kube-controller-manager':
     ensure => $ensure,
   }
+  $_kubeconfig = '/srv/kubernetes/k8s-controller-manager.kubeconf'
 
-  $kubeconfig = '/srv/kubernetes/kube-controller-manager.kubeconf'
-  kubeconfig { $kubeconfig:
-    ensure      => $ensure,
-    server      => $master,
-
-    ca_cert     => $ca_cert,
-    client_cert => $cert,
-    client_key  => $key,
+  if $k8s::packaging != 'container' {
+    $_addn_args = {
+      kubeconfig => $_kubeconfig,
+    }
+  } else {
+    $_addn_args = { }
   }
 
   # For container;
   # use_service_account_credentials => true,
-  $args = k8s::format_arguments({
-      kubeconfig                       => $kubeconfig,
+  $_args = k8s::format_arguments({
       allocate_node_cidr               => true,
       cluster_cidr                     => $cluster_cidr,
       service_cluster_ip_range         => $service_cluster_cidr,
@@ -40,20 +40,28 @@ class k8s::server::controller_manager(
       leader_elect                     => true,
       root_ca_file                     => $ca_cert,
       service_account_private_key_file => "${cert_path}/service-account.key",
-  } + $arguments)
+  } + $_addn_args + $arguments)
 
-  if $packaging == 'container' {
+  if $k8s::packaging == 'container' {
     fail('Not implemented yet')
-    $_kubeconfig = '/root/.kube/config',
     $_image = "${k8s::container_registry}/${k8s::container_image}:${pick($k8s::container_image_tag, $k8s::version)}"
     kubectl_apply { 'kube-controller-manager':
-      kubeconfig  => $_kubeconfig,
+      kubeconfig  => '/root/.kube/config',
       api_version => 'apps/v1',
       kind        => 'Deployment',
       namespace   => 'kube-system',
       content     => {},
     }
   } else {
+    kubeconfig { $_kubeconfig:
+      ensure      => $ensure,
+      server      => $master,
+
+      ca_cert     => $ca_cert,
+      client_cert => $cert,
+      client_key  => $key,
+    }
+
     file { '/etc/sysconfig/k8s-controller-manager':
       content => epp('k8s/sysconfig.epp', {
           comment               => 'Kubernetes Controller Manager configuration',
@@ -78,7 +86,7 @@ class k8s::server::controller_manager(
         group => kube,
       }),
       require => [
-        File['/etc/sysconfig/k8s-scheduler'],
+        File['/etc/sysconfig/k8s-controller-manager'],
         User['kube'],
       ],
       notify  => Service['k8s-controller-manager'],

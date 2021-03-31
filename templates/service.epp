@@ -19,9 +19,9 @@ Description=<%= pick($desc, $name) %>
 Documentation=<%= $doc %>
 <%- } -%>
 <%- if $needs { -%>
-Requires=<%= $_needs.join(' ') %>
+Requires=<%= $needs.join(' ') %>
 <%- } -%>
-After=network.target <%= $_needs.join(' ') %>
+After=network.target <%= $needs.join(' ') %>
 
 [Service]
 <%- if $dir { -%>

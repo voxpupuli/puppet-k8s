@@ -31,7 +31,7 @@ Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
   end
 
   def destroy
-    kubectl_cmd 'delete', resource[:kind], resource[:name]
+    kubectl_cmd 'delete', resource[:kind], resource[:resource_name]
   end
 
   def content_diff(content, store: true)
@@ -48,7 +48,7 @@ Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
     hash['kind'] = resource[:kind]
 
     metadata = hash['metadata'] ||= {}
-    metadata['name'] = resource[:name]
+    metadata['name'] = resource[:resource_name]
     metadata['namespace'] = resource[:namespace] if resource[:namespace]
 
     hash
@@ -57,7 +57,7 @@ Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
   private
 
   def kubectl_get
-    @data ||= kubectl_cmd 'get', resource[:kind], resource[:name], '--output', 'json'
+    @data ||= kubectl_cmd 'get', resource[:kind], resource[:resource_name]
     JSON.parse(@data)
   rescue
     {}

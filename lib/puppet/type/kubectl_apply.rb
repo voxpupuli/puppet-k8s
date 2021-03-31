@@ -63,14 +63,18 @@ Puppet::Type.newtype(:kubectl_apply) do
     end
   end
 
-  newparam(:name) do
+  # XXX Better way to separate name from Puppet namevar handling?
+  newparam(:resource_name) do
     desc 'The name of the resource'
 
     validate do |value|
-      unless value.match? %r{^[a-z0-9.-]{0,253}$}
-        raise Puppet::Error, 'Name must be valid'
+      unless value.match? %r{^([a-z0-9][a-z0-9.:-]{0,251}[a-z0-9]|[a-z0-9])$}
+        raise Puppet::Error, 'Resource name must be valid'
       end
     end
+  end
+
+  newparam(:name, namevar: true) do
   end
 
   newparam(:namespace) do
@@ -136,12 +140,17 @@ Puppet::Type.newtype(:kubectl_apply) do
   end
 
   validate do
+    self[:resource_name] = self[:name] if self[:resource_name].nil?
+
     raise Puppet::Error, 'API version is required' unless self[:api_version]
     raise Puppet::Error, 'Kind is required' unless self[:kind]
   end
 
   autorequire(:kubeconfig) do
     [ self[:kubeconfig] ]
+  end
+  autorequire(:service) do
+    [ 'k8s-apiserver' ]
   end
   autorequire(:file) do
     [

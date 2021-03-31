@@ -1,12 +1,12 @@
 class k8s::server::apiserver(
-  Enum['present', 'absent'] $ensure = $k8s::ensure,
+  Enum['present', 'absent'] $ensure = $k8s::server::ensure,
 
   Hash[String, Data] $arguments = {},
 
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $service_cluster_cidr = $k8s::service_cluster_cidr,
 
-  Optional[Array[Stdlib::HTTPUri]] $etcd_servers = undef,
-  Boolean $discover_etcd_servers = true,
+  Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
+  Boolean $discover_etcd_servers = false,
 
   Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
   Stdlib::Unixpath $ca_cert = $k8s::server::tls::ca_cert,
@@ -19,9 +19,11 @@ class k8s::server::apiserver(
   Stdlib::Unixpath $apiserver_client_cert = "${cert_path}/apiserver-kubelet-client.pem",
   Stdlib::Unixpath $apiserver_client_key = "${cert_path}/apiserver-kubelet-client.key",
   Stdlib::Unixpath $etcd_ca = "${cert_path}/etcd-ca.pem",
-  Stdlib::Unixpath $etcd_cert = "${cert_path}/etcd-client.pem",
-  Stdlib::Unixpath $etcd_key = "${cert_path}/etcd-client.key",
+  Stdlib::Unixpath $etcd_cert = "${cert_path}/etcd.pem",
+  Stdlib::Unixpath $etcd_key = "${cert_path}/etcd.key",
 ) {
+  assert_private()
+
   k8s::binary { 'kube-apiserver':
     ensure => $ensure,
   }
@@ -53,7 +55,7 @@ class k8s::server::apiserver(
     $_discovery = {}
   }
 
-  if $packaging == 'container' {
+  if $k8s::packaging == 'container' {
     $_addn_args = {
       advertise_address => '$(POD_IP)',
       bind_address      => '0.0.0.0', # TODO dual-stack support
@@ -86,7 +88,7 @@ class k8s::server::apiserver(
       requestheader_allowed_names        => 'front-proxy-client',
       requestheader_extra_headers_prefix => 'X-Remote-Extra-',
       requestheader_group_headers        => 'X-Remote-Group',
-      requestheader_uername_headers      => 'X-Remote-Uer',
+      requestheader_username_headers     => 'X-Remote-User',
       proxy_client_cert_file             => $front_proxy_cert,
       proxy_client_key_file              => $front_proxy_key,
       etcd_cafile                        => $etcd_ca,
@@ -103,7 +105,7 @@ class k8s::server::apiserver(
       tls_private_key_file               => $apiserver_key,
   } + $_discovery + $_addn_args + $arguments)
 
-  if $packaging == 'container' {
+  if $k8s::packaging == 'container' {
     $_image = "${k8s::container_registry}/${k8s::container_image}:${pick($k8s::container_image_tag, $k8s::version)}"
     file { '/etc/kubernetes/manifests/kube-apiserver.yaml':
       ensure  => $ensure,

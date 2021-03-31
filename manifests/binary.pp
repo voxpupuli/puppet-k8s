@@ -23,7 +23,14 @@ define k8s::binary(
     }
   }
 
-  case $packaging {
+  # Always install kubelet and kubectl as binaries
+  if $packaging == 'native' or $name in [ 'kubelet', 'kubectl' ] {
+    $_packaging = $k8s::native_packaging
+  } else {
+    $_packaging = $packaging
+  }
+
+  case $_packaging {
     'container': {}
     'package': {
       $_template = $k8s::package_template
