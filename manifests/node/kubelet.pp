@@ -1,30 +1,33 @@
 class k8s::node::kubelet(
-  Enum['present', 'absent'] $ensure = lookup('k8s::node::ensure', 'k8s::ensure'),
+  Enum['present', 'absent'] $ensure = $k8s::node::ensure,
 
-  Stdlib::HTTPUrl $master = lookup('k8s::node::master', 'k8s::master'),
+  Stdlib::HTTPUrl $master = $k8s::node::master,
 
   Hash[String, Data] $config = {},
   Hash[String, Data] $arguments = {},
+  String $runtime = $k8s::container_manager,
+  String $runtime_service = $k8s::container_runtime_service,
 
-  Enum['cert', 'token', 'bootstrap'] $auth = lookup('k8s::node::node_auth'),
+  Enum['cert', 'token', 'bootstrap'] $auth = $k8s::node::node_auth,
+  Boolean $rotate_server_tls = $auth == 'bootstrap',
 
   Stdlib::Unixpath $cert_path = $k8s::node::cert_path,
+  Stdlib::Unixpath $kubeconfig = '/srv/kubernetes/kubelet.kubeconf',
 
   # For cert auth
-  Optional[Stdlib::Unixpath] $ca_cert = lookup('k8s::node::ca_cert'),
-  Optional[Stdlib::Unixpath] $cert = lookup('k8s::node::node_cert'),
-  Optional[Stdlib::Unixpath] $key = lookup('k8s::node::node_key'),
+  Optional[Stdlib::Unixpath] $ca_cert = $k8s::node::ca_cert,
+  Optional[Stdlib::Unixpath] $cert = $k8s::node::node_cert,
+  Optional[Stdlib::Unixpath] $key = $k8s::node::node_key,
 
   # For token and bootstrap auth
-  Optional[Stdlib::Unixpath] $token = lookup('k8s::node::node_token'),
+  Optional[Stdlib::Unixpath] $token = $k8s::node::node_token,
 ) {
-  include k8s::node
+  assert_private()
 
   k8s::binary { 'kubelet':
     ensure    => $ensure,
   }
 
-  $_kubeconfig = '/srv/kubernetes/kubelet.kubeconf'
   if $auth == 'bootstrap' {
     $_bootstrap_kubeconfig = '/srv/kubernetes/bootstrap-kubelet.kubeconf'
   } else {
@@ -41,14 +44,14 @@ class k8s::node::kubelet(
       }
     }
     'token': {
-      kubeconfig { $_kubeconfig:
+      kubeconfig { $kubeconfig:
         ensure => $ensure,
         server => $master,
         token  => $token,
       }
     }
     'cert': {
-      kubeconfig { $_kubeconfig:
+      kubeconfig { $kubeconfig:
         ensure      => $ensure,
         server      => $master,
 
@@ -57,7 +60,8 @@ class k8s::node::kubelet(
         client_key  => $key,
       }
     }
-    default: { }
+    default: {
+    }
   }
 
   $config_hash = {
@@ -68,9 +72,43 @@ class k8s::node::kubelet(
     'tlsCertFile'        => $cert,
     'tlsPrivateKeyFile'  => $key,
     'rotateCertificates' => $auth == 'bootstrap',
-    'serverTLSBootstrap' => $auth == 'bootstrap',
+    'serverTLSBootstrap' => $rotate_server_tls,
     'clusterDomain'      => $k8s::cluster_domain,
     'cgroupDriver'       => 'systemd',
+  }
+
+  file { '/etc/modules-load.d/k8s':
+    ensure  => $ensure,
+    content => @(EOF),
+    overlay
+    br_netfilter
+    |- EOF
+  }
+  exec {
+    default:
+      path        => ['/bin', '/sbin', '/usr/bin'],
+      refreshonly => true,
+      subscribe   => File['/etc/modules-load.d/k8s'];
+
+    'modprobe overlay':
+      unless => 'lsmod | grep overlay';
+
+    'modprobe br_netfilter':
+      unless => 'lsmod | grep overlay';
+  }
+
+  file { '/etc/sysctl.d/99-k8s.conf':
+    ensure  => $ensure,
+    content => @(EOF),
+    net.bridge.bridge-nf-call-iptables  = 1
+    net.bridge.bridge-nf-call-ip6tables = 1
+    net.ipv4.ip_forward                 = 1
+    |- EOF
+  }
+  exec { 'sysctl --system':
+    path        => ['/sbin', '/usr/sbin'],
+    refreshonly => true,
+    subscribe   => File['/etc/sysctl.d/99-k8s.conf'],
   }
 
   file { '/etc/kubernetes/kubelet.conf':
@@ -80,11 +118,18 @@ class k8s::node::kubelet(
     group   => 'kube',
   }
 
+  if $runtime == 'crio' {
+    $_runtime_endpoint = 'unix:///var/run/crio/crio.sock'
+  } else {
+    $_runtime_endpoint = undef
+  }
+
   $_args = k8s::format_arguments({
-      config               => '/etc/kubernetes/kubelet.conf',
-      kubeconfig           => $_kubeconfig,
-      bootstrap_kubeconfig => $_bootstrap_kubeconfig,
-      cert_dir             => $cert_path,
+      config                     => '/etc/kubernetes/kubelet.conf',
+      kubeconfig                 => $kubeconfig,
+      bootstrap_kubeconfig       => $_bootstrap_kubeconfig,
+      cert_dir                   => $cert_path,
+      container_runtime_endpoint => $_runtime_endpoint,
   } + $arguments)
 
   file { '/etc/sysconfig/kubelet':
@@ -97,7 +142,6 @@ class k8s::node::kubelet(
     notify  => Service['kubelet'],
   }
 
-  $runtime = 'crio.service'
   systemd::unit_file { 'kubelet.service':
     ensure  => $ensure,
     content => epp('k8s/service.epp', {
@@ -106,7 +150,7 @@ class k8s::node::kubelet(
       desc  => 'Kubernetes Kubelet Server',
       doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
       needs => [
-        $runtime
+        $runtime_service
       ],
 
       dir   => '/var/lib/kubelet',

@@ -3,6 +3,12 @@
 require 'spec_helper'
 
 describe 'k8s::node' do
+  let(:pre_condition) do
+    <<~PUPPET
+    include ::k8s
+    PUPPET
+  end
+
   on_supported_os.each do |os, os_facts|
     context "on #{os}" do
       let(:facts) { os_facts }

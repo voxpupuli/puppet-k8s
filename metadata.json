@@ -30,23 +30,17 @@
       ]
     },
     {
-      "operatingsystem": "RedHat",
-      "operatingsystemrelease": [
-        "7",
-        "8"
-      ]
-    },
-    {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "9",
         "10"
       ]
     },
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "18.04"
+        "18.04",
+        "20.04",
+        "20.10"
       ]
     }
   ],
@@ -57,6 +51,6 @@
     }
   ],
   "template-url": "https://github.com/puppetlabs/pdk-templates#2.0.0",
-  "pdk-version": "2.0.0",
+  "pdk-version": "2.1.0",
   "template-ref": "tags/2.0.0-0-ge838f1d"
 }

@@ -24,7 +24,7 @@ define k8s::binary(
   }
 
   # Always install kubelet and kubectl as binaries
-  if $packaging == 'native' or $name in [ 'kubelet', 'kubectl' ] {
+  if $packaging == 'native' or ($packaging == 'container' and $name in [ 'kubelet', 'kubectl' ]) {
     $_packaging = $k8s::native_packaging
   } else {
     $_packaging = $packaging

@@ -45,7 +45,7 @@ class k8s::server(
   if $manage_resources {
     include k8s::server::resources
   }
-  
+
   if $ensure == 'present' and $manage_signing {
     # Needs the PuppetDB terminus installed
     $pql_query = @("PQL")

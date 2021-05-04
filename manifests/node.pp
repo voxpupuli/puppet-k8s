@@ -5,6 +5,11 @@ class k8s::node(
   Enum['cert', 'token', 'bootstrap'] $node_auth = $k8s::node_auth,
   Enum['cert', 'token', 'incluster'] $proxy_auth = 'cert',
 
+  Boolean $manage_kubelet = true,
+  Boolean $manage_proxy = true,
+
+  Stdlib::Unixpath $cert_path = '/var/lib/kubelet/pki',
+
   # For cert auth
   Optional[Stdlib::Unixpath] $ca_cert = undef,
   Optional[Stdlib::Unixpath] $node_cert = undef,
@@ -17,8 +22,10 @@ class k8s::node(
   Optional[Stdlib::Unixpath] $node_token = undef,
   Optional[Stdlib::Unixpath] $proxy_token = undef,
 ) {
-  include k8s
-
-  include k8s::node::kubelet
-  include k8s::node::kube_proxy
+  if $manage_kubelet {
+    include k8s::node::kubelet
+  }
+  if $manage_proxy {
+    include k8s::node::kube_proxy
+  }
 }

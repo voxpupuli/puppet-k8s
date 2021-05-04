@@ -23,14 +23,12 @@ describe 'k8s::server::scheduler' do
       let(:facts) { os_facts }
 
       it { is_expected.to compile }
-
       it { is_expected.to contain_kubeconfig('/srv/kubernetes/k8s-scheduler.kubeconf') }
-
       it { is_expected.not_to contain_file('/etc/kubernetes/manifests/k8s-scheduler.yaml') }
       it do
         is_expected.to contain_file('/etc/sysconfig/k8s-scheduler')
           .with_content(
-            <<~SYSCONF
+            <<~SYSCONF,
             ### NB: File managed by Puppet.
             ###     Any changes will be overwritten.
             #
@@ -45,7 +43,7 @@ describe 'k8s::server::scheduler' do
       it do
         is_expected.to contain_service('k8s-scheduler').with(
           ensure: 'running',
-          enable: true
+          enable: true,
         )
       end
     end

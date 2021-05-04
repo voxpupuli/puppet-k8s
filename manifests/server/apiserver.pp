@@ -186,7 +186,7 @@ class k8s::server::apiserver(
                     },
                   },
                   {
-                    name   => 'ssl-certs',
+                    name     => 'ssl-certs',
                     hostPath => {
                       path => $cert_path,
                     },

@@ -29,7 +29,7 @@ describe Puppet::Type.type(:kubectl_apply) do
     'metrics-server-7cb45bbfd5-gz4t6',
   ].each do |name|
     it 'accepts valid names' do
-      expect { resource[:name] = name }.not_to raise_error
+      expect { resource[:resource_name] = name }.not_to raise_error
     end
   end
 
@@ -40,7 +40,7 @@ describe Puppet::Type.type(:kubectl_apply) do
     'fqdn.like/name',
   ].each do |name|
     it 'rejects invalid names' do
-      expect { resource[:name] = name }.to raise_error(Puppet::Error, %r{Name must be valid})
+      expect { resource[:resource_name] = name }.to raise_error(Puppet::ResourceError, %r{Resource name must be valid})
     end
   end
 

@@ -16,8 +16,8 @@ describe 'k8s::server::tls::cert' do
       addn_names: [
         '172.31.0.0',
         'example.com',
-        '2001::19'
-      ]
+        '2001::19',
+      ],
     }
   end
 
@@ -29,7 +29,7 @@ describe 'k8s::server::tls::cert' do
 
       it do
         is_expected.to contain_file('/tmp/certs/namevar.cnf').with(
-          content: <<~CNF
+          content: <<~CNF,
           [req]
           distinguished_name = req_distinguished_name
           req_extensions     = v3_req
@@ -55,21 +55,22 @@ describe 'k8s::server::tls::cert' do
         is_expected.to contain_exec('Create K8s namevar key').with(
           path: ['/usr/bin'],
           command: "openssl genrsa -out '/tmp/certs/namevar.key' 2048",
-          creates: '/tmp/certs/namevar.key'
+          creates: '/tmp/certs/namevar.key',
         )
       end
       it do
         is_expected.to contain_exec('Create K8s namevar CSR').with(
           path: ['/usr/bin'],
           command: %r{openssl req -new -key '/tmp/certs/namevar\.key' \s+ -out '/tmp/certs/namevar\.key' -config '/tmp/certs/namevar\.cnf'},
-          creates: '/tmp/certs/namevar.key'
+          creates: '/tmp/certs/namevar.key',
         )
       end
       it do
         is_expected.to contain_exec('Sign K8s namevar cert').with(
           path: ['/usr/bin'],
-          command: %r{openssl x509 -req -in '/tmp/certs/namevar\.key' \s+ -CA '/tmp/ca.pem' -CAkey '/tmp/ca\.key' -CAcreateserial \s+ -out '/tmp/certs/namevar\.pem' -days '10000' \s+ -extensions v3_req -extfile '/tmp/certs/namevar\.cnf'},
-          creates: '/tmp/certs/namevar.pem'
+          command: %r{openssl x509 -req -in '/tmp/certs/namevar\.key' \s+ -CA '/tmp/ca.pem' -CAkey '/tmp/ca\.key' -CAcreateserial \s+ -out \
+'/tmp/certs/namevar\.pem' -days '10000' \s+ -extensions v3_req -extfile '/tmp/certs/namevar\.cnf'},
+          creates: '/tmp/certs/namevar.pem',
         )
       end
 
@@ -79,7 +80,7 @@ describe 'k8s::server::tls::cert' do
           owner: 'root',
           group: 'root',
           mode: '0600',
-          replace: false
+          replace: false,
         )
       end
       it do
@@ -88,7 +89,7 @@ describe 'k8s::server::tls::cert' do
           owner: 'root',
           group: 'root',
           mode: '0640',
-          replace: false
+          replace: false,
         )
       end
     end

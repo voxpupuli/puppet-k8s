@@ -40,7 +40,7 @@ describe 'k8s::server::controller_manager' do
       it do
         is_expected.to contain_file('/etc/sysconfig/k8s-controller-manager')
           .with_content(
-            <<~SYSCONF
+            <<~SYSCONF,
             ### NB: File managed by Puppet.
             ###     Any changes will be overwritten.
             #
@@ -55,7 +55,7 @@ describe 'k8s::server::controller_manager' do
       it do
         is_expected.to contain_service('k8s-controller-manager').with(
           ensure: 'running',
-          enable: true
+          enable: true,
         )
       end
     end

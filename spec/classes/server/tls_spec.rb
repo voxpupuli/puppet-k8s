@@ -28,14 +28,14 @@ describe 'k8s::server::tls' do
 
       it { is_expected.to compile }
 
-      %w[kube-ca aggregator-ca].each do |ca|
+      [ 'kube-ca', 'aggregator-ca' ].each do |ca|
         it { is_expected.to contain_k8s__server__tls__ca(ca) }
       end
 
-      %w[
-        kube-apiserver front-proxy-client
-        apiserver-kubelet-client kube-controller-manager
-        kube-scheduler kube-proxy node admin
+      [
+        'kube-apiserver', 'front-proxy-client',
+        'apiserver-kubelet-client', 'kube-controller-manager',
+        'kube-scheduler', 'kube-proxy', 'node', 'admin'
       ].each do |cert|
         it { is_expected.to contain_k8s__server__tls__cert(cert) }
       end

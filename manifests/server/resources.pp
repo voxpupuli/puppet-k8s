@@ -102,9 +102,9 @@ class k8s::server::resources(
         kubeconfig    => $kubeconfig;
 
       'coredns ServiceAccount':
-        api_version   => 'v1',
-        kind          => 'ServiceAccount',
-        content       => {};
+        api_version => 'v1',
+        kind        => 'ServiceAccount',
+        content     => {};
 
       'coredns ClusterRole':
         api_version   => 'rbac.authorization.k8s.io/v1',
@@ -158,9 +158,9 @@ class k8s::server::resources(
         };
 
       'coredns ConfigMap':
-        api_version   => 'v1',
-        kind          => 'ServiceAccount',
-        content       => {
+        api_version => 'v1',
+        kind        => 'ServiceAccount',
+        content     => {
           data => {
             'Corefile' => @("COREDNS"),
             .:53 {

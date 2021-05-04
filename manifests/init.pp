@@ -1,20 +1,22 @@
 class k8s(
   Enum['present', 'absent'] $ensure = 'present',
   Enum['container', 'native'] $packaging = 'native',
-  Enum['package', 'tarball', 'loose', 'hyperkube', 'manual'] $native_packaging = 'tarball',
-  String[1] $version,
-  String[1] $etcd_version,
+  Enum['package', 'tarball', 'loose', 'hyperkube', 'manual'] $native_packaging = 'loose',
+  String[1] $version = '1.18.16',
+  String[1] $etcd_version = '3.4.15',
 
   String[1] $container_registry = 'gcr.io/google_containers',
   String[1] $container_image = 'hyperkube',
   Optional[String] $container_image_tag = undef,
-  Enum['docker', 'crictl'] $container_manager = 'crictl',
-  String[1] $crictl_package = 'cri-tools',
+  Enum['docker', 'crio'] $container_manager = 'crio',
+  String[1] $container_runtime_service = "${container_manager}.service",
+  String[1] $crio_package = 'cri-o',
 
   Boolean $manage_etcd = true,
   Boolean $manage_image = false,
-  Boolean $manage_package = true,
-  Boolean $manage_container_manager = false,
+  Boolean $manage_repo = false,
+  Boolean $manage_packages = true,
+  Boolean $manage_container_manager = true,
 
   Boolean $purge_manifests = true,
 
@@ -40,12 +42,14 @@ class k8s(
     if $container_manager == 'docker' {
       $pkg = 'docker'
     } else {
-      $pkg = $crictl_package
+      $pkg = $crio_package
     }
 
     package { 'k8s container manager':
-      ensure  => installed,
-      package => $pkg,
+      name    => $pkg,
+    }
+    if $manage_repo {
+      Class['k8s::repo'] -> Package['k8s container manager']
     }
   }
 
@@ -101,11 +105,7 @@ class k8s(
     '/etc/kubernetes':
       purge   => true,
       recurse => true;
-    '/etc/kubernetes/certs':
-      owner   => 'kube',
-      group   => 'kube',
-      purge   => true,
-      recurse => true;
+    '/etc/kubernetes/certs': ;
     '/etc/kubernetes/manifests':
       purge   => $purge_manifests,
       recurse => true;
@@ -117,6 +117,19 @@ class k8s(
     '/var/lib/kublet':
       owner => 'kube',
       group => 'kube';
+    '/var/lib/kublet/pki':
+      owner => 'kube',
+      group => 'kube';
+  }
+
+  if $manage_repo {
+    include ::k8s::repo
+  }
+  if $manage_packages {
+    ensure_packages('containernetworking-plugins')
+    if $manage_repo {
+      Class['k8s::repo'] -> Package['containernetworking-plugins']
+    }
   }
 
   if $role == 'server' {

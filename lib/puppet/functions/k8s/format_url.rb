@@ -25,7 +25,7 @@ Puppet::Functions.create_function(:'k8s::format_url') do
     kernel_ext = 'zip'
     kernel_ext = 'tar.gz' if kernel == 'linux'
 
-    components = Hash[components.map { |k,v| [k.to_sym, v] }].merge(
+    components = Hash[components.map { |k, v| [k.to_sym, v] }].merge(
       arch: arch,
       underscore_arch_suffix: underscore_arch_suffix,
       dash_arch_suffix: dash_arch_suffix,

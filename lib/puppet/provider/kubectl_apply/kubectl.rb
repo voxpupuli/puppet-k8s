@@ -57,7 +57,7 @@ Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
   private
 
   def kubectl_get
-    @data ||= kubectl_cmd 'get', resource[:kind], resource[:resource_name]
+    @data ||= kubectl_cmd 'get', resource[:kind], resource[:resource_name], '--output', 'json'
     JSON.parse(@data)
   rescue
     {}

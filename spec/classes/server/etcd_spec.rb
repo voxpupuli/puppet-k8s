@@ -41,12 +41,12 @@ describe 'k8s::server::etcd' do
       it { is_expected.to compile }
 
       it do
-        %w[etcd-peer-ca etcd-client-ca].each do |ca|
+        [ 'etcd-peer-ca', 'etcd-client-ca' ].each do |ca|
           is_expected.to contain_k8s__server__tls__ca(ca)
         end
       end
       it do
-        %w[etcd-peer etcd-client].each do |cert|
+        [ 'etcd-peer', 'etcd-client' ].each do |cert|
           is_expected.to contain_k8s__server__tls__cert(cert)
         end
       end

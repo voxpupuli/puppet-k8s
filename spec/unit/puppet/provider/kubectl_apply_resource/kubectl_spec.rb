@@ -277,7 +277,7 @@ RSpec.describe kubectl_provider do
 
       it 'applies correctly' do
         expect(provider).to receive(:kubectl).never
-        expect(provider).to receive(:exists?).and_return(true)
+        allow(provider).to receive(:exists?).and_return(true)
         expect(provider).to receive(:create).never
         expect(provider).to receive(:destroy)
 

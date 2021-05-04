@@ -8,6 +8,18 @@ describe 'k8s' do
       let(:facts) { os_facts }
 
       it { is_expected.to compile }
+
+      [ 'node', 'server' ].each do |role|
+        context "with role #{role}" do
+          let (:params) do
+            {
+              role: role,
+            }
+          end
+
+          it { is_expected.to compile }
+        end
+      end
     end
   end
 end

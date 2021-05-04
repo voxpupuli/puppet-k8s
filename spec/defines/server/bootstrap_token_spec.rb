@@ -31,7 +31,7 @@ describe 'k8s::server::bootstrap_token' do
               'token-secret' => 'c29tZS1zZWNyZXQtdmFsdQ==', # 'some-secret-valu'
               'usage-bootstrap-authentication' => 'dHJ1ZQ==', # true
             }
-          }
+          },
         )
       end
     end

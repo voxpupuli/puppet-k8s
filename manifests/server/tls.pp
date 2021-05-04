@@ -152,9 +152,9 @@ class k8s::server::tls(
 
     file {
       default:
-        ensure  => $ensure,
-        owner   => 'kube',
-        group   => 'kube';
+        ensure => $ensure,
+        owner  => 'kube',
+        group  => 'kube';
 
       "${cert_path}/etcd-ca.pem":
         source => 'file:///var/lib/etcd/certs/client-ca.pem';

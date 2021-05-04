@@ -23,6 +23,7 @@ describe 'k8s::server::etcd::setup' do
     }
     PUPPET
   end
+
   on_supported_os.each do |os, os_facts|
     context "on #{os}" do
       let(:facts) { os_facts }
@@ -38,7 +39,7 @@ describe 'k8s::server::etcd::setup' do
       extract: true,
       extract_command: 'tar xfz %s --strip-components=1 -C /usr/local/bin/',
       cleanup: true,
-      creates: [ '/usr/local/bin/etcd', '/usr/local/bin/etcdctl' ]
+      creates: [ '/usr/local/bin/etcd', '/usr/local/bin/etcdctl' ],
     ).that_notifies('Service[etcd]')
   end
   it { is_expected.to contain_user('etcd') }
