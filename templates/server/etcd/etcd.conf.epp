@@ -35,7 +35,11 @@
 #[member]
 ETCD_NAME="<%= $etcd_name %>"
 ETCD_DATA_DIR="<%= $data_dir %>"
+<%- if $wal_dir { -%>
 ETCD_WAL_DIR="<%= $wal_dir %>"
+<%- } else { -%>
+# ETCD_WAL_DIR="" # Use default
+<%- } -%>
 ETCD_LISTEN_PEER_URLS="<%= $listen_peer_urls.join(',') %>"
 ETCD_LISTEN_CLIENT_URLS="<%= $listen_client_urls.join(',') %>"
 
