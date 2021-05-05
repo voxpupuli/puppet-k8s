@@ -136,7 +136,7 @@ class k8s::server::etcd::setup(
     # as it only matters before the cluster has been established.
     '/etc/etcd/cluster.conf':
       content => epp('k8s/server/etcd/cluster.conf.epp', {
-        initial_cluster => pick($initial_cluster, ["${etcd_name}=${listen_peer_urls[0]}"]),
+        initial_cluster => pick($initial_cluster, ["${etcd_name}=${initial_advertise_peer_urls[0]}"]),
       });
   }
 
