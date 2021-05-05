@@ -67,6 +67,7 @@ class k8s::server(
   kubeconfig { '/root/.kube/config':
     ensure      => $ensure,
     server      => "https://localhost:${api_port}",
+    require     => File['/root/.kube'],
 
     ca_cert     => $ca_cert,
     client_cert => "${cert_path}/admin.pem",

@@ -197,19 +197,21 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
   end
 
   def kubeconfig_content
+    default = {
+      'apiVersion' => 'v1',
+      'clusters' => [],
+      'contexts' => [],
+      'users' => [],
+      'current-context' => '',
+      'kind' => 'Config',
+      'preferences' => {},
+    }
+
     @kubeconfig_content ||= \
       if File.exist? resource[:path]
-        Psych.load(File.read(resource[:path]))
+        default.merge Psych.load(File.read(resource[:path]))
       else
-        {
-          'apiVersion' => 'v1',
-          'clusters' => [],
-          'contexts' => [],
-          'users' => [],
-          'current-context' => '',
-          'kind' => 'Config',
-          'preferences' => {},
-        }
+        default
       end
     @kubeconfig_hash ||= @kubeconfig_content.hash
     @kubeconfig_content

@@ -166,6 +166,11 @@ class k8s::server::tls(
         mode   => '0640',
         source => 'file:///var/lib/etcd/certs/etcd-client.key';
     }
+    if defined(Class['k8s::server::etcd::setup']) {
+      Class['k8s::server::etcd::setup'] -> File["${cert_path}/etcd-ca.pem"]
+      Class['k8s::server::etcd::setup'] -> File["${cert_path}/etcd.pem"]
+      Class['k8s::server::etcd::setup'] -> File["${cert_path}/etcd.key"]
+    }
 
     if !defined(File["${cert_path}/service-account.key"]) {
       file { "${cert_path}/service-account.key":

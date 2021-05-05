@@ -43,7 +43,8 @@ class k8s::server::etcd::setup(
       ensure          => $ensure,
       source          => $_url,
       extract         => true,
-      extract_command => 'tar xfz %s --strip-components=1 -C /usr/local/bin/',
+      extract_command => 'tar xfz %s --strip-components=1',
+      extract_path    => '/usr/local/bin',
       cleanup         => true,
       creates         => ['/usr/local/bin/etcd', '/usr/local/bin/etcdctl'],
 
