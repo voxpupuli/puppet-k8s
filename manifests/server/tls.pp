@@ -132,7 +132,7 @@ class k8s::server::tls(
         };
 
       'node':
-        extended_key_usage => ['clientAuth', 'serverAuth'],
+        extended_key_usage => ['serverAuth', 'clientAuth'],
         addn_names         => [
           fact('networking.fqdn'),
           fact('networking.ip'),
