@@ -45,12 +45,10 @@ Puppet::Type.newtype(:kubectl_apply) do
           else
             "updated #{resource[:kind]} #{resource.nice_name}"
           end
+        elsif resource[:show_diff] && provider.resource_diff
+          "created #{resource[:kind]} #{resource.nice_name} with #{provider.resource_diff.inspect}"
         else
-          if resource[:show_diff] && provider.resource_diff
-            "created #{resource[:kind]} #{resource.nice_name} with #{provider.resource_diff.inspect}"
-          else
-            "created #{resource[:kind]} #{resource.nice_name}"
-          end
+          "created #{resource[:kind]} #{resource.nice_name}"
         end
       elsif newvalue == :absent
         "removed #{resource[:kind]} #{resource.nice_name}"

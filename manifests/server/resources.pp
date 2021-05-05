@@ -293,17 +293,17 @@ class k8s::server::resources(
                       },
                     ],
                     livenessProbe   => {
-                      httpGet            => {
+                      httpGet             => {
                         path => '/health',
                         port => 8080,
                       },
-                      initialDelaySecond => 60,
-                      timeoutSeconds     => 5,
-                      successThreshold   => 1,
-                      failureThreshold   => 5,
+                      initialDelaySeconds => 60,
+                      timeoutSeconds      => 5,
+                      successThreshold    => 1,
+                      failureThreshold    => 5,
                     },
                     readinessProbe  => {
-                      httpGget => '/ready',
+                      httpGet => '/ready',
                       port     => 8181,
                     },
                     securityContext => {

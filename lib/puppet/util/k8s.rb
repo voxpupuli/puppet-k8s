@@ -15,7 +15,24 @@ module Puppet::Util
           if target_value.is_a?(Hash) && value.is_a?(Hash) && value.any? && target_value.any?
             delete_merge.call(target_value, value)
           elsif value.is_a?(Array) && target_value.is_a?(Array) && value.any? && target_value.any?
-            hash1.delete(key) if value == target_value
+            diff = value.size != target_value.size
+            target_value.each do |v|
+              break if diff
+              next if value.include? v
+
+              if v.is_a? Hash
+                diff ||= value.select { |ov| ov.is_a? Hash }.any? do |ov|
+                  v_copy = Marshal.load(Marshal.dump(v))
+                  delete_merge.call(v_copy, ov)
+
+                  v_copy.any?
+                end
+              else
+                diff = true
+              end
+            end
+
+            hash1.delete(key) unless diff
           elsif hash1.key?(key) && target_value == value
             hash1.delete(key)
           end

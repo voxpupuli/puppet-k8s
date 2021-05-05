@@ -27,6 +27,11 @@ RSpec.describe kubectl_provider do
             finalizers: [
               'puppet-example',
             ],
+            something: [
+              {
+                a: 1,
+              },
+            ],
           },
           type: 'bootstrap.kubernetes.io/token',
           data: {
@@ -76,6 +81,11 @@ RSpec.describe kubectl_provider do
             },
             finalizers: [
               'puppet-example',
+            ],
+            something: [
+              {
+                a: 1,
+              },
             ],
             creationTimestamp: '2021-03-08T15:36:30Z',
             name: 'bootstrap-token-example',
@@ -156,6 +166,12 @@ RSpec.describe kubectl_provider do
               'puppet-example',
               'kubernetes-example',
             ],
+            something: [
+              {
+                a: 1,
+                b: 2,
+              },
+            ],
             creationTimestamp: '2021-03-08T15:36:30Z',
             name: 'bootstrap-token-example',
             namespace: 'kube-system',
@@ -181,7 +197,11 @@ RSpec.describe kubectl_provider do
 
         allow(provider).to receive(:resource_diff).and_return(provider.content_diff(upstream_data))
         allow(provider).to receive(:exists_in_cluster).and_return(true)
-        expect(provider).to receive(:kubectl).with('--namespace', 'kube-system', 'patch', '-f', '/tmp/kubectl_apply', '-p', '{"metadata":{"finalizers":["puppet-example"]},"data":{"token-id":"tokenid"}}')
+        expect(provider).to receive(:kubectl).with(
+          '--namespace', 'kube-system',
+          'patch', '-f', '/tmp/kubectl_apply',
+          '-p', '{"metadata":{"finalizers":["puppet-example"]},"data":{"token-id":"tokenid"}}'
+        )
 
         provider.create
       end
@@ -218,6 +238,11 @@ RSpec.describe kubectl_provider do
             annotations: {
               'example.kubernetes.io/attribute': 'generated',
             },
+            something: [
+              {
+                a: 1,
+              },
+            ],
             creationTimestamp: '2021-03-08T15:36:30Z',
             name: 'bootstrap-token-example',
             namespace: 'kube-system',
@@ -230,14 +255,16 @@ RSpec.describe kubectl_provider do
       end
 
       it 'correctly verifies the larger upstream resource hash' do
-        expect(provider.content_diff(upstream_data)).to eq({
-          'metadata' => {
-            'annotations' => {
-              :'example.com/spec' => 'true'
+        expect(provider.content_diff(upstream_data)).to eq(
+          {
+            'metadata' => {
+              'annotations' => {
+                'example.com/spec': 'true',
+              },
+              finalizers: [ 'puppet-example' ],
             },
-            :finalizers => [ 'puppet-example' ]
-          }
-        })
+          },
+        )
       end
     end
 
