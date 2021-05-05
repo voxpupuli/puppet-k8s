@@ -12,9 +12,9 @@ class k8s::server::etcd::setup(
 
   Enum['on','off','readonly'] $proxy = 'off',
 
-  Array[Stdlib::HTTPUrl] $listen_client_urls = ['https://0.0.0.0:2379', 'https://[::]:2379'],
+  Array[Stdlib::HTTPUrl] $listen_client_urls = ['https://[::]:2379'],
   Array[Stdlib::HTTPUrl] $advertise_client_urls = ["https://${fqdn}:2379"],
-  Array[Stdlib::HTTPUrl] $listen_peer_urls = ['https://0.0.0.0:2380', 'https://[::]:2380'],
+  Array[Stdlib::HTTPUrl] $listen_peer_urls = ['https://[::]:2380'],
   Array[Stdlib::HTTPUrl] $initial_advertise_peer_urls = ["https://${fqdn}:2380"],
 
   Optional[Stdlib::Unixpath] $peer_cert_file = undef,
