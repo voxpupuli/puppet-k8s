@@ -6,7 +6,7 @@ require 'tempfile'
 Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
   commands kubectl: 'kubectl'
 
-  attr_reader :resource_diff
+  attr_reader :resource_diff, :exists_in_cluster
 
   def exists?
     data = kubectl_get
@@ -21,9 +21,9 @@ Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
   def create
     tempfile = Tempfile.new('kubectl_apply')
     tempfile.write resource_hash.to_json
-    if resource_diff
+    if resource_diff && exists_in_cluster
       kubectl_cmd 'patch', '-f', tempfile.path, '-p', resource_diff.to_json
-    else
+    elsif !exists_in_cluster
       kubectl_cmd 'create', '-f', tempfile.path
     end
   ensure
@@ -58,8 +58,10 @@ Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
 
   def kubectl_get
     @data ||= kubectl_cmd 'get', resource[:kind], resource[:resource_name], '--output', 'json'
+    @exists_in_cluster = true
     JSON.parse(@data)
   rescue
+    @exists_in_cluster = false
     {}
   end
 
