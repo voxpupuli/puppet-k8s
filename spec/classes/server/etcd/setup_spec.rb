@@ -37,7 +37,8 @@ describe 'k8s::server::etcd::setup' do
       ensure: 'present',
       source: 'https://storage.googleapis.com/etcd/v3.6.0/etcd-v3.6.0-linux-amd64.tar.gz',
       extract: true,
-      extract_command: 'tar xfz %s --strip-components=1 -C /usr/local/bin/',
+      extract_command: 'tar xfz %s --strip-components=1',
+      extract_path: '/usr/local/bin',
       cleanup: true,
       creates: [ '/usr/local/bin/etcd', '/usr/local/bin/etcdctl' ],
     ).that_notifies('Service[etcd]')
