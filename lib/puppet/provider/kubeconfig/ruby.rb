@@ -205,7 +205,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
       'clusters' => [],
       'contexts' => [],
       'users' => [],
-      'current-context' => '',
+      'current-context' => 'default',
       'kind' => 'Config',
       'preferences' => {},
     }
