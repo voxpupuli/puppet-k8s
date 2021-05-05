@@ -1,6 +1,6 @@
 class k8s::repo(
   Boolean $manage_container_manager = $k8s::manage_container_manager,
-  String[1] $crio_version = $k8s::version.split('.')[0,2].join('.'),
+  String[1] $crio_version = $k8s::version.split('\.')[0, 2].join('.'),
 ) {
   case fact('os.family') {
     'Debian': {

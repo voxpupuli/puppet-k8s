@@ -14,7 +14,7 @@ class k8s(
 
   Boolean $manage_etcd = true,
   Boolean $manage_image = false,
-  Boolean $manage_repo = false,
+  Boolean $manage_repo = true,
   Boolean $manage_packages = true,
   Boolean $manage_container_manager = true,
 
