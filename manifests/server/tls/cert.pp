@@ -21,7 +21,7 @@ define k8s::server::tls::cert(
 
   Stdlib::Unixpath $config = "${cert_path}/${title}.cnf",
   Stdlib::Unixpath $key = "${cert_path}/${title}.key",
-  Stdlib::Unixpath $csr = "${cert_path}/${title}.key",
+  Stdlib::Unixpath $csr = "${cert_path}/${title}.csr",
   Stdlib::Unixpath $cert = "${cert_path}/${title}.pem",
 
   String[1] $owner = 'root',
