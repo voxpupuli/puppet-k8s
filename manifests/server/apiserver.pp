@@ -227,7 +227,7 @@ class k8s::server::apiserver(
         doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
 
         dir   => '/srv/kubernetes',
-        bin   => 'k8s-apiserver',
+        bin   => 'kube-apiserver',
         user  => kube,
         group => kube,
       }),
@@ -241,5 +241,7 @@ class k8s::server::apiserver(
       ensure => stdlib::ensure($ensure, 'service'),
       enable => true,
     }
+
+    Service['k8s-apiserver'] -> Kubectl_apply<| |>
   }
 }
