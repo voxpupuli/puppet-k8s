@@ -161,7 +161,7 @@ class k8s::server::resources(
 
       'coredns ConfigMap':
         api_version => 'v1',
-        kind        => 'ServiceAccount',
+        kind        => 'ConfigMap',
         content     => {
           data => {
             'Corefile' => @("COREDNS"),
