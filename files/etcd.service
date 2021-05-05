@@ -13,6 +13,7 @@ ExecStart=/usr/local/bin/etcd
 Restart=always
 RestartSec=10s
 LimitNOFILE=40000
+WorkingDirectory=/var/lib/etcd
 
 [Install]
 WantedBy=multi-user.target
