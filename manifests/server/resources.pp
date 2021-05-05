@@ -38,7 +38,7 @@ class k8s::server::resources(
         kubeconfig  => $kubeconfig,
         provider    => 'kubectl',
         api_version => 'rbac.authorization.k8s.io/v1',
-        kind        => 'ClusterRole';
+        kind        => 'ClusterRoleBinding';
 
       'system-bootstrap-node-bootstrapper':
         content => {

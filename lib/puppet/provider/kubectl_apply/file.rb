@@ -7,6 +7,10 @@ Puppet::Type.type(:kubectl_apply).provide(:file) do
 
   attr_reader :resource_diff
 
+  def exists_in_cluster
+    File.exist? resource[:file]
+  end
+
   def exists?
     data = file_get
     return false unless data

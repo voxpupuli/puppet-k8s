@@ -39,8 +39,8 @@ Puppet::Type.newtype(:kubectl_apply) do
 
     def change_to_s(currentvalue, newvalue)
       if currentvalue == :absent || currentvalue.nil?
-        if provider.resource_diff
-          if resource[:show_diff]
+        if provider.exists_in_cluster
+          if resource[:show_diff] && provider.resource_diff
             "update #{resource[:kind]} #{resource.nice_name} with #{provider.resource_diff.inspect}"
           else
             "update #{resource[:kind]} #{resource.nice_name}"
