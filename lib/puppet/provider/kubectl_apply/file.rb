@@ -3,7 +3,7 @@
 require File.expand_path('../../../util/k8s', __FILE__)
 
 Puppet::Type.type(:kubectl_apply).provide(:file) do
-  notdefaultfor kernel: /.*/
+  notdefaultfor kernel: %r{.*}
 
   attr_reader :resource_diff
 
