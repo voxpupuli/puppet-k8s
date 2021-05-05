@@ -95,7 +95,6 @@ class k8s::server::apiserver(
       etcd_certfile                      => $etcd_cert,
       etcd_keyfile                       => $etcd_key,
       etcd_servers                       => $etcd_servers,
-      insecure_port                      => 0,
       kubelet_client_certificate         => $apiserver_client_cert,
       kubelet_client_key                 => $apiserver_client_key,
       secure_port                        => 6443,

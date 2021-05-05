@@ -28,7 +28,7 @@ After=network.target <%= $needs.join(' ') %>
 WorkingDirectory=<%= $dir %>
 <%- } -%>
 EnvironmentFile=-/etc/sysconfig/k8s-common
-EnvironmentFile=-/etc/sysconfig/<%= $name %>
+EnvironmentFile=/etc/sysconfig/<%= $name %>
 ExecStart=<%= $bindir %>/<%= $bin %> \
             $K8S_LOGTOSTDERR \
             $K8S_LOG_LEVEL \
