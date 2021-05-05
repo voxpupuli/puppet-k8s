@@ -29,6 +29,7 @@ prompt             = no
 basicConstraints = CA:FALSE
 keyUsage         = nonRepudiation, digitalSignature, keyEncipherment
 extendedKeyUsage = <%= $extended_key_usage.join(', ') %>
+<%- if $dns_altnames =~ Array[Any, 1] { -%>
 subjectAltName   = @alt_names
 
 [alt_names]
@@ -37,4 +38,5 @@ DNS.<%= $i + 1 %> = <%= $altname %>
 <%- } -%>
 <%- $ip_altnames.each |Integer $i, $altname| { -%>
 IP.<%= $i + 1 %> = <%= $altname %>
+<%- } -%>
 <%- } -%>
