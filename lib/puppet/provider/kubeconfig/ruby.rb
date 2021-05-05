@@ -40,18 +40,21 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
   end
 
   def find_cluster
+    kubeconfig_content['clusters'] ||= []
     cluster = kubeconfig_content['clusters'].find { |c| c['name'] == resource[:cluster] }
     kubeconfig_content['clusters'] << (cluster = {}) unless cluster
     cluster
   end
 
   def find_context
+    kubeconfig_content['contexts'] ||= []
     context = kubeconfig_content['contexts'].find { |c| c['name'] == resource[:context] }
     kubeconfig_content['contexts'] << (context = {}) unless context
     context
   end
 
   def find_credentials
+    kubeconfig_content['users'] ||= []
     user = kubeconfig_content['users'].find { |c| c['name'] == resource[:context] }
     kubeconfig_content['users'] << (user = {}) unless user
     user
