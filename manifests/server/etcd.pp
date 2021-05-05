@@ -62,6 +62,19 @@ class k8s::server::etcd(
         },
         extended_key_usage => ['serverAuth', 'clientAuth'];
 
+      'etcd-peer-client':
+        ca_key             => $client_ca_key,
+        ca_cert            => $client_ca_cert,
+        addn_names         => [
+          fact('networking.fqdn'),
+          fact('networking.ip'),
+          fact('networking.ip6'),
+        ],
+        distinguished_name => {
+          commonName => fact('networking.fqdn'),
+        },
+        extended_key_usage => ['serverAuth'];
+
       'etcd-client':
         ca_key             => $client_ca_key,
         ca_cert            => $client_ca_cert,
