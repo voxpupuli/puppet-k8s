@@ -41,15 +41,19 @@ Puppet::Type.newtype(:kubectl_apply) do
       if currentvalue == :absent || currentvalue.nil?
         if provider.exists_in_cluster
           if resource[:show_diff] && provider.resource_diff
-            "update #{resource[:kind]} #{resource.nice_name} with #{provider.resource_diff.inspect}"
+            "updated #{resource[:kind]} #{resource.nice_name} with #{provider.resource_diff.inspect}"
           else
-            "update #{resource[:kind]} #{resource.nice_name}"
+            "updated #{resource[:kind]} #{resource.nice_name}"
           end
         else
-          "create #{resource[:kind]} #{resource.nice_name}"
+          if resource[:show_diff] && provider.resource_diff
+            "created #{resource[:kind]} #{resource.nice_name} with #{provider.resource_diff.inspect}"
+          else
+            "created #{resource[:kind]} #{resource.nice_name}"
+          end
         end
       elsif newvalue == :absent
-        "remove #{resource[:kind]} #{resource.nice_name}"
+        "removed #{resource[:kind]} #{resource.nice_name}"
       else
         super
       end

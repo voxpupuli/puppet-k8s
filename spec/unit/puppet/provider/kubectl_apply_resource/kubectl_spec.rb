@@ -23,7 +23,10 @@ RSpec.describe kubectl_provider do
           metadata: {
             annotations: {
               'example.com/spec': 'true',
-            }
+            },
+            finalizers: [
+              'puppet-example',
+            ],
           },
           type: 'bootstrap.kubernetes.io/token',
           data: {
@@ -71,6 +74,9 @@ RSpec.describe kubectl_provider do
               'example.com/spec': 'true',
               'example.kubernetes.io/attribute': 'generated',
             },
+            finalizers: [
+              'puppet-example',
+            ],
             creationTimestamp: '2021-03-08T15:36:30Z',
             name: 'bootstrap-token-example',
             namespace: 'kube-system',
@@ -106,6 +112,7 @@ RSpec.describe kubectl_provider do
         file = instance_double('Tempfile')
         expect(file).to receive(:path).and_return('/tmp/kubectl_apply')
         expect(file).to receive(:write).with(provider.resource_hash.to_json)
+        expect(file).to receive(:flush)
         expect(file).to receive(:close!)
         expect(Tempfile).to receive(:new).with('kubectl_apply').and_return(file)
 
@@ -145,6 +152,10 @@ RSpec.describe kubectl_provider do
               'example.com/spec': 'true',
               'example.kubernetes.io/attribute': 'generated',
             },
+            finalizers: [
+              'puppet-example',
+              'kubernetes-example',
+            ],
             creationTimestamp: '2021-03-08T15:36:30Z',
             name: 'bootstrap-token-example',
             namespace: 'kube-system',
@@ -164,11 +175,13 @@ RSpec.describe kubectl_provider do
         file = instance_double('Tempfile')
         expect(file).to receive(:path).and_return('/tmp/kubectl_apply')
         expect(file).to receive(:write).with(provider.resource_hash.to_json)
+        expect(file).to receive(:flush)
         expect(file).to receive(:close!)
         expect(Tempfile).to receive(:new).with('kubectl_apply').and_return(file)
 
         allow(provider).to receive(:resource_diff).and_return(provider.content_diff(upstream_data))
-        expect(provider).to receive(:kubectl).with('--namespace', 'kube-system', 'patch', '-f', '/tmp/kubectl_apply', '-p', '{"data":{"token-id":"tokenid"}}')
+        allow(provider).to receive(:exists_in_cluster).and_return(true)
+        expect(provider).to receive(:kubectl).with('--namespace', 'kube-system', 'patch', '-f', '/tmp/kubectl_apply', '-p', '{"metadata":{"finalizers":["puppet-example"]},"data":{"token-id":"tokenid"}}')
 
         provider.create
       end
@@ -187,7 +200,7 @@ RSpec.describe kubectl_provider do
         logs = report.logs
 
         expect(logs.first.source).to eq('/Kubectl_apply[bootstrap-token-example]/ensure')
-        expect(logs.first.message).to eq('update Secret kube-system/bootstrap-token-example with {"data"=>{"token-id"=>"tokenid"}}')
+        expect(logs.first.message).to eq('created Secret kube-system/bootstrap-token-example with {"data"=>{"token-id"=>"tokenid"}, "metadata"=>{"finalizers"=>["puppet-example"]}}')
       end
     end
 
@@ -217,7 +230,14 @@ RSpec.describe kubectl_provider do
       end
 
       it 'correctly verifies the larger upstream resource hash' do
-        expect(provider.content_diff(upstream_data)).not_to eq({})
+        expect(provider.content_diff(upstream_data)).to eq({
+          'metadata' => {
+            'annotations' => {
+              :'example.com/spec' => 'true'
+            },
+            :finalizers => [ 'puppet-example' ]
+          }
+        })
       end
     end
 
@@ -288,7 +308,7 @@ RSpec.describe kubectl_provider do
         logs = catalog.apply.report.logs
 
         expect(logs.first.source).to eq('/Kubectl_apply[bootstrap-token-example]/ensure')
-        expect(logs.first.message).to eq('remove Secret kube-system/bootstrap-token-example')
+        expect(logs.first.message).to eq('removed Secret kube-system/bootstrap-token-example')
       end
     end
   end
