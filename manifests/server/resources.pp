@@ -36,6 +36,7 @@ class k8s::server::resources(
     kubectl_apply{
       default:
         kubeconfig  => $kubeconfig,
+        provider    => 'kubectl',
         api_version => 'rbac.authorization.k8s.io/v1',
         kind        => 'ClusterRole';
 
@@ -97,9 +98,10 @@ class k8s::server::resources(
   if $manage_coredns {
     kubectl_apply {
       default:
+        kubeconfig    => $kubeconfig,
+        provider      => 'kubectl',
         resource_name => 'coredns',
-        namespace     => 'kube-system',
-        kubeconfig    => $kubeconfig;
+        namespace     => 'kube-system';
 
       'coredns ServiceAccount':
         api_version => 'v1',
@@ -379,9 +381,10 @@ class k8s::server::resources(
   if $manage_flannel {
     kubectl_apply {
       default:
+        kubeconfig    => $kubeconfig,
+        provider      => 'kubectl',
         namespace     => 'kube-system',
-        resource_name => 'flannel',
-        kubeconfig    => $kubeconfig;
+        resource_name => 'flannel';
 
       'flannel ClusterRole':
         api_version => 'rbac.authorization.k8s.io/v1',
@@ -625,6 +628,7 @@ class k8s::server::resources(
   kubectl_apply {
     default:
       kubeconfig  => $kubeconfig,
+      provider    => 'kubectl',
       api_version => 'rbac.authorization.k8s.io/v1',
       kind        => 'ClusterRoleBinding',
       update      => false;
@@ -684,6 +688,7 @@ class k8s::server::resources(
   kubectl_apply {
     default:
       kubeconfig  => $kubeconfig,
+      provider    => 'kubectl',
       api_version => 'v1',
       namespace   => 'kube-system',
       kind        => 'ServiceAccount';
@@ -698,6 +703,7 @@ class k8s::server::resources(
   kubectl_apply {
     default:
       kubeconfig  => $kubeconfig,
+      provider    => 'kubectl',
       api_version => 'v1',
       kind        => 'ConfigMap',
       namespace   => 'kube-system',

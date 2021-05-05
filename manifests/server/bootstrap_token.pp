@@ -30,6 +30,7 @@ define k8s::server::bootstrap_token(
 
   kubectl_apply { "bootstrap-token-${id}":
     ensure      => $ensure,
+    provider    => 'kubectl',
     kubeconfig  => $kubeconfig,
     namespace   => 'kube-system',
 
