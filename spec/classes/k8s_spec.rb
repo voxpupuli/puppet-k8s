@@ -11,7 +11,7 @@ describe 'k8s' do
 
       [ 'node', 'server' ].each do |role|
         context "with role #{role}" do
-          let (:params) do
+          let(:params) do
             {
               role: role,
             }
