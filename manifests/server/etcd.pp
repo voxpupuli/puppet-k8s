@@ -68,35 +68,11 @@ class k8s::server::etcd(
 
       'etcd-peer-client':
         ca_key             => $client_ca_key,
-        ca_cert            => $client_ca_cert,
-        addn_names         => [
-          fact('networking.hostname'),
-          fact('networking.fqdn'),
-          fact('networking.ip'),
-          fact('networking.ip6'),
-          'localhost',
-          '127.0.0.1',
-          '::1',
-        ],
-        distinguished_name => {
-          commonName => fact('networking.fqdn'),
-        };
+        ca_cert            => $client_ca_cert;
 
       'etcd-client':
         ca_key             => $client_ca_key,
-        ca_cert            => $client_ca_cert,
-        addn_names         => [
-          fact('networking.hostname'),
-          fact('networking.fqdn'),
-          fact('networking.ip'),
-          fact('networking.ip6'),
-          'localhost',
-          '127.0.0.1',
-          '::1',
-        ],
-        distinguished_name => {
-          commonName => fact('networking.fqdn'),
-        };
+        ca_cert            => $client_ca_cert;
     }
   }
 
