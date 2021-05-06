@@ -4,7 +4,7 @@ class k8s::server::resources(
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $cluster_cidr = $k8s::server::cluster_cidr,
   Stdlib::IP::Address::Nosubnet $dns_service_address = $k8s::server::dns_service_address,
   String[1] $cluster_domain = $k8s::server::cluster_domain,
-  String[1] $direct_master = $k8s::server::direct_master,
+  String[1] $master = $k8s::server::master,
 
   Boolean $manage_bootstrap = true,
   Boolean $manage_coredns = true,
@@ -726,7 +726,7 @@ class k8s::server::resources(
                 {
                   name    => 'local',
                   cluster => {
-                    server                  => $direct_master,
+                    server                  => $master,
                     'certificate-authority' => '/var/run/secrets/kubernetes.io/serviceaccount/ca.crt',
                   },
                 }
