@@ -45,6 +45,7 @@ class k8s::node::kubelet(
         token           => $token,
         skip_tls_verify => true,
       }
+      $_authentication_hash = {}
     }
     'token': {
       kubeconfig { $kubeconfig:
@@ -55,6 +56,7 @@ class k8s::node::kubelet(
         current_context => 'default',
         token           => $token,
       }
+      $_authentication_hash = {}
     }
     'cert': {
       kubeconfig { $kubeconfig:
@@ -67,6 +69,13 @@ class k8s::node::kubelet(
         ca_cert         => $ca_cert,
         client_cert     => $cert,
         client_key      => $key,
+      }
+      $_authentication_hash = {
+        'authentication'     => {
+          'x509' =>  {
+            'clientCAFile' => $ca_cert,
+          },
+        },
       }
     }
     default: {
@@ -84,7 +93,7 @@ class k8s::node::kubelet(
     'serverTLSBootstrap' => $rotate_server_tls,
     'clusterDomain'      => $k8s::cluster_domain,
     'cgroupDriver'       => 'systemd',
-  }
+  } + $_authentication_hash
 
   file { '/etc/modules-load.d/k8s':
     ensure  => $ensure,
