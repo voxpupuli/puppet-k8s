@@ -242,8 +242,10 @@ class k8s::server::apiserver(
     }
 
     Service['k8s-apiserver'] -> Kubectl_apply<| |>
-    if defined(K8s::Server::Tls::Cert['kube-apiserver']) {
-      K8s::Server::Tls::Cert['kube-apiserver'] ~> Service['k8s-apiserver']
+    [ 'kube-apiserver', 'front-proxy-client', 'apiserver-kubelet-client' ].each |$cert| {
+      if defined(K8s::Server::Tls::Cert[$cert]) {
+        K8s::Server::Tls::Cert[$cert] ~> Service['k8s-apiserver']
+      }
     }
   }
 }
