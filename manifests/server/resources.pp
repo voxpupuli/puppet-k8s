@@ -10,7 +10,7 @@ class k8s::server::resources(
   Boolean $manage_coredns = true,
   Boolean $manage_flannel = true,
 
-  String[1] $coredns_image = 'k8s.gcr.io/coredns',
+  String[1] $coredns_image = 'coredns/coredns',
   String[1] $coredns_tag = '1.8.3',
   String[1] $flannel_image = 'quay.io/coreos/flannel',
   String[1] $flannel_tag = 'v0.13.0',
