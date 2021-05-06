@@ -34,7 +34,7 @@ class k8s::server::resources(
       },
     }
 
-    if $facts['k8s-ca'] {
+    if $facts['k8s_ca'] {
       kubectl_apply { 'cluster-info':
         kubeconfig  => $kubeconfig,
         provider    => 'kubectl',
@@ -51,7 +51,7 @@ class k8s::server::resources(
                     name    => 'default',
                     cluster => {
                       server                       => $master,
-                      'certificate-authority-data' => $facts['k8s-ca'],
+                      'certificate-authority-data' => $facts['k8s_ca'],
                     },
                   }
                 ],
