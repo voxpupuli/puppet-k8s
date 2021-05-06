@@ -37,6 +37,17 @@ class k8s::node::kubelet(
 
   case $auth {
     'bootstrap': {
+      if !defined(K8s::Binary['kubectl']) {
+        k8s::binary { 'kubectl':
+          ensure => $ensure,
+        }
+      }
+      exec { 'Retrieve K8s bootstrap kubeconfig':
+        path    => ['/usr/local/bin','/usr/bin','/bin'],
+        command => 'kubectl --namespace=kube-system get cm cluster-info -o jsonpath={.data.}',
+        creates => $_bootstrap_kubeconfig,
+      }
+
       kubeconfig { $_bootstrap_kubeconfig:
         ensure          => $ensure,
         owner           => 'kube',
@@ -44,7 +55,6 @@ class k8s::node::kubelet(
         server          => $master,
         current_context => 'default',
         token           => $token,
-        skip_tls_verify => true,
       }
       $_authentication_hash = {}
     }

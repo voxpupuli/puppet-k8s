@@ -33,6 +33,11 @@ class k8s::server::controller_manager(
   # use_service_account_credentials => true,
   $_args = k8s::format_arguments({
       allocate_node_cidrs              => true,
+      controllers                      => [
+        '*',
+        'bootstrapsigner',
+        'tokencleaner',
+      ],
       cluster_cidr                     => $cluster_cidr,
       service_cluster_ip_range         => $service_cluster_cidr,
       cluster_signing_cert_file        => $ca_cert,

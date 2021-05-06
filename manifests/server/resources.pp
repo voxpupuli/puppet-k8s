@@ -3,6 +3,7 @@ class k8s::server::resources(
 
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $cluster_cidr = $k8s::server::cluster_cidr,
   Stdlib::IP::Address::Nosubnet $dns_service_address = $k8s::server::dns_service_address,
+  Stdlib::Unixpath $ca_cert = $k8s::server::tls::ca_cert,
   String[1] $cluster_domain = $k8s::server::cluster_domain,
   String[1] $master = $k8s::server::master,
 
@@ -33,13 +34,65 @@ class k8s::server::resources(
       },
     }
 
-    kubectl_apply{
+    kubectl_apply {
+      default:
+        kubeconfig  => $kubeconfig,
+        provider    => 'kubectl',
+        api_version => 'v1',
+        kind        => 'ConfigMap',
+        namespace   => 'kube-system';
+
+      'cluster-info':
+        content => {
+          data => {
+            kubeconfig => to_yaml({
+                apiVersion        => 'v1',
+                kind              => 'Config',
+                clusters          => [
+                  {
+                    name    => '',
+                    cluster => {
+                      server                       => $master,
+                      'certificate-authority-data' => binary_file($ca_cert),
+                    },
+                  }
+                ],
+                users             => [],
+                contexts          => [],
+                preferences       => {},
+                'current-context' => '',
+            }),
+          },
+        };
+    }
+
+    kubectl_apply {
       default:
         kubeconfig  => $kubeconfig,
         provider    => 'kubectl',
         api_version => 'rbac.authorization.k8s.io/v1',
         kind        => 'ClusterRole',
         update      => false;
+
+      'puppet:cluster-info:reader':
+        kind      => 'Role',
+        namespace => 'kube-system',
+        content   => {
+          rules => [
+            {
+              apiGroups     => [ '' ],
+              resources     => [
+                'configmaps',
+              ],
+              resourceNames => [
+                'cluster-info',
+              ],
+              verbs         => [
+                'get',
+              ],
+            },
+          ],
+        };
 
       'system:certificates.k8s.io:certificatesigningrequests:nodeclient':
         content => {
@@ -114,6 +167,29 @@ class k8s::server::resources(
         provider    => 'kubectl',
         api_version => 'rbac.authorization.k8s.io/v1',
         kind        => 'ClusterRoleBinding';
+
+      'puppet:cluster-info:reader':
+        kind      => 'RoleBinding',
+        namespace => 'kube-system',
+        content   => {
+          roleRef  => {
+            apiGroup => 'rbac.authorization.k8s.io',
+            kind     => 'Role',
+            name     => 'puppet:cluster-info:reader',
+          },
+          subjects => [
+            {
+              apiGroup => 'rbac.authorization.k8s.io',
+              kind     => 'Group',
+              name     => 'system:authenticated',
+            },
+            {
+              apiGroup => 'rbac.authorization.k8s.io',
+              kind     => 'Group',
+              name     => 'system:unauthenticated',
+            },
+          ],
+        };
 
       'system-bootstrap-node-bootstrapper':
         content => {
