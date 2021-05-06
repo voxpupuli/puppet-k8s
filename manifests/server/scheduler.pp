@@ -42,6 +42,8 @@ class k8s::server::scheduler(
   } else {
     kubeconfig { $_kubeconfig:
       ensure      => $ensure,
+      owner       => 'kube',
+      group       => 'kube',
       server      => $master,
 
       ca_cert     => $ca_cert,

@@ -38,6 +38,8 @@ class k8s::node::kubelet(
     'bootstrap': {
       kubeconfig { $_bootstrap_kubeconfig:
         ensure          => $ensure,
+        owner           => 'kube',
+        group           => 'kube',
         server          => $master,
         token           => $token,
         skip_tls_verify => true,
@@ -46,6 +48,8 @@ class k8s::node::kubelet(
     'token': {
       kubeconfig { $kubeconfig:
         ensure => $ensure,
+        owner  => 'kube',
+        group  => 'kube',
         server => $master,
         token  => $token,
       }
@@ -53,6 +57,8 @@ class k8s::node::kubelet(
     'cert': {
       kubeconfig { $kubeconfig:
         ensure      => $ensure,
+        owner       => 'kube',
+        group       => 'kube',
         server      => $master,
 
         ca_cert     => $ca_cert,

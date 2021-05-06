@@ -28,6 +28,8 @@ class k8s::node::kube_proxy(
     'token': {
       kubeconfig { $kubeconfig:
         ensure => $ensure,
+        owner  => 'kube',
+        group  => 'kube',
         server => $master,
         token  => $token,
       }
@@ -36,6 +38,8 @@ class k8s::node::kube_proxy(
     'cert': {
       kubeconfig { $kubeconfig:
         ensure      => $ensure,
+        owner       => 'kube',
+        group       => 'kube',
         server      => $master,
 
         ca_cert     => $ca_cert,
