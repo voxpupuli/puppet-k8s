@@ -251,21 +251,10 @@ class k8s::server::apiserver(
   }
 
   if $manage_firewall {
-    firewalld_custom_service { 'k8s-apiserver':
-      ensure      => $ensure,
-      short       => 'k8s-apiserver',
-      description => 'Kubernetes apiserver',
-      ports       => [
-        {
-          port     => '6443',
-          protocol => 'tcp',
-        }
-      ],
-    }
     firewalld_service { 'Allow k8s apiserver access':
       ensure  => $ensure,
       zone    => 'public',
-      service => 'k8s-apiserver',
+      service => 'kube-apiserver',
     }
   }
 }

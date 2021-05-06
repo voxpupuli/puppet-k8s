@@ -140,37 +140,13 @@ class k8s::server::etcd(
   }
 
   if $manage_firewall {
-    firewalld_custom_service {
-      default:
-        ensure => $ensure;
-
-      'etcd-peer':
-        short       => 'etcd-peer',
-        description => 'Etcd peer connection',
-        ports       => [
-          {
-            port     => '2380',
-            protocol => 'tcp',
-          }
-        ];
-
-      'etcd-client':
-        short       => 'etcd-client',
-        description => 'Etcd client connection',
-        ports       => [
-          {
-            port     => '2379',
-            protocol => 'tcp',
-          }
-        ];
-    }
     firewalld_service {
       default:
         ensure => $ensure,
         zone   => 'public';
 
-      'Allow etcd peer access':
-        service => 'etcd-peer';
+      'Allow etcd server access':
+        service => 'etcd-server';
 
       'Allow etcd client access':
         service => 'etcd-client';
