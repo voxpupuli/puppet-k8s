@@ -62,7 +62,6 @@ describe 'k8s::server::tls::cert' do
         is_expected.to contain_exec('Create K8s namevar CSR').with(
           path: ['/usr/bin'],
           command: %r{openssl req -new -key '/tmp/certs/namevar\.key' \s+ -out '/tmp/certs/namevar\.csr' -config '/tmp/certs/namevar\.cnf'},
-          creates: '/tmp/certs/namevar.csr',
         )
       end
       it do
@@ -70,7 +69,6 @@ describe 'k8s::server::tls::cert' do
           path: ['/usr/bin'],
           command: %r{openssl x509 -req -in '/tmp/certs/namevar\.csr' \s+ -CA '/tmp/ca.pem' -CAkey '/tmp/ca\.key' -CAcreateserial \s+ -out \
 '/tmp/certs/namevar\.pem' -days '10000' \s+ -extensions v3_req -extfile '/tmp/certs/namevar\.cnf'},
-          creates: '/tmp/certs/namevar.pem',
         )
       end
 

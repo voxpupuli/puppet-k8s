@@ -10,6 +10,7 @@ class k8s::node::kubelet(
 
   Enum['cert', 'token', 'bootstrap'] $auth = $k8s::node::node_auth,
   Boolean $rotate_server_tls = $auth == 'bootstrap',
+  Boolean $manage_firewall = $k8s::node::manage_firewall,
 
   Stdlib::Unixpath $cert_path = $k8s::node::cert_path,
   Stdlib::Unixpath $kubeconfig = '/srv/kubernetes/kubelet.kubeconf',
@@ -192,7 +193,7 @@ class k8s::node::kubelet(
       ensure      => $ensure,
       short       => 'kubelet',
       description => 'Kubernetes kubelet daemon',
-      port        => [
+      ports       => [
         {
           port     => '10250',
           protocol => 'tcp',

@@ -17,7 +17,8 @@ describe 'k8s::server::etcd' do
         {
           certname => 'node.example.com',
           parameters => {
-            initial_advertise_peer_urls => 'https://node.example.com:2380'
+            etcd_name => 'node',
+            initial_advertise_peer_urls => ['https://node.example.com:2380'],
           }
         }
       ]

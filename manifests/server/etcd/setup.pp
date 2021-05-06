@@ -102,7 +102,7 @@ class k8s::server::etcd::setup(
     $_peer_trusted_ca_file = $peer_trusted_ca_file
     $_peer_client_cert_auth = $peer_client_cert_auth
   }
-  
+
   $_initial_cluster = [
     "${etcd_name}=${initial_advertise_peer_urls[0]}"
   ] + $initial_cluster

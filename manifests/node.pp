@@ -7,6 +7,7 @@ class k8s::node(
 
   Boolean $manage_kubelet = true,
   Boolean $manage_proxy = true,
+  Boolean $manage_firewall = $k8s::manage_firewall,
 
   Stdlib::Unixpath $cert_path = '/var/lib/kubelet/pki',
 

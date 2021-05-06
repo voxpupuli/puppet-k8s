@@ -255,7 +255,7 @@ class k8s::server::apiserver(
       ensure      => $ensure,
       short       => 'k8s-apiserver',
       description => 'Kubernetes apiserver',
-      port        => [
+      ports       => [
         {
           port     => '6443',
           protocol => 'tcp',

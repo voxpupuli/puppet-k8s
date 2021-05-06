@@ -147,7 +147,7 @@ class k8s::server::etcd(
       'etcd-peer':
         short       => 'etcd-peer',
         description => 'Etcd peer connection',
-        port        => [
+        ports       => [
           {
             port     => '2380',
             protocol => 'tcp',
@@ -157,7 +157,7 @@ class k8s::server::etcd(
       'etcd-client':
         short       => 'etcd-client',
         description => 'Etcd client connection',
-        port        => [
+        ports       => [
           {
             port     => '2379',
             protocol => 'tcp',
