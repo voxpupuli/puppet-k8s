@@ -3,8 +3,8 @@ define k8s::server::tls::k8s_sign(
 ) {
   exec { "Sign ${name} cert":
     path    => ['/usr/local/bin','/usr/bin','/bin'],
-    command => "kubectl --kubeconfig='${kubeconfig}' certificate approve ${name}",
-    unless  => "kubectl --kubeconfig='${kubeconfig}' get csr ${name} | grep Approved",
-    onlyif  => "kubectl --kubeconfig='${kubeconfig}' get csr ${name}",
+    command => "kubectl --kubeconfig='${kubeconfig}' get csr | grep 'system:node:${name}' | grep Pending | awk '{print \$1}' | xargs -rn1 kubectl --kubeconfig='${kubeconfig}' certificate approve",
+    unless  => "kubectl --kubeconfig='${kubeconfig}' get csr | grep 'system:node:${name}' | grep Approved",
+    onlyif  => "kubectl --kubeconfig='${kubeconfig}' get csr | grep 'system:node:${name}' | grep Pending",
   }
 }
