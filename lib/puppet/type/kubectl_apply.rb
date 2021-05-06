@@ -121,6 +121,11 @@ Puppet::Type.newtype(:kubectl_apply) do
     defaultto(:true)
   end
 
+  newparam(:force, boolean: true, parent: Puppet::Parameter::Boolean) do
+    desc 'Should updates be done by removal and recreation'
+    defaultto(:false)
+  end
+
   newparam(:show_diff, boolean: true, parent: Puppet::Parameter::Boolean) do
     desc 'Whether to display the difference when the resource changes'
     defaultto(:true)
