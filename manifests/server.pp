@@ -17,7 +17,7 @@ class k8s::server(
   Boolean $manage_etcd = $k8s::manage_etcd,
   Boolean $manage_firewall = $k8s::manage_firewall,
   Boolean $manage_certs = true,
-  Boolean $manage_signing = false,
+  Boolean $manage_signing = $k8s::puppetdb_discovery,
   Boolean $manage_components = true,
   Boolean $manage_resources = true,
   Boolean $node_on_server = true,

@@ -40,6 +40,10 @@ class k8s::server::controller_manager(
       leader_elect                     => true,
       root_ca_file                     => $ca_cert,
       service_account_private_key_file => "${cert_path}/service-account.key",
+      feature_gates                    => {
+        'RotateKubeletClientCertificate' => true,
+        'RotateKubeletServerCertificate' => true,
+      },
   } + $_addn_args + $arguments)
 
   if $k8s::packaging == 'container' {

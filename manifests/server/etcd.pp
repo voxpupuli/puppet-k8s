@@ -3,12 +3,12 @@ class k8s::server::etcd(
 
   Boolean $manage_setup = true,
   Boolean $manage_firewall = $k8s::server::manage_firewall,
-  Boolean $manage_members = false,
+  Boolean $manage_members = $k8s::puppetdb_discovery,
   String[1] $cluster_name = 'default',
 
   Boolean $self_signed_tls = false,
   Boolean $manage_certs = $k8s::server::manage_certs,
-  Boolean $generate_ca = false,
+  Boolean $generate_ca = $k8s::server::generate_ca,
   Stdlib::Unixpath $cert_path = '/var/lib/etcd/certs',
   Stdlib::Unixpath $peer_ca_key = "${cert_path}/peer-ca.key",
   Stdlib::Unixpath $peer_ca_cert = "${cert_path}/peer-ca.pem",

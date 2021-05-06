@@ -38,6 +38,81 @@ class k8s::server::resources(
         kubeconfig  => $kubeconfig,
         provider    => 'kubectl',
         api_version => 'rbac.authorization.k8s.io/v1',
+        kind        => 'ClusterRole',
+        update      => false;
+
+      'system:certificates.k8s.io:certificatesigningrequests:nodeclient':
+        content => {
+          metadata => {
+            annotations => {
+              'rbac.authorization.kubernetes.io/autoupdate' => 'true',
+            },
+          },
+          rules    => [
+            {
+              apiGroups => [
+                "certificates.k8s.io",
+              ],
+              resources => [
+                "certificatesigningrequests/nodeclient",
+              ],
+              verbs     => [
+                "create"
+              ],
+            },
+          ],
+        };
+
+      'system:certificates.k8s.io:certificatesigningrequests:selfnodeclient':
+        content => {
+          metadata => {
+            annotations => {
+              'rbac.authorization.kubernetes.io/autoupdate' => 'true',
+            },
+          },
+          rules    => [
+            {
+              apiGroups => [
+                "certificates.k8s.io",
+              ],
+              resources => [
+                "certificatesigningrequests/selfnodeclient",
+              ],
+              verbs     => [
+                "create"
+              ],
+            },
+          ],
+        };
+
+      'system:certificates.k8s.io:certificatesigningrequests:selfnodeserver':
+        content => {
+          metadata => {
+            annotations => {
+              'rbac.authorization.kubernetes.io/autoupdate' => 'true',
+            },
+          },
+          rules    => [
+            {
+              apiGroups => [
+                "certificates.k8s.io",
+              ],
+              resources => [
+                "certificatesigningrequests/selfnodeserver",
+              ],
+              verbs     => [
+                "create"
+              ],
+            },
+          ],
+        };
+    }
+
+    kubectl_apply{
+      default:
+        kubeconfig  => $kubeconfig,
+        provider    => 'kubectl',
+        api_version => 'rbac.authorization.k8s.io/v1',
         kind        => 'ClusterRoleBinding';
 
       'system-bootstrap-node-bootstrapper':
@@ -89,6 +164,22 @@ class k8s::server::resources(
           roleRef  => {
             kind     => 'ClusterRole',
             name     => 'system:certificates.k8s.io:certificatesigningrequests:selfnodeclient',
+            apiGroup => 'rbac.authorization.k8s.io',
+          }
+        };
+
+      'system-bootstrap-node-server-renewal':
+        content => {
+          subjects => [
+            {
+              kind     => 'Group',
+              name     => 'system:nodes',
+              apiGroup => 'rbac.authorization.k8s.io',
+            },
+          ],
+          roleRef  => {
+            kind     => 'ClusterRole',
+            name     => 'system:certificates.k8s.io:certificatesigningrequests:selfnodeserver',
             apiGroup => 'rbac.authorization.k8s.io',
           }
         };

@@ -6,7 +6,7 @@ class k8s::server::apiserver(
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $service_cluster_cidr = $k8s::service_cluster_cidr,
 
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
-  Boolean $discover_etcd_servers = false,
+  Boolean $discover_etcd_servers = $k8s::puppetdb_discovery,
   Boolean $manage_firewall = $k8s::server::manage_firewall,
 
   Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
@@ -103,6 +103,10 @@ class k8s::server::apiserver(
       service_cluster_ip_range           => $service_cluster_cidr,
       tls_cert_file                      => $apiserver_cert,
       tls_private_key_file               => $apiserver_key,
+      feature_gates                      => {
+        'RotateKubeletClientCertificate' => true,
+        'RotateKubeletServerCertificate' => true,
+      },
   } + $_discovery + $_addn_args + $arguments)
 
   if $k8s::packaging == 'container' {
