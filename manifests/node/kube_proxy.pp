@@ -56,14 +56,44 @@ class k8s::node::kube_proxy(
     default: {}
   }
 
-  $args = k8s::format_arguments({
+  $_args = k8s::format_arguments({
       cluster_cidr      => $cluster_cidr,
       hostname_override => fact('networking.fqdn'),
       kubeconfig        => $kubeconfig,
       proxy_mode        => 'iptables',
   } + $arguments)
 
-  file { '/etc/sysconfig/kube-proxy':
-    ensure => $ensure,
+  file { '/etc/sysconfig/k8s-proxy':
+    content => epp('k8s/sysconfig.epp', {
+        comment               => 'Kubernetes kube-proxy configuration',
+        environment_variables => {
+          'K8S_PROXY_ARGS' => $_args.join(' '),
+        },
+    }),
+    notify  => Service['k8s-proxy'],
+  }
+
+  systemd::unit_file { 'k8s-proxy.service':
+    ensure  => $ensure,
+    content => epp('k8s/service.epp', {
+      name  => 'k8s-proxy',
+
+      desc  => 'Kubernetes Network Proxy',
+      doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
+
+      dir   => '/srv/kubernetes',
+      bin   => 'kube-proxy',
+      user  => kube,
+      group => kube,
+    }),
+    require => [
+      File['/etc/sysconfig/k8s-proxy'],
+      User['kube'],
+    ],
+    notify  => Service['k8s-proxy'],
+  }
+  service { 'k8s-proxy':
+    ensure => stdlib::ensure($ensure, 'service'),
+    enable => true,
   }
 }
