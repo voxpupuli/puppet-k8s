@@ -10,7 +10,7 @@ Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
 
   def exists?
     data = kubectl_get
-    return false unless data
+    return false unless exists_in_cluster
 
     diff = content_diff(data)
     return true if resource[:ensure].to_s == 'absent' || resource[:update] == :false
