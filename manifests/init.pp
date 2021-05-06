@@ -100,14 +100,10 @@ class k8s(
     default:
       ensure => directory;
 
-    '/etc/cni':
-      purge   => false,
-      recurse => false;
+    '/etc/cni': ;
     '/etc/cni/net.d': ;
 
-    '/etc/kubernetes':
-      purge   => true,
-      recurse => true;
+    '/etc/kubernetes': ;
     '/etc/kubernetes/certs': ;
     '/etc/kubernetes/manifests':
       purge   => $purge_manifests,
