@@ -139,6 +139,7 @@ class k8s::node::kubelet(
       bootstrap_kubeconfig       => $_bootstrap_kubeconfig,
       cert_dir                   => $cert_path,
       container_runtime_endpoint => $_runtime_endpoint,
+      hostname_override          => fact('networking.fqdn'),
   } + $arguments)
 
   file { '/etc/sysconfig/kubelet':
