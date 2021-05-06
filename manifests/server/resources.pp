@@ -50,7 +50,7 @@ class k8s::server::resources(
                 kind              => 'Config',
                 clusters          => [
                   {
-                    name    => '',
+                    name    => 'default',
                     cluster => {
                       server                       => $master,
                       'certificate-authority-data' => binary_file($ca_cert),
@@ -881,15 +881,16 @@ class k8s::server::resources(
       provider    => 'kubectl',
       api_version => 'v1',
       kind        => 'ConfigMap',
-      namespace   => 'kube-system',
-      update      => false;
+      namespace   => 'kube-system';
 
     'kubeconfig-in-cluster':
       content => {
         data => {
           kubeconfig => to_yaml({
-              apiVersion => 'v1',
-              clusters   => [
+              apiVersion        => 'v1',
+              kind              => 'Config',
+              'current-context' => 'default',
+              clusters          => [
                 {
                   name    => 'local',
                   cluster => {
@@ -898,7 +899,7 @@ class k8s::server::resources(
                   },
                 }
               ],
-              users      => [
+              users             => [
                 {
                   name => 'service-account',
                   user => {
@@ -906,8 +907,9 @@ class k8s::server::resources(
                   },
                 },
               ],
-              contexts   => [
+              contexts          => [
                 {
+                  name    => 'default',
                   context => {
                     cluster => 'local',
                     user    => 'service-account',

@@ -44,11 +44,10 @@ class k8s::node::kubelet(
       }
       exec { 'Retrieve K8s bootstrap kubeconfig':
         path    => ['/usr/local/bin','/usr/bin','/bin'],
-        command => 'kubectl --namespace=kube-system get cm cluster-info -o jsonpath={.data.}',
+        command => "kubectl --server='${master}' --username=anonymous --namespace=kube-system get cm cluster-info -o jsonpath='{.data.kubeconfig}' > '${_bootstrap_kubeconfig}'",
         creates => $_bootstrap_kubeconfig,
       }
-
-      kubeconfig { $_bootstrap_kubeconfig:
+      -> kubeconfig { $_bootstrap_kubeconfig:
         ensure          => $ensure,
         owner           => 'kube',
         group           => 'kube',
