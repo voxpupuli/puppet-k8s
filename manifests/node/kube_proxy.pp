@@ -85,8 +85,6 @@ class k8s::node::kube_proxy(
 
       dir   => '/srv/kubernetes',
       bin   => 'kube-proxy',
-      user  => kube,
-      group => kube,
     }),
     require => [
       File['/etc/sysconfig/k8s-proxy'],
