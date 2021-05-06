@@ -80,7 +80,7 @@ class k8s::server::apiserver(
       ],
       advertise_address                  => fact('networking.ip'),
       allow_privileged                   => true,
-      anonymous_auth                     => false,
+      anonymous_auth                     => true,
       authorization_mode                 => [ 'Node', 'RBAC' ],
       bind_address                       => '::',
       client_ca_file                     => $ca_cert,
