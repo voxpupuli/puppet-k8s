@@ -24,11 +24,11 @@ define k8s::server::tls::ca(
         before  => File[$key];
 
       "Create ${title} CA cert":
-        command => "openssl req -x509 -new -nodes -key '${key}' \
+        command     => "openssl req -x509 -new -nodes -key '${key}' \
           -days '${valid_days}' -out '${cert}' -subj '${subject}'",
-        creates => $cert,
-        require => Exec["Create ${title} CA key"],
-        before  => File[$cert];
+        refreshonly => true,
+        subscribe   => Exec["Create ${title} CA key"],
+        before      => File[$cert];
     }
   }
 
