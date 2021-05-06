@@ -303,8 +303,10 @@ class k8s::server::resources(
                       failureThreshold    => 5,
                     },
                     readinessProbe  => {
-                      httpGet => '/ready',
-                      port     => 8181,
+                      httpGet => {
+                        path => '/ready',
+                        port => 8181,
+                      },
                     },
                     securityContext => {
                       allowPrivilegeEscalation => false,
