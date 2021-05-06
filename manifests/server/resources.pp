@@ -34,16 +34,14 @@ class k8s::server::resources(
       },
     }
 
-    kubectl_apply {
-      default:
+    if $facts['k8s-ca'] {
+      kubectl_apply { 'cluster-info':
         kubeconfig  => $kubeconfig,
         provider    => 'kubectl',
         api_version => 'v1',
         kind        => 'ConfigMap',
-        namespace   => 'kube-system';
-
-      'cluster-info':
-        content => {
+        namespace   => 'kube-system',
+        content     => {
           data => {
             kubeconfig => to_yaml({
                 apiVersion        => 'v1',
@@ -53,7 +51,7 @@ class k8s::server::resources(
                     name    => 'default',
                     cluster => {
                       server                       => $master,
-                      'certificate-authority-data' => binary_file($ca_cert),
+                      'certificate-authority-data' => $facts['k8s-ca'],
                     },
                   }
                 ],
@@ -63,7 +61,8 @@ class k8s::server::resources(
                 'current-context' => '',
             }),
           },
-        };
+        },
+      }
     }
 
     kubectl_apply {
