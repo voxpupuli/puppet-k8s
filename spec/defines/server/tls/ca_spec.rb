@@ -45,7 +45,7 @@ describe 'k8s::server::tls::ca' do
           ensure: 'present',
           owner: 'root',
           group: 'root',
-          mode: '0640',
+          mode: '0644',
           replace: false,
         )
       end
