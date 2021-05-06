@@ -3,7 +3,7 @@ define k8s::server::bootstrap_token(
   Stdlib::Unixpath $kubeconfig,
 
   String[6,6] $id = $name,
-  String[16,16] $secret = fqdn_rand_string(16),
+  String[16,16] $secret = fqdn_rand_string(16).downcase(),
   Boolean $use_authentication = true,
 
   Optional[String] $description = undef,
