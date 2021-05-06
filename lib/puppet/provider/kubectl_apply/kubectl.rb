@@ -13,7 +13,7 @@ Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
     return false unless exists_in_cluster
 
     diff = content_diff(data)
-    return true if resource[:ensure].to_s == 'absent' || resource[:update] == :false
+    return true if resource[:ensure].to_s == 'absent' || resource[:update] == false
 
     diff.empty?
   end
