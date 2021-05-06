@@ -41,29 +41,32 @@ class k8s::node::kubelet(
         owner           => 'kube',
         group           => 'kube',
         server          => $master,
+        current_context => 'default',
         token           => $token,
         skip_tls_verify => true,
       }
     }
     'token': {
       kubeconfig { $kubeconfig:
-        ensure => $ensure,
-        owner  => 'kube',
-        group  => 'kube',
-        server => $master,
-        token  => $token,
+        ensure          => $ensure,
+        owner           => 'kube',
+        group           => 'kube',
+        server          => $master,
+        current_context => 'default',
+        token           => $token,
       }
     }
     'cert': {
       kubeconfig { $kubeconfig:
-        ensure      => $ensure,
-        owner       => 'kube',
-        group       => 'kube',
-        server      => $master,
+        ensure          => $ensure,
+        owner           => 'kube',
+        group           => 'kube',
+        server          => $master,
+        current_context => 'default',
 
-        ca_cert     => $ca_cert,
-        client_cert => $cert,
-        client_key  => $key,
+        ca_cert         => $ca_cert,
+        client_cert     => $cert,
+        client_key      => $key,
       }
     }
     default: {

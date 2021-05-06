@@ -46,7 +46,7 @@ RSpec.describe ruby_provider do
             },
           },
         ],
-        'current-context' => '',
+        'current-context' => 'default',
         'kind' => 'Config',
         'preferences' => {},
       }

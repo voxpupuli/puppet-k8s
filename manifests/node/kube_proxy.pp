@@ -27,24 +27,26 @@ class k8s::node::kube_proxy(
   case $auth {
     'token': {
       kubeconfig { $kubeconfig:
-        ensure => $ensure,
-        owner  => 'kube',
-        group  => 'kube',
-        server => $master,
-        token  => $token,
+        ensure          => $ensure,
+        owner           => 'kube',
+        group           => 'kube',
+        server          => $master,
+        token           => $token,
+        current_context => 'default',
       }
       $_rotate_cert = false
     }
     'cert': {
       kubeconfig { $kubeconfig:
-        ensure      => $ensure,
-        owner       => 'kube',
-        group       => 'kube',
-        server      => $master,
+        ensure          => $ensure,
+        owner           => 'kube',
+        group           => 'kube',
+        server          => $master,
+        current_context => 'default',
 
-        ca_cert     => $ca_cert,
-        client_cert => $cert,
-        client_key  => $key,
+        ca_cert         => $ca_cert,
+        client_cert     => $cert,
+        client_key      => $key,
       }
       $_rotate_cert = false
     }

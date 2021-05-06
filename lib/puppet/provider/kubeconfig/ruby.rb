@@ -66,6 +66,8 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     valid &&= context_valid?
     valid &&= credentials_valid?
     valid &&= current_context_valid? if resource[:current_context]
+    valid &&= owner_valid? if resource[:owner]
+    valid &&= group_valid? if resource[:group]
     valid
   end
 
@@ -193,6 +195,30 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
 
   def update_current_context
     kubeconfig_content['current-context'] = resource[:current_context]
+  end
+
+  def owner_valid?
+    return false unless File.exists? resource[:path]
+
+    uid = File.stat(resource[:path]).uid
+    return true if uid == resource[:owner] || uid.to_s == resource[:owner].to_s
+
+    uid = Etc.getpwuid(uid)
+    uid.name == resource[:owner]
+  rescue ArgumentError
+    false
+  end
+
+  def group_valid?
+    return false unless File.exists? resource[:path]
+
+    gid = File.stat(resource[:path]).gid
+    return true if gid == resource[:group] || gid.to_s == resource[:group].to_s
+
+    gid = Etc.getgrgid(gid)
+    gid.name == resource[:group]
+  rescue ArgumentError
+    false
   end
 
   def changed?

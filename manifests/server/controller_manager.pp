@@ -54,14 +54,15 @@ class k8s::server::controller_manager(
     }
   } else {
     kubeconfig { $_kubeconfig:
-      ensure      => $ensure,
-      owner       => 'kube',
-      group       => 'kube',
-      server      => $master,
+      ensure          => $ensure,
+      owner           => 'kube',
+      group           => 'kube',
+      server          => $master,
+      current_context => 'default',
 
-      ca_cert     => $ca_cert,
-      client_cert => $cert,
-      client_key  => $key,
+      ca_cert         => $ca_cert,
+      client_cert     => $cert,
+      client_key      => $key,
     }
 
     file { '/etc/sysconfig/k8s-controller-manager':
