@@ -104,7 +104,9 @@ class k8s::server::etcd::setup(
     $_peer_client_cert_auth = $peer_client_cert_auth
   }
   
-  if $manage_members {
+  if $initial_cluster {
+    $_initial_cluster = $initial_cluster
+  } elsif $manage_members {
     $pql_query = @("PQL")
     resources[certname,parameters] {
       type = 'Class' and
@@ -122,13 +124,13 @@ class k8s::server::etcd::setup(
     | - PQL
 
     $cluster_nodes = puppetdb_query($pql_query)
-    $_initial_cluster = $initial_cluster + [
+    $_initial_cluster = [
       "${etcd_name}=${initial_advertise_peer_urls[0]}"
     ] + $cluster_nodes.map |$node| {
       "${node['parameters']['etcd_name']}=${node[initial_advertise_peer_urls[0]]}"
     }
   } else {
-    $_initial_cluster = $initial_cluster
+    $_initial_cluster = ["${etcd_name}=${initial_advertise_peer_urls[0]}"]
   }
 
   file {
@@ -164,7 +166,7 @@ class k8s::server::etcd::setup(
     # as it only matters before the cluster has been established.
     '/etc/etcd/cluster.conf':
       content => epp('k8s/server/etcd/cluster.conf.epp', {
-        initial_cluster => pick($_initial_cluster, ["${etcd_name}=${initial_advertise_peer_urls[0]}"]),
+        initial_cluster => $_initial_cluster,
       });
   }
 
