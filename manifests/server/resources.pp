@@ -574,7 +574,7 @@ class k8s::server::resources(
                     command      => [ 'cp' ],
                     args         => [
                       '-f',
-                      '/etc/kube-flannel/cni.conf.json',
+                      '/etc/kube-flannel/cni-conf.json',
                       '/etc/cni/net.d/10-flannel.conflits',
                     ],
                     volumeMounts => [
