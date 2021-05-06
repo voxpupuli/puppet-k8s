@@ -28,7 +28,7 @@ define k8s::server::etcd::member(
   }) + ($cluster_key ? {
       undef   => [],
       default => [
-        "ETCDCTL_CERT=${cluster_key}",
+        "ETCDCTL_KEY=${cluster_key}",
       ],
   })
 
