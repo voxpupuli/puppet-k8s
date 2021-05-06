@@ -126,7 +126,7 @@ class k8s::server::etcd(
     if $manage_setup {
       class { 'k8s::server::etcd::setup':
         initial_cluster => $cluster_nodes.map |$node| {
-          "${node['parameters']['etcd_name']}=${node[initial_advertise_peer_urls[0]]}"
+          "${node['parameters']['etcd_name']}=${node['parameters']['initial_advertise_peer_urls'][0]}"
         },
       }
     }

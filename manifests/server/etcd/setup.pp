@@ -32,7 +32,7 @@ class k8s::server::etcd::setup(
   Optional[Integer] $auto_compaction_retention = undef,
   Optional[Enum['existing', 'new']] $initial_cluster_state = undef,
   Optional[String[1]] $initial_cluster_token = undef,
-  Array[Stdlib::HTTPUrl] $initial_cluster = [],
+  Array[String[1]] $initial_cluster = [],
 ) {
   if $install == 'archive' {
     $_url = k8s::format_url($archive_template, {
