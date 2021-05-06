@@ -80,8 +80,7 @@ class k8s::server::etcd(
         ],
         distinguished_name => {
           commonName => fact('networking.fqdn'),
-        },
-        extended_key_usage => ['serverAuth'];
+        }:
 
       'etcd-client':
         ca_key             => $client_ca_key,
