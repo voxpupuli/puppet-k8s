@@ -21,7 +21,7 @@ class k8s::node::kubelet(
   Optional[Stdlib::Unixpath] $key = $k8s::node::node_key,
 
   # For token and bootstrap auth
-  Optional[Stdlib::Unixpath] $token = $k8s::node::node_token,
+  Optional[String[1]] $token = $k8s::node::node_token,
 ) {
   assert_private()
 

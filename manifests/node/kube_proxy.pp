@@ -15,7 +15,7 @@ class k8s::node::kube_proxy(
   Optional[Stdlib::Unixpath] $key = $k8s::node::proxy_key,
 
   # For token and bootstrap auth
-  Optional[Stdlib::Unixpath] $token = $k8s::node::proxy_token,
+  Optional[String[1]] $token = $k8s::node::proxy_token,
 ) {
   assert_private()
 
@@ -34,7 +34,6 @@ class k8s::node::kube_proxy(
         token           => $token,
         current_context => 'default',
       }
-      $_rotate_cert = false
     }
     'cert': {
       kubeconfig { $kubeconfig:
@@ -48,7 +47,6 @@ class k8s::node::kube_proxy(
         client_cert     => $cert,
         client_key      => $key,
       }
-      $_rotate_cert = false
     }
     'incluster': {
       if $packaging != 'container' {

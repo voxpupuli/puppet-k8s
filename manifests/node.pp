@@ -20,8 +20,8 @@ class k8s::node(
   Optional[Stdlib::Unixpath] $proxy_key = undef,
 
   # For token and bootstrap auth
-  Optional[Stdlib::Unixpath] $node_token = undef,
-  Optional[Stdlib::Unixpath] $proxy_token = undef,
+  Optional[String[1]] $node_token = undef,
+  Optional[String[1]] $proxy_token = undef,
 ) {
   if $manage_kubelet {
     include k8s::node::kubelet
