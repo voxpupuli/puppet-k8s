@@ -46,7 +46,7 @@ define k8s::server::tls::ca(
       ensure  => $ensure,
       owner   => $owner,
       group   => $group,
-      mode    => '0640',
+      mode    => '0644',
       replace => false,
     }
   }
