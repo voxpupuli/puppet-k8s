@@ -149,9 +149,19 @@ Puppet::Type.newtype(:kubeconfig) do
 
   # Ensure the file or directory exists
   autorequire(:file) do
-    [
+    req = [
       self[:path],
       Pathname.new(self[:path]).parent.to_s,
     ]
+    if self[:embed_certs]
+      req += [
+        self[:ca_cert],
+        self[:client_cert],
+        self[:client_key]
+      ].compact
+    end
+    req += [ self[:token_file] ].compact
+
+    req
   end
 end
