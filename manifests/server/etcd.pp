@@ -53,9 +53,12 @@ class k8s::server::etcd(
         ca_key             => $peer_ca_key,
         ca_cert            => $peer_ca_cert,
         addn_names         => [
+          fact('networking.hostname'),
           fact('networking.fqdn'),
           fact('networking.ip'),
           fact('networking.ip6'),
+          '127.0.0.1',
+          '::1',
         ],
         distinguished_name => {
           commonName => fact('networking.fqdn'),
@@ -66,9 +69,12 @@ class k8s::server::etcd(
         ca_key             => $client_ca_key,
         ca_cert            => $client_ca_cert,
         addn_names         => [
+          fact('networking.hostname'),
           fact('networking.fqdn'),
           fact('networking.ip'),
           fact('networking.ip6'),
+          '127.0.0.1',
+          '::1',
         ],
         distinguished_name => {
           commonName => fact('networking.fqdn'),
@@ -78,6 +84,14 @@ class k8s::server::etcd(
       'etcd-client':
         ca_key             => $client_ca_key,
         ca_cert            => $client_ca_cert,
+        addn_names         => [
+          fact('networking.hostname'),
+          fact('networking.fqdn'),
+          fact('networking.ip'),
+          fact('networking.ip6'),
+          '127.0.0.1',
+          '::1',
+        ],
         distinguished_name => {
           commonName => fact('networking.fqdn'),
         };
@@ -110,7 +124,10 @@ class k8s::server::etcd(
     $cluster_nodes.each |$node| {
       k8s::server::etcd::member { $node['certname']:
         peer_urls    => $node['parameters']['initial_advertise_peer_urls'],
-        cluster_urls => ['http://localhost:2379'],
+        cluster_urls => ['https://localhost:2379'],
+        cluster_ca   => $client_ca_cert,
+        cluster_cert => "${cert_path}/etcd-client.pem",
+        cluster_key  => "${cert_path}/etcd-client.key",
       }
     }
   }
