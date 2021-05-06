@@ -129,8 +129,10 @@ class k8s::node::kubelet(
 
   if $runtime == 'crio' {
     $_runtime_endpoint = 'unix:///var/run/crio/crio.sock'
+    $_runtime = 'remote'
   } else {
     $_runtime_endpoint = undef
+    $_runtime = undef
   }
 
   $_args = k8s::format_arguments({
@@ -138,6 +140,7 @@ class k8s::node::kubelet(
       kubeconfig                 => $kubeconfig,
       bootstrap_kubeconfig       => $_bootstrap_kubeconfig,
       cert_dir                   => $cert_path,
+      container_runtime          => $_runtime,
       container_runtime_endpoint => $_runtime_endpoint,
       hostname_override          => fact('networking.fqdn'),
   } + $arguments)
