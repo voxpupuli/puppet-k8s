@@ -660,11 +660,16 @@ class k8s::server::resources(
             kind      => 'ServiceAccount',
             name      => 'kube-controller-manager',
             namespace => 'kube-system',
+          },
+          {
+            apiGroup => 'rbac.authorization.k8s.io',
+            kind     => 'User',
+            name     => 'system:kube-controller-manager',
           }
         ],
         roleRef  => {
           kind     => 'ClusterRole',
-          name     => 'system:kube-controller-manager',
+          name     => 'cluster-admin', # 'system:kube-controller-manager'
           apiGroup => 'rbac.authorization.k8s.io',
         },
       };
