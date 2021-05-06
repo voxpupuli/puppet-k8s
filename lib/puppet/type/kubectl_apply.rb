@@ -121,7 +121,7 @@ Puppet::Type.newtype(:kubectl_apply) do
     defaultto(:true)
   end
 
-  newparam(:force, boolean: true, parent: Puppet::Parameter::Boolean) do
+  newparam(:recreate, boolean: true, parent: Puppet::Parameter::Boolean) do
     desc 'Should updates be done by removal and recreation'
     defaultto(:false)
   end

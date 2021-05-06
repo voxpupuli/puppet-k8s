@@ -22,7 +22,7 @@ Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
     tempfile = Tempfile.new('kubectl_apply')
     tempfile.write resource_hash.to_json
     tempfile.flush
-    if resource[:force] && resource_diff && exists_in_cluster
+    if resource[:recreate] && resource_diff && exists_in_cluster
       kubectl_cmd 'delete', '-f', tempfile.path
       kubectl_cmd 'create', '-f', tempfile.path
     elsif resource_diff && exists_in_cluster

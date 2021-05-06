@@ -476,7 +476,7 @@ class k8s::server::resources(
       'flannel DaemonSet':
         api_version => 'apps/v1',
         kind        => 'DaemonSet',
-        force       => true,
+        recreate    => true,
         content     => {
           metadata => {
             labels => {
