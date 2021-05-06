@@ -151,4 +151,10 @@ class k8s::server::etcd::setup(
     require   => User['etcd'],
     subscribe => File['/etc/etcd/etcd.conf'],
   }
+
+  ['etcd-peer', 'etcd-peer-client'].each |$cert| {
+    if defined(K8s::Server::Tls::Cert[$cert]) {
+      K8s::Server::Tls::Cert[$cert] ~> Service['etcd']
+    }
+  }
 }
