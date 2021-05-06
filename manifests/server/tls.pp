@@ -92,13 +92,14 @@ class k8s::server::tls(
           "kubernetes.default.svc.${cluster_domain}",
           'kubernetes.service.discover',
           'localhost',
+          fact('networking.hostname'),
           fact('networking.fqdn'),
           $api_service_address,
           '127.0.0.1',
           '::1',
           fact('networking.ip'),
           fact('networking.ip6'),
-        ],
+        ].unique(),
         distinguished_name => {
           commonName => 'kube-apiserver',
         };
