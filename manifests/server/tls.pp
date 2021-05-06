@@ -1,6 +1,6 @@
 class k8s::server::tls(
   Enum['present', 'absent'] $ensure = 'present',
-  Boolean $generate_ca = false,
+  Boolean $generate_ca = $k8s::server::generate_ca,
   Boolean $manage_certs = $k8s::server::manage_certs,
 
   Array[
