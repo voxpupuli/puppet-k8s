@@ -73,10 +73,11 @@ class k8s::server::resources(
         kind        => 'ClusterRole',
         update      => false;
 
-      'puppet:cluster-info:reader':
-        kind      => 'Role',
-        namespace => 'kube-system',
-        content   => {
+      'puppet:cluster-info:reader Role':
+        kind          => 'Role',
+        namespace     => 'kube-system',
+        resource_name => 'puppet:cluster-info:reader',
+        content       => {
           rules => [
             {
               apiGroups     => [ '' ],
@@ -167,10 +168,11 @@ class k8s::server::resources(
         api_version => 'rbac.authorization.k8s.io/v1',
         kind        => 'ClusterRoleBinding';
 
-      'puppet:cluster-info:reader':
-        kind      => 'RoleBinding',
-        namespace => 'kube-system',
-        content   => {
+      'puppet:cluster-info:reader RoleBinding':
+        kind          => 'RoleBinding',
+        namespace     => 'kube-system',
+        resource_name => 'puppet:cluster-info:reader',
+        content       => {
           roleRef  => {
             apiGroup => 'rbac.authorization.k8s.io',
             kind     => 'Role',
