@@ -174,8 +174,6 @@ class k8s::node::kubelet(
       needs => [
         $runtime_service
       ],
-
-      dir   => '/var/lib/kubelet',
       bin   => 'kubelet',
     }),
     require => [

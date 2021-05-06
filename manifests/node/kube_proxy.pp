@@ -82,8 +82,6 @@ class k8s::node::kube_proxy(
 
       desc => 'Kubernetes Network Proxy',
       doc  => 'https://github.com/GoogleCloudPlatform/kubernetes',
-
-      dir  => '/srv/kubernetes',
       bin  => 'kube-proxy',
     }),
     require => [
