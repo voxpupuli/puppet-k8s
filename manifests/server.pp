@@ -32,7 +32,7 @@ class k8s::server(
     include k8s::server::apiserver
 
     # XXX Think of a better way to do this
-    if $k8s::master == 'https://kubernetes:6443' {
+    if $master == 'https://kubernetes:6443' {
       class { 'k8s::server::controller_manager':
         master => 'https://localhost:6443',
       }
