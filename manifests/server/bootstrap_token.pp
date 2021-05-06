@@ -25,7 +25,7 @@ define k8s::server::bootstrap_token(
   }.filter |$k, $v| {
     $v != undef and $v != ''
   }.map |$k, $v| {
-    [$k, String(Binary.new("${v}", '%s'))]
+    [$k, String(Binary.new(String($v), '%s'))]
   })
 
   kubectl_apply { "bootstrap-token-${id}":
