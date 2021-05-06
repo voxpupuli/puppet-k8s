@@ -33,6 +33,7 @@ define k8s::server::bootstrap_token(
     provider    => 'kubectl',
     kubeconfig  => $kubeconfig,
     namespace   => 'kube-system',
+    update      => false,
 
     api_version => 'v1',
     kind        => 'Secret',
