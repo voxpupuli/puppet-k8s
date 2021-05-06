@@ -164,8 +164,6 @@ class k8s::node::kubelet(
 
       dir   => '/var/lib/kubelet',
       bin   => 'kubelet',
-      user  => kube,
-      group => kube,
     }),
     require => [
       File['/etc/sysconfig/kubelet', '/etc/kubernetes/kubelet.conf'],
