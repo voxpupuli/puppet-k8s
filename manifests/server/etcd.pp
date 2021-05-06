@@ -68,11 +68,13 @@ class k8s::server::etcd(
 
       'etcd-peer-client':
         ca_key             => $client_ca_key,
-        ca_cert            => $client_ca_cert;
+        ca_cert            => $client_ca_cert,
+        extended_key_usage => ['serverAuth', 'clientAuth'];
 
       'etcd-client':
         ca_key             => $client_ca_key,
-        ca_cert            => $client_ca_cert;
+        ca_cert            => $client_ca_cert,
+        extended_key_usage => ['serverAuth', 'clientAuth'];
     }
   }
 
