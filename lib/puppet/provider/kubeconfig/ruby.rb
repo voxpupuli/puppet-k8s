@@ -198,7 +198,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
   end
 
   def owner_valid?
-    return false unless File.exists? resource[:path]
+    return false unless File.exist? resource[:path]
 
     uid = File.stat(resource[:path]).uid
     return true if uid == resource[:owner] || uid.to_s == resource[:owner].to_s
@@ -210,7 +210,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
   end
 
   def group_valid?
-    return false unless File.exists? resource[:path]
+    return false unless File.exist? resource[:path]
 
     gid = File.stat(resource[:path]).gid
     return true if gid == resource[:group] || gid.to_s == resource[:group].to_s

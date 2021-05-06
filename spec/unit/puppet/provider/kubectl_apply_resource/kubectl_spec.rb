@@ -353,13 +353,13 @@ RSpec.describe kubectl_provider do
                 'prometheus.io/port'   => '9153',
                 'prometheus.io/scrape' => 'true',
               },
-              'labels'      => {
+              'labels' => {
                 'k8s-app'                       => 'kube-dns',
                 'kubernetes.io/cluster-service' => 'true',
                 'kubernetes.io/name'            => 'CoreDNS',
               },
             },
-            'spec'     => {
+            'spec' => {
               'selector'  => {
                 'k8s-app' => 'kube-dns',
               },
@@ -374,7 +374,7 @@ RSpec.describe kubectl_provider do
                   'name'     => 'dns-tcp',
                   'port'     => 53,
                   'protocol' => 'TCP',
-                }
+                },
               ],
             },
           }

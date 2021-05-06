@@ -21,7 +21,8 @@ module Puppet::Util
               next if value.include? v
 
               if v.is_a? Hash
-                diff ||= !value.select { |ov| ov.is_a? Hash }.any? do |ov|
+                diff ||= value.select { |ov| ov.is_a? Hash }
+                              .none? do |ov|
                   v_copy = Marshal.load(Marshal.dump(v))
                   delete_merge.call(v_copy, ov)
 
