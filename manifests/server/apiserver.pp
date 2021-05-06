@@ -7,6 +7,7 @@ class k8s::server::apiserver(
 
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
   Boolean $discover_etcd_servers = false,
+  Boolean $manage_firewall = $k8s::server::manage_firewall,
 
   Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
   Stdlib::Unixpath $ca_cert = $k8s::server::tls::ca_cert,
@@ -246,6 +247,25 @@ class k8s::server::apiserver(
       if defined(K8s::Server::Tls::Cert[$cert]) {
         K8s::Server::Tls::Cert[$cert] ~> Service['k8s-apiserver']
       }
+    }
+  }
+
+  if $manage_firewall {
+    firewalld_custom_service { 'k8s-apiserver':
+      ensure      => $ensure,
+      short       => 'k8s-apiserver',
+      description => 'Kubernetes apiserver',
+      port        => [
+        {
+          port     => '6443',
+          protocol => 'tcp',
+        }
+      ],
+    }
+    firewalld_service { 'Allow k8s apiserver access':
+      ensure  => $ensure,
+      zone    => 'public',
+      service => 'k8s-apiserver',
     }
   }
 }

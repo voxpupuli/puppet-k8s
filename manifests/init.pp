@@ -13,6 +13,7 @@ class k8s(
   String[1] $crio_package = 'cri-o',
 
   Boolean $manage_etcd = true,
+  Boolean $manage_firewall = false,
   Boolean $manage_image = false,
   Boolean $manage_repo = true,
   Boolean $manage_packages = true,

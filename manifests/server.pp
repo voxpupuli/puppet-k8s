@@ -14,6 +14,7 @@ class k8s::server(
   Stdlib::Unixpath $aggregator_ca_cert = "${cert_path}/aggregator-ca.pem",
 
   Boolean $manage_etcd = $k8s::manage_etcd,
+  Boolean $manage_firewall = $k8s::manage_firewall,
   Boolean $manage_certs = true,
   Boolean $manage_signing = false,
   Boolean $manage_components = true,

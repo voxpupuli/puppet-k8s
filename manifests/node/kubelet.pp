@@ -186,4 +186,23 @@ class k8s::node::kubelet(
     ensure => stdlib::ensure($ensure, 'service'),
     enable => true,
   }
+
+  if $manage_firewall {
+    firewalld_custom_service { 'kubelet':
+      ensure      => $ensure,
+      short       => 'kubelet',
+      description => 'Kubernetes kubelet daemon',
+      port        => [
+        {
+          port     => '10250',
+          protocol => 'tcp',
+        }
+      ],
+    }
+    firewalld_service { 'Allow k8s kubelet access':
+      ensure  => $ensure,
+      zone    => 'public',
+      service => 'kubelet',
+    }
+  }
 }

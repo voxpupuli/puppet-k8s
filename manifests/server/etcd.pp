@@ -2,6 +2,7 @@ class k8s::server::etcd(
   Enum['present', 'absent'] $ensure = $k8s::server::ensure,
 
   Boolean $manage_setup = true,
+  Boolean $manage_firewall = $k8s::server::manage_firewall,
   Boolean $manage_members = false,
   String[1] $cluster_name = 'default',
 
@@ -135,6 +136,44 @@ class k8s::server::etcd(
         cluster_cert => "${cert_path}/etcd-client.pem",
         cluster_key  => "${cert_path}/etcd-client.key",
       }
+    }
+  }
+
+  if $manage_firewall {
+    firewalld_custom_service {
+      default:
+        ensure => $ensure;
+
+      'etcd-peer':
+        short       => 'etcd-peer',
+        description => 'Etcd peer connection',
+        port        => [
+          {
+            port     => '2380',
+            protocol => 'tcp',
+          }
+        ];
+
+      'etcd-client':
+        short       => 'etcd-client',
+        description => 'Etcd client connection',
+        port        => [
+          {
+            port     => '2379',
+            protocol => 'tcp',
+          }
+        ];
+    }
+    firewalld_service {
+      default:
+        ensure => $ensure,
+        zone   => 'public';
+
+      'Allow etcd peer access':
+        service => 'etcd-peer';
+
+      'Allow etcd client access':
+        service => 'etcd-client';
     }
   }
 }
