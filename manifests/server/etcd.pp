@@ -124,7 +124,7 @@ class k8s::server::etcd(
 
     $cluster_nodes = puppetdb_query($pql_query)
     $cluster_nodes.each |$node| {
-      k8s::server::etcd::member { $node['certname']:
+      k8s::server::etcd::member { $node['parameters']['etcd_name']:
         peer_urls    => $node['parameters']['initial_advertise_peer_urls'],
         cluster_urls => ['https://localhost:2379'],
         cluster_ca   => $client_ca_cert,
