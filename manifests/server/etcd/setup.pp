@@ -84,12 +84,12 @@ class k8s::server::etcd::setup(
   # Use generated certs by default
   if !$k8s::server::etcd::self_signed_tls and $k8s::server::etcd::manage_certs {
     $_dir = '/var/lib/etcd/certs'
-    $_cert_file = pick($cert_file, "${_dir}/etcd-peer.pem")
-    $_key_file = pick($key_file, "${_dir}/etcd-peer.key")
+    $_cert_file = pick($cert_file, "${_dir}/etcd-server.pem")
+    $_key_file = pick($key_file, "${_dir}/etcd-server.key")
     $_trusted_ca_file = pick($trusted_ca_file, "${_dir}/client-ca.pem")
     $_client_cert_auth = pick($client_cert_auth, true)
-    $_peer_cert_file = pick($peer_cert_file, "${_dir}/etcd-peer-client.pem")
-    $_peer_key_file = pick($peer_key_file, "${_dir}/etcd-peer-client.key")
+    $_peer_cert_file = pick($peer_cert_file, "${_dir}/etcd-peer.pem")
+    $_peer_key_file = pick($peer_key_file, "${_dir}/etcd-peer.key")
     $_peer_trusted_ca_file = pick($peer_trusted_ca_file, "${_dir}/peer-ca.pem")
     $_peer_client_cert_auth = pick($peer_client_cert_auth, true)
   } else {

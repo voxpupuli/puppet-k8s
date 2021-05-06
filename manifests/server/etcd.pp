@@ -49,9 +49,9 @@ class k8s::server::etcd(
         group     => 'etcd',
         cert_path => $cert_path;
 
-      'etcd-peer':
-        ca_key             => $peer_ca_key,
-        ca_cert            => $peer_ca_cert,
+      'etcd-server':
+        ca_key             => $client_ca_key,
+        ca_cert            => $client_ca_cert,
         addn_names         => [
           fact('networking.hostname'),
           fact('networking.fqdn'),
@@ -66,7 +66,7 @@ class k8s::server::etcd(
         },
         extended_key_usage => ['serverAuth'];
 
-      'etcd-peer-client':
+      'etcd-peer':
         ca_key             => $peer_ca_key,
         ca_cert            => $peer_ca_cert,
         addn_names         => [
@@ -88,8 +88,7 @@ class k8s::server::etcd(
         ca_cert            => $client_ca_cert,
         distinguished_name => {
           commonName => 'etcd client',
-        },
-        extended_key_usage => ['clientAuth'];
+        };
     }
   }
 
