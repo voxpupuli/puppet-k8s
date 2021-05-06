@@ -28,12 +28,11 @@ class k8s::server::etcd::setup(
   Optional[Stdlib::Unixpath] $trusted_ca_file = undef,
   Boolean $client_cert_auth = false,
   Boolean $auto_tls = $k8s::server::etcd::self_signed_tls,
-  Boolean $manage_members = $k8s::server::etcd::manage_members,
 
   Optional[Integer] $auto_compaction_retention = undef,
   Optional[Enum['existing', 'new']] $initial_cluster_state = undef,
   Optional[String[1]] $initial_cluster_token = undef,
-  Optional[Array[Stdlib::HTTPUrl]] $initial_cluster = undef,
+  Array[Stdlib::HTTPUrl] $initial_cluster = [],
 ) {
   if $install == 'archive' {
     $_url = k8s::format_url($archive_template, {
@@ -104,34 +103,9 @@ class k8s::server::etcd::setup(
     $_peer_client_cert_auth = $peer_client_cert_auth
   }
   
-  if $initial_cluster {
-    $_initial_cluster = $initial_cluster
-  } elsif $manage_members {
-    $pql_query = @("PQL")
-    resources[certname,parameters] {
-      type = 'Class' and
-      title = 'K8s::Server::Etcd::Setup' and
-      nodes {
-        resources {
-          type = 'Class' and
-          title = 'K8s::Server::Etcd' and
-          parameters.cluster_name = '${cluster_name}' and
-          certname != '${trusted[certname]}'
-        }
-      }
-      order by certname
-    }
-    | - PQL
-
-    $cluster_nodes = puppetdb_query($pql_query)
-    $_initial_cluster = [
-      "${etcd_name}=${initial_advertise_peer_urls[0]}"
-    ] + $cluster_nodes.map |$node| {
-      "${node['parameters']['etcd_name']}=${node[initial_advertise_peer_urls[0]]}"
-    }
-  } else {
-    $_initial_cluster = ["${etcd_name}=${initial_advertise_peer_urls[0]}"]
-  }
+  $_initial_cluster = [
+    "${etcd_name}=${initial_advertise_peer_urls[0]}"
+  ] + $initial_cluster
 
   file {
     default:

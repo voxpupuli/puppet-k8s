@@ -100,7 +100,7 @@ class k8s::server::etcd(
     }
   }
 
-  if $manage_setup {
+  if $manage_setup and !$manage_members {
     include k8s::server::etcd::setup
   }
 
@@ -123,6 +123,14 @@ class k8s::server::etcd(
     | - PQL
 
     $cluster_nodes = puppetdb_query($pql_query)
+    if $manage_setup {
+      class { 'k8s::server::etcd::setup':
+        initial_cluster => $cluster_nodes.map |$node| {
+          "${node['parameters']['etcd_name']}=${node[initial_advertise_peer_urls[0]]}"
+        },
+      }
+    }
+
     $cluster_nodes.each |$node| {
       k8s::server::etcd::member { $node['parameters']['etcd_name']:
         peer_urls    => $node['parameters']['initial_advertise_peer_urls'],
