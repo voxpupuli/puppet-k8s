@@ -604,7 +604,7 @@ class k8s::server::resources(
                   {
                     name      => 'flannel-cfg',
                     configMap => {
-                      name => 'kube-flannel-cfg',
+                      name => 'flannel',
                     },
                   },
                   {
