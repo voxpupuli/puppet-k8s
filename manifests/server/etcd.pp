@@ -125,9 +125,13 @@ class k8s::server::etcd(
     $cluster_nodes = puppetdb_query($pql_query)
     if $manage_setup {
       class { 'k8s::server::etcd::setup':
-        initial_cluster => $cluster_nodes.map |$node| {
+        initial_cluster       => $cluster_nodes.map |$node| {
           "${node['parameters']['etcd_name']}=${node['parameters']['initial_advertise_peer_urls'][0]}"
         },
+        initial_cluster_state => ($cluster_nodes.size() ? {
+          0       => 'new',
+          default => 'existing',
+        }),
       }
     }
 
