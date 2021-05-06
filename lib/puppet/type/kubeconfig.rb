@@ -157,7 +157,7 @@ Puppet::Type.newtype(:kubeconfig) do
       req += [
         self[:ca_cert],
         self[:client_cert],
-        self[:client_key]
+        self[:client_key],
       ].compact
     end
     req += [ self[:token_file] ].compact

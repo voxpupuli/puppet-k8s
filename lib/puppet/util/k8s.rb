@@ -12,9 +12,9 @@ module Puppet::Util
           end
 
           target_value = hash1[key]
-          if hash1.key?(key) && target_value.nil?
-            next
-          elsif target_value.is_a?(Hash) && value.is_a?(Hash) && value.any? && target_value.any?
+          next if hash1.key?(key) && target_value.nil?
+
+          if target_value.is_a?(Hash) && value.is_a?(Hash) && value.any? && target_value.any?
             delete_merge.call(target_value, value)
           elsif value.is_a?(Array) && target_value.is_a?(Array) && value.any? && target_value.any?
             diff = value.size != target_value.size

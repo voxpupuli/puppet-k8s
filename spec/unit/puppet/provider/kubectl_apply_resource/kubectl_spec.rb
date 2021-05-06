@@ -252,11 +252,13 @@ RSpec.describe kubectl_provider do
         end
 
         it 'correctly patches upstream' do
-          expect(provider.content_diff(upstream_data)).to eq({
-            'metadata' => {
-              something: nil
+          expect(provider.content_diff(upstream_data)).to eq(
+            {
+              'metadata' => {
+                something: nil
+              },
             },
-          })
+          )
         end
       end
 
