@@ -1,6 +1,6 @@
 <%- |
   String[1] $name,
-  String[1] $args_name = "\$${regsubst($name, '-', '_').upcase()}_ARGS",
+  String[1] $args_name = "\$${regsubst($name, '-', '_', 'G').upcase()}_ARGS",
   String[1] $bin,
   Optional[String[1]] $desc = undef,
   Optional[String[1]] $doc = undef,
