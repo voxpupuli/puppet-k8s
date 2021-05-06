@@ -52,7 +52,7 @@ describe 'k8s::server::etcd' do
         end
       end
       it { is_expected.to contain_class('k8s::server::etcd::setup') }
-      it { is_expected.to contain_k8s__server__etcd__member('node.example.com').with_peer_urls('https://node.example.com:2380') }
+      it { is_expected.to contain_k8s__server__etcd__member('node').with_peer_urls('https://node.example.com:2380') }
     end
   end
 end

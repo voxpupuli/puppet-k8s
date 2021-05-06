@@ -6,7 +6,7 @@ describe 'k8s::server::etcd::member' do
   let(:title) { 'namevar' }
   let(:params) do
     {
-      peer_urls: 'http://localhost:4001'
+      peer_urls: ['http://localhost:4001'],
     }
   end
 
