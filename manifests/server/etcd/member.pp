@@ -1,7 +1,7 @@
 # TODO - Convert to native type
 
 define k8s::server::etcd::member(
-  String $peer_urls,
+  Array[String, 1] $peer_urls,
 
   Optional[Array[Stdlib::HTTPUrl]] $cluster_urls = undef,
   Optional[Stdlib::Unixpath] $cluster_ca = undef,
@@ -35,7 +35,7 @@ define k8s::server::etcd::member(
   Service <| title == 'etcd' |>
   -> exec { "Add ${name} as member":
     environment => $environment,
-    command     => "etcdctl member add ${name} --peer-urls=\"${peer_urls}\"",
+    command     => "etcdctl member add ${name} --peer-urls=\"${peer_urls.join(',')}\"",
     onlyif      => 'etcdctl endpoint health',
     unless      => "etcdctl -w fields member list | grep \\\"Name\\\" | grep ${name} || \
                     etcdctl -w fields member list | grep \\\"PeerURL\\\" | grep ${peer_urls}",
