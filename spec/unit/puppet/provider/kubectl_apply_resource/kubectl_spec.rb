@@ -224,6 +224,42 @@ RSpec.describe kubectl_provider do
         expect(logs.first.message).to eq('created Secret kube-system/bootstrap-token-example with {"data"=>{"token-id"=>"tokenid"}, "metadata"=>{"finalizers"=>["puppet-example"]}}')
       end
 
+      context 'and should be removed' do
+        let(:resource_properties) do
+          {
+            ensure: :present,
+            name: name,
+            namespace: 'kube-system',
+
+            api_version: 'v1',
+            kind: 'Secret',
+
+            content: {
+              metadata: {
+                annotations: {
+                  'example.com/spec': 'true',
+                },
+                something: nil,
+              },
+              type: 'bootstrap.kubernetes.io/token',
+              data: {
+                'token-id': 'other-token-id',
+                'token-secret': 'tokensecret',
+                'usage-bootstrap-authentication': 'true',
+              }
+            }
+          }
+        end
+
+        it 'correctly patches upstream' do
+          expect(provider.content_diff(upstream_data)).to eq({
+            'metadata' => {
+              something: nil
+            },
+          })
+        end
+      end
+
       context 'when set to recreate' do
         let(:resource_properties) do
           {
@@ -325,6 +361,46 @@ RSpec.describe kubectl_provider do
             },
           },
         )
+      end
+
+      context 'and should be missing' do
+        let(:resource_properties) do
+          {
+            ensure: :present,
+            name: name,
+            namespace: 'kube-system',
+
+            api_version: 'v1',
+            kind: 'Secret',
+
+            content: {
+              metadata: {
+                annotations: {
+                  'example.com/spec': 'true',
+                },
+                finalizers: nil,
+              },
+              type: 'bootstrap.kubernetes.io/token',
+              data: {
+                'token-id': 'tokenid',
+                'token-secret': 'tokensecret',
+                'usage-bootstrap-authentication': 'true',
+              }
+            }
+          }
+        end
+
+        it 'does not attempt removal' do
+          expect(provider.content_diff(upstream_data)).to eq(
+            {
+              'metadata' => {
+                'annotations' => {
+                  'example.com/spec': 'true',
+                },
+              },
+            },
+          )
+        end
       end
     end
 
