@@ -78,13 +78,13 @@ class k8s::node::kube_proxy(
   systemd::unit_file { 'k8s-proxy.service':
     ensure  => $ensure,
     content => epp('k8s/service.epp', {
-      name  => 'k8s-proxy',
+      name => 'k8s-proxy',
 
-      desc  => 'Kubernetes Network Proxy',
-      doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
+      desc => 'Kubernetes Network Proxy',
+      doc  => 'https://github.com/GoogleCloudPlatform/kubernetes',
 
-      dir   => '/srv/kubernetes',
-      bin   => 'kube-proxy',
+      dir  => '/srv/kubernetes',
+      bin  => 'kube-proxy',
     }),
     require => [
       File['/etc/sysconfig/k8s-proxy'],
