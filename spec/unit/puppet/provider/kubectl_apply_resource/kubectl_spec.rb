@@ -271,7 +271,8 @@ RSpec.describe kubectl_provider do
           allow(provider).to receive(:exists_in_cluster).and_return(true)
           expect(provider).to receive(:kubectl).with(
             '--namespace', 'kube-system',
-            'delete', '-f', '/tmp/kubectl_apply'
+            'delete', '-f', '/tmp/kubectl_apply',
+            '--cascade=false', '--wait=false'
           )
           expect(provider).to receive(:kubectl).with(
             '--namespace', 'kube-system',
