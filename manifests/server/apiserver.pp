@@ -242,5 +242,8 @@ class k8s::server::apiserver(
     }
 
     Service['k8s-apiserver'] -> Kubectl_apply<| |>
+    if defined(K8s::Server::Tls::Cert['kube-apiserver']) {
+      K8s::Server::Tls::Cert['kube-apiserver'] ~> Service['k8s-apiserver']
+    }
   }
 }
