@@ -2,7 +2,7 @@ class k8s::server::etcd::setup(
   Enum['present','absent'] $ensure = $k8s::server::etcd::ensure,
   Enum['archive','package'] $install = 'archive',
   String[1] $package = 'etcd',
-  String[1] $version = $k8s::etcd_version,
+  String[1] $version = $k8s::server::etcd::version,
   String[1] $etcd_name = fact('hostname'),
   String[1] $fqdn = fact('networking.fqdn'),
 
@@ -133,7 +133,8 @@ class k8s::server::etcd::setup(
         auto_compaction_retention   => $auto_compaction_retention,
         initial_cluster_state       => $initial_cluster_state,
         initial_cluster_token       => $initial_cluster_token,
-      });
+      }),
+      notify  => Service['etcd'];
 
     # Separate out initial cluster configuration into a separate config file.
     # This avoids reloading the service when/if the initial cluster state changes,
@@ -154,11 +155,5 @@ class k8s::server::etcd::setup(
     enable    => true,
     require   => User['etcd'],
     subscribe => File['/etc/etcd/etcd.conf'],
-  }
-
-  ['etcd-peer', 'etcd-peer-client'].each |$cert| {
-    if defined(K8s::Server::Tls::Cert[$cert]) {
-      K8s::Server::Tls::Cert[$cert] ~> Service['etcd']
-    }
   }
 }

@@ -1,14 +1,15 @@
 class k8s::server::etcd(
-  Enum['present', 'absent'] $ensure = $k8s::server::ensure,
+  Enum['present', 'absent'] $ensure = 'present',
+  String[1] $version = $k8s::etcd_version,
 
   Boolean $manage_setup = true,
-  Boolean $manage_firewall = $k8s::server::manage_firewall,
-  Boolean $manage_members = $k8s::puppetdb_discovery,
+  Boolean $manage_firewall = false,
+  Boolean $manage_members = false,
   String[1] $cluster_name = 'default',
 
   Boolean $self_signed_tls = false,
-  Boolean $manage_certs = $k8s::server::manage_certs,
-  Boolean $generate_ca = $k8s::server::generate_ca,
+  Boolean $manage_certs = true,
+  Boolean $generate_ca = false,
   Stdlib::Unixpath $cert_path = '/var/lib/etcd/certs',
   Stdlib::Unixpath $peer_ca_key = "${cert_path}/peer-ca.key",
   Stdlib::Unixpath $peer_ca_cert = "${cert_path}/peer-ca.pem",

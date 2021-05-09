@@ -24,7 +24,13 @@ class k8s::server(
   Boolean $node_on_server = true,
 ) {
   if $manage_etcd {
-    include k8s::server::etcd
+    class { 'k8s::server::etcd':
+      ensure          => $ensure,
+      generate_ca     => $generate_ca,
+      manage_certs    => $manage_certs,
+      manage_firewall => $manage_firewall,
+      manage_members  => $k8s::puppetdb_discovery,
+    }
   }
   if $manage_certs {
     include k8s::server::tls
