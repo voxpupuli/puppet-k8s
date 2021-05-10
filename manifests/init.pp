@@ -115,10 +115,10 @@ class k8s(
       owner => 'kube',
       group => 'kube';
     '/usr/libexec/kubernetes': ;
-    '/var/lib/kublet':
+    '/var/lib/kubelet':
       owner => 'kube',
       group => 'kube';
-    '/var/lib/kublet/pki':
+    '/var/lib/kubelet/pki':
       owner => 'kube',
       group => 'kube';
   }
