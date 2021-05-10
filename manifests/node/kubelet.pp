@@ -111,6 +111,9 @@ class k8s::node::kubelet(
     'rotateCertificates' => $auth == 'bootstrap',
     'serverTLSBootstrap' => $rotate_server_tls,
     'clusterDomain'      => $k8s::cluster_domain,
+    'clusterDNS'         => [
+      $k8s::dns_service_address,
+    ],
     'cgroupDriver'       => 'systemd',
   } + $_authentication_hash
 
@@ -171,10 +174,6 @@ class k8s::node::kubelet(
       container_runtime          => $_runtime,
       container_runtime_endpoint => $_runtime_endpoint,
       hostname_override          => fact('networking.fqdn'),
-      feature_gates              => {
-        'RotateKubeletClientCertificate' => true,
-        'RotateKubeletServerCertificate' => true,
-      },
   } + $arguments)
 
   file { '/etc/sysconfig/kubelet':

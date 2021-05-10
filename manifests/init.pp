@@ -48,7 +48,7 @@ class k8s(
     }
 
     package { 'k8s container manager':
-      name    => $pkg,
+      name => $pkg,
     }
     if $manage_repo {
       Class['k8s::repo'] -> Package['k8s container manager']
@@ -127,7 +127,9 @@ class k8s(
     include ::k8s::repo
   }
   if $manage_packages {
-    ensure_packages('containernetworking-plugins')
+    ensure_packages([
+      'containernetworking-plugins',
+    ])
     if $manage_repo {
       Class['k8s::repo'] -> Package['containernetworking-plugins']
     }
