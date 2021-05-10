@@ -117,6 +117,10 @@ class k8s(
     '/usr/libexec/kubernetes': ;
     '/var/lib/kubelet': ;
     '/var/lib/kubelet/pki': ;
+
+    '/usr/share/containers/': ;
+    '/usr/share/containers/oci/': ;
+    '/usr/share/containers/oci/hooks.d': ;
   }
 
   if $manage_repo {
