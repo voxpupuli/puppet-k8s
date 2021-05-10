@@ -116,7 +116,7 @@ class k8s::node::kubelet(
       $k8s::dns_service_address,
     ],
     'cgroupDriver'       => 'systemd',
-    'resolvConf'         => '',
+    'resolvConf'         => '/etc/kubernetes/resolv.conf',
   } + $_authentication_hash
 
   file { '/etc/modules-load.d/k8s':
@@ -159,6 +159,11 @@ class k8s::node::kubelet(
     owner   => 'kube',
     group   => 'kube',
     notify  => Service['kubelet'],
+  }
+  file { '/etc/kubernetes/resolv.conf':
+    ensure  => $ensure,
+    owner   => 'kube',
+    group   => 'kube',
   }
 
   if $runtime == 'crio' {
