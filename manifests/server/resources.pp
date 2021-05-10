@@ -529,7 +529,7 @@ class k8s::server::resources(
           },
           spec     => {
             selector  => {
-              'k8s-app' => 'kube-dns',
+              'k8s-app' => 'coredns',
             },
             clusterIP => $dns_service_address,
             ports     => [
