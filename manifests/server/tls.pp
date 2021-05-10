@@ -85,7 +85,7 @@ class k8s::server::tls(
 
       'kube-apiserver':
         extended_key_usage => ['serverAuth'],
-        addn_names         => [
+        addn_names         => ([
           'kubernetes',
           'kubernetes.default',
           'kubernetes.default.svc',
@@ -99,7 +99,7 @@ class k8s::server::tls(
           '::1',
           fact('networking.ip'),
           fact('networking.ip6'),
-        ].unique(),
+        ] + $api_addn_names).unique(),
         distinguished_name => {
           commonName => 'kube-apiserver',
         };
