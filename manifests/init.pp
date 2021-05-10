@@ -115,12 +115,8 @@ class k8s(
       owner => 'kube',
       group => 'kube';
     '/usr/libexec/kubernetes': ;
-    '/var/lib/kubelet':
-      owner => 'kube',
-      group => 'kube';
-    '/var/lib/kubelet/pki':
-      owner => 'kube',
-      group => 'kube';
+    '/var/lib/kubelet': ;
+    '/var/lib/kubelet/pki': ;
   }
 
   if $manage_repo {
