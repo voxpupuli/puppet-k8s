@@ -81,8 +81,9 @@ class k8s::server::scheduler(
       notify  => Service['k8s-scheduler'],
     }
     service { 'k8s-scheduler':
-      ensure => stdlib::ensure($ensure, 'service'),
-      enable => true,
+      ensure    => stdlib::ensure($ensure, 'service'),
+      enable    => true,
+      subscribe => K8s::Binary['kube-scheduler'],
     }
   }
 }

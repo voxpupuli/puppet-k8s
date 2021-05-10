@@ -242,8 +242,9 @@ class k8s::server::apiserver(
       notify  => Service['k8s-apiserver'],
     }
     service { 'k8s-apiserver':
-      ensure => stdlib::ensure($ensure, 'service'),
-      enable => true,
+      ensure    => stdlib::ensure($ensure, 'service'),
+      enable    => true,
+      subscribe => K8s::Binary['kube-apiserver'],
     }
 
     Service['k8s-apiserver'] -> Kubectl_apply<| |>

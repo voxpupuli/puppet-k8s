@@ -104,8 +104,9 @@ class k8s::server::controller_manager(
       notify  => Service['k8s-controller-manager'],
     }
     service { 'k8s-controller-manager':
-      ensure => stdlib::ensure($ensure, 'service'),
-      enable => true,
+      ensure    => stdlib::ensure($ensure, 'service'),
+      enable    => true,
+      subscribe => K8s::Binary['kube-controller-manager'],
     }
   }
 }

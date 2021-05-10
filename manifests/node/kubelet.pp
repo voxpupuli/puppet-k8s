@@ -26,7 +26,8 @@ class k8s::node::kubelet(
   assert_private()
 
   k8s::binary { 'kubelet':
-    ensure    => $ensure,
+    ensure => $ensure,
+    notify => Service['kubelet'],
   }
 
   if $auth == 'bootstrap' {
@@ -46,10 +47,15 @@ class k8s::node::kubelet(
       }
       exec { 'Retrieve K8s CA':
         path    => ['/usr/local/bin','/usr/bin','/bin'],
-        command => "kubectl --server='${master}' --username=anonymous --insecure-skip-tls-verify=true get --raw /api/v1/namespaces/kube-system/configmaps/cluster-info | jq .data.ca -r > '${_ca_cert}'",
+        command => "kubectl --server='${master}' --username=anonymous --insecure-skip-tls-verify=true \
+          get --raw /api/v1/namespaces/kube-system/configmaps/cluster-info | jq .data.ca -r > '${_ca_cert}'",
         creates => $_ca_cert,
+        require => [
+          K8s::Binary['kubectl'],
+          Package['jq'],
+        ]
       }
-      kubeconfig { $_bootstrap_kubeconfig:
+      -> kubeconfig { $_bootstrap_kubeconfig:
         ensure          => $ensure,
         owner           => 'kube',
         group           => 'kube',
@@ -58,7 +64,10 @@ class k8s::node::kubelet(
         token           => $token,
 
         ca_cert         => $_ca_cert,
+
+        notify          => Service['kubelet'],
       }
+      File <| title == $_ca_cert |> -> Kubeconfig[$_bootstrap_kubeconfig]
       $_authentication_hash = {
         'authentication'     => {
           'x509' =>  {
@@ -75,6 +84,7 @@ class k8s::node::kubelet(
         server          => $master,
         current_context => 'default',
         token           => $token,
+        notify          => Service['kubelet'],
       }
       $_authentication_hash = {}
     }
@@ -89,6 +99,7 @@ class k8s::node::kubelet(
         ca_cert         => $ca_cert,
         client_cert     => $cert,
         client_key      => $key,
+        notify          => Service['kubelet'],
       }
       $_authentication_hash = {
         'authentication'     => {
@@ -161,9 +172,9 @@ class k8s::node::kubelet(
     notify  => Service['kubelet'],
   }
   file { '/etc/kubernetes/resolv.conf':
-    ensure  => $ensure,
-    owner   => 'kube',
-    group   => 'kube',
+    ensure => $ensure,
+    owner  => 'kube',
+    group  => 'kube',
   }
 
   if $runtime == 'crio' {

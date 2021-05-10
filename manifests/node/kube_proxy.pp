@@ -89,7 +89,8 @@ class k8s::node::kube_proxy(
     notify  => Service['k8s-proxy'],
   }
   service { 'k8s-proxy':
-    ensure => stdlib::ensure($ensure, 'service'),
-    enable => true,
+    ensure    => stdlib::ensure($ensure, 'service'),
+    enable    => true,
+    subscribe => K8s::Binary['kube-proxy'],
   }
 }
