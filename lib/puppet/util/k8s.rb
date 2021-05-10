@@ -40,7 +40,7 @@ module Puppet::Util
             hash1.delete(key)
           end
 
-          hash1.delete(key) if hash1.key?(key) && (hash1[key].nil? || hash1[key].empty?)
+          hash1.delete(key) if hash1.key?(key) && (hash1[key].nil? || (hash1[key].respond_to?(:empty?) && hash1[key].empty?))
         end
         hash1.dup.each_pair do |key, value|
           if value.nil? && !hash2.key?(key)
