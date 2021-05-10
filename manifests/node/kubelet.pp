@@ -124,7 +124,6 @@ class k8s::node::kubelet(
     overlay
     br_netfilter
     |- EOF
-    notify  => Service['kubelet'],
   }
   exec {
     default:
@@ -158,6 +157,7 @@ class k8s::node::kubelet(
     content => to_yaml($config_hash + $config),
     owner   => 'kube',
     group   => 'kube',
+    notify  => Service['kubelet'],
   }
 
   if $runtime == 'crio' {
