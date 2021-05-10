@@ -123,6 +123,7 @@ class k8s::node::kubelet(
     overlay
     br_netfilter
     |- EOF
+    notify  => Service['kubelet'],
   }
   exec {
     default:
