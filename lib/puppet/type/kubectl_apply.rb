@@ -128,7 +128,7 @@ Puppet::Type.newtype(:kubectl_apply) do
 
   newparam(:show_diff, boolean: true, parent: Puppet::Parameter::Boolean) do
     desc 'Whether to display the difference when the resource changes'
-    defaultto(:true)
+    defaultto(:false)
   end
 
   newparam(:content) do

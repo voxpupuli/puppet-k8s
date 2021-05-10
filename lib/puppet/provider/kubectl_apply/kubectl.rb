@@ -70,7 +70,7 @@ Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
     @exists_in_cluster = true
     JSON.parse(@data)
   rescue StandardError => e
-    raise RuntimeError, "#{e.class}: #{e} for #{@data}"
+    raise RuntimeError, "#{e.class}: #{e}"
   end
 
   def kubectl_cmd(*args)
