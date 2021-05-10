@@ -367,7 +367,6 @@ class k8s::server::resources(
             },
           },
           spec     => {
-            replicas => 2,
             strategy => {
               type          => 'RollingUpdate',
               rollingUpdate => {
