@@ -362,7 +362,7 @@ class k8s::server::resources(
         content     => {
           metadata => {
             labels => {
-              'k8s-app'            => 'kube-dns',
+              'k8s-app'            => 'coredns',
               'kubernetes.io/name' => 'CoreDNS',
             },
           },
@@ -376,13 +376,13 @@ class k8s::server::resources(
             },
             selector => {
               matchLabels => {
-                'k8s-app' => 'kube-dns',
+                'k8s-app' => 'coredns',
               },
             },
             template => {
               metadata => {
                 labels      => {
-                  'k8s-app' => 'kube-dns',
+                  'k8s-app' => 'coredns',
                 },
               },
               spec     => {
@@ -522,7 +522,7 @@ class k8s::server::resources(
               'prometheus.io/scrape' => 'true',
             },
             labels      => {
-              'k8s-app'                       => 'kube-dns',
+              'k8s-app'                       => 'coredns',
               'kubernetes.io/cluster-service' => 'true',
               'kubernetes.io/name'            => 'CoreDNS',
             },

@@ -115,7 +115,7 @@ class k8s::node::kubelet(
       $k8s::dns_service_address,
     ],
     'cgroupDriver'       => 'systemd',
-    'resolvConf'         => '/etc/kubernetes/resolv.conf',
+    'resolvConf'         => '',
   } + $_authentication_hash
 
   file { '/etc/modules-load.d/k8s':
@@ -158,14 +158,6 @@ class k8s::node::kubelet(
     content => to_yaml($config_hash + $config),
     owner   => 'kube',
     group   => 'kube',
-  }
-  file { '/etc/kubernetes/resolv.conf':
-    ensure  => $ensure,
-    content => @("EOF"),
-    search default.svc.${k8s::cluster_domain} svc.${k8s::cluster_domain} ${k8s::cluster_domain}
-    nameserver ${k8s::dns_service_address}
-    options ndots:5
-    |EOF
   }
 
   if $runtime == 'crio' {
