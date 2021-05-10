@@ -37,6 +37,7 @@ class k8s::node::kubelet(
 
   case $auth {
     'bootstrap': {
+      $_ca_cert = pick($ca_cert, '/var/lib/kubelet/pki/ca.pem')
       ensure_packages(['jq'])
       if !defined(K8s::Binary['kubectl']) {
         k8s::binary { 'kubectl':
@@ -45,8 +46,8 @@ class k8s::node::kubelet(
       }
       exec { 'Retrieve K8s CA':
         path    => ['/usr/local/bin','/usr/bin','/bin'],
-        command => "kubectl --server='${master}' --username=anonymous --insecure-skip-tls-verify=true get --raw /api/v1/namespaces/kube-system/configmaps/cluster-info | jq .data.ca -r > '${ca_cert}'",
-        creates => $ca_cert,
+        command => "kubectl --server='${master}' --username=anonymous --insecure-skip-tls-verify=true get --raw /api/v1/namespaces/kube-system/configmaps/cluster-info | jq .data.ca -r > '${_ca_cert}'",
+        creates => $_ca_cert,
       }
       kubeconfig { $_bootstrap_kubeconfig:
         ensure          => $ensure,
@@ -56,12 +57,12 @@ class k8s::node::kubelet(
         current_context => 'default',
         token           => $token,
 
-        ca_cert         => $ca_cert,
+        ca_cert         => $_ca_cert,
       }
       $_authentication_hash = {
         'authentication'     => {
           'x509' =>  {
-            'clientCAFile' => $ca_cert,
+            'clientCAFile' => $_ca_cert,
           },
         },
       }
