@@ -45,6 +45,12 @@ class k8s(
       $pkg = 'docker'
     } else {
       $pkg = $crio_package
+
+      file { '/usr/libexec/crio/conmon':
+        ensure  => present,
+        target  => '/usr/bin/conmon',
+        replace => false,
+      }
     }
 
     package { 'k8s container manager':
