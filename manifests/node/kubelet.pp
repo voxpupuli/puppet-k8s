@@ -43,20 +43,28 @@ class k8s::node::kubelet(
           ensure => $ensure,
         }
       }
-      exec { 'Retrieve K8s bootstrap kubeconfig':
+      exec { 'Retrieve K8s CA':
         path    => ['/usr/local/bin','/usr/bin','/bin'],
-        command => "kubectl --server='${master}' --username=anonymous --insecure-skip-tls-verify=true get --raw /api/v1/namespaces/kube-system/configmaps/cluster-info | jq .data.kubeconfig -r > '${_bootstrap_kubeconfig}'",
-        creates => $_bootstrap_kubeconfig,
+        command => "kubectl --server='${master}' --username=anonymous --insecure-skip-tls-verify=true get --raw /api/v1/namespaces/kube-system/configmaps/cluster-info | jq .data.ca -r > '${ca_cert}'",
+        creates => $ca_cert,
       }
-      -> kubeconfig { $_bootstrap_kubeconfig:
+      kubeconfig { $_bootstrap_kubeconfig:
         ensure          => $ensure,
         owner           => 'kube',
         group           => 'kube',
         server          => $master,
         current_context => 'default',
         token           => $token,
+
+        ca_cert         => $ca_cert,
       }
-      $_authentication_hash = {}
+      $_authentication_hash = {
+        'authentication'     => {
+          'x509' =>  {
+            'clientCAFile' => $ca_cert,
+          },
+        },
+      }
     }
     'token': {
       kubeconfig { $kubeconfig:

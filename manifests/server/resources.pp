@@ -43,7 +43,7 @@ class k8s::server::resources(
         namespace   => 'kube-system',
         content     => {
           data => {
-            'ca.pem'   => String($facts['k8s_ca'], '%s'),
+            ca         => String($facts['k8s_ca'], '%s'),
             kubeconfig => to_yaml({
                 apiVersion        => 'v1',
                 kind              => 'Config',
