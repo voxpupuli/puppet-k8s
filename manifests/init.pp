@@ -50,9 +50,11 @@ class k8s(
         ensure  => present,
         target  => '/usr/bin/conmon',
         replace => false,
+        require => Package['k8s container manager'],
       }
       file { '/etc/cni/net.d/100-crio-bridge.conf':
-        ensure => absent,
+        ensure  => absent,
+        require => Package['k8s container manager'],
       }
     }
 
