@@ -45,7 +45,12 @@ class k8s::node::kubelet(
           ensure => $ensure,
         }
       }
-      exec { 'Retrieve K8s CA':
+      exec { 'Remove broken CA':
+        path    => ['/usr/local/bin','/usr/bin','/bin'],
+        command => "rm '${_ca_cert}'",
+        onlyif  => "stat '${_ca_cert}' | grep 'Size: 0'",
+      }
+      ~> exec { 'Retrieve K8s CA':
         path    => ['/usr/local/bin','/usr/bin','/bin'],
         command => "kubectl --server='${master}' --username=anonymous --insecure-skip-tls-verify=true \
           get --raw /api/v1/namespaces/kube-system/configmaps/cluster-info | jq .data.ca -r > '${_ca_cert}'",
@@ -53,7 +58,7 @@ class k8s::node::kubelet(
         require => [
           K8s::Binary['kubectl'],
           Package['jq'],
-        ]
+        ],
       }
       -> kubeconfig { $_bootstrap_kubeconfig:
         ensure          => $ensure,
