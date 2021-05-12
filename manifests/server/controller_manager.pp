@@ -93,7 +93,7 @@ class k8s::server::controller_manager(
 
         dir   => '/srv/kubernetes',
         bin   => 'kube-controller-manager',
-        needs => ['k8s-apiserver.service'],
+        needs => ['kube-apiserver.service'],
         user  => kube,
         group => kube,
       }),

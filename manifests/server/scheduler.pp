@@ -70,7 +70,7 @@ class k8s::server::scheduler(
 
         dir   => '/srv/kubernetes',
         bin   => 'kube-scheduler',
-        needs => ['k8s-apiserver.service'],
+        needs => ['kube-apiserver.service'],
         user  => kube,
         group => kube,
       }),
