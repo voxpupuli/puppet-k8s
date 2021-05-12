@@ -13,6 +13,7 @@ RSpec.describe kubectl_provider do
     let(:resource_properties) do
       {
         ensure: :present,
+        show_diff: true,
         name: name,
         namespace: 'kube-system',
 

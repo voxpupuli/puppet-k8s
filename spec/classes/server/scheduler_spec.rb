@@ -23,10 +23,10 @@ describe 'k8s::server::scheduler' do
       let(:facts) { os_facts }
 
       it { is_expected.to compile }
-      it { is_expected.to contain_kubeconfig('/srv/kubernetes/k8s-scheduler.kubeconf') }
-      it { is_expected.not_to contain_file('/etc/kubernetes/manifests/k8s-scheduler.yaml') }
+      it { is_expected.to contain_kubeconfig('/srv/kubernetes/kube-scheduler.kubeconf') }
+      it { is_expected.not_to contain_file('/etc/kubernetes/manifests/kube-scheduler.yaml') }
       it do
-        is_expected.to contain_file('/etc/sysconfig/k8s-scheduler')
+        is_expected.to contain_file('/etc/sysconfig/kube-scheduler')
           .with_content(
             <<~SYSCONF,
             ### NB: File managed by Puppet.
@@ -35,13 +35,13 @@ describe 'k8s::server::scheduler' do
             ## Kubernetes Scheduler configuration
             #
 
-            K8S_SCHEDULER_ARGS="--leader-elect=true --kubeconfig=/srv/kubernetes/k8s-scheduler.kubeconf"
+            KUBE_SCHEDULER_ARGS="--leader-elect=true --kubeconfig=/srv/kubernetes/kube-scheduler.kubeconf"
             SYSCONF
-          ).that_notifies('Service[k8s-scheduler]')
+          ).that_notifies('Service[kube-scheduler]')
       end
-      it { is_expected.to contain_systemd__unit_file('k8s-scheduler.service').that_notifies('Service[k8s-scheduler]') }
+      it { is_expected.to contain_systemd__unit_file('kube-scheduler.service').that_notifies('Service[kube-scheduler]') }
       it do
-        is_expected.to contain_service('k8s-scheduler').with(
+        is_expected.to contain_service('kube-scheduler').with(
           ensure: 'running',
           enable: true,
         )

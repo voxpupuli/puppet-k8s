@@ -16,7 +16,7 @@ class k8s::server::scheduler(
     ensure => $ensure,
   }
 
-  $_kubeconfig = '/srv/kubernetes/k8s-scheduler.kubeconf'
+  $_kubeconfig = '/srv/kubernetes/kube-scheduler.kubeconf'
   if $k8s::packaging != 'container' {
     $_addn_args = {
       kubeconfig => $_kubeconfig
@@ -51,19 +51,19 @@ class k8s::server::scheduler(
       client_cert     => $cert,
       client_key      => $key,
     }
-    file { '/etc/sysconfig/k8s-scheduler':
+    file { '/etc/sysconfig/kube-scheduler':
       content => epp('k8s/sysconfig.epp', {
           comment               => 'Kubernetes Scheduler configuration',
           environment_variables => {
-            'K8S_SCHEDULER_ARGS' => $_args.join(' '),
+            'KUBE_SCHEDULER_ARGS' => $_args.join(' '),
           },
       }),
-      notify  => Service['k8s-scheduler'],
+      notify  => Service['kube-scheduler'],
     }
-    systemd::unit_file { 'k8s-scheduler.service':
+    systemd::unit_file { 'kube-scheduler.service':
       ensure  => $ensure,
       content => epp('k8s/service.epp', {
-        name  => 'k8s-scheduler',
+        name  => 'kube-scheduler',
 
         desc  => 'Kubernetes Scheduler',
         doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
@@ -75,12 +75,12 @@ class k8s::server::scheduler(
         group => kube,
       }),
       require => [
-        File['/etc/sysconfig/k8s-scheduler'],
+        File['/etc/sysconfig/kube-scheduler'],
         User['kube'],
       ],
-      notify  => Service['k8s-scheduler'],
+      notify  => Service['kube-scheduler'],
     }
-    service { 'k8s-scheduler':
+    service { 'kube-scheduler':
       ensure    => stdlib::ensure($ensure, 'service'),
       enable    => true,
       subscribe => K8s::Binary['kube-scheduler'],

@@ -34,11 +34,11 @@ describe 'k8s::server::controller_manager' do
 
       it { is_expected.to compile }
 
-      it { is_expected.to contain_kubeconfig('/srv/kubernetes/k8s-controller-manager.kubeconf') }
+      it { is_expected.to contain_kubeconfig('/srv/kubernetes/kube-controller-manager.kubeconf') }
 
-      it { is_expected.not_to contain_file('/etc/kubernetes/manifests/k8s-controller-manager.yaml') }
+      it { is_expected.not_to contain_file('/etc/kubernetes/manifests/kube-controller-manager.yaml') }
       it do
-        is_expected.to contain_file('/etc/sysconfig/k8s-controller-manager')
+        is_expected.to contain_file('/etc/sysconfig/kube-controller-manager')
           .with_content(
             <<~SYSCONF,
             ### NB: File managed by Puppet.
@@ -47,13 +47,13 @@ describe 'k8s::server::controller_manager' do
             ## Kubernetes Controller Manager configuration
             #
 
-            K8S_CONTROLLER_MANAGER_ARGS="--allocate-node-cidrs=true --controllers=*,bootstrapsigner,tokencleaner --cluster-cidr=10.0.0.0/16 --service-cluster-ip-range=10.1.0.0/24 --cluster-signing-cert-file=/etc/kubernetes/certs/ca.pem --cluster-signing-key-file=/etc/kubernetes/certs/ca.key --leader-elect=true --root-ca-file=/etc/kubernetes/certs/ca.pem --service-account-private-key-file=/etc/kubernetes/certs/service-account.key --feature-gates=RotateKubeletClientCertificate=true,RotateKubeletServerCertificate=true --kubeconfig=/srv/kubernetes/k8s-controller-manager.kubeconf"
+            KUBE_CONTROLLER_MANAGER_ARGS="--allocate-node-cidrs=true --controllers=*,bootstrapsigner,tokencleaner --cluster-cidr=10.0.0.0/16 --service-cluster-ip-range=10.1.0.0/24 --cluster-signing-cert-file=/etc/kubernetes/certs/ca.pem --cluster-signing-key-file=/etc/kubernetes/certs/ca.key --leader-elect=true --root-ca-file=/etc/kubernetes/certs/ca.pem --service-account-private-key-file=/etc/kubernetes/certs/service-account.key --feature-gates=RotateKubeletClientCertificate=true,RotateKubeletServerCertificate=true --kubeconfig=/srv/kubernetes/kube-controller-manager.kubeconf"
             SYSCONF
-          ).that_notifies('Service[k8s-controller-manager]')
+          ).that_notifies('Service[kube-controller-manager]')
       end
-      it { is_expected.to contain_systemd__unit_file('k8s-controller-manager.service').that_notifies('Service[k8s-controller-manager]') }
+      it { is_expected.to contain_systemd__unit_file('kube-controller-manager.service').that_notifies('Service[kube-controller-manager]') }
       it do
-        is_expected.to contain_service('k8s-controller-manager').with(
+        is_expected.to contain_service('kube-controller-manager').with(
           ensure: 'running',
           enable: true,
         )

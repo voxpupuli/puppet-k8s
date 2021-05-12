@@ -19,7 +19,7 @@ class k8s::server::controller_manager(
   k8s::binary { 'kube-controller-manager':
     ensure => $ensure,
   }
-  $_kubeconfig = '/srv/kubernetes/k8s-controller-manager.kubeconf'
+  $_kubeconfig = '/srv/kubernetes/kube-controller-manager.kubeconf'
 
   if $k8s::packaging != 'container' {
     $_addn_args = {
@@ -74,19 +74,19 @@ class k8s::server::controller_manager(
       client_key      => $key,
     }
 
-    file { '/etc/sysconfig/k8s-controller-manager':
+    file { '/etc/sysconfig/kube-controller-manager':
       content => epp('k8s/sysconfig.epp', {
           comment               => 'Kubernetes Controller Manager configuration',
           environment_variables => {
-            'K8S_CONTROLLER_MANAGER_ARGS' => $_args.join(' '),
+            'KUBE_CONTROLLER_MANAGER_ARGS' => $_args.join(' '),
           },
       }),
-      notify  => Service['k8s-controller-manager'],
+      notify  => Service['kube-controller-manager'],
     }
-    systemd::unit_file { 'k8s-controller-manager.service':
+    systemd::unit_file { 'kube-controller-manager.service':
       ensure  => $ensure,
       content => epp('k8s/service.epp', {
-        name  => 'k8s-controller-manager',
+        name  => 'kube-controller-manager',
 
         desc  => 'Kubernetes Controller Manager',
         doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
@@ -98,12 +98,12 @@ class k8s::server::controller_manager(
         group => kube,
       }),
       require => [
-        File['/etc/sysconfig/k8s-controller-manager'],
+        File['/etc/sysconfig/kube-controller-manager'],
         User['kube'],
       ],
-      notify  => Service['k8s-controller-manager'],
+      notify  => Service['kube-controller-manager'],
     }
-    service { 'k8s-controller-manager':
+    service { 'kube-controller-manager':
       ensure    => stdlib::ensure($ensure, 'service'),
       enable    => true,
       subscribe => K8s::Binary['kube-controller-manager'],

@@ -213,19 +213,19 @@ class k8s::server::apiserver(
       }),
     }
   } else {
-    file { '/etc/sysconfig/k8s-apiserver':
+    file { '/etc/sysconfig/kube-apiserver':
       content => epp('k8s/sysconfig.epp', {
           comment               => 'Kubernetes API Server configuration',
           environment_variables => {
-            'K8S_APISERVER_ARGS' => $_args.join(' '),
+            'KUBE_APISERVER_ARGS' => $_args.join(' '),
           },
       }),
-      notify  => Service['k8s-apiserver'],
+      notify  => Service['kube-apiserver'],
     }
-    systemd::unit_file { 'k8s-apiserver.service':
+    systemd::unit_file { 'kube-apiserver.service':
       ensure  => $ensure,
       content => epp('k8s/service.epp', {
-        name  => 'k8s-apiserver',
+        name  => 'kube-apiserver',
 
         desc  => 'Kubernetes API Server',
         doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
@@ -236,21 +236,21 @@ class k8s::server::apiserver(
         group => kube,
       }),
       require => [
-        File['/etc/sysconfig/k8s-apiserver'],
+        File['/etc/sysconfig/kube-apiserver'],
         User['kube'],
       ],
-      notify  => Service['k8s-apiserver'],
+      notify  => Service['kube-apiserver'],
     }
-    service { 'k8s-apiserver':
+    service { 'kube-apiserver':
       ensure    => stdlib::ensure($ensure, 'service'),
       enable    => true,
       subscribe => K8s::Binary['kube-apiserver'],
     }
 
-    Service['k8s-apiserver'] -> Kubectl_apply<| |>
+    Service['kube-apiserver'] -> Kubectl_apply<| |>
     [ 'kube-apiserver', 'front-proxy-client', 'apiserver-kubelet-client' ].each |$cert| {
       if defined(K8s::Server::Tls::Cert[$cert]) {
-        K8s::Server::Tls::Cert[$cert] ~> Service['k8s-apiserver']
+        K8s::Server::Tls::Cert[$cert] ~> Service['kube-apiserver']
       }
     }
   }

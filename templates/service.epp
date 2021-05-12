@@ -27,11 +27,11 @@ After=network.target <%= $needs.join(' ') %>
 <%- if $dir { -%>
 WorkingDirectory=<%= $dir %>
 <%- } -%>
-EnvironmentFile=-/etc/sysconfig/k8s-common
+EnvironmentFile=-/etc/sysconfig/kube-common
 EnvironmentFile=/etc/sysconfig/<%= $name %>
 ExecStart=<%= $bindir %>/<%= $bin %> \
-            $K8S_LOGTOSTDERR \
-            $K8S_LOG_LEVEL \
+            $KUBE_LOGTOSTDERR \
+            $KUBE_LOG_LEVEL \
             <%= $args_name %>
 <%- if $user { -%>
 User=<%= $user %>
