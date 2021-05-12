@@ -63,32 +63,32 @@ class k8s::node::kube_proxy(
       proxy_mode        => 'iptables',
   } + $arguments)
 
-  file { '/etc/sysconfig/k8s-proxy':
+  file { '/etc/sysconfig/kube-proxy':
     content => epp('k8s/sysconfig.epp', {
         comment               => 'Kubernetes kube-proxy configuration',
         environment_variables => {
-          'K8S_PROXY_ARGS' => $_args.join(' '),
+          'KUBE_PROXY_ARGS' => $_args.join(' '),
         },
     }),
-    notify  => Service['k8s-proxy'],
+    notify  => Service['kube-proxy'],
   }
 
-  systemd::unit_file { 'k8s-proxy.service':
+  systemd::unit_file { 'kube-proxy.service':
     ensure  => $ensure,
     content => epp('k8s/service.epp', {
-      name => 'k8s-proxy',
+      name => 'kube-proxy',
 
       desc => 'Kubernetes Network Proxy',
       doc  => 'https://github.com/GoogleCloudPlatform/kubernetes',
       bin  => 'kube-proxy',
     }),
     require => [
-      File['/etc/sysconfig/k8s-proxy'],
+      File['/etc/sysconfig/kube-proxy'],
       User['kube'],
     ],
-    notify  => Service['k8s-proxy'],
+    notify  => Service['kube-proxy'],
   }
-  service { 'k8s-proxy':
+  service { 'kube-proxy':
     ensure    => stdlib::ensure($ensure, 'service'),
     enable    => true,
     subscribe => K8s::Binary['kube-proxy'],
