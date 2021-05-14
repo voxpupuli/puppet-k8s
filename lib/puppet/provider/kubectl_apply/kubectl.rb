@@ -65,7 +65,7 @@ Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
     @exists_in_cluster = true
     JSON.parse(@data)
   rescue Puppet::ExecutionFailure => e
-    if %r{Error from server (NotFound)}.match?(e.message)
+    if %r{Error from server \(NotFound\)}.match?(e.message)
       @exists_in_cluster = false
       return {}
     end
