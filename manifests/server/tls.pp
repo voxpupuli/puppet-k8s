@@ -37,21 +37,24 @@ class k8s::server::tls(
 
     # Additional non-CA certs that should also only be generated on one node
     if $generate_ca {
-      exec {
-        default:
-          path    => ['/usr/bin'],
-          require => Package['openssl'];
-
-        'Create service account private key':
-          command => "openssl genrsa -out '${cert_path}/service-account.key' ${key_bits}",
-          creates => "${cert_path}/service-account.key",
-          before  => File["${cert_path}/service-account.key"];
-
-        'Gets service account public key':
-          command => "openssl pkey -pubout -in '${cert_path}/service-account.key' -out '${cert_path}/service-account.pub'",
-          creates => "${cert_path}/service-account.pub",
-          before  => File["${cert_path}/service-account.pub"];
+      exec { 'K8s create service account private key':
+        path    => ['/usr/bin'],
+        require => Package['openssl'],
+        command => "openssl genrsa -out '${cert_path}/service-account.key' ${key_bits}",
+        creates => "${cert_path}/service-account.key",
+        before  => [
+          File["${cert_path}/service-account.key"],
+          Exec['K8s get service account public key'],
+        ],
       }
+    }
+
+    exec { 'K8s get service account public key':
+      path    => ['/usr/bin'],
+      require => Package['openssl'],
+      command => "openssl pkey -pubout -in '${cert_path}/service-account.key' -out '${cert_path}/service-account.pub'",
+      creates => "${cert_path}/service-account.pub",
+      before  => File["${cert_path}/service-account.pub"],
     }
 
     # Generate K8s CA
