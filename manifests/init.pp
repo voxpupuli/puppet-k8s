@@ -22,7 +22,7 @@ class k8s(
 
   Boolean $purge_manifests = true,
 
-  String[1] $native_url_template = 'http://storage.googleapis.com/kubernetes-release/release/v%{version}/bin/%{kernel}/%{arch}/%{binary}',
+  String[1] $native_url_template = 'https://storage.googleapis.com/kubernetes-release/release/v%{version}/bin/%{kernel}/%{arch}/%{binary}',
   String[1] $tarball_url_template = 'https://dl.k8s.io/v%{version}/kubernetes-%{component}-%{kernel}-%{arch}.tar.gz',
   String[1] $package_template = 'kubernetes-%{component}',
   String[1] $hyperkube_name = 'hyperkube',
