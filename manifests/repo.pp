@@ -5,7 +5,10 @@ class k8s::repo(
   case fact('os.family') {
     'Debian': {
       if fact('os.name') == 'Debian' {
-        $release_name = "Debian_${fact('os.release.major')}"
+        if Integer(fact('os.release.major')) != 10 {
+          warning('CRI-O is only available for Debian 10')
+        }
+        $release_name = 'Debian_Testing'
       } elsif fact('os.name') == 'Ubuntu' {
         $release_name = "xUbuntu_${fact('os.release.full')}"
       } elsif fact('os.name') == 'Raspbian' {
