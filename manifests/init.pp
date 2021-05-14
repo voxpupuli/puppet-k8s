@@ -70,7 +70,7 @@ class k8s(
     }
     -> file_line { 'K8s crio cgroup manager':
       path  => '/etc/crio/crio.conf',
-      line  => 'cgroup_manager = "systemd"'
+      line  => 'cgroup_manager = "systemd"',
       match => '^cgroup_manager',
     }
     if $manage_repo {
