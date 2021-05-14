@@ -69,6 +69,7 @@ Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
       @exists_in_cluster = false
       return {}
     end
+
     raise
   rescue StandardError => e
     raise Puppet::Error, "#{e.class}: #{e}"
