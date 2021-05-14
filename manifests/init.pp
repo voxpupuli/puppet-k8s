@@ -83,7 +83,10 @@ class k8s(
     gid        => 'kube',
     home       => '/srv/kubernetes',
     managehome => false,
-    shell      => '/sbin/nologin',
+    shell      => (fact('os.family') ? {
+      'Debian' => '/usr/sbin/nologin',
+      default  => '/sbin/nologin',
+    }),
     system     => true,
     uid        => 888,
   }
