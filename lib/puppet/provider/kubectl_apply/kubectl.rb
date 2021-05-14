@@ -62,13 +62,14 @@ Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
 
   def kubectl_get
     @data ||= kubectl_cmd 'get', resource[:kind], resource[:resource_name], '--output', 'json'
-    if %r{Error from server (NotFound)}.match?(@data)
+    @exists_in_cluster = true
+    JSON.parse(@data)
+  rescue Puppet::ExecutionFailure => e
+    if %r{Error from server (NotFound)}.match?(e.message)
       @exists_in_cluster = false
       return {}
     end
-
-    @exists_in_cluster = true
-    JSON.parse(@data)
+    raise
   rescue StandardError => e
     raise Puppet::Error, "#{e.class}: #{e}"
   end
