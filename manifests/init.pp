@@ -10,7 +10,7 @@ class k8s(
   Optional[String] $container_image_tag = undef,
   Enum['docker', 'crio'] $container_manager = 'crio',
   String[1] $container_runtime_service = "${container_manager}.service",
-  String[1] $crio_package = 'cri-o',
+  Optional[String[1]] $crio_package = undef,
 
   Boolean $manage_etcd = true,
   Boolean $manage_firewall = false,
@@ -45,7 +45,12 @@ class k8s(
     if $container_manager == 'docker' {
       $pkg = 'docker'
     } else {
-      $pkg = $crio_package
+      if fact('os.family') == 'Debian' {
+        $_crio_version = $version.split('\.')[0, 2].join('.')
+        $pkg = pick($crio_package, "cri-o-${_crio_version}")
+      } else {
+        $pkg = pick($crio_package, 'cri-o')
+      }
 
       file { '/usr/libexec/crio/conmon':
         ensure  => present,
