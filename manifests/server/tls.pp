@@ -176,7 +176,7 @@ class k8s::server::tls(
       Class['k8s::server::etcd::setup'] -> File["${cert_path}/etcd.key"]
     }
 
-    if !defined(File["${cert_path}/service-account.key"]) {
+    if $generate_ca and !defined(File["${cert_path}/service-account.key"]) {
       file { "${cert_path}/service-account.key":
         owner   => kube,
         group   => kube,
