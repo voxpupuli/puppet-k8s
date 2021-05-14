@@ -26,6 +26,7 @@ class k8s(
   String[1] $tarball_url_template = 'https://dl.k8s.io/v%{version}/kubernetes-%{component}-%{kernel}-%{arch}.tar.gz',
   String[1] $package_template = 'kubernetes-%{component}',
   String[1] $hyperkube_name = 'hyperkube',
+  Optional[Stdlib::Unixpath] $sysconfig_path = undef,
 
   Enum['cert', 'token', 'bootstrap'] $node_auth = 'bootstrap',
 
@@ -98,7 +99,8 @@ class k8s(
     group  => 'kube',
   }
 
-  file { '/etc/sysconfig/kube-common':
+  $_sysconfig_path = pick($sysconfig_path, '/etc/sysconfig')
+  file { "${_sysconfig_path}/kube-common":
     ensure  => file,
     content => epp('k8s/sysconfig.epp', {
         comment               => 'General Kubernetes Configuration',

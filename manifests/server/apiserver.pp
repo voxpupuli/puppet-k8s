@@ -213,7 +213,8 @@ class k8s::server::apiserver(
       }),
     }
   } else {
-    file { '/etc/sysconfig/kube-apiserver':
+    $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
+    file { "${_sysconfig_path}/kube-apiserver":
       content => epp('k8s/sysconfig.epp', {
           comment               => 'Kubernetes API Server configuration',
           environment_variables => {
@@ -236,7 +237,7 @@ class k8s::server::apiserver(
         group => kube,
       }),
       require => [
-        File['/etc/sysconfig/kube-apiserver'],
+        File["${_sysconfig_path}/kube-apiserver"],
         User['kube'],
       ],
       notify  => Service['kube-apiserver'],

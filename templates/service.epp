@@ -10,6 +10,7 @@
 
   Optional[String[1]] $user = undef,
   Optional[String[1]] $group = undef,
+  Optional[Stdlib::Unixpath] $sysconfig_path = undef,
 
   Stdlib::Unixpath $bindir = "/opt/k8s/${k8s::version}",
 | -%>
@@ -27,8 +28,11 @@ After=network.target <%= $needs.join(' ') %>
 <%- if $dir { -%>
 WorkingDirectory=<%= $dir %>
 <%- } -%>
-EnvironmentFile=-/etc/sysconfig/kube-common
-EnvironmentFile=/etc/sysconfig/<%= $name %>
+<%-
+  $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
+-%>
+EnvironmentFile=-<%= $_sysconfig_path %>/kube-common
+EnvironmentFile=<%= $sysconfig_path %>/<%= $name %>
 ExecStart=<%= $bindir %>/<%= $bin %> \
             $KUBE_LOGTOSTDERR \
             $KUBE_LOG_LEVEL \

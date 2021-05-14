@@ -194,7 +194,8 @@ class k8s::node::kubelet(
       hostname_override          => fact('networking.fqdn'),
   } + $arguments)
 
-  file { '/etc/sysconfig/kubelet':
+  $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
+  file { "${_sysconfig_path}/kubelet":
     content => epp('k8s/sysconfig.epp', {
         comment               => 'Kubernetes Kubelet configuration',
         environment_variables => {
@@ -217,7 +218,7 @@ class k8s::node::kubelet(
       bin   => 'kubelet',
     }),
     require => [
-      File['/etc/sysconfig/kubelet', '/etc/kubernetes/kubelet.conf'],
+      File["${_sysconfig_path}/kubelet", '/etc/kubernetes/kubelet.conf'],
       User['kube'],
     ],
     notify  => Service['kubelet'],

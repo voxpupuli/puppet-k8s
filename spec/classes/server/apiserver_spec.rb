@@ -42,7 +42,10 @@ describe 'k8s::server::apiserver' do
       it { is_expected.not_to contain_file('/etc/kubernetes/manifests/kube-apiserver.yaml') }
 
       it do
-        is_expected.to contain_file('/etc/sysconfig/kube-apiserver')
+        sysconf = '/etc/sysconfig'
+        sysconf = '/etc/default' if os_facts['os']['family'] == 'Debian'
+
+        is_expected.to contain_file(File.join sysconf, 'kube-apiserver')
           .with_content(
             <<~SYSCONF,
             ### NB: File managed by Puppet.

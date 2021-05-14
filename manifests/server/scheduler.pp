@@ -51,7 +51,8 @@ class k8s::server::scheduler(
       client_cert     => $cert,
       client_key      => $key,
     }
-    file { '/etc/sysconfig/kube-scheduler':
+    $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
+    file { "${_sysconfig_path}/kube-scheduler":
       content => epp('k8s/sysconfig.epp', {
           comment               => 'Kubernetes Scheduler configuration',
           environment_variables => {
@@ -75,7 +76,7 @@ class k8s::server::scheduler(
         group => kube,
       }),
       require => [
-        File['/etc/sysconfig/kube-scheduler'],
+        File["${_sysconfig_path}/kube-scheduler"],
         User['kube'],
       ],
       notify  => Service['kube-scheduler'],

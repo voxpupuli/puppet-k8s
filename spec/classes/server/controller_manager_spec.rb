@@ -38,7 +38,10 @@ describe 'k8s::server::controller_manager' do
 
       it { is_expected.not_to contain_file('/etc/kubernetes/manifests/kube-controller-manager.yaml') }
       it do
-        is_expected.to contain_file('/etc/sysconfig/kube-controller-manager')
+        sysconf = '/etc/sysconfig'
+        sysconf = '/etc/default' if os_facts['os']['family'] == 'Debian'
+
+        is_expected.to contain_file(File.join sysconf, 'kube-controller-manager')
           .with_content(
             <<~SYSCONF,
             ### NB: File managed by Puppet.

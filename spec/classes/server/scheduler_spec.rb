@@ -26,7 +26,10 @@ describe 'k8s::server::scheduler' do
       it { is_expected.to contain_kubeconfig('/srv/kubernetes/kube-scheduler.kubeconf') }
       it { is_expected.not_to contain_file('/etc/kubernetes/manifests/kube-scheduler.yaml') }
       it do
-        is_expected.to contain_file('/etc/sysconfig/kube-scheduler')
+        sysconf = '/etc/sysconfig'
+        sysconf = '/etc/default' if os_facts['os']['family'] == 'Debian'
+
+        is_expected.to contain_file(File.join sysconf, 'kube-scheduler')
           .with_content(
             <<~SYSCONF,
             ### NB: File managed by Puppet.
