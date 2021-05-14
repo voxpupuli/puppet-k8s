@@ -11,8 +11,8 @@ class k8s::repo(
       } elsif fact('os.name') == 'Raspbian' {
         $repo_name = "Raspbian_${fact('os.release.full')}"
       }
-      $libcontainers_url = "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${repo_name}/ /"
-      $crio_url = "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/${crio_version}/${repo_name}/ /"
+      $libcontainers_url = "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${repo_name}/"
+      $crio_url = "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/${crio_version}/${repo_name}/"
 
       apt::source { 'libcontainers:stable':
         location => $libcontainers_url,
