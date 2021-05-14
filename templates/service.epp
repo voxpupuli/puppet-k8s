@@ -32,7 +32,7 @@ WorkingDirectory=<%= $dir %>
   $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
 -%>
 EnvironmentFile=-<%= $_sysconfig_path %>/kube-common
-EnvironmentFile=<%= $sysconfig_path %>/<%= $name %>
+EnvironmentFile=<%= $_sysconfig_path %>/<%= $name %>
 ExecStart=<%= $bindir %>/<%= $bin %> \
             $KUBE_LOGTOSTDERR \
             $KUBE_LOG_LEVEL \
