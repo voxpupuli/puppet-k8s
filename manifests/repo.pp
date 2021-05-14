@@ -14,13 +14,13 @@ class k8s::repo(
       } elsif fact('os.name') == 'Raspbian' {
         $release_name = "Raspbian_${fact('os.release.full')}"
       }
-      $libcontainers_url = 'https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/'
-      $crio_url = "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/${crio_version}/"
+      $libcontainers_url = "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${release_name}"
+      $crio_url = "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/${crio_version}/${release_name}"
 
       apt::source { 'libcontainers:stable':
         location => $libcontainers_url,
         repos    => '/',
-        release  => $release_name,
+        release  => '',
         key      => {
           id     => '2472D6D0D2F66AF87ABA8DA34D64390375060AA4',
           server => 'hkps.pool.sks-keyservers.net',
@@ -30,7 +30,7 @@ class k8s::repo(
         apt::source { 'libcontainers:stable:cri-o':
           location => $crio_url,
           repos    => '/',
-          release  => $release_name,
+          release  => '',
           key      => {
             id     => '2472D6D0D2F66AF87ABA8DA34D64390375060AA4',
             server => 'hkps.pool.sks-keyservers.net',
