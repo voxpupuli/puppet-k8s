@@ -48,6 +48,7 @@ class k8s(
       if fact('os.family') == 'Debian' {
         $_crio_version = $version.split('\.')[0, 2].join('.')
         $pkg = pick($crio_package, "cri-o-${_crio_version}")
+
       } else {
         $pkg = pick($crio_package, 'cri-o')
       }
@@ -66,6 +67,11 @@ class k8s(
 
     package { 'k8s container manager':
       name => $pkg,
+    }
+    -> file_line { 'K8s crio cgroup manager':
+      path  => '/etc/crio/crio.conf',
+      line  => 'cgroup_manager = "systemd"'
+      match => '^cgroup_manager',
     }
     if $manage_repo {
       Class['k8s::repo'] -> Package['k8s container manager']
