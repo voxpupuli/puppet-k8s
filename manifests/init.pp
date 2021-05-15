@@ -131,6 +131,8 @@ class k8s(
 
     '/etc/cni': ;
     '/etc/cni/net.d': ;
+    '/opt/cni': ;
+    '/opt/cni/bin': ;
 
     '/etc/kubernetes': ;
     '/etc/kubernetes/certs': ;
