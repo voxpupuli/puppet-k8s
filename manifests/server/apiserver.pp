@@ -13,6 +13,7 @@ class k8s::server::apiserver(
   Stdlib::Unixpath $ca_cert = $k8s::server::tls::ca_cert,
   Stdlib::Unixpath $aggregator_ca_cert = $k8s::server::tls::aggregator_ca_cert,
   Stdlib::Unixpath $serviceaccount_public = "${cert_path}/service-account.pub",
+  Stdlib::Unixpath $serviceaccount_private = "${cert_path}/service-account.key",
   Stdlib::Unixpath $apiserver_cert = "${cert_path}/kube-apiserver.pem",
   Stdlib::Unixpath $apiserver_key = "${cert_path}/kube-apiserver.key",
   Stdlib::Unixpath $front_proxy_cert = "${cert_path}/front-proxy-client.pem",
@@ -65,6 +66,15 @@ class k8s::server::apiserver(
     $_addn_args = {}
   }
 
+  if versioncmp($k8s::version, '1.20') >= 0 {
+    $_service_account = {
+      service_account_signing_key_file => $serviceaccount_private,
+      service_account_issuer           => 'https://kubernetes.default.svc.cluster.local',
+    }
+  } else {
+    $_service_account = {}
+  }
+
   $_args = k8s::format_arguments({
       enable_admission_plugins           => [
         'NamespaceLifecycle',
@@ -103,11 +113,7 @@ class k8s::server::apiserver(
       service_cluster_ip_range           => $service_cluster_cidr,
       tls_cert_file                      => $apiserver_cert,
       tls_private_key_file               => $apiserver_key,
-      feature_gates                      => {
-        'RotateKubeletClientCertificate' => true,
-        'RotateKubeletServerCertificate' => true,
-      },
-  } + $_discovery + $_addn_args + $arguments)
+  } + $_discovery + $_addn_args + $_service_account + $arguments)
 
   if $k8s::packaging == 'container' {
     $_image = "${k8s::container_registry}/${k8s::container_image}:${pick($k8s::container_image_tag, $k8s::version)}"
