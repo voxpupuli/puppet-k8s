@@ -238,7 +238,13 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
 
     @kubeconfig_content ||= \
       if File.exist? resource[:path]
-        default.merge Psych.load(File.read(resource[:path]))
+        begin
+          data = Psych.load(File.read(resource[:path]))
+        rescue Psych::Exception
+          data = {} # Handle broken files as if empty
+        end
+        data = {} unless data.is_a? Hash
+        default.merge data
       else
         default
       end
