@@ -41,7 +41,7 @@ describe 'k8s::server::controller_manager' do
         sysconf = '/etc/sysconfig'
         sysconf = '/etc/default' if os_facts['os']['family'] == 'Debian'
 
-        is_expected.to contain_file(File.join sysconf, 'kube-controller-manager')
+        is_expected.to contain_file(File.join(sysconf, 'kube-controller-manager'))
           .with_content(
             <<~SYSCONF,
             ### NB: File managed by Puppet.

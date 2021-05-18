@@ -29,7 +29,7 @@ describe 'k8s::server::scheduler' do
         sysconf = '/etc/sysconfig'
         sysconf = '/etc/default' if os_facts['os']['family'] == 'Debian'
 
-        is_expected.to contain_file(File.join sysconf, 'kube-scheduler')
+        is_expected.to contain_file(File.join(sysconf, 'kube-scheduler'))
           .with_content(
             <<~SYSCONF,
             ### NB: File managed by Puppet.

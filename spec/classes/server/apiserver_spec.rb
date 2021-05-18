@@ -45,7 +45,7 @@ describe 'k8s::server::apiserver' do
         sysconf = '/etc/sysconfig'
         sysconf = '/etc/default' if os_facts['os']['family'] == 'Debian'
 
-        is_expected.to contain_file(File.join sysconf, 'kube-apiserver')
+        is_expected.to contain_file(File.join(sysconf, 'kube-apiserver'))
           .with_content(
             <<~SYSCONF,
             ### NB: File managed by Puppet.
