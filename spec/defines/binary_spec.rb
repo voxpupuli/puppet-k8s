@@ -56,7 +56,7 @@ describe 'k8s::binary' do
               is_expected.to contain_file("/opt/k8s/1.0/#{binary}").with(
                 ensure: 'present',
                 mode: '0755',
-                source: "http://storage.googleapis.com/kubernetes-release/release/v1.0/bin/linux/amd64/#{binary}",
+                source: "https://storage.googleapis.com/kubernetes-release/release/v1.0/bin/linux/amd64/#{binary}",
               )
             end
           elsif method == 'hyperkube'
@@ -64,7 +64,7 @@ describe 'k8s::binary' do
               is_expected.to contain_file('/opt/k8s/1.0/hyperkube').with(
                 ensure: 'present',
                 mode: '0755',
-                source: 'http://storage.googleapis.com/kubernetes-release/release/v1.0/bin/linux/amd64/hyperkube',
+                source: 'https://storage.googleapis.com/kubernetes-release/release/v1.0/bin/linux/amd64/hyperkube',
               )
             end
           end

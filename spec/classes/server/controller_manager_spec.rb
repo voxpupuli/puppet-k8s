@@ -50,7 +50,7 @@ describe 'k8s::server::controller_manager' do
             ## Kubernetes Controller Manager configuration
             #
 
-            KUBE_CONTROLLER_MANAGER_ARGS="--allocate-node-cidrs=true --controllers=*,bootstrapsigner,tokencleaner --cluster-cidr=10.0.0.0/16 --service-cluster-ip-range=10.1.0.0/24 --cluster-signing-cert-file=/etc/kubernetes/certs/ca.pem --cluster-signing-key-file=/etc/kubernetes/certs/ca.key --leader-elect=true --root-ca-file=/etc/kubernetes/certs/ca.pem --service-account-private-key-file=/etc/kubernetes/certs/service-account.key --feature-gates=RotateKubeletClientCertificate=true,RotateKubeletServerCertificate=true --kubeconfig=/srv/kubernetes/kube-controller-manager.kubeconf"
+            KUBE_CONTROLLER_MANAGER_ARGS="--allocate-node-cidrs=true --controllers=*,bootstrapsigner,tokencleaner --cluster-cidr=10.0.0.0/16 --service-cluster-ip-range=10.1.0.0/24 --cluster-signing-cert-file=/etc/kubernetes/certs/ca.pem --cluster-signing-key-file=/etc/kubernetes/certs/ca.key --leader-elect=true --root-ca-file=/etc/kubernetes/certs/ca.pem --service-account-private-key-file=/etc/kubernetes/certs/service-account.key --kubeconfig=/srv/kubernetes/kube-controller-manager.kubeconf"
             SYSCONF
           ).that_notifies('Service[kube-controller-manager]')
       end
