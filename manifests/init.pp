@@ -61,7 +61,6 @@ class k8s(
           ensure  => link,
           target  => '/usr/sbin/runc',
           replace => false,
-          notify  => Service['crio'],
         }
       } else {
         $pkg = pick($crio_package, 'cri-o')
