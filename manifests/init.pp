@@ -169,8 +169,16 @@ class k8s(
     include ::k8s::repo
   }
   if $manage_packages {
+    # Ensure conntrack is installed to properly handle networking cleanup
+    if fact('os.family') == 'Debian' {
+      $_conntrack = 'conntrack'
+    } else {
+      $_conntrack = 'conntrack-tools'
+    }
+
     ensure_packages([
       'containernetworking-plugins',
+      $_conntrack,
     ])
     if $manage_repo {
       Class['k8s::repo'] -> Package['containernetworking-plugins']
