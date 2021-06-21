@@ -53,6 +53,16 @@ class k8s(
           $pkg = pick($crio_package, "cri-o")
         }
 
+        # Avoid a potential issue with some CRI-o versions
+        file { ['/usr/lib/cri-o-runc/sbin', '/usr/lib/cri-o-runc']:
+          ensure => directory,
+        }
+        file { '/usr/lib/cri-o-runc/sbin/runc':
+          ensure  => link,
+          target  => '/usr/sbin/runc',
+          replace => false,
+          notify  => Service['crio'],
+        }
       } else {
         $pkg = pick($crio_package, 'cri-o')
       }
