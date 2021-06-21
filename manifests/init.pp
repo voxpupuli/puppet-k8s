@@ -47,7 +47,11 @@ class k8s(
     } else {
       if fact('os.family') == 'Debian' {
         $_crio_version = $version.split('\.')[0, 2].join('.')
-        $pkg = pick($crio_package, "cri-o-${_crio_version}")
+        if versioncmp($_crio_version, '1.17') < 0 {
+          $pkg = pick($crio_package, "cri-o-${_crio_version}")
+        } else {
+          $pkg = pick($crio_package, "cri-o")
+        }
 
       } else {
         $pkg = pick($crio_package, 'cri-o')
