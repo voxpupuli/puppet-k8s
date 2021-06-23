@@ -27,7 +27,7 @@ class k8s::repo(
         release  => '',
         key      => {
           id     => '2472D6D0D2F66AF87ABA8DA34D64390375060AA4',
-          server => 'hkps.pool.sks-keyservers.net',
+          source => "${libcontainers_url}/Release.key",
         },
       }
       if $manage_container_manager {
@@ -37,7 +37,7 @@ class k8s::repo(
           release  => '',
           key      => {
             id     => '2472D6D0D2F66AF87ABA8DA34D64390375060AA4',
-            server => 'hkps.pool.sks-keyservers.net',
+            source => "${crio_url}/Release.key",
           },
         }
       }
