@@ -74,13 +74,14 @@ class k8s::server(
 
   include k8s::node::kubectl
   kubeconfig { '/root/.kube/config':
-    ensure      => $ensure,
-    server      => "https://localhost:${api_port}",
-    require     => File['/root/.kube'],
+    ensure          => $ensure,
+    server          => "https://localhost:${api_port}",
+    require         => File['/root/.kube'],
+    current_context => 'default',
 
-    ca_cert     => $ca_cert,
-    client_cert => "${cert_path}/admin.pem",
-    client_key  => "${cert_path}/admin.key",
+    ca_cert         => $ca_cert,
+    client_cert     => "${cert_path}/admin.pem",
+    client_key      => "${cert_path}/admin.key",
   }
 
   if $node_on_server {
