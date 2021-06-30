@@ -227,6 +227,7 @@ class k8s::node::kubelet(
     ensure => stdlib::ensure($ensure, 'service'),
     enable => true,
   }
+  Package <| title == 'containernetworking-plugins' |> -> Service['kubelet']
 
   if $manage_firewall {
     firewalld_custom_service { 'kubelet':
