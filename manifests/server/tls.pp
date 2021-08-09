@@ -49,12 +49,20 @@ class k8s::server::tls(
       }
     }
 
-    exec { 'K8s get service account public key':
-      path    => ['/usr/bin'],
-      require => Package['openssl'],
-      command => "openssl pkey -pubout -in '${cert_path}/service-account.key' -out '${cert_path}/service-account.pub'",
-      creates => "${cert_path}/service-account.pub",
-      before  => File["${cert_path}/service-account.pub"],
+    exec {
+      default:
+        path    => ['/usr/bin'];
+
+      'K8s remove broken service account public key':
+        command => "rm '${cert_path}/service-account.pub'",
+        onlyif  => "file '${cert_path}/service-account.pub' | grep ': empty'",
+        notify  => Exec['K8s get service account public key'];
+
+      'K8s get service account public key':
+        require => Package['openssl'],
+        command => "openssl pkey -pubout -in '${cert_path}/service-account.key' -out '${cert_path}/service-account.pub'",
+        creates => "${cert_path}/service-account.pub",
+        before  => File["${cert_path}/service-account.pub"];
     }
 
     # Generate K8s CA

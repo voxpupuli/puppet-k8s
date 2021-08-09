@@ -51,7 +51,7 @@ define k8s::server::tls::cert(
     Package <| title == 'openssl' |>
     -> exec {
       default:
-        path    => ['/usr/bin'];
+        path    => ['/usr/bin', '/bin'];
 
       "Create K8s ${title} key":
         command => "openssl genrsa -out '${key}' ${key_bits}",
@@ -65,6 +65,11 @@ define k8s::server::tls::cert(
         refreshonly => true,
         notify      => Exec["Sign K8s ${title} cert"],
         before      => File[$csr];
+
+      "Remove broken K8s ${title} cert":
+        command => "rm '${cert}'",
+        onlyif  => "file '${cert}' | grep ': empty'",
+        notify  => Exec["Sign K8s ${title} cert"];
 
       "Sign K8s ${title} cert":
         command     => "openssl x509 -req -in '${csr}' \

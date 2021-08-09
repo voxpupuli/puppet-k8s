@@ -16,12 +16,17 @@ define k8s::server::tls::ca(
     Package <| title == 'openssl' |>
     -> exec {
       default:
-        path    => ['/usr/bin'];
+        path    => ['/usr/bin', '/bin'];
 
       "Create ${title} CA key":
         command => "openssl genrsa -out '${key}' ${key_bits}",
         creates => $key,
         before  => File[$key];
+
+      "Remove broken ${title} CA cert":
+        command => "rm '${cert}'",
+        onlyif  => "file '${cert}' | grep ': empty'",
+        notify  => Exec["Create ${title} CA cert"];
 
       "Create ${title} CA cert":
         command     => "openssl req -x509 -new -nodes -key '${key}' \
