@@ -53,20 +53,20 @@ describe 'k8s::server::tls::cert' do
       end
       it do
         is_expected.to contain_exec('Create K8s namevar key').with(
-          path: ['/usr/bin'],
+          path: ['/usr/bin', '/bin'],
           command: "openssl genrsa -out '/tmp/certs/namevar.key' 2048",
           creates: '/tmp/certs/namevar.key',
         )
       end
       it do
         is_expected.to contain_exec('Create K8s namevar CSR').with(
-          path: ['/usr/bin'],
+          path: ['/usr/bin', '/bin'],
           command: %r{openssl req -new -key '/tmp/certs/namevar\.key' \s+ -out '/tmp/certs/namevar\.csr' -config '/tmp/certs/namevar\.cnf'},
         )
       end
       it do
         is_expected.to contain_exec('Sign K8s namevar cert').with(
-          path: ['/usr/bin'],
+          path: ['/usr/bin', '/bin'],
           command: %r{openssl x509 -req -in '/tmp/certs/namevar\.csr' \s+ -CA '/tmp/ca.pem' -CAkey '/tmp/ca\.key' -CAcreateserial \s+ -out \
 '/tmp/certs/namevar\.pem' -days '10000' \s+ -extensions v3_req -extfile '/tmp/certs/namevar\.cnf'},
         )
