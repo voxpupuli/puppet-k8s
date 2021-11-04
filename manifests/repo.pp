@@ -6,10 +6,10 @@ class k8s::repo(
     'Debian': {
       if fact('os.name') == 'Debian' {
         if Integer(fact('os.release.major')) < 10 {
-          warning('CRI-O is only available for Debian 10')
+          warning('CRI-O is only available for Debian 10 and newer')
         }
         if versioncmp($crio_version, '1.19') >= 0 {
-          $release_name = 'Debian_10'
+          $release_name = "Debian_${fact('os.release.major')}"
         } else {
           $release_name = 'Debian_Testing'
         }
