@@ -19,7 +19,7 @@ describe 'k8s::server::tls::ca' do
 
       it do
         is_expected.to contain_exec('Create namevar CA key').with(
-          path: [ '/usr/bin' , '/bin'],
+          path: [ '/usr/bin', '/bin'],
           command: "openssl genrsa -out '/tmp/ca.key' 2048",
           creates: '/tmp/ca.key',
         )

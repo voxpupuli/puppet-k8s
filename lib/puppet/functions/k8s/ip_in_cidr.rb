@@ -16,13 +16,15 @@ Puppet::Functions.create_function(:'k8s::ip_in_cidr') do
   #
   # @return [String] The first IP address in the CIDR
   dispatch :ip_in_cidr do
-    param 'Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]', :cidr
+    param 'Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]]', :cidr
     optional_param 'Variant[Enum["first","second"], Integer[1]]', :index
     return_type 'String'
   end
 
   require 'ipaddr'
   def ip_in_cidr(cidr, index = 1)
+    cidr = cidr.first if cidr.is_a? Array
+
     if index.is_a? String
       index = 1 if index == 'first'
       index = 2 if index == 'second'

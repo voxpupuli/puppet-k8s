@@ -3,7 +3,7 @@ class k8s::server::apiserver(
 
   Hash[String, Data] $arguments = {},
 
-  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $service_cluster_cidr = $k8s::service_cluster_cidr,
+  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $service_cluster_cidr = $k8s::service_cluster_cidr,
 
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
   Boolean $discover_etcd_servers = $k8s::puppetdb_discovery,

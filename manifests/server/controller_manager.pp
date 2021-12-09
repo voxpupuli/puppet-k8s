@@ -5,8 +5,8 @@ class k8s::server::controller_manager(
 
   Hash[String, Data] $arguments = {},
 
-  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $service_cluster_cidr = $k8s::service_cluster_cidr,
-  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $cluster_cidr = $k8s::cluster_cidr,
+  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $service_cluster_cidr = $k8s::service_cluster_cidr,
+  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $cluster_cidr = $k8s::cluster_cidr,
 
   Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
   Stdlib::Unixpath $ca_cert = $k8s::server::tls::ca_cert,

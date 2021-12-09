@@ -61,6 +61,39 @@ describe 'k8s::server::controller_manager' do
           enable: true,
         )
       end
+
+      context 'with dual-stack' do
+        let(:params) do
+          {
+            cluster_cidr: [
+              '10.0.0.0/16',
+              'fc00:cafe:42:0::/64',
+            ],
+            service_cluster_cidr: [
+              '10.1.0.0/24',
+              'fc00:cafe:42:1::/64',
+            ]
+          }
+        end
+
+        it do
+          sysconf = '/etc/sysconfig'
+          sysconf = '/etc/default' if os_facts['os']['family'] == 'Debian'
+
+          is_expected.to contain_file(File.join(sysconf, 'kube-controller-manager'))
+            .with_content(
+              <<~SYSCONF,
+              ### NB: File managed by Puppet.
+              ###     Any changes will be overwritten.
+              #
+              ## Kubernetes Controller Manager configuration
+              #
+
+              KUBE_CONTROLLER_MANAGER_ARGS="--allocate-node-cidrs=true --controllers=*,bootstrapsigner,tokencleaner --cluster-cidr=10.0.0.0/16,fc00:cafe:42:0::/64 --service-cluster-ip-range=10.1.0.0/24,fc00:cafe:42:1::/64 --cluster-signing-cert-file=/etc/kubernetes/certs/ca.pem --cluster-signing-key-file=/etc/kubernetes/certs/ca.key --leader-elect=true --root-ca-file=/etc/kubernetes/certs/ca.pem --service-account-private-key-file=/etc/kubernetes/certs/service-account.key --kubeconfig=/srv/kubernetes/kube-controller-manager.kubeconf"
+              SYSCONF
+            ).that_notifies('Service[kube-controller-manager]')
+        end
+      end
     end
   end
 end

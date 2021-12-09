@@ -5,7 +5,7 @@ class k8s::node::kube_proxy(
 
   Hash[String, Data] $arguments = {},
 
-  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR] $cluster_cidr = $k8s::cluster_cidr,
+  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $cluster_cidr = $k8s::cluster_cidr,
 
   Enum['cert', 'token', 'incluster'] $auth = $k8s::node::proxy_auth,
 
