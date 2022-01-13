@@ -184,6 +184,12 @@ class k8s::node::kubelet(
     $_runtime = undef
   }
 
+  if fact('networking.ip') and fact('networking.ip6') {
+    $_node_ip = [fact('networking.ip'), fact('networking.ip6')]
+  } else {
+    $_node_ip = undef
+  }
+
   $_args = k8s::format_arguments({
       config                     => '/etc/kubernetes/kubelet.conf',
       kubeconfig                 => $kubeconfig,
@@ -192,6 +198,7 @@ class k8s::node::kubelet(
       container_runtime          => $_runtime,
       container_runtime_endpoint => $_runtime_endpoint,
       hostname_override          => fact('networking.fqdn'),
+      node_ip                    => $_node_ip
   } + $arguments)
 
   $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
