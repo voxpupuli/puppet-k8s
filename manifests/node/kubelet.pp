@@ -11,6 +11,7 @@ class k8s::node::kubelet(
   Enum['cert', 'token', 'bootstrap'] $auth = $k8s::node::node_auth,
   Boolean $rotate_server_tls = $auth == 'bootstrap',
   Boolean $manage_firewall = $k8s::node::manage_firewall,
+  Boolean $support_dualstack = true,
 
   Stdlib::Unixpath $cert_path = $k8s::node::cert_path,
   Stdlib::Unixpath $kubeconfig = '/srv/kubernetes/kubelet.kubeconf',
@@ -184,7 +185,7 @@ class k8s::node::kubelet(
     $_runtime = undef
   }
 
-  if fact('networking.ip') and fact('networking.ip6') {
+  if $support_dualstack and fact('networking.ip') and fact('networking.ip6') {
     $_node_ip = [fact('networking.ip'), fact('networking.ip6')]
   } else {
     $_node_ip = undef
