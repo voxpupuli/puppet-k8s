@@ -3,7 +3,7 @@ class k8s(
   Enum['container', 'native'] $packaging = 'native',
   Enum['package', 'tarball', 'loose', 'hyperkube', 'manual'] $native_packaging = 'loose',
   String[1] $version = '1.18.16',
-  String[1] $etcd_version = '3.4.15',
+  String[1] $etcd_version = '3.5.1',
 
   String[1] $container_registry = 'gcr.io/google_containers',
   String[1] $container_image = 'hyperkube',
