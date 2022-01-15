@@ -63,7 +63,8 @@ class k8s::node::kube_proxy(
       proxy_mode        => 'iptables',
   } + $arguments)
 
-  file { '/etc/sysconfig/kube-proxy':
+  $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
+  file { "${_sysconfig_path}/kube-proxy":
     content => epp('k8s/sysconfig.epp', {
         comment               => 'Kubernetes kube-proxy configuration',
         environment_variables => {
@@ -83,7 +84,7 @@ class k8s::node::kube_proxy(
       bin  => 'kube-proxy',
     }),
     require => [
-      File['/etc/sysconfig/kube-proxy'],
+      File["${_sysconfig_path}/kube-proxy"],
       User['kube'],
     ],
     notify  => Service['kube-proxy'],
