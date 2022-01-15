@@ -33,6 +33,8 @@ class k8s::node::kube_proxy(
         server          => $master,
         token           => $token,
         current_context => 'default',
+
+        ca_cert         => $ca_cert,
       }
     }
     'cert': {
