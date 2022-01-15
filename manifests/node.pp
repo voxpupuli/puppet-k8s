@@ -10,9 +10,9 @@ class k8s::node(
   Boolean $manage_firewall = $k8s::manage_firewall,
 
   Stdlib::Unixpath $cert_path = '/var/lib/kubelet/pki',
+  Optional[Stdlib::Unixpath] $ca_cert = "${cert_path}/ca.pem",
 
   # For cert auth
-  Optional[Stdlib::Unixpath] $ca_cert = undef,
   Optional[Stdlib::Unixpath] $node_cert = undef,
   Optional[Stdlib::Unixpath] $node_key = undef,
 

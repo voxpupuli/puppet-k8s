@@ -33,8 +33,8 @@ class k8s::node::kube_proxy(
         server          => $master,
         token           => $token,
         current_context => 'default',
-
         ca_cert         => $ca_cert,
+        notify          => Service['kube-proxy'],
       }
     }
     'cert': {
@@ -43,11 +43,11 @@ class k8s::node::kube_proxy(
         owner           => 'kube',
         group           => 'kube',
         server          => $master,
-        current_context => 'default',
-
-        ca_cert         => $ca_cert,
         client_cert     => $cert,
         client_key      => $key,
+        current_context => 'default',
+        ca_cert         => $ca_cert,
+        notify          => Service['kube-proxy'],
       }
     }
     'incluster': {
