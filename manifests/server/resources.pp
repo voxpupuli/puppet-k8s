@@ -16,8 +16,10 @@ class k8s::server::resources(
   String[1] $kube_proxy_tag = "v${k8s::version}",
   String[1] $coredns_image = 'coredns/coredns',
   String[1] $coredns_tag = '1.8.7',
-  String[1] $flannel_image = 'quay.io/coreos/flannel',
-  String[1] $flannel_tag = 'v0.13.0',
+  String[1] $flannel_cni_image = 'rancher/mirrored-flannelcni-flannel-cni-plugin',
+  String[1] $flannel_cni_tag = 'v1.0.0',
+  String[1] $flannel_image = 'rancher/mirrored-flannelcni-flannel',
+  String[1] $flannel_tag = 'v0.16.1',
 ) {
   assert_private()
 
@@ -890,6 +892,12 @@ class k8s::server::resources(
           },
           rules    => [
             {
+              apiGroups     => ['extensions'],
+              resources     => ['podsecuritypolicies'],
+              verbs         => ['use'],
+              resourceNames => ['psp.flannel.unprivileged'],
+            },
+            {
               apiGroups => [''],
               resources => ['pods'],
               verbs     => ['get'],
@@ -1080,13 +1088,29 @@ class k8s::server::resources(
                 ],
                 initContainers     => [
                   {
+                    name         => 'install-cni-plugin',
+                    image        => "${flannel_cni_image}:${flannel_cni_tag}",
+                    command      => [ 'cp' ],
+                    args         => [
+                      '-f',
+                      '/flannel',
+                      '/opt/cni/bin/flannel',
+                    ],
+                    volumeMounts => [
+                      {
+                        name      => 'host-cni-bin',
+                        mountPath => '/opt/cni/bin',
+                      },
+                    ],
+                  },
+                  {
                     name         => 'install-cni',
                     image        => "${flannel_image}:${flannel_tag}",
                     command      => [ 'cp' ],
                     args         => [
                       '-f',
                       '/etc/kube-flannel/cni-conf.json',
-                      '/etc/cni/net.d/10-flannel.conflits',
+                      '/etc/cni/net.d/10-flannel.conflist',
                     ],
                     volumeMounts => [
                       {
