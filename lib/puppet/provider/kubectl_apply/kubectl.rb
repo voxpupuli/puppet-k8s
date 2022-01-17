@@ -5,6 +5,7 @@ require 'tempfile'
 
 Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
   commands kubectl: 'kubectl'
+  defaultfor kernel: %r{.*}
 
   attr_reader :resource_diff, :exists_in_cluster
 

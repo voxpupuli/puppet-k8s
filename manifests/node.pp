@@ -3,10 +3,10 @@ class k8s::node(
 
   Stdlib::HTTPUrl $master = $k8s::master,
   Enum['cert', 'token', 'bootstrap'] $node_auth = $k8s::node_auth,
-  Enum['cert', 'token', 'incluster'] $proxy_auth = 'cert',
+  Enum['cert', 'token', 'incluster'] $proxy_auth = 'incluster',
 
   Boolean $manage_kubelet = true,
-  Boolean $manage_proxy = true,
+  Boolean $manage_proxy = false,
   Boolean $manage_firewall = $k8s::manage_firewall,
 
   Stdlib::Unixpath $cert_path = '/var/lib/kubelet/pki',

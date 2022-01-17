@@ -8,9 +8,12 @@ class k8s::server::resources(
   String[1] $master = $k8s::server::master,
 
   Boolean $manage_bootstrap = true,
+  Boolean $manage_kube_proxy = $k8s::manage_kube_proxy,
   Boolean $manage_coredns = true,
   Boolean $manage_flannel = true,
 
+  String[1] $kube_proxy_image = 'k8s.gcr.io/kube-proxy',
+  String[1] $kube_proxy_tag = "v${k8s::version}",
   String[1] $coredns_image = 'coredns/coredns',
   String[1] $coredns_tag = '1.8.3',
   String[1] $flannel_image = 'quay.io/coreos/flannel',
@@ -42,7 +45,12 @@ class k8s::server::resources(
         kind        => 'ConfigMap',
         namespace   => 'kube-system',
         content     => {
-          data => {
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
+          data     => {
             ca         => String(Binary.new($facts['k8s_ca']), '%s'),
             kubeconfig => to_yaml({
                 apiVersion        => 'v1',
@@ -79,7 +87,12 @@ class k8s::server::resources(
         namespace     => 'kube-system',
         resource_name => 'puppet:cluster-info:reader',
         content       => {
-          rules => [
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
+          rules    => [
             {
               apiGroups     => [ '' ],
               resources     => [
@@ -101,17 +114,20 @@ class k8s::server::resources(
             annotations => {
               'rbac.authorization.kubernetes.io/autoupdate' => 'true',
             },
+            labels      => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
           },
           rules    => [
             {
               apiGroups => [
-                "certificates.k8s.io",
+                'certificates.k8s.io',
               ],
               resources => [
-                "certificatesigningrequests/nodeclient",
+                'certificatesigningrequests/nodeclient',
               ],
               verbs     => [
-                "create"
+                'create'
               ],
             },
           ],
@@ -123,17 +139,20 @@ class k8s::server::resources(
             annotations => {
               'rbac.authorization.kubernetes.io/autoupdate' => 'true',
             },
+            labels      => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
           },
           rules    => [
             {
               apiGroups => [
-                "certificates.k8s.io",
+                'certificates.k8s.io',
               ],
               resources => [
-                "certificatesigningrequests/selfnodeclient",
+                'certificatesigningrequests/selfnodeclient',
               ],
               verbs     => [
-                "create"
+                'create'
               ],
             },
           ],
@@ -145,17 +164,20 @@ class k8s::server::resources(
             annotations => {
               'rbac.authorization.kubernetes.io/autoupdate' => 'true',
             },
+            labels      => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
           },
           rules    => [
             {
               apiGroups => [
-                "certificates.k8s.io",
+                'certificates.k8s.io',
               ],
               resources => [
-                "certificatesigningrequests/selfnodeserver",
+                'certificatesigningrequests/selfnodeserver',
               ],
               verbs     => [
-                "create"
+                'create'
               ],
             },
           ],
@@ -174,6 +196,11 @@ class k8s::server::resources(
         namespace     => 'kube-system',
         resource_name => 'puppet:cluster-info:reader',
         content       => {
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
           roleRef  => {
             apiGroup => 'rbac.authorization.k8s.io',
             kind     => 'Role',
@@ -195,6 +222,11 @@ class k8s::server::resources(
 
       'system-bootstrap-node-bootstrapper':
         content => {
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
           subjects => [
             {
               kind     => 'Group',
@@ -216,6 +248,11 @@ class k8s::server::resources(
 
       'system-bootstrap-approve-node-client-csr':
         content => {
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
           subjects => [
             {
               kind     => 'Group',
@@ -232,6 +269,11 @@ class k8s::server::resources(
 
       'system-bootstrap-node-renewal':
         content => {
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
           subjects => [
             {
               kind     => 'Group',
@@ -248,6 +290,11 @@ class k8s::server::resources(
 
       'system-bootstrap-node-server-renewal':
         content => {
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
           subjects => [
             {
               kind     => 'Group',
@@ -264,6 +311,265 @@ class k8s::server::resources(
     }
   }
 
+  if $manage_kube_proxy {
+    # if version >= 1.23
+    #   command = /go-runner
+    #   args = --log-file=blah --also-stdout /usr/local/bin/kube-proxy
+    # else
+    #   command = /usr/local/bin/kube-proxy
+    #   args = --logtostderr=false --alsologtostderr=true --log-file=blah
+
+    kubectl_apply {
+      default:
+        kubeconfig    => $kubeconfig,
+        provider      => 'kubectl',
+        resource_name => 'kube-proxy',
+        namespace     => 'kube-system';
+
+      'kube-proxy ClusterRoleBinding':
+        api_version   => 'rbac.authorization.k8s.io/v1',
+        kind          => 'ClusterRoleBinding',
+        resource_name => 'kube-proxy',
+        content       => {
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
+          subjects => [
+            {
+              kind      => 'ServiceAccount',
+              name      => 'kube-proxy',
+              namespace => 'kube-system',
+            },
+          ],
+          roleRef  => {
+            kind     => 'ClusterRole',
+            name     => 'system:node-proxier',
+            apiGroup => 'rbac.authorization.k8s.io',
+          },
+        };
+
+        # apiVersion: kubeproxy.config.k8s.io/v1alpha1
+        # bindAddress: 0.0.0.0
+        # bindAddressHardFail: false
+        # clientConnection:
+        #   acceptContentTypes: ""
+        #   burst: 10
+        #   contentType: application/vnd.kubernetes.protobuf
+        #   kubeconfig: ""
+        #   qps: 5
+        # clusterCIDR: ""
+        # configSyncPeriod: 15m0s
+        # conntrack:
+        #   maxPerCore: 32768
+        #   min: 131072
+        #   tcpCloseWaitTimeout: 1h0m0s
+        #   tcpEstablishedTimeout: 24h0m0s
+        # detectLocalMode: ""
+        # enableProfiling: false
+        # healthzBindAddress: 0.0.0.0:10256
+        # hostnameOverride: ""
+        # iptables:
+        #   masqueradeAll: false
+        #   masqueradeBit: 14
+        #   minSyncPeriod: 1s
+        #   syncPeriod: 30s
+        # ipvs:
+        #   excludeCIDRs: null
+        #   minSyncPeriod: 0s
+        #   scheduler: ""
+        #   strictARP: false
+        #   syncPeriod: 30s
+        #   tcpFinTimeout: 0s
+        #   tcpTimeout: 0s
+        #   udpTimeout: 0s
+        # kind: KubeProxyConfiguration
+        # metricsBindAddress: 127.0.0.1:10249
+        # mode: ""
+        # nodePortAddresses: null
+        # oomScoreAdj: -999
+        # portRange: ""
+        # showHiddenMetricsForVersion: ""
+        # udpIdleTimeout: 250ms
+        # winkernel:
+        #   enableDSR: false
+        #   networkName: ""
+        #   sourceVip: ""
+
+      'kube-proxy ConfigMap':
+        api_version => 'v1',
+        kind        => 'ConfigMap',
+        content     => {
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
+          data     => {
+            'kube-proxy.conf' => to_yaml({
+                apiVersion  => 'kubeproxy.config.k8s.io/v1alpha1',
+                kind        => 'KubeProxyConfiguration',
+                clusterCIDR => $cluster_cidr,
+            }),
+          },
+        };
+
+      'kube-proxy DaemonSet':
+        api_version => 'apps/v1',
+        kind        => 'DaemonSet',
+        content     => {
+          metadata => {
+            labels => {
+              tier                       => 'node',
+              'k8s-app'                  => 'kube-proxy',
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
+          spec     => {
+            selector       => {
+              matchLabels => {
+                tier                       => 'node',
+                'k8s-app'                  => 'kube-proxy',
+                'kubernetes.io/managed-by' => 'puppet',
+              },
+            },
+            template       => {
+              metadata => {
+                labels => {
+                  tier                       => 'node',
+                  'k8s-app'                  => 'kube-proxy',
+                  'kubernetes.io/managed-by' => 'puppet',
+                },
+              },
+              spec     => {
+                containers         => [
+                  {
+                    name            => 'kube-proxy',
+                    image           => "${kube_proxy_image}:${kube_proxy_tag}",
+                    imagePullPolicy => 'IfNotPresent',
+                    command         => [
+                      '/usr/local/bin/kube-proxy',
+                    ],
+                    args            => k8s::format_arguments({
+                        alsologtostderr        => true,
+                        log_file               => '/var/log/kube-proxy.log',
+                        cluster_cidr           => $cluster_cidr,
+                        conntrack_max_per_core => 131072,
+                        kubeconfig             => '/var/lib/kube-proxy/kubeconfig',
+                        oom_score_adj          => -998,
+                        v                      => 2,
+                    }),
+                    resources       => {
+                      requests => {
+                        cpu => '100m',
+                      },
+                    },
+                    securityContext => {
+                      privileged => true,
+                    },
+                    volumeMounts    => [
+                      {
+                        mountPath => '/var/lib/kube-proxy/kube-proxy.conf',
+                        name      => 'kube-proxy',
+                        subPath   => 'kube-proxy.conf',
+                        readOnly  => true,
+                      },
+                      {
+                        mountPath => '/var/lib/kube-proxy/kubeconfig',
+                        name      => 'kubeconfig',
+                        subPath   => 'kubeconfig',
+                        readOnly  => true,
+                      },
+                      {
+                        mountPath => '/lib/modules',
+                        name      => 'lib-modules',
+                        readOnly  => true,
+                      },
+                      # {
+                      #   mountPath => '/etc/ssl/certs',
+                      #   name      => 'ca-certs-host',
+                      #   readOnly  => true,
+                      # },
+                      {
+                        mountPath => '/run/xtables.lock',
+                        name      => 'iptables-lock',
+                      },
+                    ],
+                  }
+                ],
+                hostNetwork        => true,
+                priorityClassName  => 'system-node-critical',
+                serviceAccountName => 'kube-proxy',
+                tolerations        => [
+                  {
+                    key      => 'CriticalAddonsOnly',
+                    operator => 'Exists',
+                  },
+                  {
+                    effect   => 'NoSchedule',
+                    operator => 'Exists',
+                  },
+                  {
+                    effect   => 'NoExecute',
+                    operator => 'Exists',
+                  },
+                ],
+                volumes            => [
+                  {
+                    name     => 'logfile',
+                    hostPath => {
+                      path => '/var/log/kube-proxy.log',
+                      type => 'FileOrCreate',
+                    },
+                  },
+                  {
+                    name     => 'lib-modules',
+                    hostPath => {
+                      path => '/lib/modules',
+                      type => 'Directory',
+                    },
+                  },
+                  {
+                    name     => 'iptables-lock',
+                    hostPath => {
+                      path => '/run/xtables.lock',
+                      type => 'FileOrCreate',
+                    },
+                  },
+                  # {
+                  #   name     => 'ca-certs-host',
+                  #   hostPath => {
+                  #     path => '/usr/share/ca-certificates',
+                  #     type => 'Directory',
+                  #   },
+                  # },
+                  {
+                    name      => 'kube-proxy',
+                    configMap => {
+                      name => 'kube-proxy',
+                    },
+                  },
+                  {
+                    name      => 'kubeconfig',
+                    configMap => {
+                      name => 'kubeconfig-in-cluster',
+                    },
+                  },
+                ],
+              },
+            },
+            updateStrategy => {
+              rollingUpdate => {
+                maxUnavailable => 1,
+              },
+              type          => 'RollingUpdate',
+            },
+          },
+        };
+    }
+  }
+
   if $manage_coredns {
     kubectl_apply {
       default:
@@ -275,7 +581,13 @@ class k8s::server::resources(
       'coredns ServiceAccount':
         api_version => 'v1',
         kind        => 'ServiceAccount',
-        content     => {};
+        content     => {
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
+        };
 
       'coredns ClusterRole':
         api_version   => 'rbac.authorization.k8s.io/v1',
@@ -285,6 +597,7 @@ class k8s::server::resources(
           metadata => {
             labels => {
               'kubernetes.io/bootstrapping' => 'rbac-defaults',
+              'kubernetes.io/managed-by'    => 'puppet',
             },
           },
           rules    => [
@@ -312,6 +625,7 @@ class k8s::server::resources(
             },
             labels      => {
               'kubernetes.io/bootstrapping' => 'rbac-defaults',
+              'kubernetes.io/managed-by'    => 'puppet',
             },
           },
           subjects => [
@@ -332,7 +646,12 @@ class k8s::server::resources(
         api_version => 'v1',
         kind        => 'ConfigMap',
         content     => {
-          data => {
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
+          data     => {
             'Corefile' => @("COREDNS"),
             .:53 {
               errors
@@ -362,8 +681,9 @@ class k8s::server::resources(
         content     => {
           metadata => {
             labels => {
-              'k8s-app'            => 'coredns',
-              'kubernetes.io/name' => 'CoreDNS',
+              'k8s-app'                  => 'coredns',
+              'kubernetes.io/name'       => 'CoreDNS',
+              'kubernetes.io/managed-by' => 'puppet',
             },
           },
           spec     => {
@@ -375,13 +695,15 @@ class k8s::server::resources(
             },
             selector => {
               matchLabels => {
-                'k8s-app' => 'coredns',
+                'k8s-app'                  => 'coredns',
+                'kubernetes.io/managed-by' => 'puppet',
               },
             },
             template => {
               metadata => {
                 labels      => {
-                  'k8s-app' => 'coredns',
+                  'k8s-app'                  => 'coredns',
+                  'kubernetes.io/managed-by' => 'puppet',
                 },
               },
               spec     => {
@@ -524,6 +846,7 @@ class k8s::server::resources(
               'k8s-app'                       => 'coredns',
               'kubernetes.io/cluster-service' => 'true',
               'kubernetes.io/name'            => 'CoreDNS',
+              'kubernetes.io/managed-by'      => 'puppet',
             },
           },
           spec     => {
@@ -560,7 +883,12 @@ class k8s::server::resources(
         api_version => 'rbac.authorization.k8s.io/v1',
         kind        => 'ClusterRole',
         content     => {
-          rules => [
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
+          rules    => [
             {
               apiGroups => [''],
               resources => ['pods'],
@@ -583,6 +911,11 @@ class k8s::server::resources(
         api_version => 'rbac.authorization.k8s.io/v1',
         kind        => 'ClusterRoleBinding',
         content     => {
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
           subjects => [
             {
               kind      => 'ServiceAccount',
@@ -600,7 +933,13 @@ class k8s::server::resources(
       'flannel ServiceAccount':
         api_version => 'v1',
         kind        => 'ServiceAccount',
-        content     => {};
+        content     => {
+          metadata => {
+            labels => {
+              'kubernetes.io/managed-by' => 'puppet',
+            },
+          },
+        };
 
       'flannel ConfigMap':
         api_version => 'v1',
@@ -608,8 +947,9 @@ class k8s::server::resources(
         content     => {
           metadata => {
             labels => {
-              tier      => 'node',
-              'k8s-app' => 'flannel',
+              tier                       => 'node',
+              'k8s-app'                  => 'flannel',
+              'kubernetes.io/managed-by' => 'puppet',
             }
           },
           data     => {
@@ -648,22 +988,25 @@ class k8s::server::resources(
         content     => {
           metadata => {
             labels => {
-              'tier'    => 'node',
-              'k8s-app' => 'flannel',
+              'tier'                     => 'node',
+              'k8s-app'                  => 'flannel',
+              'kubernetes.io/managed-by' => 'puppet',
             },
           },
           spec     => {
             selector       => {
               matchLabels => {
-                'tier'    => 'node',
-                'k8s-app' => 'flannel',
+                'tier'                     => 'node',
+                'k8s-app'                  => 'flannel',
+                'kubernetes.io/managed-by' => 'puppet',
               },
             },
             template       => {
               metadata => {
                 labels => {
-                  'tier'    => 'node',
-                  'k8s-app' => 'flannel',
+                  'tier'                     => 'node',
+                  'k8s-app'                  => 'flannel',
+                  'kubernetes.io/managed-by' => 'puppet',
                 },
               },
               spec     => {
@@ -824,6 +1167,11 @@ class k8s::server::resources(
     'controller-manager RoleBinding':
       resource_name => 'controller-manager',
       content       => {
+        metadata => {
+          labels => {
+            'kubernetes.io/managed-by' => 'puppet',
+          },
+        },
         subjects => [
           {
             kind      => 'ServiceAccount',
@@ -846,6 +1194,11 @@ class k8s::server::resources(
     'kube-proxy RoleBinding':
       resource_name => 'kube-proxy',
       content       => {
+        metadata => {
+          labels => {
+            'kubernetes.io/managed-by' => 'puppet',
+          },
+        },
         subjects => [
           {
             kind      => 'ServiceAccount',
@@ -867,7 +1220,14 @@ class k8s::server::resources(
       provider    => 'kubectl',
       api_version => 'v1',
       namespace   => 'kube-system',
-      kind        => 'ServiceAccount';
+      kind        => 'ServiceAccount',
+      content     => {
+        metadata => {
+          labels => {
+            'kubernetes.io/managed-by' => 'puppet',
+          },
+        },
+      };
 
     'kube-controller-manager SA':
       resource_name => 'kube-controller-manager';
@@ -886,11 +1246,16 @@ class k8s::server::resources(
 
     'kubeconfig-in-cluster':
       content => {
-        data => {
+        metadata => {
+          labels => {
+            'kubernetes.io/managed-by' => 'puppet',
+          },
+        },
+        data     => {
           kubeconfig => to_yaml({
               apiVersion        => 'v1',
               kind              => 'Config',
-              'current-context' => 'default',
+              'current-context' => 'local',
               clusters          => [
                 {
                   name    => 'local',
@@ -902,18 +1267,18 @@ class k8s::server::resources(
               ],
               users             => [
                 {
-                  name => 'service-account',
+                  name => 'local',
                   user => {
-                    tokenfile => '/var/run/secrets/kubernetes.io/serviceaccount/token',
+                    tokenFile => '/var/run/secrets/kubernetes.io/serviceaccount/token',
                   },
                 },
               ],
               contexts          => [
                 {
-                  name    => 'default',
+                  name    => 'local',
                   context => {
                     cluster => 'local',
-                    user    => 'service-account',
+                    user    => 'local',
                   },
                 },
               ],
