@@ -66,7 +66,6 @@ class k8s::node::kube_proxy(
     'kind'             => 'KubeProxyConfiguration',
 
     'clusterCIDR'      => $cluster_cidr,
-    'hostnameOverride' => fact('networking.fqdn'),
   } + $config
 
   file { '/etc/kubernetes/kube-proxy.conf':
@@ -78,10 +77,8 @@ class k8s::node::kube_proxy(
   }
 
   $_args = k8s::format_arguments({
-      cluster_cidr      => $cluster_cidr,
-      hostname_override => fact('networking.fqdn'),
-      kubeconfig        => $kubeconfig,
-      proxy_mode        => 'iptables',
+      config     => '/etc/kubernetes/kube-proxy.conf',
+      kubeconfig => $kubeconfig,
   } + $arguments)
 
   if $k8s::packaging == 'container' {

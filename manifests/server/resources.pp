@@ -15,7 +15,7 @@ class k8s::server::resources(
   String[1] $kube_proxy_image = 'k8s.gcr.io/kube-proxy',
   String[1] $kube_proxy_tag = "v${k8s::version}",
   String[1] $coredns_image = 'coredns/coredns',
-  String[1] $coredns_tag = '1.8.3',
+  String[1] $coredns_tag = '1.8.7',
   String[1] $flannel_image = 'quay.io/coreos/flannel',
   String[1] $flannel_tag = 'v0.13.0',
 ) {
