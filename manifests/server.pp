@@ -22,7 +22,7 @@ class k8s::server(
   Boolean $manage_components = true,
   Boolean $manage_resources = true,
   Boolean $node_on_server = true,
-  String $puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag,
+  String[1] $puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag,
 ) {
   if $manage_etcd {
     class { 'k8s::server::etcd':

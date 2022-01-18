@@ -8,7 +8,7 @@ class k8s::node(
   Boolean $manage_kubelet = true,
   Boolean $manage_proxy = false,
   Boolean $manage_firewall = $k8s::manage_firewall,
-  String $puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag,
+  String[1] $puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag,
 
   Stdlib::Unixpath $cert_path = '/var/lib/kubelet/pki',
   Optional[Stdlib::Unixpath] $ca_cert = "${cert_path}/ca.pem",

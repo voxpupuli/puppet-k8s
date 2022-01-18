@@ -1,12 +1,12 @@
 class k8s::server::etcd(
   Enum['present', 'absent'] $ensure = 'present',
-  String[1] $version = $k8s::etcd_version,
+  String[1] $version = pick($k8s::etcd_version, '3.5.1'),
 
   Boolean $manage_setup = true,
   Boolean $manage_firewall = false,
   Boolean $manage_members = false,
   String[1] $cluster_name = 'default',
-  String $puppetdb_discovery_tag = $k8s::server::puppetdb_discovery_tag,
+  String[1] $puppetdb_discovery_tag = pick($k8s::server::puppetdb_discovery_tag, $cluster_name),
 
   Boolean $self_signed_tls = false,
   Boolean $manage_certs = true,
