@@ -12,7 +12,7 @@ class k8s::node::kubelet(
   Enum['cert', 'token', 'bootstrap'] $auth = $k8s::node::node_auth,
   Boolean $rotate_server_tls = $auth == 'bootstrap',
   Boolean $manage_firewall = $k8s::node::manage_firewall,
-  Boolean $support_dualstack = true,
+  Boolean $support_dualstack = $k8s::cluster_cidr =~ Array[Data],
 
   Stdlib::Unixpath $cert_path = $k8s::node::cert_path,
   Stdlib::Unixpath $kubeconfig = '/srv/kubernetes/kubelet.kubeconf',
