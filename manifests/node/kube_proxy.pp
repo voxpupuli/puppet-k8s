@@ -5,6 +5,7 @@ class k8s::node::kube_proxy(
 
   Hash[String, Data] $config = {},
   Hash[String, Data] $arguments = {},
+  String $puppetdb_discovery_tag = $k8s::node::puppetdb_discovery_tag,
 
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $cluster_cidr = $k8s::cluster_cidr,
 

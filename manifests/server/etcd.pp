@@ -6,6 +6,7 @@ class k8s::server::etcd(
   Boolean $manage_firewall = false,
   Boolean $manage_members = false,
   String[1] $cluster_name = 'default',
+  String $puppetdb_discovery_tag = $k8s::server::puppetdb_discovery_tag,
 
   Boolean $self_signed_tls = false,
   Boolean $manage_certs = true,
@@ -109,6 +110,7 @@ class k8s::server::etcd(
           type = 'Class' and
           title = 'K8s::Server::Etcd' and
           parameters.cluster_name = '${cluster_name}' and
+          parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}' and
           certname != '${trusted[certname]}'
         }
       }

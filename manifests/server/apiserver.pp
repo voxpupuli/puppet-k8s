@@ -8,6 +8,7 @@ class k8s::server::apiserver(
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
   Boolean $discover_etcd_servers = $k8s::puppetdb_discovery,
   Boolean $manage_firewall = $k8s::server::manage_firewall,
+  String $puppetdb_discovery_tag = $k8s::server::puppetdb_discovery_tag,
 
   Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
   Stdlib::Unixpath $ca_cert = $k8s::server::tls::ca_cert,
@@ -40,7 +41,8 @@ class k8s::server::apiserver(
         resources {
           type = 'Class' and
           title = 'K8s::Server::Etcd' and
-          parameters.cluster_name = '${k8s::server::etcd::cluster_name}'
+          parameters.cluster_name = '${k8s::server::etcd::cluster_name}' and
+          parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}'
         }
       }
       order by certname

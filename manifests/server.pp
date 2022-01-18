@@ -22,6 +22,7 @@ class k8s::server(
   Boolean $manage_components = true,
   Boolean $manage_resources = true,
   Boolean $node_on_server = true,
+  String $puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag,
 ) {
   if $manage_etcd {
     class { 'k8s::server::etcd':
@@ -60,7 +61,8 @@ class k8s::server(
     $pql_query = @("PQL")
     resources[certname] {
       type = 'Class' and
-      title = 'K8s::Node::Kubelet'
+      title = 'K8s::Node::Kubelet' and
+      parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}'
       order by certname
     }
     | - PQL

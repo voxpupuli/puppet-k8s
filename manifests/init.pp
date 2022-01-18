@@ -20,6 +20,7 @@ class k8s(
   Boolean $manage_container_manager = true,
   Boolean $manage_kube_proxy = true,
   Boolean $puppetdb_discovery = false,
+  String[1] $puppetdb_discovery_tag = 'default',
 
   Boolean $purge_manifests = true,
 

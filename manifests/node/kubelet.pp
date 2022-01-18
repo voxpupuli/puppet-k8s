@@ -7,6 +7,7 @@ class k8s::node::kubelet(
   Hash[String, Data] $arguments = {},
   String $runtime = $k8s::container_manager,
   String $runtime_service = $k8s::container_runtime_service,
+  String $puppetdb_discovery_tag = $k8s::node::puppetdb_discovery_tag,
 
   Enum['cert', 'token', 'bootstrap'] $auth = $k8s::node::node_auth,
   Boolean $rotate_server_tls = $auth == 'bootstrap',
