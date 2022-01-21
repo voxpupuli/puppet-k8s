@@ -14,12 +14,16 @@ class k8s::server::resources(
 
   String[1] $kube_proxy_image = 'k8s.gcr.io/kube-proxy',
   String[1] $kube_proxy_tag = "v${k8s::version}",
+  Hash[String,Data] $kube_proxy_daemonset_config = {},
+  Hash[String,Data] $extra_kube_proxy_args = {},
   String[1] $coredns_image = 'coredns/coredns',
   String[1] $coredns_tag = '1.8.7',
+  Hash[String,Data] $coredns_deployment_config = {},
   String[1] $flannel_cni_image = 'rancher/mirrored-flannelcni-flannel-cni-plugin',
   String[1] $flannel_cni_tag = 'v1.0.0',
   String[1] $flannel_image = 'rancher/mirrored-flannelcni-flannel',
   String[1] $flannel_tag = 'v0.16.1',
+  Hash[String,Data] $flannel_daemonset_config = {},
 ) {
   assert_private()
 
@@ -454,14 +458,13 @@ class k8s::server::resources(
                       '/usr/local/bin/kube-proxy',
                     ],
                     args            => k8s::format_arguments({
-                        alsologtostderr        => true,
-                        log_file               => '/var/log/kube-proxy.log',
-                        cluster_cidr           => $cluster_cidr,
-                        conntrack_max_per_core => 131072,
-                        kubeconfig             => '/var/lib/kube-proxy/kubeconfig',
-                        oom_score_adj          => -998,
-                        v                      => 2,
-                    }),
+                        alsologtostderr => true,
+                        log_file        => '/var/log/kube-proxy.log',
+                        cluster_cidr    => $cluster_cidr,
+                        kubeconfig      => '/var/lib/kube-proxy/kubeconfig',
+                        oom_score_adj   => -998,
+                        v               => 2,
+                    } + $extra_kube_proxy_args),
                     resources       => {
                       requests => {
                         cpu => '100m',
@@ -568,7 +571,7 @@ class k8s::server::resources(
               type          => 'RollingUpdate',
             },
           },
-        };
+        } + $kube_proxy_daemonset_config;
     }
   }
 
@@ -828,7 +831,7 @@ class k8s::server::resources(
               },
             },
           },
-        },
+        } + $coredns_deployment_config,
         require     => Kubectl_apply[
           'coredns ServiceAccount',
           'coredns ConfigMap',
@@ -1159,7 +1162,7 @@ class k8s::server::resources(
               type          => 'RollingUpdate',
             },
           },
-        };
+        } + $flannel_daemonset_config;
     }
   }
 
