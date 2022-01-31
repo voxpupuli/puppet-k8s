@@ -41,7 +41,6 @@ class k8s::server::apiserver(
         resources {
           type = 'Class' and
           title = 'K8s::Server::Etcd' and
-          parameters.cluster_name = '${k8s::server::etcd::cluster_name}' and
           parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}'
         }
       }
