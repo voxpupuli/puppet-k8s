@@ -458,13 +458,19 @@ class k8s::server::resources(
                       '/usr/local/bin/kube-proxy',
                     ],
                     args            => k8s::format_arguments({
-                        alsologtostderr => true,
-                        log_file        => '/var/log/kube-proxy.log',
-                        cluster_cidr    => $cluster_cidr,
-                        kubeconfig      => '/var/lib/kube-proxy/kubeconfig',
-                        oom_score_adj   => -998,
-                        v               => 2,
+                        alsologtostderr   => true,
+                        log_file          => '/var/log/kube-proxy.log',
+                        cluster_cidr      => $cluster_cidr,
+                        hostname_override => '$(NODE_NAME)',
+                        kubeconfig        => '/var/lib/kube-proxy/kubeconfig',
                     } + $extra_kube_proxy_args),
+                    env             => {
+                      valueFrom => {
+                        fieldRef => {
+                          fieldPath => 'spec.nodeName',
+                        },
+                      },
+                    },
                     resources       => {
                       requests => {
                         cpu => '100m',
