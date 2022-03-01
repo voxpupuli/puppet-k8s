@@ -465,10 +465,12 @@ class k8s::server::resources(
                         kubeconfig        => '/var/lib/kube-proxy/kubeconfig',
                     } + $extra_kube_proxy_args),
                     env             => [
-                      name      => 'NODE_NAME',
-                      valueFrom => {
-                        fieldRef => {
-                          fieldPath => 'spec.nodeName',
+                      {
+                        name      => 'NODE_NAME',
+                        valueFrom => {
+                          fieldRef => {
+                            fieldPath => 'spec.nodeName',
+                          },
                         },
                       },
                     ],
