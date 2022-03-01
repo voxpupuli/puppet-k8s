@@ -464,13 +464,13 @@ class k8s::server::resources(
                         hostname_override => '$(NODE_NAME)',
                         kubeconfig        => '/var/lib/kube-proxy/kubeconfig',
                     } + $extra_kube_proxy_args),
-                    env             => {
+                    env             => [
                       valueFrom => {
                         fieldRef => {
                           fieldPath => 'spec.nodeName',
                         },
                       },
-                    },
+                    ],
                     resources       => {
                       requests => {
                         cpu => '100m',
