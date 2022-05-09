@@ -674,7 +674,7 @@ class k8s::server::resources(
               }
               ready
               kubernetes ${cluster_domain} in-addr.arpa ip6.arpa {
-                fallthrough in-adr.arpa ip6.arpa
+                fallthrough in-addr.arpa ip6.arpa
               }
               prometheus :9153
               forward . /etc/resolv.conf {
