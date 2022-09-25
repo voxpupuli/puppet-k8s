@@ -25,8 +25,6 @@ class k8s::node::kubelet(
   # For token and bootstrap auth
   Optional[String[1]] $token = $k8s::node::node_token,
 ) {
-  assert_private()
-
   k8s::binary { 'kubelet':
     ensure => $ensure,
     notify => Service['kubelet'],
