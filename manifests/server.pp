@@ -3,7 +3,7 @@ class k8s::server(
   Integer[1] $api_port = 6443,
 
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $cluster_cidr = $k8s::cluster_cidr,
-  Stdlib::IP::Address::Nosubnet $dns_service_address = $k8s::dns_service_address,
+  Variant[Stdlib::IP::Address::Nosubnet, Array[Stdlib::IP::Address::Nosubnet]] $dns_service_address = $k8s::dns_service_address,
   String $cluster_domain = $k8s::cluster_domain,
   String $direct_master = "https://${fact('networking.ip')}:${api_port}",
   String $master = $k8s::master,

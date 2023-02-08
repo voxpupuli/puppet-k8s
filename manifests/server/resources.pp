@@ -2,7 +2,7 @@ class k8s::server::resources(
   Stdlib::Unixpath $kubeconfig = '/root/.kube/config',
 
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $cluster_cidr = $k8s::server::cluster_cidr,
-  Stdlib::IP::Address::Nosubnet $dns_service_address = $k8s::server::dns_service_address,
+  Variant[Stdlib::IP::Address::Nosubnet, Array[Stdlib::IP::Address::Nosubnet]] $dns_service_address = $k8s::server::dns_service_address,
   Stdlib::Unixpath $ca_cert = $k8s::server::tls::ca_cert,
   String[1] $cluster_domain = $k8s::server::cluster_domain,
   String[1] $master = $k8s::server::master,
@@ -585,6 +585,17 @@ class k8s::server::resources(
   }
 
   if $manage_coredns {
+    if $dns_service_address =~ Array[Stdlib::IP::Address::Nosubnet] {
+      $_addn_coredns_svc_hash = {
+        clusterIP  => $dns_service_address[0],
+        clusterIPs => $dns_service_address,
+      }
+    } else {
+      $_addn_coredns_svc_hash = {
+        clusterIP => $dns_service_address,
+      }
+    }
+
     kubectl_apply {
       default:
         kubeconfig    => $kubeconfig,
@@ -863,11 +874,10 @@ class k8s::server::resources(
               'kubernetes.io/managed-by'      => 'puppet',
             },
           },
-          spec     => {
+          spec     => $_addn_coredns_svc_hash + {
             selector  => {
               'k8s-app' => 'coredns',
             },
-            clusterIP => $dns_service_address,
             ports     => [
               {
                 name     => 'dns',
