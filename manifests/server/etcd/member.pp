@@ -1,5 +1,6 @@
+# @summary Adds another member to a local etcd cluster
+#
 # TODO - Convert to native type
-
 define k8s::server::etcd::member(
   Array[String, 1] $peer_urls,
 

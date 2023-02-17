@@ -1,3 +1,4 @@
+# @summary Generates the necessary Kubernetes certificates for a server
 class k8s::server::tls(
   Enum['present', 'absent'] $ensure = 'present',
   Boolean $generate_ca = $k8s::server::generate_ca,

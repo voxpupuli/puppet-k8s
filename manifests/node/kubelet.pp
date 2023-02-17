@@ -1,3 +1,4 @@
+# @summary Installs and configures kubelet
 class k8s::node::kubelet(
   Enum['present', 'absent'] $ensure = $k8s::node::ensure,
 

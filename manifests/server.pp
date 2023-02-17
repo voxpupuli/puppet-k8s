@@ -1,3 +1,4 @@
+# @summary Sets up a Kubernetes server instance
 class k8s::server(
   Enum['present', 'absent'] $ensure = $k8s::ensure,
   Integer[1] $api_port = 6443,

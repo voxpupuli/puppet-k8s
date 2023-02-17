@@ -1,3 +1,4 @@
+# @summary Installs and configures a Kubernetes scheduler
 class k8s::server::scheduler(
   Enum['present', 'absent'] $ensure = $k8s::server::ensure,
 

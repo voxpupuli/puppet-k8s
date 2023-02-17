@@ -3,6 +3,7 @@
 require File.expand_path('../../../util/k8s', __FILE__)
 require 'tempfile'
 
+# Applies resources as data in a Kubernetes cluster
 Puppet::Type.type(:kubectl_apply).provide(:kubectl) do
   commands kubectl: 'kubectl'
   defaultfor kernel: %r{.*}

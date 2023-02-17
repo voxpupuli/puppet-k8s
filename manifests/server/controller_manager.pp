@@ -1,3 +1,4 @@
+# @summary Installs and configures a Kubernetes controller manager
 class k8s::server::controller_manager(
   Enum['present', 'absent'] $ensure = $k8s::server::ensure,
 

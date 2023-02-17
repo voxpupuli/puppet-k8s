@@ -1,3 +1,4 @@
+# @summary Deploys a Kubernetes binary
 define k8s::binary(
   Enum['present', 'absent'] $ensure = $k8s::ensure,
   String[1] $version = $k8s::version,

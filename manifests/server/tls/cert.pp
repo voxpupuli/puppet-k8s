@@ -1,3 +1,4 @@
+# @summary Generates and signs a TLS certificate
 define k8s::server::tls::cert(
   Enum['present', 'absent'] $ensure = present,
 
@@ -66,6 +67,7 @@ define k8s::server::tls::cert(
         notify      => Exec["Sign K8s ${title} cert"],
         before      => File[$csr];
 
+      # TODO - Don't generate 0-byte files in the first place
       "Remove broken K8s ${title} cert":
         command => "rm '${cert}'",
         onlyif  => "file '${cert}' | grep ': empty'",

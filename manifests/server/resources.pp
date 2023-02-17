@@ -1,3 +1,4 @@
+# @summary Generates and deploys standard Kubernetes in-cluster services
 class k8s::server::resources(
   Stdlib::Unixpath $kubeconfig = '/root/.kube/config',
 

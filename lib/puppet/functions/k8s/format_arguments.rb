@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+# Formats a hash of arguments into something that can be passed to a kubernetes application
 Puppet::Functions.create_function(:'k8s::format_arguments') do
-  # Format a hash of arguments into something that can be passed to a kubernetes application
-  #
   # @param arguments A hash of arguments to format
   #
   # @return [Array[String]] An array of formatted kubernetes arguments

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Uses kubectl to handle kubeconfig entries
 Puppet::Type.type(:kubeconfig).provide(:kubectl, parent: :ruby) do
   commands kubectl: 'kubectl'
 

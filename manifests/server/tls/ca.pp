@@ -1,3 +1,4 @@
+# @summary Generates a TLS CA
 define k8s::server::tls::ca(
   Enum['present', 'absent'] $ensure = present,
 

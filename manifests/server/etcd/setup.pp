@@ -1,3 +1,4 @@
+# @summary Installs and configures an etcd instance
 class k8s::server::etcd::setup(
   Enum['present','absent'] $ensure = $k8s::server::etcd::ensure,
   Enum['archive','package'] $install = 'archive',

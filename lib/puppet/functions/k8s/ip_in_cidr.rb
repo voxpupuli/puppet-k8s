@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
+# Retrieves an IP inside of a CIDR based on an index
 Puppet::Functions.create_function(:'k8s::ip_in_cidr') do
-  # Retrieves an IP inside of a CIDR based on an index
-  #
   # @example In 192.168.0.0/24
   #     k8s::ip_in_cidr('192.168.0.0/24', 'first')
   #     # => 192.168.0.1

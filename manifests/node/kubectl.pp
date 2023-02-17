@@ -1,3 +1,4 @@
+# @summary Installs the kubectl binary
 class k8s::node::kubectl(
   Enum['present', 'absent'] $ensure = $k8s::ensure,
 ) {

@@ -1,3 +1,4 @@
+# @summary Installs a Kubernetes node
 class k8s::node(
   Enum['present', 'absent'] $ensure = $k8s::ensure,
 

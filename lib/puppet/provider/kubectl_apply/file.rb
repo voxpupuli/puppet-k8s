@@ -2,6 +2,7 @@
 
 require File.expand_path('../../../util/k8s', __FILE__)
 
+# Applies resources as YAML files on disk
 Puppet::Type.type(:kubectl_apply).provide(:file) do
   attr_reader :resource_diff
 

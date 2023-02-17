@@ -27,6 +27,8 @@ Puppet::Type.newtype(:kubectl_apply) do
   DOC
 
   ensurable do
+    desc 'Whether the described resource should be present or absent (default: present)'
+
     newvalue(:present) do
       provider.create unless provider.exists?
     end
@@ -77,6 +79,7 @@ Puppet::Type.newtype(:kubectl_apply) do
   end
 
   newparam(:name, namevar: true) do
+    desc 'The Puppet name of the instance'
   end
 
   newparam(:namespace) do

@@ -1,3 +1,4 @@
+# @summary Sets up an etcd cluster node
 class k8s::server::etcd(
   Enum['present', 'absent'] $ensure = 'present',
   String[1] $version = pick($k8s::etcd_version, '3.5.1'),

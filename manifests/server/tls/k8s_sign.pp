@@ -1,3 +1,6 @@
+# @summary Signs pending CSR requests for bootstrapping clients
+#
+# TODO - This should probably be done as a service next to the apiservers
 define k8s::server::tls::k8s_sign(
   $kubeconfig = '/root/.kube/config',
 ) {

@@ -1,3 +1,4 @@
+# @summary Installs and configures a Kubernetes apiserver
 class k8s::server::apiserver(
   Enum['present', 'absent'] $ensure = $k8s::server::ensure,
 
