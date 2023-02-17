@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "author": "LiU-IT",
   "summary": "Module for installing and managing plain Kubernetes installs",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "source": "https://gitlab.it.liu.se/pm-liuit/k8s/tree/production",
   "project_page": "https://gitlab.it.liu.se/pm-liuit/k8s",
   "issues_url": "https://gitlab.it.liu.se/pm-liuit/k8s/issues",
