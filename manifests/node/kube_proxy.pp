@@ -1,3 +1,6 @@
+# @summary Sets up a on-node kube-proxy instance
+# 
+# For most use-cases, running kube-proxy inside the cluster itself is recommended
 class k8s::node::kube_proxy(
   Enum['present', 'absent'] $ensure = $k8s::node::ensure,
 

@@ -1,3 +1,6 @@
+# @summary Generates and stores a kubelet bootstrap token into the cluster
+#
+# You generally only want this to be done on a single Kubernetes server
 define k8s::server::bootstrap_token(
   Enum['present', 'absent'] $ensure = 'present',
   Stdlib::Unixpath $kubeconfig,

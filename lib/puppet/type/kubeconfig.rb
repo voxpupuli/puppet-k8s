@@ -11,6 +11,8 @@ Puppet::Type.newtype(:kubeconfig) do
   DOC
 
   ensurable do
+    desc 'Whether the kubeconfig should be present or absent (default: present)'
+
     newvalue(:present) do
       provider.create unless provider.exists?
     end
@@ -100,6 +102,8 @@ Puppet::Type.newtype(:kubeconfig) do
   end
 
   newparam(:ca_cert) do
+    desc 'The path to a CA certificate to include in the kubeconfig'
+
     validate do |value|
       unless Puppet::Util.absolute_path?(value)
         raise Puppet::Error, "File paths must be fully qualified, not '#{value}'"
@@ -107,6 +111,8 @@ Puppet::Type.newtype(:kubeconfig) do
     end
   end
   newparam(:client_cert) do
+    desc 'The path to a client certificate to include in the kubeconfig'
+
     validate do |value|
       unless Puppet::Util.absolute_path?(value)
         raise Puppet::Error, "File paths must be fully qualified, not '#{value}'"
@@ -114,6 +120,8 @@ Puppet::Type.newtype(:kubeconfig) do
     end
   end
   newparam(:client_key) do
+    desc 'The path to a client key to include in the kubeconfig'
+
     validate do |value|
       unless Puppet::Util.absolute_path?(value)
         raise Puppet::Error, "File paths must be fully qualified, not '#{value}'"
@@ -126,6 +134,8 @@ Puppet::Type.newtype(:kubeconfig) do
   end
 
   newparam(:token_file) do
+    desc 'The path to a file containing an authentication token'
+
     validate do |value|
       unless Puppet::Util.absolute_path?(value)
         raise Puppet::Error, "File paths must be fully qualified, not '#{value}'"
@@ -134,8 +144,10 @@ Puppet::Type.newtype(:kubeconfig) do
   end
 
   newparam(:username) do
+    desc 'The username of a user'
   end
   newparam(:password) do
+    desc 'The password of a user'
   end
 
   validate do

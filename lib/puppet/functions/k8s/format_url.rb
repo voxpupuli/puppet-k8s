@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
+# Formats a download URL for K8s binaries
 Puppet::Functions.create_function(:'k8s::format_url') do
+  # @param url The URL template to format
+  # @param components A hash of additional arguments
+  #
+  # @return String A valid download URL
   dispatch :k8s_format_binary do
     param 'String[1]', :url
     param 'Hash[String,Data]', :components

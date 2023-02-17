@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Uses Ruby YAML to handle kubeconfig entries
 Puppet::Type.type(:kubeconfig).provide(:ruby) do
   def exists?
     return false unless File.exist? resource[:path]

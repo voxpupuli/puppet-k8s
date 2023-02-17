@@ -1,3 +1,4 @@
+# @summary Sets up a Kubernetes instance - either as a node or as a server
 class k8s(
   Enum['present', 'absent'] $ensure = 'present',
   Enum['container', 'native'] $packaging = 'native',
