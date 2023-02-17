@@ -38,7 +38,7 @@ class k8s(
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $service_cluster_cidr = '10.1.0.0/24',
   Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $cluster_cidr = '10.0.0.0/16',
   Stdlib::IP::Address::Nosubnet $api_service_address = k8s::ip_in_cidr($service_cluster_cidr, 'first'),
-  Stdlib::IP::Address::Nosubnet $dns_service_address = k8s::ip_in_cidr($service_cluster_cidr, 'second'),
+  Variant[Stdlib::IP::Address::Nosubnet, Array[Stdlib::IP::Address::Nosubnet]] $dns_service_address = k8s::ip_in_cidr($service_cluster_cidr, 'second'),
   Stdlib::Fqdn $cluster_domain = 'cluster.local',
 
   Enum['node','server','none'] $role = 'none',

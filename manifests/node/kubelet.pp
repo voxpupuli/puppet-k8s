@@ -130,7 +130,7 @@ class k8s::node::kubelet(
     'clusterDomain'      => $k8s::cluster_domain,
     'clusterDNS'         => [
       $k8s::dns_service_address,
-    ],
+    ].flatten,
     'cgroupDriver'       => 'systemd',
   } + $_authentication_hash
 

@@ -36,7 +36,7 @@ describe 'K8s::Timestamp' do
       '1979-05-05T05:21:61Z',
       '1979-05-05T01:00Z',
       199,
-      1_000
+      1_000,
     ].each do |value|
       describe value.inspect do
         it { is_expected.not_to allow_value(value) }
