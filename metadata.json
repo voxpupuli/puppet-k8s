@@ -1,12 +1,12 @@
 {
-  "name": "liuit-k8s",
+  "name": "puppet-k8s",
   "version": "0.0.1",
-  "author": "LiU-IT",
-  "summary": "Module for installing and managing plain Kubernetes installs",
+  "author": "Vox Pupuli",
+  "summary": "Install and manage plain Kubernetes installs",
   "license": "Apache-2.0",
-  "source": "https://gitlab.it.liu.se/pm-liuit/k8s/tree/production",
-  "project_page": "https://gitlab.it.liu.se/pm-liuit/k8s",
-  "issues_url": "https://gitlab.it.liu.se/pm-liuit/k8s/issues",
+  "source": "https://github.com/voxpupuli/puppet-k8s",
+  "project_page": "https://github.com/voxpupuli/puppet-k8s",
+  "issues_url": "https://github.com/voxpupuli/puppet-k8s/issues",
   "dependencies": [
     {
       "name": "puppet-archive",
@@ -49,8 +49,5 @@
       "name": "puppet",
       "version_requirement": ">= 6.0.0"
     }
-  ],
-  "template-url": "https://github.com/puppetlabs/pdk-templates#2.0.0",
-  "pdk-version": "2.1.0",
-  "template-ref": "tags/2.0.0-0-ge838f1d"
+  ]
 }
