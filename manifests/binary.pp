@@ -1,18 +1,18 @@
 # @summary Deploys a Kubernetes binary
-define k8s::binary(
-  Enum['present', 'absent'] $ensure = $k8s::ensure,
-  String[1] $version = $k8s::version,
-  String[1] $packaging = $k8s::packaging,
-  String[1] $target = "/opt/k8s/${$version}",
+define k8s::binary (
+  K8s::Ensure $ensure       = $k8s::ensure,
+  String[1] $version        = $k8s::version,
+  String[1] $packaging      = $k8s::packaging,
+  String[1] $target         = "/opt/k8s/${$version}",
   String[1] $tarball_target = '/opt/k8s/archives',
 
   Boolean $active = true,
 
   Optional[String] $component = undef,
 ) {
-  if $name in [ 'kubelet', 'kube-proxy' ] {
+  if $name in ['kubelet', 'kube-proxy'] {
     $_component = pick($component, 'node')
-  } elsif $name in [ 'kube-apiserver', 'kube-controller-manager', 'kube-scheduler' ] {
+  } elsif $name in ['kube-apiserver', 'kube-controller-manager', 'kube-scheduler'] {
     $_component = pick($component, 'server')
   } else {
     $_component = pick($component, 'client')
@@ -25,7 +25,7 @@ define k8s::binary(
   }
 
   # Always install kubelet and kubectl as binaries
-  if $packaging == 'native' or ($packaging == 'container' and $name in [ 'kubelet', 'kubectl' ]) {
+  if $packaging == 'native' or ($packaging == 'container' and $name in ['kubelet', 'kubectl']) {
     $_packaging = $k8s::native_packaging
   } else {
     $_packaging = $packaging
@@ -36,8 +36,8 @@ define k8s::binary(
     'package': {
       $_template = $k8s::package_template
       $_name = k8s::format_url($_template, {
-        version => $version,
-        component => $_component,
+          version => $version,
+          component => $_component,
       })
       package { "kubernetes-${name}":
         ensure => $ensure,
@@ -55,8 +55,8 @@ define k8s::binary(
     'tarball': {
       $_template = $k8s::tarball_url_template
       $_url = k8s::format_url($_template, {
-        version => $version,
-        component => $_component,
+          version => $version,
+          component => $_component,
       })
       $_file = "${tarball_target}/${basename($_url)}"
       if !defined(File[$tarball_target]) {
@@ -88,9 +88,9 @@ define k8s::binary(
     'loose': {
       $_template = $k8s::native_url_template
       $_url = k8s::format_url($_template, {
-        version   => $version,
-        component => $_component,
-        binary    => $name,
+          version   => $version,
+          component => $_component,
+          binary    => $name,
       })
       file { "${target}/${name}":
         ensure => $ensure,
@@ -101,9 +101,9 @@ define k8s::binary(
     'hyperkube': {
       $_template = $k8s::native_url_template
       $_url = k8s::format_url($_template, {
-        version   => $version,
-        component => $_component,
-        binary    => $k8s::hyperkube_name,
+          version   => $version,
+          component => $_component,
+          binary    => $k8s::hyperkube_name,
       })
       if !defined(File["${target}/${k8s::hyperkube_name}"]) {
         file { "${target}/${k8s::hyperkube_name}":
@@ -120,7 +120,7 @@ define k8s::binary(
     }
     'manual': {
       # User is expected to have created ${target}/${name} now
-      File<| $title == "${target}/${name}" |> { }
+      File<| $title == "${target}/${name}" |> {}
     }
     default: {
       fail('Invalid packaging specified')

@@ -1,23 +1,23 @@
 # @summary Sets up a on-node kube-proxy instance
-# 
+#
 # For most use-cases, running kube-proxy inside the cluster itself is recommended
-class k8s::node::kube_proxy(
-  Enum['present', 'absent'] $ensure = $k8s::node::ensure,
+class k8s::node::kube_proxy (
+  K8s::Ensure $ensure = $k8s::node::ensure,
 
   Stdlib::HTTPUrl $master = $k8s::node::master,
 
-  Hash[String, Data] $config = {},
-  Hash[String, Data] $arguments = {},
+  Hash[String, Data] $config     = {},
+  Hash[String, Data] $arguments  = {},
   String $puppetdb_discovery_tag = $k8s::node::puppetdb_discovery_tag,
 
-  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $cluster_cidr = $k8s::cluster_cidr,
+  K8s::Cluster_cidr $cluster_cidr = $k8s::cluster_cidr,
 
-  Enum['cert', 'token', 'incluster'] $auth = $k8s::node::proxy_auth,
+  K8s::Proxy_auth $auth = $k8s::node::proxy_auth,
 
   # For cert auth
   Optional[Stdlib::Unixpath] $ca_cert = $k8s::node::ca_cert,
-  Optional[Stdlib::Unixpath] $cert = $k8s::node::proxy_cert,
-  Optional[Stdlib::Unixpath] $key = $k8s::node::proxy_key,
+  Optional[Stdlib::Unixpath] $cert    = $k8s::node::proxy_cert,
+  Optional[Stdlib::Unixpath] $key     = $k8s::node::proxy_key,
 
   # For token and bootstrap auth
   Optional[String[1]] $token = $k8s::node::proxy_token,
@@ -102,11 +102,11 @@ class k8s::node::kube_proxy(
     systemd::unit_file { 'kube-proxy.service':
       ensure  => $_ensure,
       content => epp('k8s/service.epp', {
-        name => 'kube-proxy',
+          name => 'kube-proxy',
 
-        desc => 'Kubernetes Network Proxy',
-        doc  => 'https://github.com/GoogleCloudPlatform/kubernetes',
-        bin  => 'kube-proxy',
+          desc => 'Kubernetes Network Proxy',
+          doc  => 'https://github.com/GoogleCloudPlatform/kubernetes',
+          bin  => 'kube-proxy',
       }),
       require => [
         File["${_sysconfig_path}/kube-proxy"],

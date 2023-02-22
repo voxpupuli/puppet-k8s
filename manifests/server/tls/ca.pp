@@ -1,6 +1,6 @@
 # @summary Generates a TLS CA
-define k8s::server::tls::ca(
-  Enum['present', 'absent'] $ensure = present,
+define k8s::server::tls::ca (
+  K8s::Ensure $ensure = present,
 
   Stdlib::Unixpath $key,
   Stdlib::Unixpath $cert,
@@ -11,7 +11,7 @@ define k8s::server::tls::ca(
 
   Integer[512] $key_bits = 2048,
   Integer[1] $valid_days = 10000,
-  Boolean $generate = true,
+  Boolean $generate      = true,
 ) {
   if $ensure == 'present' and $generate {
     Package <| title == 'openssl' |>

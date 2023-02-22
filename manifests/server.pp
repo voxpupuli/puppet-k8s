@@ -1,28 +1,28 @@
 # @summary Sets up a Kubernetes server instance
-class k8s::server(
-  Enum['present', 'absent'] $ensure = $k8s::ensure,
+class k8s::server (
+  K8s::Ensure $ensure  = $k8s::ensure,
   Integer[1] $api_port = 6443,
 
-  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $cluster_cidr = $k8s::cluster_cidr,
-  Variant[Stdlib::IP::Address::Nosubnet, Array[Stdlib::IP::Address::Nosubnet]] $dns_service_address = $k8s::dns_service_address,
-  String $cluster_domain = $k8s::cluster_domain,
-  String $direct_master = "https://${fact('networking.ip')}:${api_port}",
-  String $master = $k8s::master,
+  K8s::Cluster_cidr $cluster_cidr               = $k8s::cluster_cidr,
+  K8s::Dns_service_address $dns_service_address = $k8s::dns_service_address,
+  String $cluster_domain                        = $k8s::cluster_domain,
+  String $direct_master                         = "https://${fact('networking.ip')}:${api_port}",
+  String $master                                = $k8s::master,
 
-  Stdlib::Unixpath $cert_path = '/etc/kubernetes/certs',
-  Stdlib::Unixpath $ca_key = "${cert_path}/ca.key",
-  Stdlib::Unixpath $ca_cert = "${cert_path}/ca.pem",
-  Stdlib::Unixpath $aggregator_ca_key = "${cert_path}/aggregator-ca.key",
+  Stdlib::Unixpath $cert_path          = '/etc/kubernetes/certs',
+  Stdlib::Unixpath $ca_key             = "${cert_path}/ca.key",
+  Stdlib::Unixpath $ca_cert            = "${cert_path}/ca.pem",
+  Stdlib::Unixpath $aggregator_ca_key  = "${cert_path}/aggregator-ca.key",
   Stdlib::Unixpath $aggregator_ca_cert = "${cert_path}/aggregator-ca.pem",
 
-  Boolean $generate_ca = false,
-  Boolean $manage_etcd = $k8s::manage_etcd,
-  Boolean $manage_firewall = $k8s::manage_firewall,
-  Boolean $manage_certs = true,
-  Boolean $manage_signing = $k8s::puppetdb_discovery,
-  Boolean $manage_components = true,
-  Boolean $manage_resources = true,
-  Boolean $node_on_server = true,
+  Boolean $generate_ca              = false,
+  Boolean $manage_etcd              = $k8s::manage_etcd,
+  Boolean $manage_firewall          = $k8s::manage_firewall,
+  Boolean $manage_certs             = true,
+  Boolean $manage_signing           = $k8s::puppetdb_discovery,
+  Boolean $manage_components        = true,
+  Boolean $manage_resources         = true,
+  Boolean $node_on_server           = true,
   String[1] $puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag,
 ) {
   if $manage_etcd {
@@ -69,10 +69,7 @@ class k8s::server(
     | - PQL
 
     $cluster_nodes = puppetdb_query($pql_query)
-    $cluster_nodes.each |$node| {
-      k8s::server::tls::k8s_sign { $node['certname']:
-      }
-    }
+    $cluster_nodes.each |$node| { k8s::server::tls::k8s_sign { $node['certname']: } }
   }
 
   include k8s::node::kubectl

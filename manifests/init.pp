@@ -1,48 +1,48 @@
 # @summary Sets up a Kubernetes instance - either as a node or as a server
-class k8s(
-  Enum['present', 'absent'] $ensure = 'present',
-  Enum['container', 'native'] $packaging = 'native',
-  Enum['package', 'tarball', 'loose', 'hyperkube', 'manual'] $native_packaging = 'loose',
-  String[1] $version = '1.20.14',
-  String[1] $etcd_version = '3.5.1',
+class k8s (
+  K8s::Ensure $ensure       = 'present',
+  Enum['container', 'native'] $packaging  = 'native',
+  K8s::Native_packaging $native_packaging = 'loose',
+  String[1] $version                      = '1.20.14',
+  String[1] $etcd_version                 = '3.5.1',
 
-  String[1] $container_registry = 'gcr.io/google_containers',
-  String[1] $container_image = 'hyperkube',
-  Optional[String] $container_image_tag = undef,
+  String[1] $container_registry             = 'gcr.io/google_containers',
+  String[1] $container_image                = 'hyperkube',
+  Optional[String] $container_image_tag     = undef,
   Enum['docker', 'crio'] $container_manager = 'crio',
-  String[1] $container_runtime_service = "${container_manager}.service",
-  Optional[String[1]] $crio_package = undef,
+  String[1] $container_runtime_service      = "${container_manager}.service",
+  Optional[String[1]] $crio_package         = undef,
 
-  Boolean $manage_etcd = true,
-  Boolean $manage_firewall = false,
-  Boolean $manage_image = false,
-  Boolean $manage_repo = true,
-  Boolean $manage_packages = true,
+  Boolean $manage_etcd              = true,
+  Boolean $manage_firewall          = false,
+  Boolean $manage_image             = false,
+  Boolean $manage_repo              = true,
+  Boolean $manage_packages          = true,
   Boolean $manage_container_manager = true,
-  Boolean $manage_kube_proxy = true,
-  Boolean $puppetdb_discovery = false,
+  Boolean $manage_kube_proxy        = true,
+  Boolean $puppetdb_discovery       = false,
   String[1] $puppetdb_discovery_tag = 'default',
 
-  Boolean $purge_manifests = true,
+  Boolean $purge_manifests                           = true,
 
-  String[1] $native_url_template = 'https://storage.googleapis.com/kubernetes-release/release/v%{version}/bin/%{kernel}/%{arch}/%{binary}',
-  String[1] $tarball_url_template = 'https://dl.k8s.io/v%{version}/kubernetes-%{component}-%{kernel}-%{arch}.tar.gz',
-  String[1] $package_template = 'kubernetes-%{component}',
-  String[1] $hyperkube_name = 'hyperkube',
+  String[1] $native_url_template             = 'https://storage.googleapis.com/kubernetes-release/release/v%{version}/bin/%{kernel}/%{arch}/%{binary}',
+  String[1] $tarball_url_template            = 'https://dl.k8s.io/v%{version}/kubernetes-%{component}-%{kernel}-%{arch}.tar.gz',
+  String[1] $package_template                = 'kubernetes-%{component}',
+  String[1] $hyperkube_name                  = 'hyperkube',
   Optional[Stdlib::Unixpath] $sysconfig_path = undef,
 
-  Enum['cert', 'token', 'bootstrap'] $node_auth = 'bootstrap',
+  K8s::Node_auth $node_auth = 'bootstrap',
 
-  Stdlib::HTTPUrl $incluster_master = 'https://kubernetes.default.svc',
-  Stdlib::HTTPUrl $master = 'https://kubernetes:6443',
-  Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
-  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $service_cluster_cidr = '10.1.0.0/24',
-  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $cluster_cidr = '10.0.0.0/16',
+  Stdlib::HTTPUrl $incluster_master                  = 'https://kubernetes.default.svc',
+  Stdlib::HTTPUrl $master                            = 'https://kubernetes:6443',
+  Optional[Array[Stdlib::HTTPUrl]] $etcd_servers     = undef,
+  K8s::Cluster_cidr $service_cluster_cidr            = '10.1.0.0/24',
+  K8s::Cluster_cidr $cluster_cidr                    = '10.0.0.0/16',
   Stdlib::IP::Address::Nosubnet $api_service_address = k8s::ip_in_cidr($service_cluster_cidr, 'first'),
-  Variant[Stdlib::IP::Address::Nosubnet, Array[Stdlib::IP::Address::Nosubnet]] $dns_service_address = k8s::ip_in_cidr($service_cluster_cidr, 'second'),
-  Stdlib::Fqdn $cluster_domain = 'cluster.local',
+  K8s::Dns_service_address $dns_service_address      = k8s::ip_in_cidr($service_cluster_cidr, 'second'),
+  Stdlib::Fqdn $cluster_domain                       = 'cluster.local',
 
-  Enum['node','server','none'] $role = 'none',
+  Enum['node','server','none']  $role = 'none',
 ) {
   if $manage_container_manager {
     if $container_manager == 'docker' {
@@ -53,7 +53,7 @@ class k8s(
         if versioncmp($_crio_version, '1.17') < 0 {
           $pkg = pick($crio_package, "cri-o-${_crio_version}")
         } else {
-          $pkg = pick($crio_package, "cri-o")
+          $pkg = pick($crio_package, 'cri-o')
         }
 
         # Avoid a potential issue with some CRI-o versions
@@ -70,7 +70,7 @@ class k8s(
       }
 
       file { '/usr/libexec/crio/conmon':
-        ensure  => present,
+        ensure  => link,
         target  => '/usr/bin/conmon',
         replace => false,
         require => Package['k8s container manager'],
@@ -106,8 +106,8 @@ class k8s(
     home       => '/srv/kubernetes',
     managehome => false,
     shell      => (fact('os.family') ? {
-      'Debian' => '/usr/sbin/nologin',
-      default  => '/sbin/nologin',
+        'Debian' => '/usr/sbin/nologin',
+        default  => '/sbin/nologin',
     }),
     system     => true,
     uid        => 888,
@@ -169,7 +169,7 @@ class k8s(
   }
 
   if $manage_repo {
-    include ::k8s::repo
+    include k8s::repo
   }
   if $manage_packages {
     # Ensure conntrack is installed to properly handle networking cleanup
@@ -180,8 +180,8 @@ class k8s(
     }
 
     ensure_packages([
-      'containernetworking-plugins',
-      $_conntrack,
+        'containernetworking-plugins',
+        $_conntrack,
     ])
     if $manage_repo {
       Class['k8s::repo'] -> Package['containernetworking-plugins']
@@ -189,8 +189,8 @@ class k8s(
   }
 
   if $role == 'server' {
-    include ::k8s::server
+    include k8s::server
   } elsif $role == 'node' {
-    include ::k8s::node
+    include k8s::node
   }
 }

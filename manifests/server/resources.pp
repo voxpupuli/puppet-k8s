@@ -1,30 +1,30 @@
 # @summary Generates and deploys standard Kubernetes in-cluster services
-class k8s::server::resources(
+class k8s::server::resources (
   Stdlib::Unixpath $kubeconfig = '/root/.kube/config',
 
-  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $cluster_cidr = $k8s::server::cluster_cidr,
-  Variant[Stdlib::IP::Address::Nosubnet, Array[Stdlib::IP::Address::Nosubnet]] $dns_service_address = $k8s::server::dns_service_address,
-  Stdlib::Unixpath $ca_cert = $k8s::server::tls::ca_cert,
-  String[1] $cluster_domain = $k8s::server::cluster_domain,
-  String[1] $master = $k8s::server::master,
+  K8s::Cluster_cidr $cluster_cidr               = $k8s::server::cluster_cidr,
+  K8s::Dns_service_address $dns_service_address = $k8s::server::dns_service_address,
+  Stdlib::Unixpath $ca_cert                     = $k8s::server::tls::ca_cert,
+  String[1] $cluster_domain                     = $k8s::server::cluster_domain,
+  String[1] $master                             = $k8s::server::master,
 
-  Boolean $manage_bootstrap = true,
+  Boolean $manage_bootstrap  = true,
   Boolean $manage_kube_proxy = $k8s::manage_kube_proxy,
-  Boolean $manage_coredns = true,
-  Boolean $manage_flannel = true,
+  Boolean $manage_coredns    = true,
+  Boolean $manage_flannel    = true,
 
-  String[1] $kube_proxy_image = 'k8s.gcr.io/kube-proxy',
-  String[1] $kube_proxy_tag = "v${k8s::version}",
+  String[1] $kube_proxy_image                    = 'k8s.gcr.io/kube-proxy',
+  String[1] $kube_proxy_tag                      = "v${k8s::version}",
   Hash[String,Data] $kube_proxy_daemonset_config = {},
-  Hash[String,Data] $extra_kube_proxy_args = {},
-  String[1] $coredns_image = 'coredns/coredns',
-  String[1] $coredns_tag = '1.8.7',
-  Hash[String,Data] $coredns_deployment_config = {},
-  String[1] $flannel_cni_image = 'rancher/mirrored-flannelcni-flannel-cni-plugin',
-  String[1] $flannel_cni_tag = 'v1.0.0',
-  String[1] $flannel_image = 'rancher/mirrored-flannelcni-flannel',
-  String[1] $flannel_tag = 'v0.16.1',
-  Hash[String,Data] $flannel_daemonset_config = {},
+  Hash[String,Data] $extra_kube_proxy_args       = {},
+  String[1] $coredns_image                       = 'coredns/coredns',
+  String[1] $coredns_tag                         = '1.8.7',
+  Hash[String,Data] $coredns_deployment_config   = {},
+  String[1] $flannel_cni_image                   = 'rancher/mirrored-flannelcni-flannel-cni-plugin',
+  String[1] $flannel_cni_tag                     = 'v1.0.0',
+  String[1] $flannel_image                       = 'rancher/mirrored-flannelcni-flannel',
+  String[1] $flannel_tag                         = 'v0.16.1',
+  Hash[String,Data] $flannel_daemonset_config    = {},
 ) {
   assert_private()
 
@@ -69,7 +69,7 @@ class k8s::server::resources(
                       server                       => $master,
                       'certificate-authority-data' => $facts['k8s_ca'],
                     },
-                  }
+                  },
                 ],
                 users             => [],
                 contexts          => [],
@@ -101,7 +101,7 @@ class k8s::server::resources(
           },
           rules    => [
             {
-              apiGroups     => [ '' ],
+              apiGroups     => [''],
               resources     => [
                 'configmaps',
               ],
@@ -134,7 +134,7 @@ class k8s::server::resources(
                 'certificatesigningrequests/nodeclient',
               ],
               verbs     => [
-                'create'
+                'create',
               ],
             },
           ],
@@ -159,7 +159,7 @@ class k8s::server::resources(
                 'certificatesigningrequests/selfnodeclient',
               ],
               verbs     => [
-                'create'
+                'create',
               ],
             },
           ],
@@ -184,14 +184,14 @@ class k8s::server::resources(
                 'certificatesigningrequests/selfnodeserver',
               ],
               verbs     => [
-                'create'
+                'create',
               ],
             },
           ],
         };
     }
 
-    kubectl_apply{
+    kubectl_apply {
       default:
         kubeconfig  => $kubeconfig,
         provider    => 'kubectl',
@@ -250,7 +250,7 @@ class k8s::server::resources(
             kind     => 'ClusterRole',
             name     => 'system:node-bootstrapper',
             apiGroup => 'rbac.authorization.k8s.io',
-          }
+          },
         };
 
       'system-bootstrap-approve-node-client-csr':
@@ -292,7 +292,7 @@ class k8s::server::resources(
             kind     => 'ClusterRole',
             name     => 'system:certificates.k8s.io:certificatesigningrequests:selfnodeclient',
             apiGroup => 'rbac.authorization.k8s.io',
-          }
+          },
         };
 
       'system-bootstrap-node-server-renewal':
@@ -313,7 +313,7 @@ class k8s::server::resources(
             kind     => 'ClusterRole',
             name     => 'system:certificates.k8s.io:certificatesigningrequests:selfnodeserver',
             apiGroup => 'rbac.authorization.k8s.io',
-          }
+          },
         };
     }
   }
@@ -357,52 +357,52 @@ class k8s::server::resources(
           },
         };
 
-        # apiVersion: kubeproxy.config.k8s.io/v1alpha1
-        # bindAddress: 0.0.0.0
-        # bindAddressHardFail: false
-        # clientConnection:
-        #   acceptContentTypes: ""
-        #   burst: 10
-        #   contentType: application/vnd.kubernetes.protobuf
-        #   kubeconfig: ""
-        #   qps: 5
-        # clusterCIDR: ""
-        # configSyncPeriod: 15m0s
-        # conntrack:
-        #   maxPerCore: 32768
-        #   min: 131072
-        #   tcpCloseWaitTimeout: 1h0m0s
-        #   tcpEstablishedTimeout: 24h0m0s
-        # detectLocalMode: ""
-        # enableProfiling: false
-        # healthzBindAddress: 0.0.0.0:10256
-        # hostnameOverride: ""
-        # iptables:
-        #   masqueradeAll: false
-        #   masqueradeBit: 14
-        #   minSyncPeriod: 1s
-        #   syncPeriod: 30s
-        # ipvs:
-        #   excludeCIDRs: null
-        #   minSyncPeriod: 0s
-        #   scheduler: ""
-        #   strictARP: false
-        #   syncPeriod: 30s
-        #   tcpFinTimeout: 0s
-        #   tcpTimeout: 0s
-        #   udpTimeout: 0s
-        # kind: KubeProxyConfiguration
-        # metricsBindAddress: 127.0.0.1:10249
-        # mode: ""
-        # nodePortAddresses: null
-        # oomScoreAdj: -999
-        # portRange: ""
-        # showHiddenMetricsForVersion: ""
-        # udpIdleTimeout: 250ms
-        # winkernel:
-        #   enableDSR: false
-        #   networkName: ""
-        #   sourceVip: ""
+      # apiVersion: kubeproxy.config.k8s.io/v1alpha1
+      # bindAddress: 0.0.0.0
+      # bindAddressHardFail: false
+      # clientConnection:
+      #   acceptContentTypes: ""
+      #   burst: 10
+      #   contentType: application/vnd.kubernetes.protobuf
+      #   kubeconfig: ""
+      #   qps: 5
+      # clusterCIDR: ""
+      # configSyncPeriod: 15m0s
+      # conntrack:
+      #   maxPerCore: 32768
+      #   min: 131072
+      #   tcpCloseWaitTimeout: 1h0m0s
+      #   tcpEstablishedTimeout: 24h0m0s
+      # detectLocalMode: ""
+      # enableProfiling: false
+      # healthzBindAddress: 0.0.0.0:10256
+      # hostnameOverride: ""
+      # iptables:
+      #   masqueradeAll: false
+      #   masqueradeBit: 14
+      #   minSyncPeriod: 1s
+      #   syncPeriod: 30s
+      # ipvs:
+      #   excludeCIDRs: null
+      #   minSyncPeriod: 0s
+      #   scheduler: ""
+      #   strictARP: false
+      #   syncPeriod: 30s
+      #   tcpFinTimeout: 0s
+      #   tcpTimeout: 0s
+      #   udpTimeout: 0s
+      # kind: KubeProxyConfiguration
+      # metricsBindAddress: 127.0.0.1:10249
+      # mode: ""
+      # nodePortAddresses: null
+      # oomScoreAdj: -999
+      # portRange: ""
+      # showHiddenMetricsForVersion: ""
+      # udpIdleTimeout: 250ms
+      # winkernel:
+      #   enableDSR: false
+      #   networkName: ""
+      #   sourceVip: ""
 
       'kube-proxy ConfigMap':
         api_version => 'v1',
@@ -744,7 +744,7 @@ class k8s::server::resources(
                               {
                                 key      => 'k8s-app',
                                 operator => 'In',
-                                values   => [ 'coredns' ],
+                                values   => ['coredns'],
                               },
                             ],
                           },
@@ -783,7 +783,7 @@ class k8s::server::resources(
                         memory => '70Mi',
                       },
                     },
-                    args            => [ '-conf', '/etc/coredns/Corefile' ],
+                    args            => ['-conf', '/etc/coredns/Corefile'],
                     volumeMounts    => [
                       {
                         name      => 'config-volume',
@@ -827,8 +827,8 @@ class k8s::server::resources(
                     securityContext => {
                       allowPrivilegeEscalation => false,
                       capabilities             => {
-                        add  => [ 'NET_BIND_SERVICE' ],
-                        drop => [ 'all' ],
+                        add  => ['NET_BIND_SERVICE'],
+                        drop => ['all'],
                       },
                       readOnlyRootFilesystem   => true,
                     },
@@ -876,10 +876,10 @@ class k8s::server::resources(
             },
           },
           spec     => $_addn_coredns_svc_hash + {
-            selector  => {
+            selector => {
               'k8s-app' => 'coredns',
             },
-            ports     => [
+            ports    => [
               {
                 name     => 'dns',
                 port     => 53,
@@ -889,7 +889,7 @@ class k8s::server::resources(
                 name     => 'dns-tcp',
                 port     => 53,
                 protocol => 'TCP',
-              }
+              },
             ],
           },
         };
@@ -981,33 +981,33 @@ class k8s::server::resources(
               tier                       => 'node',
               'k8s-app'                  => 'flannel',
               'kubernetes.io/managed-by' => 'puppet',
-            }
+            },
           },
           data     => {
             'cni-conf.json' => to_json({
-              name       => 'cbr0',
-              cniVersion => '0.3.1',
-              plugins    => [
-                {
-                  type     => 'flannel',
-                  delegate => {
-                    hairpinMode      => true,
-                    isDefaultGateway => true,
+                name       => 'cbr0',
+                cniVersion => '0.3.1',
+                plugins    => [
+                  {
+                    type     => 'flannel',
+                    delegate => {
+                      hairpinMode      => true,
+                      isDefaultGateway => true,
+                    },
                   },
-                },
-                {
-                  type         => 'portmap',
-                  capabilities => {
-                    portMappings => true,
+                  {
+                    type         => 'portmap',
+                    capabilities => {
+                      portMappings => true,
+                    },
                   },
-                },
-              ],
+                ],
             }),
             'net-conf.json' => to_json({
-              'Network' => $cluster_cidr,
-              'Backend' => {
-                'Type' => 'vxlan',
-              },
+                'Network' => $cluster_cidr,
+                'Backend' => {
+                  'Type' => 'vxlan',
+                },
             }),
           },
         };
@@ -1061,8 +1061,8 @@ class k8s::server::resources(
                   {
                     name            => 'flannel',
                     image           => "${flannel_image}:${flannel_tag}",
-                    command         => [ '/opt/bin/flanneld' ],
-                    args            => [ '--ip-masq', '--kube-subnet-mgr' ],
+                    command         => ['/opt/bin/flanneld'],
+                    args            => ['--ip-masq', '--kube-subnet-mgr'],
                     resources       => {
                       requests => {
                         cpu    => '100m',
@@ -1076,7 +1076,7 @@ class k8s::server::resources(
                     securityContext => {
                       privileged   => false,
                       capabilities => {
-                        add => [ 'NET_ADMIN', 'NET_RAW' ],
+                        add => ['NET_ADMIN', 'NET_RAW'],
                       },
                     },
                     env             => [
@@ -1113,7 +1113,7 @@ class k8s::server::resources(
                   {
                     name         => 'install-cni-plugin',
                     image        => "${flannel_cni_image}:${flannel_cni_tag}",
-                    command      => [ 'cp' ],
+                    command      => ['cp'],
                     args         => [
                       '-f',
                       '/flannel',
@@ -1129,7 +1129,7 @@ class k8s::server::resources(
                   {
                     name         => 'install-cni',
                     image        => "${flannel_image}:${flannel_tag}",
-                    command      => [ 'cp' ],
+                    command      => ['cp'],
                     args         => [
                       '-f',
                       '/etc/kube-flannel/cni-conf.json',
@@ -1229,7 +1229,7 @@ class k8s::server::resources(
             apiGroup => 'rbac.authorization.k8s.io',
             kind     => 'User',
             name     => 'system:kube-controller-manager',
-          }
+          },
         ],
         roleRef  => {
           kind     => 'ClusterRole',
@@ -1310,7 +1310,7 @@ class k8s::server::resources(
                     server                  => $master,
                     'certificate-authority' => '/var/run/secrets/kubernetes.io/serviceaccount/ca.crt',
                   },
-                }
+                },
               ],
               users             => [
                 {

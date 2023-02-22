@@ -1,19 +1,19 @@
 # @summary Installs and configures a Kubernetes controller manager
-class k8s::server::controller_manager(
-  Enum['present', 'absent'] $ensure = $k8s::server::ensure,
+class k8s::server::controller_manager (
+  K8s::Ensure $ensure = $k8s::server::ensure,
 
   Stdlib::HTTPUrl $master = $k8s::master,
 
   Hash[String, Data] $arguments = {},
 
-  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $service_cluster_cidr = $k8s::service_cluster_cidr,
-  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $cluster_cidr = $k8s::cluster_cidr,
+  K8s::Cluster_cidr $service_cluster_cidr = $k8s::service_cluster_cidr,
+  K8s::Cluster_cidr $cluster_cidr         = $k8s::cluster_cidr,
 
   Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
-  Stdlib::Unixpath $ca_cert = $k8s::server::tls::ca_cert,
-  Stdlib::Unixpath $ca_key = $k8s::server::tls::ca_key,
-  Stdlib::Unixpath $cert = "${cert_path}/kube-controller-manager.pem",
-  Stdlib::Unixpath $key = "${cert_path}/kube-controller-manager.key",
+  Stdlib::Unixpath $ca_cert   = $k8s::server::tls::ca_cert,
+  Stdlib::Unixpath $ca_key    = $k8s::server::tls::ca_key,
+  Stdlib::Unixpath $cert      = "${cert_path}/kube-controller-manager.pem",
+  Stdlib::Unixpath $key       = "${cert_path}/kube-controller-manager.key",
 ) {
   assert_private()
 
@@ -27,7 +27,7 @@ class k8s::server::controller_manager(
       kubeconfig => $_kubeconfig,
     }
   } else {
-    $_addn_args = { }
+    $_addn_args = {}
   }
 
   # For container;
@@ -84,16 +84,16 @@ class k8s::server::controller_manager(
     systemd::unit_file { 'kube-controller-manager.service':
       ensure  => $ensure,
       content => epp('k8s/service.epp', {
-        name  => 'kube-controller-manager',
+          name  => 'kube-controller-manager',
 
-        desc  => 'Kubernetes Controller Manager',
-        doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
+          desc  => 'Kubernetes Controller Manager',
+          doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
 
-        dir   => '/srv/kubernetes',
-        bin   => 'kube-controller-manager',
-        needs => ['kube-apiserver.service'],
-        user  => kube,
-        group => kube,
+          dir   => '/srv/kubernetes',
+          bin   => 'kube-controller-manager',
+          needs => ['kube-apiserver.service'],
+          user  => kube,
+          group => kube,
       }),
       require => [
         File["${_sysconfig_path}/kube-controller-manager"],

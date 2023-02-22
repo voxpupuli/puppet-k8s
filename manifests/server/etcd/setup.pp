@@ -1,11 +1,11 @@
 # @summary Installs and configures an etcd instance
-class k8s::server::etcd::setup(
-  Enum['present','absent'] $ensure = $k8s::server::etcd::ensure,
+class k8s::server::etcd::setup (
+  K8s::Ensure $ensure                = $k8s::server::etcd::ensure,
   Enum['archive','package'] $install = 'archive',
-  String[1] $package = 'etcd',
-  String[1] $version = $k8s::server::etcd::version,
-  String[1] $etcd_name = fact('hostname'),
-  String[1] $fqdn = fact('networking.fqdn'),
+  String[1] $package                 = 'etcd',
+  String[1] $version                 = $k8s::server::etcd::version,
+  String[1] $etcd_name               = $facts['networking']['hostname'],
+  String[1] $fqdn                    = $facts['networking']['fqdn'],
 
   Stdlib::HTTPUrl $archive_template = 'https://storage.googleapis.com/etcd/v%{version}/etcd-v%{version}-%{kernel}-%{arch}.%{kernel_ext}',
 
@@ -13,33 +13,32 @@ class k8s::server::etcd::setup(
 
   Enum['on','off','readonly'] $proxy = 'off',
 
-  Array[Stdlib::HTTPUrl] $listen_client_urls = ['https://[::]:2379'],
-  Array[Stdlib::HTTPUrl] $advertise_client_urls = ["https://${fqdn}:2379"],
-  Array[Stdlib::HTTPUrl] $listen_peer_urls = ['https://[::]:2380'],
+  Array[Stdlib::HTTPUrl] $listen_client_urls          = ['https://[::]:2379'],
+  Array[Stdlib::HTTPUrl] $advertise_client_urls       = ["https://${fqdn}:2379"],
+  Array[Stdlib::HTTPUrl] $listen_peer_urls            = ['https://[::]:2380'],
   Array[Stdlib::HTTPUrl] $initial_advertise_peer_urls = ["https://${fqdn}:2380"],
 
-  Optional[Stdlib::Unixpath] $peer_cert_file = undef,
-  Optional[Stdlib::Unixpath] $peer_key_file = undef,
+  Optional[Stdlib::Unixpath] $peer_cert_file       = undef,
+  Optional[Stdlib::Unixpath] $peer_key_file        = undef,
   Optional[Stdlib::Unixpath] $peer_trusted_ca_file = undef,
-  Boolean $peer_client_cert_auth = false,
-  Boolean $peer_auto_tls = $k8s::server::etcd::self_signed_tls,
+  Boolean $peer_client_cert_auth                   = false,
+  Boolean $peer_auto_tls                           = $k8s::server::etcd::self_signed_tls,
 
-  Optional[Stdlib::Unixpath] $cert_file = undef,
-  Optional[Stdlib::Unixpath] $key_file = undef,
+  Optional[Stdlib::Unixpath] $cert_file       = undef,
+  Optional[Stdlib::Unixpath] $key_file        = undef,
   Optional[Stdlib::Unixpath] $trusted_ca_file = undef,
-  Boolean $client_cert_auth = false,
-  Boolean $auto_tls = $k8s::server::etcd::self_signed_tls,
+  Boolean $client_cert_auth                   = false,
+  Boolean $auto_tls                           = $k8s::server::etcd::self_signed_tls,
 
-  Optional[Integer] $auto_compaction_retention = undef,
+  Optional[Integer] $auto_compaction_retention             = undef,
   Optional[Enum['existing', 'new']] $initial_cluster_state = undef,
-  Optional[String[1]] $initial_cluster_token = undef,
-  Array[String[1]] $initial_cluster = [],
+  Optional[String[1]] $initial_cluster_token               = undef,
+  Array[String[1]] $initial_cluster                        = [],
 ) {
   if $install == 'archive' {
-    $_url = k8s::format_url($archive_template, {
-      version => $version,
-    })
+    $_url  = k8s::format_url($archive_template, { version => $version, })
     $_file = basename($_url)
+
     archive { "/var/tmp/${_file}":
       ensure          => $ensure,
       source          => $_url,
@@ -116,24 +115,24 @@ class k8s::server::etcd::setup(
 
     '/etc/etcd/etcd.conf':
       content => epp('k8s/server/etcd/etcd.conf.epp', {
-        etcd_name                   => $etcd_name,
-        data_dir                    => $data_dir,
-        proxy                       => $proxy,
-        listen_client_urls          => $listen_client_urls,
-        advertise_client_urls       => $advertise_client_urls,
-        listen_peer_urls            => $listen_peer_urls,
-        initial_advertise_peer_urls => $initial_advertise_peer_urls,
-        cert_file                   => $_cert_file,
-        key_file                    => $_key_file,
-        trusted_ca_file             => $_trusted_ca_file,
-        client_cert_auth            => $_client_cert_auth,
-        peer_cert_file              => $_peer_cert_file,
-        peer_key_file               => $_peer_key_file,
-        peer_trusted_ca_file        => $_peer_trusted_ca_file,
-        peer_client_cert_auth       => $_peer_client_cert_auth,
-        auto_compaction_retention   => $auto_compaction_retention,
-        initial_cluster_state       => $initial_cluster_state,
-        initial_cluster_token       => $initial_cluster_token,
+          etcd_name                   => $etcd_name,
+          data_dir                    => $data_dir,
+          proxy                       => $proxy,
+          listen_client_urls          => $listen_client_urls,
+          advertise_client_urls       => $advertise_client_urls,
+          listen_peer_urls            => $listen_peer_urls,
+          initial_advertise_peer_urls => $initial_advertise_peer_urls,
+          cert_file                   => $_cert_file,
+          key_file                    => $_key_file,
+          trusted_ca_file             => $_trusted_ca_file,
+          client_cert_auth            => $_client_cert_auth,
+          peer_cert_file              => $_peer_cert_file,
+          peer_key_file               => $_peer_key_file,
+          peer_trusted_ca_file        => $_peer_trusted_ca_file,
+          peer_client_cert_auth       => $_peer_client_cert_auth,
+          auto_compaction_retention   => $auto_compaction_retention,
+          initial_cluster_state       => $initial_cluster_state,
+          initial_cluster_token       => $initial_cluster_token,
       }),
       notify  => Service['etcd'];
 
@@ -142,7 +141,7 @@ class k8s::server::etcd::setup(
     # as it only matters before the cluster has been established.
     '/etc/etcd/cluster.conf':
       content => epp('k8s/server/etcd/cluster.conf.epp', {
-        initial_cluster => $_initial_cluster,
+          initial_cluster => $_initial_cluster,
       });
   }
 
