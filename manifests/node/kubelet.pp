@@ -137,10 +137,7 @@ class k8s::node::kubelet (
 
   file { '/etc/modules-load.d/k8s':
     ensure  => $ensure,
-    content => @(EOF),
-    overlay
-    br_netfilter
-    |- EOF
+    content => file('k8s/etc/modules-load.d/k8s'),
   }
   exec {
     default:
@@ -157,11 +154,7 @@ class k8s::node::kubelet (
 
   file { '/etc/sysctl.d/99-k8s.conf':
     ensure  => $ensure,
-    content => @(EOF),
-    net.bridge.bridge-nf-call-iptables  = 1
-    net.bridge.bridge-nf-call-ip6tables = 1
-    net.ipv4.ip_forward                 = 1
-    |- EOF
+    content => file('k8s/etc/sysctl.d/99-k8s.conf'),
   }
   exec { 'sysctl --system':
     path        => ['/sbin', '/usr/sbin'],

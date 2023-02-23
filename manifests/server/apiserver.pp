@@ -34,20 +34,19 @@ class k8s::server::apiserver (
 
   if $discover_etcd_servers and !$etcd_servers {
     # Needs the PuppetDB terminus installed
-    $pql_query = @("PQL")
-    resources[certname,parameters] {
-      type = 'Class' and
-      title = 'K8s::Server::Etcd::Setup' and
-      nodes {
-        resources {
-          type = 'Class' and
-          title = 'K8s::Server::Etcd' and
-          parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}'
-        }
-      }
-      order by certname
-    }
-    | - PQL
+    $pql_query = [
+      'resources[certname,parameters] {',
+      'type = \'Class\' and',
+      'title = \'K8s::Server::Etcd::Setup\' and',
+      'nodes {',
+      '  resources {',
+      '    type = \'Class\' and',
+      '    title = \'K8s::Server::Etcd\' and',
+      "    parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}'",
+      '  }',
+      '}',
+      'order by certname }',
+    ].join(' ')
 
     $cluster_nodes = puppetdb_query($pql_query)
     $_discovery = {

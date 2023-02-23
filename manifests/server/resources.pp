@@ -678,26 +678,26 @@ class k8s::server::resources (
             },
           },
           data     => {
-            'Corefile' => @("COREDNS"),
-            .:53 {
-              errors
-              health {
-                lameduck 5s
-              }
-              ready
-              kubernetes ${cluster_domain} in-addr.arpa ip6.arpa {
-                fallthrough in-addr.arpa ip6.arpa
-              }
-              prometheus :9153
-              forward . /etc/resolv.conf {
-                max_concurrent 1000
-              }
-              cache 30
-              loop
-              reload
-              loadbalance
-            }
-            |-COREDNS
+            'Corefile' => [
+              '.:53 {',
+              '  errors',
+              '  health {',
+              '    lameduck 5s',
+              '  }',
+              '  ready',
+              "  kubernetes ${cluster_domain} in-addr.arpa ip6.arpa {",
+              '    fallthrough in-addr.arpa ip6.arpa',
+              '  }',
+              '  prometheus :9153',
+              '  forward . /etc/resolv.conf {',
+              '    max_concurrent 1000',
+              '  }',
+              '  cache 30',
+              '  loop',
+              '  reload',
+              '  loadbalance',
+              '}',
+            ].join("\n"),
           },
         };
 

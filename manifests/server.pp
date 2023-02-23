@@ -59,14 +59,14 @@ class k8s::server (
 
   if $ensure == 'present' and $manage_signing {
     # Needs the PuppetDB terminus installed
-    $pql_query = @("PQL")
-    resources[certname] {
-      type = 'Class' and
-      title = 'K8s::Node::Kubelet' and
-      parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}'
-      order by certname
-    }
-    | - PQL
+
+    $pql_query = [
+      'resources[certname] {',
+      'type = \'Class\' and',
+      'title = \'K8s::Node::Kubelet\' and',
+      "parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}'",
+      'order by certname }',
+    ].join(' ')
 
     $cluster_nodes = puppetdb_query($pql_query)
     $cluster_nodes.each |$node| { k8s::server::tls::k8s_sign { $node['certname']: } }
