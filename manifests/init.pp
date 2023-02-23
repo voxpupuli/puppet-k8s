@@ -36,10 +36,10 @@ class k8s (
   Stdlib::HTTPUrl $incluster_master                  = 'https://kubernetes.default.svc',
   Stdlib::HTTPUrl $master                            = 'https://kubernetes:6443',
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers     = undef,
-  K8s::Cluster_cidr $service_cluster_cidr            = '10.1.0.0/24',
-  K8s::Cluster_cidr $cluster_cidr                    = '10.0.0.0/16',
+  K8s::Cidr $service_cluster_cidr                    = '10.1.0.0/24',
+  K8s::Cidr $cluster_cidr                            = '10.0.0.0/16',
   Stdlib::IP::Address::Nosubnet $api_service_address = k8s::ip_in_cidr($service_cluster_cidr, 'first'),
-  K8s::Dns_service_address $dns_service_address      = k8s::ip_in_cidr($service_cluster_cidr, 'second'),
+  K8s::Ip_addresses $dns_service_address             = k8s::ip_in_cidr($service_cluster_cidr, 'second'),
   Stdlib::Fqdn $cluster_domain                       = 'cluster.local',
 
   Enum['node','server','none']  $role = 'none',

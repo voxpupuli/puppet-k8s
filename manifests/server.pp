@@ -3,11 +3,11 @@ class k8s::server (
   K8s::Ensure $ensure  = $k8s::ensure,
   Integer[1] $api_port = 6443,
 
-  K8s::Cluster_cidr $cluster_cidr               = $k8s::cluster_cidr,
-  K8s::Dns_service_address $dns_service_address = $k8s::dns_service_address,
-  String $cluster_domain                        = $k8s::cluster_domain,
-  String $direct_master                         = "https://${fact('networking.ip')}:${api_port}",
-  String $master                                = $k8s::master,
+  K8s::Cidr $cluster_cidr                = $k8s::cluster_cidr,
+  K8s::Ip_addresses $dns_service_address = $k8s::dns_service_address,
+  String $cluster_domain                 = $k8s::cluster_domain,
+  String $direct_master                  = "https://${fact('networking.ip')}:${api_port}",
+  String $master                         = $k8s::master,
 
   Stdlib::Unixpath $cert_path          = '/etc/kubernetes/certs',
   Stdlib::Unixpath $ca_key             = "${cert_path}/ca.key",

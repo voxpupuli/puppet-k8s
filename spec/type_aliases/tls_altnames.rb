@@ -2,10 +2,9 @@
 
 require 'spec_helper'
 
-describe 'K8s::Addn_names' do
-  describe 'valid addn_names' do
+describe 'K8s::Tls_altnames' do
+  describe 'valid tls_altnames' do
     [
-      [nil],
       ['1.2.3.4'],
       ['2001:db8:3333:4444:5555:6666:7777:8888'],
       ['www.example.com'],
@@ -17,8 +16,9 @@ describe 'K8s::Addn_names' do
     end
   end
 
-  describe 'invalid addn_names' do
+  describe 'invalid tls_altnames' do
     [
+      [nil],
       nil,
       { 'foo' => 'bar' },
       {},

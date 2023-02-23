@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-describe 'K8s::Dns_service_address' do
-  describe 'valid dns_service_address' do
+describe 'K8s::Ip_addresses' do
+  describe 'valid ip_addresses' do
     [
       '1.2.3.4',
       '2001:db8:3333:4444:5555:6666:7777:8888',
@@ -16,7 +16,7 @@ describe 'K8s::Dns_service_address' do
     end
   end
 
-  describe 'invalid dns_service_address' do
+  describe 'invalid ip_addresses' do
     [
       nil,
       [nil],

@@ -11,7 +11,7 @@ define k8s::server::tls::cert (
   Integer[1] $valid_days                      = 10000,
   K8s::Extended_key_usage $extended_key_usage = ['clientAuth'],
 
-  K8s::Addn_names $addn_names = [],
+  K8s::Tls_altnames $addn_names = [],
 
   Stdlib::Unixpath $config = "${cert_path}/${title}.cnf",
   Stdlib::Unixpath $key = "${cert_path}/${title}.key",

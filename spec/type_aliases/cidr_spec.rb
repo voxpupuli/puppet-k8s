@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-describe 'K8s::Cluster_cidr' do
-  describe 'valid cluster_cidr' do
+describe 'K8s::Cidr' do
+  describe 'valid cidr' do
     [
       '1.2.3.4/8',
       '2001:db8:3333:4444:5555:6666:7777:8888/32',
@@ -16,7 +16,7 @@ describe 'K8s::Cluster_cidr' do
     end
   end
 
-  describe 'invalid cluster_cidr' do
+  describe 'invalid cidr' do
     [
       nil,
       [nil],

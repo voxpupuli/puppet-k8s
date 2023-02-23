@@ -43,19 +43,18 @@
 
 ### Data types
 
-* [`K8s::Addn_names`](#K8s--Addn_names): a type to describe addn_names
-* [`K8s::Api_addn_names`](#K8s--Api_addn_names): a type to describe api_addn_names
-* [`K8s::Cluster_cidr`](#K8s--Cluster_cidr): a type to describe the cluster_cidr
-* [`K8s::Dns_service_address`](#K8s--Dns_service_address): a type to describe the dns_service_address
+* [`K8s::Cidr`](#K8s--Cidr): a type to describe the cidr
 * [`K8s::Duration`](#K8s--Duration): This regexp matches Go duration values, as taken from; https://golang.org/pkg/time/#ParseDuration
 * [`K8s::Ensure`](#K8s--Ensure): a type to describe the ensure pattern
 * [`K8s::Extended_key_usage`](#K8s--Extended_key_usage): a type to describe extended_key_usage
+* [`K8s::Ip_addresses`](#K8s--Ip_addresses): a type to describe the ip_addresses
 * [`K8s::Native_packaging`](#K8s--Native_packaging): a type to describe native_packaging
 * [`K8s::Node_auth`](#K8s--Node_auth): a type to describe the node auth
 * [`K8s::PortRange`](#K8s--PortRange): This regexp matches port range values
 * [`K8s::Proxy_auth`](#K8s--Proxy_auth): a type to describe the kube-proxy auth
 * [`K8s::Quantity`](#K8s--Quantity): This regexp matches quantities, like those for resource requests/limits
 * [`K8s::Timestamp`](#K8s--Timestamp): This regexp matches RFC3339 timestamps, the same as what Kubernetes expects to find
+* [`K8s::Tls_altnames`](#K8s--Tls_altnames): a type to describe tls_altnames
 * [`K8s::URI`](#K8s--URI): This regexp matches URI values
 * [`K8s::Version`](#K8s--Version): A type for handling Kubernetes version numbers
 
@@ -348,7 +347,7 @@ Default value: `undef`
 
 ##### <a name="-k8s--service_cluster_cidr"></a>`service_cluster_cidr`
 
-Data type: `K8s::Cluster_cidr`
+Data type: `K8s::Cidr`
 
 
 
@@ -356,7 +355,7 @@ Default value: `'10.1.0.0/24'`
 
 ##### <a name="-k8s--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cluster_cidr`
+Data type: `K8s::Cidr`
 
 
 
@@ -372,7 +371,7 @@ Default value: `k8s::ip_in_cidr($service_cluster_cidr, 'first')`
 
 ##### <a name="-k8s--dns_service_address"></a>`dns_service_address`
 
-Data type: `K8s::Dns_service_address`
+Data type: `K8s::Ip_addresses`
 
 
 
@@ -609,7 +608,7 @@ Default value: `$k8s::node::puppetdb_discovery_tag`
 
 ##### <a name="-k8s--node--kube_proxy--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cluster_cidr`
+Data type: `K8s::Cidr`
 
 
 
@@ -910,7 +909,7 @@ Default value: `6443`
 
 ##### <a name="-k8s--server--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cluster_cidr`
+Data type: `K8s::Cidr`
 
 
 
@@ -918,7 +917,7 @@ Default value: `$k8s::cluster_cidr`
 
 ##### <a name="-k8s--server--dns_service_address"></a>`dns_service_address`
 
-Data type: `K8s::Dns_service_address`
+Data type: `K8s::Ip_addresses`
 
 
 
@@ -1108,7 +1107,7 @@ Default value: `{}`
 
 ##### <a name="-k8s--server--apiserver--service_cluster_cidr"></a>`service_cluster_cidr`
 
-Data type: `K8s::Cluster_cidr`
+Data type: `K8s::Cidr`
 
 
 
@@ -1303,7 +1302,7 @@ Default value: `{}`
 
 ##### <a name="-k8s--server--controller_manager--service_cluster_cidr"></a>`service_cluster_cidr`
 
-Data type: `K8s::Cluster_cidr`
+Data type: `K8s::Cidr`
 
 
 
@@ -1311,7 +1310,7 @@ Default value: `$k8s::service_cluster_cidr`
 
 ##### <a name="-k8s--server--controller_manager--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cluster_cidr`
+Data type: `K8s::Cidr`
 
 
 
@@ -1794,7 +1793,7 @@ Default value: `'/root/.kube/config'`
 
 ##### <a name="-k8s--server--resources--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cluster_cidr`
+Data type: `K8s::Cidr`
 
 
 
@@ -1802,7 +1801,7 @@ Default value: `$k8s::server::cluster_cidr`
 
 ##### <a name="-k8s--server--resources--dns_service_address"></a>`dns_service_address`
 
-Data type: `K8s::Dns_service_address`
+Data type: `K8s::Ip_addresses`
 
 
 
@@ -2080,11 +2079,11 @@ Default value: `$k8s::server::manage_certs`
 
 ##### <a name="-k8s--server--tls--api_addn_names"></a>`api_addn_names`
 
-Data type: `K8s::Api_addn_names`
+Data type: `Optional[K8s::Tls_altnames]`
 
 
 
-Default value: `[]`
+Default value: `undef`
 
 ##### <a name="-k8s--server--tls--cluster_domain"></a>`cluster_domain`
 
@@ -2549,7 +2548,7 @@ Default value: `['clientAuth']`
 
 ##### <a name="-k8s--server--tls--cert--addn_names"></a>`addn_names`
 
-Data type: `K8s::Addn_names`
+Data type: `K8s::Tls_altnames`
 
 
 
@@ -2981,37 +2980,9 @@ The index of the IP to retrieve
 
 ## Data types
 
-### <a name="K8s--Addn_names"></a>`K8s::Addn_names`
+### <a name="K8s--Cidr"></a>`K8s::Cidr`
 
-a type to describe addn_names
-
-Alias of
-
-```puppet
-Array[Optional[
-    Variant[
-      Stdlib::Fqdn,
-      Stdlib::IP::Address::Nosubnet,
-    ]
-  ]]
-```
-
-### <a name="K8s--Api_addn_names"></a>`K8s::Api_addn_names`
-
-a type to describe api_addn_names
-
-Alias of
-
-```puppet
-Array[Variant[
-    Stdlib::Fqdn,
-    Stdlib::IP::Address::Nosubnet,
-  ]]
-```
-
-### <a name="K8s--Cluster_cidr"></a>`K8s::Cluster_cidr`
-
-a type to describe the cluster_cidr
+a type to describe the cidr
 
 Alias of
 
@@ -3021,18 +2992,6 @@ Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[
       Stdlib::IP::Address::V4::CIDR,
       Stdlib::IP::Address::V6::CIDR
     ]
-  ]]
-```
-
-### <a name="K8s--Dns_service_address"></a>`K8s::Dns_service_address`
-
-a type to describe the dns_service_address
-
-Alias of
-
-```puppet
-Variant[Stdlib::IP::Address::Nosubnet, Array[
-    Stdlib::IP::Address::Nosubnet
   ]]
 ```
 
@@ -3059,6 +3018,18 @@ Alias of
 Array[Enum[
     'clientAuth',
     'serverAuth'
+  ]]
+```
+
+### <a name="K8s--Ip_addresses"></a>`K8s::Ip_addresses`
+
+a type to describe the ip_addresses
+
+Alias of
+
+```puppet
+Variant[Stdlib::IP::Address::Nosubnet, Array[
+    Stdlib::IP::Address::Nosubnet
   ]]
 ```
 
@@ -3097,6 +3068,19 @@ Alias of `Pattern[/^[+-]?([0-9]+|[0-9]+\.[0-9]{1,3}|\.[0-9]{1,3}|[0-9]+\.)([KMGT
 This regexp matches RFC3339 timestamps, the same as what Kubernetes expects to find
 
 Alias of `Pattern[/^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?([Zz]|[+-]([01][0-9]|2[0-3]):[0-5][0-9])$/]`
+
+### <a name="K8s--Tls_altnames"></a>`K8s::Tls_altnames`
+
+a type to describe tls_altnames
+
+Alias of
+
+```puppet
+Array[Variant[
+    Stdlib::Fqdn,
+    Stdlib::IP::Address::Nosubnet,
+  ]]
+```
 
 ### <a name="K8s--URI"></a>`K8s::URI`
 
