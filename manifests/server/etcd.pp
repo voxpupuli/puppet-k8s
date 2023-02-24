@@ -1,29 +1,30 @@
 # @summary Sets up an etcd cluster node
-class k8s::server::etcd(
-  Enum['present', 'absent'] $ensure = 'present',
-  String[1] $version = pick($k8s::etcd_version, '3.5.1'),
+class k8s::server::etcd (
+  K8s::Ensure $ensure = 'present',
+  String[1] $version  = pick($k8s::etcd_version, '3.5.1'),
 
-  Boolean $manage_setup = true,
-  Boolean $manage_firewall = false,
-  Boolean $manage_members = false,
-  String[1] $cluster_name = 'default',
+  Boolean $manage_setup             = true,
+  Boolean $manage_firewall          = false,
+  Boolean $manage_members           = false,
+  String[1] $cluster_name           = 'default',
   String[1] $puppetdb_discovery_tag = pick($k8s::server::puppetdb_discovery_tag, $cluster_name),
 
   Boolean $self_signed_tls = false,
-  Boolean $manage_certs = true,
-  Boolean $generate_ca = false,
-  Stdlib::Unixpath $cert_path = '/var/lib/etcd/certs',
-  Stdlib::Unixpath $peer_ca_key = "${cert_path}/peer-ca.key",
-  Stdlib::Unixpath $peer_ca_cert = "${cert_path}/peer-ca.pem",
-  Stdlib::Unixpath $client_ca_key = "${cert_path}/client-ca.key",
+  Boolean $manage_certs    = true,
+  Boolean $generate_ca     = false,
+
+  Stdlib::Unixpath $cert_path      = '/var/lib/etcd/certs',
+  Stdlib::Unixpath $peer_ca_key    = "${cert_path}/peer-ca.key",
+  Stdlib::Unixpath $peer_ca_cert   = "${cert_path}/peer-ca.pem",
+  Stdlib::Unixpath $client_ca_key  = "${cert_path}/client-ca.key",
   Stdlib::Unixpath $client_ca_cert = "${cert_path}/client-ca.pem",
 ) {
   if (!$self_signed_tls and $manage_certs) or $ensure == 'absent' {
     if !defined(File[$cert_path]) {
       file { $cert_path:
         ensure => ($ensure ? {
-          present => directory,
-          default => absent,
+            'present' => directory,
+            default   => absent,
         }),
         owner  => 'etcd',
         group  => 'etcd',
@@ -102,22 +103,22 @@ class k8s::server::etcd(
 
   if $ensure == 'present' and $manage_members {
     # Needs the PuppetDB terminus installed
-    $pql_query = @("PQL")
-    resources[certname,parameters] {
-      type = 'Class' and
-      title = 'K8s::Server::Etcd::Setup' and
-      nodes {
-        resources {
-          type = 'Class' and
-          title = 'K8s::Server::Etcd' and
-          parameters.cluster_name = '${cluster_name}' and
-          parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}' and
-          certname != '${trusted[certname]}'
-        }
-      }
-      order by certname
-    }
-    | - PQL
+    $pql_query = [
+      'resources[certname,parameters] {',
+      '  type = \'Class\' and',
+      '  title = \'K8s::Server::Etcd::Setup\' and',
+      '  nodes {',
+      '    resources {',
+      '      type = \'Class\' and',
+      '      title = \'K8s::Server::Etcd\' and',
+      "      parameters.cluster_name = '${cluster_name}' and",
+      "      parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}' and",
+      "      certname != '${trusted[certname]}'",
+      '    }',
+      '  }',
+      '  order by certname',
+      '}',
+    ].join(' ')
 
     $cluster_nodes = puppetdb_query($pql_query)
     if $manage_setup {
@@ -126,8 +127,8 @@ class k8s::server::etcd(
           "${node['parameters']['etcd_name']}=${node['parameters']['initial_advertise_peer_urls'][0]}"
         },
         initial_cluster_state => ($cluster_nodes.size() ? {
-          0       => 'new',
-          default => 'existing',
+            0       => 'new',
+            default => 'existing',
         }),
       }
     }

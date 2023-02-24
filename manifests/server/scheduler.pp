@@ -1,15 +1,15 @@
 # @summary Installs and configures a Kubernetes scheduler
-class k8s::server::scheduler(
-  Enum['present', 'absent'] $ensure = $k8s::server::ensure,
+class k8s::server::scheduler (
+  K8s::Ensure $ensure = $k8s::server::ensure,
 
   Stdlib::HTTPUrl $master = $k8s::master,
 
   Hash[String, Data] $arguments = {},
 
   Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
-  Stdlib::Unixpath $ca_cert = $k8s::server::tls::ca_cert,
-  Stdlib::Unixpath $cert = "${cert_path}/kube-scheduler.pem",
-  Stdlib::Unixpath $key = "${cert_path}/kube-scheduler.key",
+  Stdlib::Unixpath $ca_cert   = $k8s::server::tls::ca_cert,
+  Stdlib::Unixpath $cert      = "${cert_path}/kube-scheduler.pem",
+  Stdlib::Unixpath $key       = "${cert_path}/kube-scheduler.key",
 ) {
   assert_private()
 
@@ -20,10 +20,10 @@ class k8s::server::scheduler(
   $_kubeconfig = '/srv/kubernetes/kube-scheduler.kubeconf'
   if $k8s::packaging != 'container' {
     $_addn_args = {
-      kubeconfig => $_kubeconfig
+      kubeconfig => $_kubeconfig,
     }
   } else {
-    $_addn_args = { }
+    $_addn_args = {}
   }
 
   $_args = k8s::format_arguments({
@@ -65,16 +65,16 @@ class k8s::server::scheduler(
     systemd::unit_file { 'kube-scheduler.service':
       ensure  => $ensure,
       content => epp('k8s/service.epp', {
-        name  => 'kube-scheduler',
+          name  => 'kube-scheduler',
 
-        desc  => 'Kubernetes Scheduler',
-        doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
+          desc  => 'Kubernetes Scheduler',
+          doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
 
-        dir   => '/srv/kubernetes',
-        bin   => 'kube-scheduler',
-        needs => ['kube-apiserver.service'],
-        user  => kube,
-        group => kube,
+          dir   => '/srv/kubernetes',
+          bin   => 'kube-scheduler',
+          needs => ['kube-apiserver.service'],
+          user  => kube,
+          group => kube,
       }),
       require => [
         File["${_sysconfig_path}/kube-scheduler"],

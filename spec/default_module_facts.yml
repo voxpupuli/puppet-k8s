@@ -5,6 +5,7 @@ is_pe: false
 macaddress: "aa:aa:aa:aa:aa:aa"
 networking:
   fqdn: 'node.example.com'
+  hostname: 'node'
   ip: '172.16.254.254'
   ip6: "fe80:0000:0000:0000:aaaa:aaaa:aaaa:aaaa"
 os:

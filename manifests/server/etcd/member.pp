@@ -1,7 +1,7 @@
 # @summary Adds another member to a local etcd cluster
 #
 # TODO - Convert to native type
-define k8s::server::etcd::member(
+define k8s::server::etcd::member (
   Array[String, 1] $peer_urls,
 
   Optional[Array[Stdlib::HTTPUrl]] $cluster_urls = undef,
@@ -40,6 +40,6 @@ define k8s::server::etcd::member(
     onlyif      => 'etcdctl endpoint health',
     unless      => "etcdctl -w fields member list | grep \\\"Name\\\" | grep ${name} || \
                     etcdctl -w fields member list | grep \\\"PeerURL\\\" | grep ${peer_urls}",
-    path        => [ '/bin', '/usr/bin', '/usr/local/bin' ],
+    path        => ['/bin', '/usr/bin', '/usr/local/bin'],
   }
 }

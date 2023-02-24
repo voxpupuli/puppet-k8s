@@ -1,25 +1,20 @@
 # @summary Generates the necessary Kubernetes certificates for a server
-class k8s::server::tls(
-  Enum['present', 'absent'] $ensure = 'present',
-  Boolean $generate_ca = $k8s::server::generate_ca,
+class k8s::server::tls (
+  K8s::Ensure $ensure   = 'present',
+  Boolean $generate_ca  = $k8s::server::generate_ca,
   Boolean $manage_certs = $k8s::server::manage_certs,
 
-  Array[
-    Variant[
-      Stdlib::Fqdn,
-      Stdlib::IP::Address::Nosubnet,
-    ]
-  ] $api_addn_names = [],
-  String[1] $cluster_domain = $k8s::cluster_domain,
+  K8s::Tls_altnames $api_addn_names                  = [],
+  String[1] $cluster_domain                          = $k8s::cluster_domain,
   Stdlib::IP::Address::Nosubnet $api_service_address = $k8s::api_service_address,
 
   Stdlib::Unixpath $cert_path = $k8s::server::cert_path,
-  Integer[512] $key_bits = 2048,
-  Integer[1] $valid_days = 10000,
+  Integer[512] $key_bits      = 2048,
+  Integer[1] $valid_days      = 10000,
 
-  Stdlib::Unixpath $ca_key = $k8s::server::ca_key,
-  Stdlib::Unixpath $ca_cert = $k8s::server::ca_cert,
-  Stdlib::Unixpath $aggregator_ca_key = $k8s::server::aggregator_ca_key,
+  Stdlib::Unixpath $ca_key             = $k8s::server::ca_key,
+  Stdlib::Unixpath $ca_cert            = $k8s::server::ca_cert,
+  Stdlib::Unixpath $aggregator_ca_key  = $k8s::server::aggregator_ca_key,
   Stdlib::Unixpath $aggregator_ca_cert = $k8s::server::aggregator_ca_cert,
 ) {
   if $manage_certs or $ensure == 'absent' {
@@ -28,8 +23,8 @@ class k8s::server::tls(
     if !defined(File[$cert_path]) {
       file { $cert_path:
         ensure => ($ensure ? {
-          present => directory,
-          default => absent,
+            'present' => directory,
+            default   => absent,
         }),
         owner  => 'kube',
         group  => 'kube',
@@ -98,19 +93,19 @@ class k8s::server::tls(
       'kube-apiserver':
         extended_key_usage => ['serverAuth'],
         addn_names         => ([
-          'kubernetes',
-          'kubernetes.default',
-          'kubernetes.default.svc',
-          "kubernetes.default.svc.${cluster_domain}",
-          'kubernetes.service.discover',
-          'localhost',
-          fact('networking.hostname'),
-          fact('networking.fqdn'),
-          $api_service_address,
-          '127.0.0.1',
-          '::1',
-          fact('networking.ip'),
-          fact('networking.ip6'),
+            'kubernetes',
+            'kubernetes.default',
+            'kubernetes.default.svc',
+            "kubernetes.default.svc.${cluster_domain}",
+            'kubernetes.service.discover',
+            'localhost',
+            fact('networking.hostname'),
+            fact('networking.fqdn'),
+            $api_service_address,
+            '127.0.0.1',
+            '::1',
+            fact('networking.ip'),
+            fact('networking.ip6'),
         ] + $api_addn_names).unique(),
         distinguished_name => {
           commonName => 'kube-apiserver',

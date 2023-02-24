@@ -1,30 +1,30 @@
 # @summary Installs and configures a Kubernetes apiserver
-class k8s::server::apiserver(
-  Enum['present', 'absent'] $ensure = $k8s::server::ensure,
+class k8s::server::apiserver (
+  K8s::Ensure $ensure = $k8s::server::ensure,
 
   Hash[String, Data] $arguments = {},
 
-  Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR]]] $service_cluster_cidr = $k8s::service_cluster_cidr,
+  K8s::Cidr $service_cluster_cidr = $k8s::service_cluster_cidr,
 
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
-  Boolean $discover_etcd_servers = $k8s::puppetdb_discovery,
-  Boolean $manage_firewall = $k8s::server::manage_firewall,
-  String $puppetdb_discovery_tag = $k8s::server::puppetdb_discovery_tag,
+  Boolean $discover_etcd_servers                 = $k8s::puppetdb_discovery,
+  Boolean $manage_firewall                       = $k8s::server::manage_firewall,
+  String $puppetdb_discovery_tag                 = $k8s::server::puppetdb_discovery_tag,
 
-  Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
-  Stdlib::Unixpath $ca_cert = $k8s::server::tls::ca_cert,
-  Stdlib::Unixpath $aggregator_ca_cert = $k8s::server::tls::aggregator_ca_cert,
-  Stdlib::Unixpath $serviceaccount_public = "${cert_path}/service-account.pub",
+  Stdlib::Unixpath $cert_path              = $k8s::server::tls::cert_path,
+  Stdlib::Unixpath $ca_cert                = $k8s::server::tls::ca_cert,
+  Stdlib::Unixpath $aggregator_ca_cert     = $k8s::server::tls::aggregator_ca_cert,
+  Stdlib::Unixpath $serviceaccount_public  = "${cert_path}/service-account.pub",
   Stdlib::Unixpath $serviceaccount_private = "${cert_path}/service-account.key",
-  Stdlib::Unixpath $apiserver_cert = "${cert_path}/kube-apiserver.pem",
-  Stdlib::Unixpath $apiserver_key = "${cert_path}/kube-apiserver.key",
-  Stdlib::Unixpath $front_proxy_cert = "${cert_path}/front-proxy-client.pem",
-  Stdlib::Unixpath $front_proxy_key = "${cert_path}/front-proxy-client.key",
-  Stdlib::Unixpath $apiserver_client_cert = "${cert_path}/apiserver-kubelet-client.pem",
-  Stdlib::Unixpath $apiserver_client_key = "${cert_path}/apiserver-kubelet-client.key",
-  Stdlib::Unixpath $etcd_ca = "${cert_path}/etcd-ca.pem",
-  Stdlib::Unixpath $etcd_cert = "${cert_path}/etcd.pem",
-  Stdlib::Unixpath $etcd_key = "${cert_path}/etcd.key",
+  Stdlib::Unixpath $apiserver_cert         = "${cert_path}/kube-apiserver.pem",
+  Stdlib::Unixpath $apiserver_key          = "${cert_path}/kube-apiserver.key",
+  Stdlib::Unixpath $front_proxy_cert       = "${cert_path}/front-proxy-client.pem",
+  Stdlib::Unixpath $front_proxy_key        = "${cert_path}/front-proxy-client.key",
+  Stdlib::Unixpath $apiserver_client_cert  = "${cert_path}/apiserver-kubelet-client.pem",
+  Stdlib::Unixpath $apiserver_client_key   = "${cert_path}/apiserver-kubelet-client.key",
+  Stdlib::Unixpath $etcd_ca                = "${cert_path}/etcd-ca.pem",
+  Stdlib::Unixpath $etcd_cert              = "${cert_path}/etcd.pem",
+  Stdlib::Unixpath $etcd_key               = "${cert_path}/etcd.key",
 ) {
   assert_private()
 
@@ -34,26 +34,25 @@ class k8s::server::apiserver(
 
   if $discover_etcd_servers and !$etcd_servers {
     # Needs the PuppetDB terminus installed
-    $pql_query = @("PQL")
-    resources[certname,parameters] {
-      type = 'Class' and
-      title = 'K8s::Server::Etcd::Setup' and
-      nodes {
-        resources {
-          type = 'Class' and
-          title = 'K8s::Server::Etcd' and
-          parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}'
-        }
-      }
-      order by certname
-    }
-    | - PQL
+    $pql_query = [
+      'resources[certname,parameters] {',
+      'type = \'Class\' and',
+      'title = \'K8s::Server::Etcd::Setup\' and',
+      'nodes {',
+      '  resources {',
+      '    type = \'Class\' and',
+      '    title = \'K8s::Server::Etcd\' and',
+      "    parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}'",
+      '  }',
+      '}',
+      'order by certname }',
+    ].join(' ')
 
     $cluster_nodes = puppetdb_query($pql_query)
     $_discovery = {
-        etcd_servers => sort(flatten($cluster_nodes.map |$node| {
-              $node['parameters']['advertise_client_urls']
-        })),
+      etcd_servers => sort(flatten($cluster_nodes.map |$node| {
+            $node['parameters']['advertise_client_urls']
+      })),
     }
   } else {
     $_discovery = {}
@@ -93,7 +92,7 @@ class k8s::server::apiserver(
       advertise_address                  => fact('networking.ip'),
       allow_privileged                   => true,
       anonymous_auth                     => true,
-      authorization_mode                 => [ 'Node', 'RBAC' ],
+      authorization_mode                 => ['Node', 'RBAC'],
       bind_address                       => '::',
       client_ca_file                     => $ca_cert,
       enable_bootstrap_token_auth        => true,
@@ -215,7 +214,7 @@ class k8s::server::apiserver(
               rollingUpdate => {
                 maxUnavailable => 1,
               },
-              type          => 'RollingUpdate'
+              type          => 'RollingUpdate',
             },
           },
       }),
@@ -234,15 +233,15 @@ class k8s::server::apiserver(
     systemd::unit_file { 'kube-apiserver.service':
       ensure  => $ensure,
       content => epp('k8s/service.epp', {
-        name  => 'kube-apiserver',
+          name  => 'kube-apiserver',
 
-        desc  => 'Kubernetes API Server',
-        doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
+          desc  => 'Kubernetes API Server',
+          doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
 
-        dir   => '/srv/kubernetes',
-        bin   => 'kube-apiserver',
-        user  => kube,
-        group => kube,
+          dir   => '/srv/kubernetes',
+          bin   => 'kube-apiserver',
+          user  => kube,
+          group => kube,
       }),
       require => [
         File["${_sysconfig_path}/kube-apiserver"],
@@ -256,8 +255,7 @@ class k8s::server::apiserver(
       subscribe => K8s::Binary['kube-apiserver'],
     }
 
-    Service['kube-apiserver'] -> Kubectl_apply<| |>
-    [ 'kube-apiserver', 'front-proxy-client', 'apiserver-kubelet-client' ].each |$cert| {
+    Service['kube-apiserver'] -> Kubectl_apply<| |> ['kube-apiserver', 'front-proxy-client', 'apiserver-kubelet-client'].each |$cert| {
       if defined(K8s::Server::Tls::Cert[$cert]) {
         K8s::Server::Tls::Cert[$cert] ~> Service['kube-apiserver']
       }

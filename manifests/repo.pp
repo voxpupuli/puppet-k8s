@@ -1,7 +1,7 @@
 # @summary Handles repositories for the container runtime
-class k8s::repo(
+class k8s::repo (
   Boolean $manage_container_manager = $k8s::manage_container_manager,
-  String[1] $crio_version = $k8s::version.split('\.')[0, 2].join('.'),
+  String[1] $crio_version           = $k8s::version.split('\.')[0, 2].join('.'),
 ) {
   case fact('os.family') {
     'Debian': {
@@ -51,16 +51,17 @@ class k8s::repo(
         descr    => 'Stable releases of libcontainers',
         baseurl  => $libcontainers_url,
         gpgcheck => 1,
-        gpgkey   => "${libcontainers_url}repodata/repomd.xml.key"
+        gpgkey   => "${libcontainers_url}repodata/repomd.xml.key",
       }
       if $manage_container_manager {
         yumrepo { 'libcontainers:stable:cri-o':
           descr    => 'Stable releases of CRI-o',
           baseurl  => $crio_url,
           gpgcheck => 1,
-          gpgkey   => "${crio_url}repodata/repomd.xml.key"
+          gpgkey   => "${crio_url}repodata/repomd.xml.key",
         }
       }
     }
+    default: {}
   }
 }

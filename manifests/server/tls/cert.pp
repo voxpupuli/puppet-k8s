@@ -1,24 +1,17 @@
 # @summary Generates and signs a TLS certificate
-define k8s::server::tls::cert(
-  Enum['present', 'absent'] $ensure = present,
-
+define k8s::server::tls::cert (
   Hash[String, String] $distinguished_name,
   Stdlib::Unixpath $cert_path,
   Stdlib::Unixpath $ca_key,
   Stdlib::Unixpath $ca_cert,
 
-  Integer[512] $key_bits = 2048,
-  Integer[1] $valid_days = 10000,
-  Array[Enum['clientAuth','serverAuth']] $extended_key_usage = ['clientAuth'],
+  K8s::Ensure $ensure = present,
 
-  Array[
-    Optional[
-      Variant[
-        Stdlib::Fqdn,
-        Stdlib::IP::Address::Nosubnet,
-      ]
-    ]
-  ] $addn_names = [],
+  Integer[512] $key_bits                      = 2048,
+  Integer[1] $valid_days                      = 10000,
+  K8s::Extended_key_usage $extended_key_usage = ['clientAuth'],
+
+  K8s::Tls_altnames $addn_names = [],
 
   Stdlib::Unixpath $config = "${cert_path}/${title}.cnf",
   Stdlib::Unixpath $key = "${cert_path}/${title}.key",
@@ -40,10 +33,10 @@ define k8s::server::tls::cert(
     owner   => $owner,
     group   => $group,
     content => epp('k8s/server/tls/openssl.cnf.epp', {
-      extended_key_usage => $extended_key_usage,
-      distinguished_name => $distinguished_name,
-      dns_altnames       => $_dns_altnames,
-      ip_altnames        => $_ip_altnames,
+        extended_key_usage => $extended_key_usage,
+        distinguished_name => $distinguished_name,
+        dns_altnames       => $_dns_altnames,
+        ip_altnames        => $_ip_altnames,
     }),
     notify  => Exec["Create K8s ${title} CSR"],
   }

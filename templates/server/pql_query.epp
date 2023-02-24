@@ -1,0 +1,10 @@
+<%- |
+  String $comment,
+  Hash[String,String] $environment_variables,
+| -%>
+resources[certname] {
+  type = 'Class' and
+  title = 'K8s::Node::Kubelet' and
+  parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}'
+  order by certname
+}

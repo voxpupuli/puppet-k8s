@@ -1,27 +1,27 @@
 # @summary Installs and configures kubelet
-class k8s::node::kubelet(
-  Enum['present', 'absent'] $ensure = $k8s::node::ensure,
+class k8s::node::kubelet (
+  K8s::Ensure $ensure = $k8s::node::ensure,
 
   Stdlib::HTTPUrl $master = $k8s::node::master,
 
-  Hash[String, Data] $config = {},
-  Hash[String, Data] $arguments = {},
-  String $runtime = $k8s::container_manager,
-  String $runtime_service = $k8s::container_runtime_service,
+  Hash[String, Data] $config        = {},
+  Hash[String, Data] $arguments     = {},
+  String $runtime                   = $k8s::container_manager,
+  String $runtime_service           = $k8s::container_runtime_service,
   String[1] $puppetdb_discovery_tag = $k8s::node::puppetdb_discovery_tag,
 
-  Enum['cert', 'token', 'bootstrap'] $auth = $k8s::node::node_auth,
+  K8s::Node_auth $auth       = $k8s::node::node_auth,
   Boolean $rotate_server_tls = $auth == 'bootstrap',
-  Boolean $manage_firewall = $k8s::node::manage_firewall,
+  Boolean $manage_firewall   = $k8s::node::manage_firewall,
   Boolean $support_dualstack = $k8s::cluster_cidr =~ Array[Data, 2],
 
-  Stdlib::Unixpath $cert_path = $k8s::node::cert_path,
+  Stdlib::Unixpath $cert_path  = $k8s::node::cert_path,
   Stdlib::Unixpath $kubeconfig = '/srv/kubernetes/kubelet.kubeconf',
 
   # For cert auth
   Optional[Stdlib::Unixpath] $ca_cert = $k8s::node::ca_cert,
-  Optional[Stdlib::Unixpath] $cert = $k8s::node::node_cert,
-  Optional[Stdlib::Unixpath] $key = $k8s::node::node_key,
+  Optional[Stdlib::Unixpath] $cert    = $k8s::node::node_cert,
+  Optional[Stdlib::Unixpath] $key     = $k8s::node::node_key,
 
   # For token and bootstrap auth
   Optional[String[1]] $token = $k8s::node::node_token,
@@ -76,7 +76,7 @@ class k8s::node::kubelet(
       File <| title == $_ca_cert |> -> Kubeconfig[$_bootstrap_kubeconfig]
       $_authentication_hash = {
         'authentication'     => {
-          'x509' =>  {
+          'x509' => {
             'clientCAFile' => $_ca_cert,
           },
         },
@@ -109,7 +109,7 @@ class k8s::node::kubelet(
       }
       $_authentication_hash = {
         'authentication'     => {
-          'x509' =>  {
+          'x509' => {
             'clientCAFile' => $ca_cert,
           },
         },
@@ -137,10 +137,7 @@ class k8s::node::kubelet(
 
   file { '/etc/modules-load.d/k8s':
     ensure  => $ensure,
-    content => @(EOF),
-    overlay
-    br_netfilter
-    |- EOF
+    content => file('k8s/etc/modules-load.d/k8s'),
   }
   exec {
     default:
@@ -157,11 +154,7 @@ class k8s::node::kubelet(
 
   file { '/etc/sysctl.d/99-k8s.conf':
     ensure  => $ensure,
-    content => @(EOF),
-    net.bridge.bridge-nf-call-iptables  = 1
-    net.bridge.bridge-nf-call-ip6tables = 1
-    net.ipv4.ip_forward                 = 1
-    |- EOF
+    content => file('k8s/etc/sysctl.d/99-k8s.conf'),
   }
   exec { 'sysctl --system':
     path        => ['/sbin', '/usr/sbin'],
@@ -199,7 +192,7 @@ class k8s::node::kubelet(
       container_runtime          => $_runtime,
       container_runtime_endpoint => $_runtime_endpoint,
       hostname_override          => fact('networking.fqdn'),
-      node_ip                    => $_node_ip
+      node_ip                    => $_node_ip,
   } + $arguments)
 
   $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
@@ -216,14 +209,11 @@ class k8s::node::kubelet(
   systemd::unit_file { 'kubelet.service':
     ensure  => $ensure,
     content => epp('k8s/service.epp', {
-      name  => 'kubelet',
-
-      desc  => 'Kubernetes Kubelet Server',
-      doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
-      needs => [
-        $runtime_service
-      ],
-      bin   => 'kubelet',
+        name  => 'kubelet',
+        desc  => 'Kubernetes Kubelet Server',
+        doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
+        needs => [$runtime_service,],
+        bin   => 'kubelet',
     }),
     require => [
       File["${_sysconfig_path}/kubelet", '/etc/kubernetes/kubelet.conf'],
@@ -246,7 +236,7 @@ class k8s::node::kubelet(
         {
           port     => '10250',
           protocol => 'tcp',
-        }
+        },
       ],
     }
     firewalld_service { 'Allow k8s kubelet access':
