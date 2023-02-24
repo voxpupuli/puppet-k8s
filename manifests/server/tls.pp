@@ -4,7 +4,7 @@ class k8s::server::tls (
   Boolean $generate_ca  = $k8s::server::generate_ca,
   Boolean $manage_certs = $k8s::server::manage_certs,
 
-  Optional[K8s::Tls_altnames] $api_addn_names        = undef,
+  K8s::Tls_altnames $api_addn_names                  = [],
   String[1] $cluster_domain                          = $k8s::cluster_domain,
   Stdlib::IP::Address::Nosubnet $api_service_address = $k8s::api_service_address,
 
