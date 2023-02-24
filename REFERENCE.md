@@ -2079,11 +2079,11 @@ Default value: `$k8s::server::manage_certs`
 
 ##### <a name="-k8s--server--tls--api_addn_names"></a>`api_addn_names`
 
-Data type: `Optional[K8s::Tls_altnames]`
+Data type: `K8s::Tls_altnames`
 
 
 
-Default value: `undef`
+Default value: `[]`
 
 ##### <a name="-k8s--server--tls--cluster_domain"></a>`cluster_domain`
 
