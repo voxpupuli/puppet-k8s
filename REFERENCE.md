@@ -44,12 +44,12 @@
 ### Data types
 
 * [`K8s::Cidr`](#K8s--Cidr): a type to describe the cidr
-* [`K8s::Duration`](#K8s--Duration): This regexp matches Go duration values, as taken from; https://golang.org/pkg/time/#ParseDuration
+* [`K8s::Duration`](#K8s--Duration): This regexp matches Go duration values, as taken from;
 * [`K8s::Ensure`](#K8s--Ensure): a type to describe the ensure pattern
 * [`K8s::Extended_key_usage`](#K8s--Extended_key_usage): a type to describe extended_key_usage
 * [`K8s::Ip_addresses`](#K8s--Ip_addresses): a type to describe the ip_addresses
-* [`K8s::Native_packaging`](#K8s--Native_packaging): a type to describe native_packaging
-* [`K8s::Node_auth`](#K8s--Node_auth): a type to describe the node auth
+* [`K8s::Native_packaging`](#K8s--Native_packaging): @summary a type to describe native_packaging
+* [`K8s::Node_auth`](#K8s--Node_auth): @summary a type to describe the node auth
 * [`K8s::PortRange`](#K8s--PortRange): This regexp matches port range values
 * [`K8s::Proxy_auth`](#K8s--Proxy_auth): a type to describe the kube-proxy auth
 * [`K8s::Quantity`](#K8s--Quantity): This regexp matches quantities, like those for resource requests/limits
@@ -2997,7 +2997,6 @@ Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[
 
 ### <a name="K8s--Duration"></a>`K8s::Duration`
 
-This regexp matches Go duration values, as taken from;
 https://golang.org/pkg/time/#ParseDuration
 
 Alias of `Pattern[/^(-?[0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$/]`
@@ -3035,13 +3034,13 @@ Variant[Stdlib::IP::Address::Nosubnet, Array[
 
 ### <a name="K8s--Native_packaging"></a>`K8s::Native_packaging`
 
-a type to describe native_packaging
+@summary a type to describe native_packaging
 
 Alias of `Enum['package', 'tarball', 'loose', 'hyperkube', 'manual']`
 
 ### <a name="K8s--Node_auth"></a>`K8s::Node_auth`
 
-a type to describe the node auth
+@summary a type to describe the node auth
 
 Alias of `Enum['cert', 'token', 'bootstrap']`
 
