@@ -53,8 +53,8 @@
 * [`K8s::PortRange`](#K8s--PortRange): This regexp matches port range values
 * [`K8s::Proxy_auth`](#K8s--Proxy_auth): a type to describe the kube-proxy auth
 * [`K8s::Quantity`](#K8s--Quantity): This regexp matches quantities, like those for resource requests/limits
+* [`K8s::TLS_altnames`](#K8s--TLS_altnames): a type to describe TLS alternative names in certificates
 * [`K8s::Timestamp`](#K8s--Timestamp): This regexp matches RFC3339 timestamps, the same as what Kubernetes expects to find
-* [`K8s::Tls_altnames`](#K8s--Tls_altnames): a type to describe tls_altnames
 * [`K8s::URI`](#K8s--URI): This regexp matches URI values
 * [`K8s::Version`](#K8s--Version): A type for handling Kubernetes version numbers
 
@@ -2079,7 +2079,7 @@ Default value: `$k8s::server::manage_certs`
 
 ##### <a name="-k8s--server--tls--api_addn_names"></a>`api_addn_names`
 
-Data type: `K8s::Tls_altnames`
+Data type: `K8s::TLS_altnames`
 
 
 
@@ -2548,7 +2548,7 @@ Default value: `['clientAuth']`
 
 ##### <a name="-k8s--server--tls--cert--addn_names"></a>`addn_names`
 
-Data type: `K8s::Tls_altnames`
+Data type: `K8s::TLS_altnames`
 
 
 
@@ -3063,15 +3063,9 @@ This regexp matches quantities, like those for resource requests/limits
 
 Alias of `Pattern[/^[+-]?([0-9]+|[0-9]+\.[0-9]{1,3}|\.[0-9]{1,3}|[0-9]+\.)([KMGTPE]i|[mkMGTPE]|[eE][0-9]+(\.[0-9]+)?)?$/]`
 
-### <a name="K8s--Timestamp"></a>`K8s::Timestamp`
+### <a name="K8s--TLS_altnames"></a>`K8s::TLS_altnames`
 
-This regexp matches RFC3339 timestamps, the same as what Kubernetes expects to find
-
-Alias of `Pattern[/^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?([Zz]|[+-]([01][0-9]|2[0-3]):[0-5][0-9])$/]`
-
-### <a name="K8s--Tls_altnames"></a>`K8s::Tls_altnames`
-
-a type to describe tls_altnames
+a type to describe TLS alternative names in certificates
 
 Alias of
 
@@ -3081,6 +3075,12 @@ Array[Variant[
     Stdlib::IP::Address::Nosubnet,
   ]]
 ```
+
+### <a name="K8s--Timestamp"></a>`K8s::Timestamp`
+
+This regexp matches RFC3339 timestamps, the same as what Kubernetes expects to find
+
+Alias of `Pattern[/^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?([Zz]|[+-]([01][0-9]|2[0-3]):[0-5][0-9])$/]`
 
 ### <a name="K8s--URI"></a>`K8s::URI`
 

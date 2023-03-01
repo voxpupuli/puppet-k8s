@@ -2,13 +2,15 @@
 
 require 'spec_helper'
 
-describe 'K8s::Tls_altnames' do
-  describe 'valid tls_altnames' do
+describe 'K8s::TLS_altnames' do
+  describe 'valid TLS altnames' do
     [
       ['1.2.3.4'],
       ['2001:db8:3333:4444:5555:6666:7777:8888'],
+      ['::1'],
       ['www.example.com'],
-      ['fullname']
+      ['fullname'],
+      ['127.0.0.1','::1','localhost']
     ].each do |value|
       describe value.inspect do
         it { is_expected.to allow_value(value) }
@@ -16,15 +18,16 @@ describe 'K8s::Tls_altnames' do
     end
   end
 
-  describe 'invalid tls_altnames' do
+  describe 'invalid TLS altnames' do
     [
       [nil],
       nil,
       { 'foo' => 'bar' },
       {},
       '',
-      'mailto:',
-      '199',
+      [''],
+      ['mailto:'],
+      ['199'],
       600,
       1_000,
     ].each do |value|
