@@ -46,7 +46,7 @@
 * [`K8s::CIDR`](#K8s--CIDR): a type to describe one or more IPv4/6 CIDR
 * [`K8s::Duration`](#K8s--Duration): This regexp matches Go duration values, as taken from;
 * [`K8s::Ensure`](#K8s--Ensure): a type to describe the ensure pattern
-* [`K8s::Extended_key_usage`](#K8s--Extended_key_usage): a type to describe extended_key_usage
+* [`K8s::Extended_key_usage`](#K8s--Extended_key_usage): a type to describe extended key usage for a TLS certificate
 * [`K8s::IP_addresses`](#K8s--IP_addresses): a type to describe multiple IP addresses without subnet sizes
 * [`K8s::Native_packaging`](#K8s--Native_packaging): @summary a type to describe native_packaging
 * [`K8s::Node_auth`](#K8s--Node_auth): @summary a type to describe the node auth
@@ -3010,7 +3010,7 @@ Alias of `Enum['present', 'absent']`
 
 ### <a name="K8s--Extended_key_usage"></a>`K8s::Extended_key_usage`
 
-a type to describe extended_key_usage
+a type to describe extended key usage for a TLS certificate
 
 Alias of
 
