@@ -10,7 +10,7 @@ class k8s::node::kube_proxy (
   Hash[String, Data] $arguments  = {},
   String $puppetdb_discovery_tag = $k8s::node::puppetdb_discovery_tag,
 
-  K8s::Cidr $cluster_cidr = $k8s::cluster_cidr,
+  K8s::CIDR $cluster_cidr = $k8s::cluster_cidr,
 
   K8s::Proxy_auth $auth = $k8s::node::proxy_auth,
 

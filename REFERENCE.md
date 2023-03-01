@@ -43,18 +43,18 @@
 
 ### Data types
 
-* [`K8s::Cidr`](#K8s--Cidr): a type to describe the cidr
+* [`K8s::CIDR`](#K8s--CIDR): a type to describe one or more IPv4/6 CIDR
 * [`K8s::Duration`](#K8s--Duration): This regexp matches Go duration values, as taken from;
 * [`K8s::Ensure`](#K8s--Ensure): a type to describe the ensure pattern
-* [`K8s::Extended_key_usage`](#K8s--Extended_key_usage): a type to describe extended_key_usage
-* [`K8s::Ip_addresses`](#K8s--Ip_addresses): a type to describe the ip_addresses
-* [`K8s::Native_packaging`](#K8s--Native_packaging): @summary a type to describe native_packaging
-* [`K8s::Node_auth`](#K8s--Node_auth): @summary a type to describe the node auth
+* [`K8s::Extended_key_usage`](#K8s--Extended_key_usage): a type to describe extended key usage for a TLS certificate
+* [`K8s::IP_addresses`](#K8s--IP_addresses): a type to describe multiple IP addresses without subnet sizes
+* [`K8s::Native_packaging`](#K8s--Native_packaging): a type to describe Kubernetes native packaging methods
+* [`K8s::Node_auth`](#K8s--Node_auth): a type to describe node/kubelet authentication methods
 * [`K8s::PortRange`](#K8s--PortRange): This regexp matches port range values
-* [`K8s::Proxy_auth`](#K8s--Proxy_auth): a type to describe the kube-proxy auth
+* [`K8s::Proxy_auth`](#K8s--Proxy_auth): a type to describe kube-proxy authentication methods
 * [`K8s::Quantity`](#K8s--Quantity): This regexp matches quantities, like those for resource requests/limits
+* [`K8s::TLS_altnames`](#K8s--TLS_altnames): a type to describe TLS alternative names in certificates
 * [`K8s::Timestamp`](#K8s--Timestamp): This regexp matches RFC3339 timestamps, the same as what Kubernetes expects to find
-* [`K8s::Tls_altnames`](#K8s--Tls_altnames): a type to describe tls_altnames
 * [`K8s::URI`](#K8s--URI): This regexp matches URI values
 * [`K8s::Version`](#K8s--Version): A type for handling Kubernetes version numbers
 
@@ -347,7 +347,7 @@ Default value: `undef`
 
 ##### <a name="-k8s--service_cluster_cidr"></a>`service_cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -355,7 +355,7 @@ Default value: `'10.1.0.0/24'`
 
 ##### <a name="-k8s--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -371,7 +371,7 @@ Default value: `k8s::ip_in_cidr($service_cluster_cidr, 'first')`
 
 ##### <a name="-k8s--dns_service_address"></a>`dns_service_address`
 
-Data type: `K8s::Ip_addresses`
+Data type: `K8s::IP_addresses`
 
 
 
@@ -608,7 +608,7 @@ Default value: `$k8s::node::puppetdb_discovery_tag`
 
 ##### <a name="-k8s--node--kube_proxy--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -909,7 +909,7 @@ Default value: `6443`
 
 ##### <a name="-k8s--server--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -917,7 +917,7 @@ Default value: `$k8s::cluster_cidr`
 
 ##### <a name="-k8s--server--dns_service_address"></a>`dns_service_address`
 
-Data type: `K8s::Ip_addresses`
+Data type: `K8s::IP_addresses`
 
 
 
@@ -1107,7 +1107,7 @@ Default value: `{}`
 
 ##### <a name="-k8s--server--apiserver--service_cluster_cidr"></a>`service_cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -1302,7 +1302,7 @@ Default value: `{}`
 
 ##### <a name="-k8s--server--controller_manager--service_cluster_cidr"></a>`service_cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -1310,7 +1310,7 @@ Default value: `$k8s::service_cluster_cidr`
 
 ##### <a name="-k8s--server--controller_manager--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -1793,7 +1793,7 @@ Default value: `'/root/.kube/config'`
 
 ##### <a name="-k8s--server--resources--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -1801,7 +1801,7 @@ Default value: `$k8s::server::cluster_cidr`
 
 ##### <a name="-k8s--server--resources--dns_service_address"></a>`dns_service_address`
 
-Data type: `K8s::Ip_addresses`
+Data type: `K8s::IP_addresses`
 
 
 
@@ -2079,7 +2079,7 @@ Default value: `$k8s::server::manage_certs`
 
 ##### <a name="-k8s--server--tls--api_addn_names"></a>`api_addn_names`
 
-Data type: `K8s::Tls_altnames`
+Data type: `K8s::TLS_altnames`
 
 
 
@@ -2548,7 +2548,7 @@ Default value: `['clientAuth']`
 
 ##### <a name="-k8s--server--tls--cert--addn_names"></a>`addn_names`
 
-Data type: `K8s::Tls_altnames`
+Data type: `K8s::TLS_altnames`
 
 
 
@@ -2980,9 +2980,9 @@ The index of the IP to retrieve
 
 ## Data types
 
-### <a name="K8s--Cidr"></a>`K8s::Cidr`
+### <a name="K8s--CIDR"></a>`K8s::CIDR`
 
-a type to describe the cidr
+a type to describe one or more IPv4/6 CIDR
 
 Alias of
 
@@ -2991,7 +2991,8 @@ Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[
     Variant[
       Stdlib::IP::Address::V4::CIDR,
       Stdlib::IP::Address::V6::CIDR
-    ]
+    ],
+    1
   ]]
 ```
 
@@ -3009,7 +3010,7 @@ Alias of `Enum['present', 'absent']`
 
 ### <a name="K8s--Extended_key_usage"></a>`K8s::Extended_key_usage`
 
-a type to describe extended_key_usage
+a type to describe extended key usage for a TLS certificate
 
 Alias of
 
@@ -3020,27 +3021,30 @@ Array[Enum[
   ]]
 ```
 
-### <a name="K8s--Ip_addresses"></a>`K8s::Ip_addresses`
+### <a name="K8s--IP_addresses"></a>`K8s::IP_addresses`
 
-a type to describe the ip_addresses
+a type to describe multiple IP addresses without subnet sizes
 
 Alias of
 
 ```puppet
 Variant[Stdlib::IP::Address::Nosubnet, Array[
-    Stdlib::IP::Address::Nosubnet
+    Stdlib::IP::Address::Nosubnet,
+    1
   ]]
 ```
 
 ### <a name="K8s--Native_packaging"></a>`K8s::Native_packaging`
 
-@summary a type to describe native_packaging
+a type to describe Kubernetes native packaging methods
+
+* **Note** hyperkube is a legacy name for single-binary packages
 
 Alias of `Enum['package', 'tarball', 'loose', 'hyperkube', 'manual']`
 
 ### <a name="K8s--Node_auth"></a>`K8s::Node_auth`
 
-@summary a type to describe the node auth
+a type to describe node/kubelet authentication methods
 
 Alias of `Enum['cert', 'token', 'bootstrap']`
 
@@ -3052,7 +3056,7 @@ Alias of `Pattern[/^[0-9]+(-[0-9]+)?$/]`
 
 ### <a name="K8s--Proxy_auth"></a>`K8s::Proxy_auth`
 
-a type to describe the kube-proxy auth
+a type to describe kube-proxy authentication methods
 
 Alias of `Enum['cert', 'token', 'incluster']`
 
@@ -3062,15 +3066,9 @@ This regexp matches quantities, like those for resource requests/limits
 
 Alias of `Pattern[/^[+-]?([0-9]+|[0-9]+\.[0-9]{1,3}|\.[0-9]{1,3}|[0-9]+\.)([KMGTPE]i|[mkMGTPE]|[eE][0-9]+(\.[0-9]+)?)?$/]`
 
-### <a name="K8s--Timestamp"></a>`K8s::Timestamp`
+### <a name="K8s--TLS_altnames"></a>`K8s::TLS_altnames`
 
-This regexp matches RFC3339 timestamps, the same as what Kubernetes expects to find
-
-Alias of `Pattern[/^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?([Zz]|[+-]([01][0-9]|2[0-3]):[0-5][0-9])$/]`
-
-### <a name="K8s--Tls_altnames"></a>`K8s::Tls_altnames`
-
-a type to describe tls_altnames
+a type to describe TLS alternative names in certificates
 
 Alias of
 
@@ -3080,6 +3078,12 @@ Array[Variant[
     Stdlib::IP::Address::Nosubnet,
   ]]
 ```
+
+### <a name="K8s--Timestamp"></a>`K8s::Timestamp`
+
+This regexp matches RFC3339 timestamps, the same as what Kubernetes expects to find
+
+Alias of `Pattern[/^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?([Zz]|[+-]([01][0-9]|2[0-3]):[0-5][0-9])$/]`
 
 ### <a name="K8s--URI"></a>`K8s::URI`
 
