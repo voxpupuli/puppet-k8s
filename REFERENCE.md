@@ -83,6 +83,7 @@ The following parameters are available in the `k8s` class:
 * [`runc_version`](#-k8s--runc_version)
 * [`manage_etcd`](#-k8s--manage_etcd)
 * [`manage_firewall`](#-k8s--manage_firewall)
+* [`manage_kernel_modules`](#-k8s--manage_kernel_modules)
 * [`manage_image`](#-k8s--manage_image)
 * [`manage_repo`](#-k8s--manage_repo)
 * [`manage_packages`](#-k8s--manage_packages)
@@ -225,6 +226,14 @@ Data type: `Boolean`
 
 
 Default value: `false`
+
+##### <a name="-k8s--manage_kernel_modules"></a>`manage_kernel_modules`
+
+Data type: `Boolean`
+
+
+
+Default value: `true`
 
 ##### <a name="-k8s--manage_image"></a>`manage_image`
 
@@ -3132,4 +3141,3 @@ Alias of `Pattern[/^[a-z]+:\/\//]`
 A type for handling Kubernetes version numbers
 
 Alias of `Pattern[/^(\d+\.){2}\d+$/]`
-
