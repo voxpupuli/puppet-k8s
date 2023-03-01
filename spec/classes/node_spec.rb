@@ -5,7 +5,7 @@ require 'spec_helper'
 describe 'k8s::node' do
   let(:pre_condition) do
     <<~PUPPET
-    include ::k8s
+      include ::k8s
     PUPPET
   end
 

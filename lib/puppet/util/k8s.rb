@@ -23,8 +23,8 @@ module Puppet::Util
               next if value.include? v
 
               if v.is_a? Hash
-                diff ||= value.select { |ov| ov.is_a? Hash }
-                              .none? do |ov|
+                diff ||= value.select { |ov| ov.is_a? Hash }.
+                         none? do |ov|
                   v_copy = Marshal.load(Marshal.dump(v))
                   delete_merge.call(v_copy, ov)
 
@@ -43,9 +43,7 @@ module Puppet::Util
           hash1.delete(key) if hash1.key?(key) && (hash1[key].nil? || (hash1[key].respond_to?(:empty?) && hash1[key].empty?))
         end
         hash1.dup.each_pair do |key, value|
-          if value.nil? && !hash2.key?(key)
-            hash1.delete key
-          end
+          hash1.delete key if value.nil? && !hash2.key?(key)
         end
 
         hash1

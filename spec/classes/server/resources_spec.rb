@@ -5,16 +5,16 @@ require 'spec_helper'
 describe 'k8s::server::resources' do
   let(:pre_condition) do
     <<~PUPPET
-    function assert_private() {}
+      function assert_private() {}
 
-    include ::k8s
-    class { '::k8s::server':
-      manage_etcd => true,
-      manage_certs => true,
-      manage_components => false,
-      manage_resources => false,
-      node_on_server => false,
-    }
+      include ::k8s
+      class { '::k8s::server':
+        manage_etcd => true,
+        manage_certs => true,
+        manage_components => false,
+        manage_resources => false,
+        node_on_server => false,
+      }
     PUPPET
   end
 

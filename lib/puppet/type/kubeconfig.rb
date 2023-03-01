@@ -49,9 +49,7 @@ Puppet::Type.newtype(:kubeconfig) do
     desc 'An arbitrary path used as the identity of the resource.'
 
     validate do |value|
-      unless Puppet::Util.absolute_path?(value)
-        raise Puppet::Error, "File paths must be fully qualified, not '#{value}'"
-      end
+      raise Puppet::Error, "File paths must be fully qualified, not '#{value}'" unless Puppet::Util.absolute_path?(value)
     end
   end
 
@@ -105,27 +103,21 @@ Puppet::Type.newtype(:kubeconfig) do
     desc 'The path to a CA certificate to include in the kubeconfig'
 
     validate do |value|
-      unless Puppet::Util.absolute_path?(value)
-        raise Puppet::Error, "File paths must be fully qualified, not '#{value}'"
-      end
+      raise Puppet::Error, "File paths must be fully qualified, not '#{value}'" unless Puppet::Util.absolute_path?(value)
     end
   end
   newparam(:client_cert) do
     desc 'The path to a client certificate to include in the kubeconfig'
 
     validate do |value|
-      unless Puppet::Util.absolute_path?(value)
-        raise Puppet::Error, "File paths must be fully qualified, not '#{value}'"
-      end
+      raise Puppet::Error, "File paths must be fully qualified, not '#{value}'" unless Puppet::Util.absolute_path?(value)
     end
   end
   newparam(:client_key) do
     desc 'The path to a client key to include in the kubeconfig'
 
     validate do |value|
-      unless Puppet::Util.absolute_path?(value)
-        raise Puppet::Error, "File paths must be fully qualified, not '#{value}'"
-      end
+      raise Puppet::Error, "File paths must be fully qualified, not '#{value}'" unless Puppet::Util.absolute_path?(value)
     end
   end
 
@@ -137,9 +129,7 @@ Puppet::Type.newtype(:kubeconfig) do
     desc 'The path to a file containing an authentication token'
 
     validate do |value|
-      unless Puppet::Util.absolute_path?(value)
-        raise Puppet::Error, "File paths must be fully qualified, not '#{value}'"
-      end
+      raise Puppet::Error, "File paths must be fully qualified, not '#{value}'" unless Puppet::Util.absolute_path?(value)
     end
   end
 
@@ -151,12 +141,8 @@ Puppet::Type.newtype(:kubeconfig) do
   end
 
   validate do
-    if self[:token] && self[:token_file]
-      raise Puppet::Error, "Can't specify both token and token_file for the same kubeconfig entry"
-    end
-    unless self[:path]
-      raise(Puppet::Error, 'path is a required attribute')
-    end
+    raise Puppet::Error, "Can't specify both token and token_file for the same kubeconfig entry" if self[:token] && self[:token_file]
+    raise(Puppet::Error, 'path is a required attribute') unless self[:path]
   end
 
   # Ensure the file or directory exists
@@ -172,7 +158,7 @@ Puppet::Type.newtype(:kubeconfig) do
         self[:client_key],
       ].compact
     end
-    req += [ self[:token_file] ].compact
+    req += [self[:token_file]].compact
 
     req
   end

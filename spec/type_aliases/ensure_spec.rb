@@ -4,9 +4,9 @@ require 'spec_helper'
 
 describe 'K8s::Ensure' do
   describe 'valid ensure' do
-    [
-      'present',
-      'absent',
+    %w[
+      present
+      absent
     ].each do |value|
       describe value.inspect do
         it { is_expected.to allow_value(value) }

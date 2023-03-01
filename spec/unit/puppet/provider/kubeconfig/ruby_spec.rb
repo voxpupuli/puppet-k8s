@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 ruby_provider = Puppet::Type.type(:kubeconfig).provider(:ruby)
@@ -54,7 +56,7 @@ RSpec.describe ruby_provider do
     let(:resource) { Puppet::Type::Kubeconfig.new(resource_properties) }
     let(:provider) { ruby_provider.new(resource) }
 
-    before(:each) do
+    before do
       resource.provider = provider
     end
 
@@ -83,7 +85,7 @@ RSpec.describe ruby_provider do
         conf
       end
 
-      before(:each) do
+      before do
         File.write(catmpfile, 'ca.crt')
       end
 

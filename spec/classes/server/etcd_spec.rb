@@ -12,26 +12,26 @@ describe 'k8s::server::etcd' do
   end
   let(:pre_condition) do
     <<~PUPPET
-    function puppetdb_query(String[1] $data) {
-      return [
-        {
-          certname => 'node.example.com',
-          parameters => {
-            etcd_name => 'node',
-            initial_advertise_peer_urls => ['https://node.example.com:2380'],
+      function puppetdb_query(String[1] $data) {
+        return [
+          {
+            certname => 'node.example.com',
+            parameters => {
+              etcd_name => 'node',
+              initial_advertise_peer_urls => ['https://node.example.com:2380'],
+            }
           }
-        }
-      ]
-    }
+        ]
+      }
 
-    include ::k8s
-    class { '::k8s::server':
-      manage_etcd => false,
-      manage_certs => false,
-      manage_components => false,
-      manage_resources => false,
-      node_on_server => false,
-    }
+      include ::k8s
+      class { '::k8s::server':
+        manage_etcd => false,
+        manage_certs => false,
+        manage_components => false,
+        manage_resources => false,
+        node_on_server => false,
+      }
     PUPPET
   end
 
@@ -42,15 +42,17 @@ describe 'k8s::server::etcd' do
       it { is_expected.to compile }
 
       it do
-        [ 'etcd-peer-ca', 'etcd-client-ca' ].each do |ca|
+        %w[etcd-peer-ca etcd-client-ca].each do |ca|
           is_expected.to contain_k8s__server__tls__ca(ca)
         end
       end
+
       it do
-        [ 'etcd-peer', 'etcd-client' ].each do |cert|
+        %w[etcd-peer etcd-client].each do |cert|
           is_expected.to contain_k8s__server__tls__cert(cert)
         end
       end
+
       it { is_expected.to contain_class('k8s::server::etcd::setup') }
       it { is_expected.to contain_k8s__server__etcd__member('node').with_peer_urls(['https://node.example.com:2380']) }
     end

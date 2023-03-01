@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'puppet'
 
@@ -5,7 +7,7 @@ describe Puppet::Type.type(:kubeconfig) do
   let(:resource) do
     Puppet::Type.type(:kubeconfig).new(
       path: '/tmp/kubeconfig',
-      server: 'https://kubernetes.home.lan:6443',
+      server: 'https://kubernetes.home.lan:6443'
     )
   end
 
@@ -45,7 +47,7 @@ describe Puppet::Type.type(:kubeconfig) do
     let(:kubeconfig_resource) do
       described_class.new(
         path: '/tmp/kubeconfig',
-        server: 'https://kubernetes.home.lan:6443',
+        server: 'https://kubernetes.home.lan:6443'
       )
     end
 
@@ -60,9 +62,11 @@ describe Puppet::Type.type(:kubeconfig) do
     it 'creates relationship' do
       expect(auto_req.size).to be 1
     end
+
     it 'links to archive resource' do
       expect(auto_req[0].target).to eql kubeconfig_resource
     end
+
     it 'autorequires parent directory' do
       expect(auto_req[0].source).to eql file_resource
     end

@@ -4,10 +4,10 @@ require 'spec_helper'
 
 describe 'K8s::Node_auth' do
   describe 'valid node_auth' do
-    [
-      'cert',
-      'token',
-      'bootstrap',
+    %w[
+      cert
+      token
+      bootstrap
     ].each do |value|
       describe value.inspect do
         it { is_expected.to allow_value(value) }

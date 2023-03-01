@@ -139,6 +139,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
 
     return false unless user['name'] == resource[:user]
     return false unless user['user']
+
     if resource[:client_cert]
       if resource[:embed_certs] == :true
         wanted = Base64.strict_encode64(File.read(resource[:client_cert]))

@@ -4,10 +4,10 @@ require 'spec_helper'
 
 describe 'K8s::Proxy_auth' do
   describe 'valid proxy_auth' do
-    [
-      'cert',
-      'token',
-      'incluster',
+    %w[
+      cert
+      token
+      incluster
     ].each do |value|
       describe value.inspect do
         it { is_expected.to allow_value(value) }

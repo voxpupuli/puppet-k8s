@@ -11,14 +11,14 @@ describe 'k8s::server::tls' do
   end
   let(:pre_condition) do
     <<~PUPPET
-    include ::k8s
-    class { '::k8s::server':
-      manage_etcd => false,
-      manage_certs => false,
-      manage_components => false,
-      manage_resources => false,
-      node_on_server => false,
-    }
+      include ::k8s
+      class { '::k8s::server':
+        manage_etcd => false,
+        manage_certs => false,
+        manage_components => false,
+        manage_resources => false,
+        node_on_server => false,
+      }
     PUPPET
   end
 
@@ -28,14 +28,14 @@ describe 'k8s::server::tls' do
 
       it { is_expected.to compile }
 
-      [ 'kube-ca', 'aggregator-ca' ].each do |ca|
+      %w[kube-ca aggregator-ca].each do |ca|
         it { is_expected.to contain_k8s__server__tls__ca(ca) }
       end
 
-      [
-        'kube-apiserver', 'front-proxy-client',
-        'apiserver-kubelet-client', 'kube-controller-manager',
-        'kube-scheduler', 'kube-proxy', 'node', 'admin'
+      %w[
+        kube-apiserver front-proxy-client
+        apiserver-kubelet-client kube-controller-manager
+        kube-scheduler kube-proxy node admin
       ].each do |cert|
         it { is_expected.to contain_k8s__server__tls__cert(cert) }
       end

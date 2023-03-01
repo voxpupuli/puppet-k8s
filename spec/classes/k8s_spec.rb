@@ -9,7 +9,7 @@ describe 'k8s' do
 
       it { is_expected.to compile }
 
-      [ 'node', 'server' ].each do |role|
+      %w[node server].each do |role|
         context "with role #{role}" do
           let(:params) do
             {
@@ -24,7 +24,7 @@ describe 'k8s' do
       context 'With dual-stack' do
         it { is_expected.to compile }
 
-        [ 'node', 'server' ].each do |role|
+        %w[node server].each do |role|
           context "with role #{role}" do
             let(:params) do
               {

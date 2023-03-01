@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'tmpdir'
 
@@ -57,7 +59,7 @@ RSpec.shared_examples 'a kubeconfig provider' do |provider_class|
         }
       end
 
-      before(:each) do
+      before do
         File.write(tmpfile, Psych.dump(sample_config))
       end
 
