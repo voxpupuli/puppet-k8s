@@ -51,7 +51,7 @@
 * [`K8s::Native_packaging`](#K8s--Native_packaging): a type to describe Kubernetes native packaging methods
 * [`K8s::Node_auth`](#K8s--Node_auth): a type to describe node/kubelet authentication methods
 * [`K8s::PortRange`](#K8s--PortRange): This regexp matches port range values
-* [`K8s::Proxy_auth`](#K8s--Proxy_auth): a type to describe the kube-proxy auth
+* [`K8s::Proxy_auth`](#K8s--Proxy_auth): a type to describe kube-proxy authentication methods
 * [`K8s::Quantity`](#K8s--Quantity): This regexp matches quantities, like those for resource requests/limits
 * [`K8s::TLS_altnames`](#K8s--TLS_altnames): a type to describe TLS alternative names in certificates
 * [`K8s::Timestamp`](#K8s--Timestamp): This regexp matches RFC3339 timestamps, the same as what Kubernetes expects to find
@@ -3056,7 +3056,7 @@ Alias of `Pattern[/^[0-9]+(-[0-9]+)?$/]`
 
 ### <a name="K8s--Proxy_auth"></a>`K8s::Proxy_auth`
 
-a type to describe the kube-proxy auth
+a type to describe kube-proxy authentication methods
 
 Alias of `Enum['cert', 'token', 'incluster']`
 
