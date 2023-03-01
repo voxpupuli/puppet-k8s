@@ -48,7 +48,7 @@
 * [`K8s::Ensure`](#K8s--Ensure): a type to describe the ensure pattern
 * [`K8s::Extended_key_usage`](#K8s--Extended_key_usage): a type to describe extended key usage for a TLS certificate
 * [`K8s::IP_addresses`](#K8s--IP_addresses): a type to describe multiple IP addresses without subnet sizes
-* [`K8s::Native_packaging`](#K8s--Native_packaging): @summary a type to describe native_packaging
+* [`K8s::Native_packaging`](#K8s--Native_packaging): a type to describe Kubernetes native packaging methods
 * [`K8s::Node_auth`](#K8s--Node_auth): @summary a type to describe the node auth
 * [`K8s::PortRange`](#K8s--PortRange): This regexp matches port range values
 * [`K8s::Proxy_auth`](#K8s--Proxy_auth): a type to describe the kube-proxy auth
@@ -3036,7 +3036,9 @@ Variant[Stdlib::IP::Address::Nosubnet, Array[
 
 ### <a name="K8s--Native_packaging"></a>`K8s::Native_packaging`
 
-@summary a type to describe native_packaging
+a type to describe Kubernetes native packaging methods
+
+* **Note** hyperkube is a legacy name for single-binary packages
 
 Alias of `Enum['package', 'tarball', 'loose', 'hyperkube', 'manual']`
 
