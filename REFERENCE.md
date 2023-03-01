@@ -49,7 +49,7 @@
 * [`K8s::Extended_key_usage`](#K8s--Extended_key_usage): a type to describe extended key usage for a TLS certificate
 * [`K8s::IP_addresses`](#K8s--IP_addresses): a type to describe multiple IP addresses without subnet sizes
 * [`K8s::Native_packaging`](#K8s--Native_packaging): a type to describe Kubernetes native packaging methods
-* [`K8s::Node_auth`](#K8s--Node_auth): @summary a type to describe the node auth
+* [`K8s::Node_auth`](#K8s--Node_auth): a type to describe node/kubelet authentication methods
 * [`K8s::PortRange`](#K8s--PortRange): This regexp matches port range values
 * [`K8s::Proxy_auth`](#K8s--Proxy_auth): a type to describe the kube-proxy auth
 * [`K8s::Quantity`](#K8s--Quantity): This regexp matches quantities, like those for resource requests/limits
@@ -3044,7 +3044,7 @@ Alias of `Enum['package', 'tarball', 'loose', 'hyperkube', 'manual']`
 
 ### <a name="K8s--Node_auth"></a>`K8s::Node_auth`
 
-@summary a type to describe the node auth
+a type to describe node/kubelet authentication methods
 
 Alias of `Enum['cert', 'token', 'bootstrap']`
 
