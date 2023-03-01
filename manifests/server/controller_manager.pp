@@ -6,8 +6,8 @@ class k8s::server::controller_manager (
 
   Hash[String, Data] $arguments = {},
 
-  K8s::Cidr $service_cluster_cidr = $k8s::service_cluster_cidr,
-  K8s::Cidr $cluster_cidr         = $k8s::cluster_cidr,
+  K8s::CIDR $service_cluster_cidr = $k8s::service_cluster_cidr,
+  K8s::CIDR $cluster_cidr         = $k8s::cluster_cidr,
 
   Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
   Stdlib::Unixpath $ca_cert   = $k8s::server::tls::ca_cert,

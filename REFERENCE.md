@@ -43,7 +43,7 @@
 
 ### Data types
 
-* [`K8s::Cidr`](#K8s--Cidr): a type to describe the cidr
+* [`K8s::CIDR`](#K8s--CIDR): a type to describe one or more IPv4/6 CIDR
 * [`K8s::Duration`](#K8s--Duration): This regexp matches Go duration values, as taken from;
 * [`K8s::Ensure`](#K8s--Ensure): a type to describe the ensure pattern
 * [`K8s::Extended_key_usage`](#K8s--Extended_key_usage): a type to describe extended_key_usage
@@ -347,7 +347,7 @@ Default value: `undef`
 
 ##### <a name="-k8s--service_cluster_cidr"></a>`service_cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -355,7 +355,7 @@ Default value: `'10.1.0.0/24'`
 
 ##### <a name="-k8s--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -608,7 +608,7 @@ Default value: `$k8s::node::puppetdb_discovery_tag`
 
 ##### <a name="-k8s--node--kube_proxy--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -909,7 +909,7 @@ Default value: `6443`
 
 ##### <a name="-k8s--server--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -1107,7 +1107,7 @@ Default value: `{}`
 
 ##### <a name="-k8s--server--apiserver--service_cluster_cidr"></a>`service_cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -1302,7 +1302,7 @@ Default value: `{}`
 
 ##### <a name="-k8s--server--controller_manager--service_cluster_cidr"></a>`service_cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -1310,7 +1310,7 @@ Default value: `$k8s::service_cluster_cidr`
 
 ##### <a name="-k8s--server--controller_manager--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -1793,7 +1793,7 @@ Default value: `'/root/.kube/config'`
 
 ##### <a name="-k8s--server--resources--cluster_cidr"></a>`cluster_cidr`
 
-Data type: `K8s::Cidr`
+Data type: `K8s::CIDR`
 
 
 
@@ -2980,9 +2980,9 @@ The index of the IP to retrieve
 
 ## Data types
 
-### <a name="K8s--Cidr"></a>`K8s::Cidr`
+### <a name="K8s--CIDR"></a>`K8s::CIDR`
 
-a type to describe the cidr
+a type to describe one or more IPv4/6 CIDR
 
 Alias of
 
@@ -2991,7 +2991,8 @@ Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[
     Variant[
       Stdlib::IP::Address::V4::CIDR,
       Stdlib::IP::Address::V6::CIDR
-    ]
+    ],
+    1
   ]]
 ```
 

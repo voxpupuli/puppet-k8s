@@ -3,7 +3,7 @@ class k8s::server (
   K8s::Ensure $ensure  = $k8s::ensure,
   Integer[1] $api_port = 6443,
 
-  K8s::Cidr $cluster_cidr                = $k8s::cluster_cidr,
+  K8s::CIDR $cluster_cidr                = $k8s::cluster_cidr,
   K8s::Ip_addresses $dns_service_address = $k8s::dns_service_address,
   String $cluster_domain                 = $k8s::cluster_domain,
   String $direct_master                  = "https://${fact('networking.ip')}:${api_port}",
