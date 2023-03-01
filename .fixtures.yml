@@ -6,3 +6,4 @@ fixtures:
     archive: "puppet/archive"
     stdlib: "puppetlabs/stdlib"
     systemd: "camptocamp/systemd"
+    kmod: "puppet/kmod"

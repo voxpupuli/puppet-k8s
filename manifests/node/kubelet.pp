@@ -10,10 +10,11 @@ class k8s::node::kubelet (
   String $runtime_service           = $k8s::container_runtime_service,
   String[1] $puppetdb_discovery_tag = $k8s::node::puppetdb_discovery_tag,
 
-  K8s::Node_auth $auth       = $k8s::node::node_auth,
-  Boolean $rotate_server_tls = $auth == 'bootstrap',
-  Boolean $manage_firewall   = $k8s::node::manage_firewall,
-  Boolean $support_dualstack = $k8s::cluster_cidr =~ Array[Data, 2],
+  K8s::Node_auth $auth           = $k8s::node::node_auth,
+  Boolean $rotate_server_tls     = $auth == 'bootstrap',
+  Boolean $manage_firewall       = $k8s::node::manage_firewall,
+  Boolean $manage_kernel_modules = $k8s::node::manage_kernel_modules,
+  Boolean $support_dualstack     = $k8s::cluster_cidr =~ Array[Data, 2],
 
   Stdlib::Unixpath $cert_path  = $k8s::node::cert_path,
   Stdlib::Unixpath $kubeconfig = '/srv/kubernetes/kubelet.kubeconf',
@@ -135,21 +136,14 @@ class k8s::node::kubelet (
     'cgroupDriver'       => 'systemd',
   } + $_authentication_hash
 
-  file { '/etc/modules-load.d/k8s':
-    ensure  => $ensure,
-    content => file('k8s/etc/modules-load.d/k8s'),
-  }
-  exec {
-    default:
-      path        => ['/bin', '/sbin', '/usr/bin'],
-      refreshonly => true,
-      subscribe   => File['/etc/modules-load.d/k8s'];
+  if $manage_kernel_modules {
+    kmod::load {
+      default:
+        ensure => $ensure;
 
-    'modprobe overlay':
-      unless => 'lsmod | grep overlay';
-
-    'modprobe br_netfilter':
-      unless => 'lsmod | grep overlay';
+      'overlay':;
+      'br_netfilter':;
+    }
   }
 
   file { '/etc/sysctl.d/99-k8s.conf':
