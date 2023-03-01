@@ -23,7 +23,7 @@ class k8s (
   Boolean $puppetdb_discovery       = false,
   String[1] $puppetdb_discovery_tag = 'default',
 
-  Boolean $purge_manifests                           = true,
+  Boolean $purge_manifests = true,
 
   String[1] $native_url_template             = 'https://storage.googleapis.com/kubernetes-release/release/v%{version}/bin/%{kernel}/%{arch}/%{binary}',
   String[1] $tarball_url_template            = 'https://dl.k8s.io/v%{version}/kubernetes-%{component}-%{kernel}-%{arch}.tar.gz',
@@ -39,7 +39,7 @@ class k8s (
   K8s::CIDR $service_cluster_cidr                    = '10.1.0.0/24',
   K8s::CIDR $cluster_cidr                            = '10.0.0.0/16',
   Stdlib::IP::Address::Nosubnet $api_service_address = k8s::ip_in_cidr($service_cluster_cidr, 'first'),
-  K8s::Ip_addresses $dns_service_address             = k8s::ip_in_cidr($service_cluster_cidr, 'second'),
+  K8s::IP_addresses $dns_service_address             = k8s::ip_in_cidr($service_cluster_cidr, 'second'),
   Stdlib::Fqdn $cluster_domain                       = 'cluster.local',
 
   Enum['node','server','none']  $role = 'none',

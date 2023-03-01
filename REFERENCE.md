@@ -47,7 +47,7 @@
 * [`K8s::Duration`](#K8s--Duration): This regexp matches Go duration values, as taken from;
 * [`K8s::Ensure`](#K8s--Ensure): a type to describe the ensure pattern
 * [`K8s::Extended_key_usage`](#K8s--Extended_key_usage): a type to describe extended_key_usage
-* [`K8s::Ip_addresses`](#K8s--Ip_addresses): a type to describe the ip_addresses
+* [`K8s::IP_addresses`](#K8s--IP_addresses): a type to describe multiple IP addresses without subnet sizes
 * [`K8s::Native_packaging`](#K8s--Native_packaging): @summary a type to describe native_packaging
 * [`K8s::Node_auth`](#K8s--Node_auth): @summary a type to describe the node auth
 * [`K8s::PortRange`](#K8s--PortRange): This regexp matches port range values
@@ -371,7 +371,7 @@ Default value: `k8s::ip_in_cidr($service_cluster_cidr, 'first')`
 
 ##### <a name="-k8s--dns_service_address"></a>`dns_service_address`
 
-Data type: `K8s::Ip_addresses`
+Data type: `K8s::IP_addresses`
 
 
 
@@ -917,7 +917,7 @@ Default value: `$k8s::cluster_cidr`
 
 ##### <a name="-k8s--server--dns_service_address"></a>`dns_service_address`
 
-Data type: `K8s::Ip_addresses`
+Data type: `K8s::IP_addresses`
 
 
 
@@ -1801,7 +1801,7 @@ Default value: `$k8s::server::cluster_cidr`
 
 ##### <a name="-k8s--server--resources--dns_service_address"></a>`dns_service_address`
 
-Data type: `K8s::Ip_addresses`
+Data type: `K8s::IP_addresses`
 
 
 
@@ -3021,15 +3021,16 @@ Array[Enum[
   ]]
 ```
 
-### <a name="K8s--Ip_addresses"></a>`K8s::Ip_addresses`
+### <a name="K8s--IP_addresses"></a>`K8s::IP_addresses`
 
-a type to describe the ip_addresses
+a type to describe multiple IP addresses without subnet sizes
 
 Alias of
 
 ```puppet
 Variant[Stdlib::IP::Address::Nosubnet, Array[
-    Stdlib::IP::Address::Nosubnet
+    Stdlib::IP::Address::Nosubnet,
+    1
   ]]
 ```
 
