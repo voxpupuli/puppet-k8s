@@ -72,9 +72,7 @@ Puppet::Type.newtype(:kubectl_apply) do
     desc 'The name of the resource'
 
     validate do |value|
-      unless value.match? %r{^([a-z0-9][a-z0-9.:-]{0,251}[a-z0-9]|[a-z0-9])$}
-        raise Puppet::Error, 'Resource name must be valid'
-      end
+      raise Puppet::Error, 'Resource name must be valid' unless value.match? %r{^([a-z0-9][a-z0-9.:-]{0,251}[a-z0-9]|[a-z0-9])$}
     end
   end
 
@@ -86,9 +84,7 @@ Puppet::Type.newtype(:kubectl_apply) do
     desc 'The namespace the resource is contained in'
 
     validate do |value|
-      unless value.match? %r{^[a-z0-9.-]{0,253}$}
-        raise Puppet::Error, 'Namespace must be valid'
-      end
+      raise Puppet::Error, 'Namespace must be valid' unless value.match? %r{^[a-z0-9.-]{0,253}$}
     end
   end
 
@@ -96,18 +92,14 @@ Puppet::Type.newtype(:kubectl_apply) do
     desc 'The kubeconfig file to use for handling the resource'
 
     validate do |value|
-      unless Puppet::Util.absolute_path?(value)
-        raise Puppet::Error, 'Kubeconfig path must be fully qualified'
-      end
+      raise Puppet::Error, 'Kubeconfig path must be fully qualified' unless Puppet::Util.absolute_path?(value)
     end
   end
   newparam(:file) do
     desc 'The local file for the resource'
 
     validate do |value|
-      unless Puppet::Util.absolute_path?(value)
-        raise Puppet::Error, 'File path must be fully qualified'
-      end
+      raise Puppet::Error, 'File path must be fully qualified' unless Puppet::Util.absolute_path?(value)
     end
   end
 
@@ -139,13 +131,9 @@ Puppet::Type.newtype(:kubectl_apply) do
     defaultto({})
 
     validate do |value|
-      unless value.is_a? Hash
-        raise Puppet::Error, 'Content must be a valid content hash'
-      end
+      raise Puppet::Error, 'Content must be a valid content hash' unless value.is_a? Hash
 
-      if ['apiVersion', 'kind'].any? { |key| value.key? key }
-        raise Puppet::Error, "Can't specify apiVersion or kind in content"
-      end
+      raise Puppet::Error, "Can't specify apiVersion or kind in content" if %w[apiVersion kind].any? { |key| value.key? key }
     end
   end
 
@@ -157,10 +145,10 @@ Puppet::Type.newtype(:kubectl_apply) do
   end
 
   autorequire(:kubeconfig) do
-    [ self[:kubeconfig] ]
+    [self[:kubeconfig]]
   end
   autorequire(:service) do
-    [ 'k8s-apiserver' ]
+    ['k8s-apiserver']
   end
   autorequire(:file) do
     [
@@ -169,7 +157,7 @@ Puppet::Type.newtype(:kubectl_apply) do
     ]
   end
   autorequire(:k8s__binary) do
-    [ 'kubectl' ]
+    ['kubectl']
   end
 
   def nice_name

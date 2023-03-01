@@ -22,7 +22,7 @@ describe 'k8s::server::etcd::member' do
           command: 'etcdctl member add namevar --peer-urls="http://localhost:4001"',
           onlyif: 'etcdctl endpoint health',
           unless: %r{etcdctl -w fields member list | grep \\"Name\\" | grep namevar || \s+ etcdctl -w fields member list | grep \\"PeerURL\\" | grep http://localhost:4001},
-          path: [ '/bin', '/usr/bin', '/usr/local/bin' ],
+          path: ['/bin', '/usr/bin', '/usr/local/bin']
         )
       end
     end
@@ -31,9 +31,9 @@ describe 'k8s::server::etcd::member' do
   context 'with etcd installed' do
     let(:pre_condition) do
       <<~PUPPET
-      service { 'etcd':
-        ensure => running,
-      }
+        service { 'etcd':
+          ensure => running,
+        }
       PUPPET
     end
 

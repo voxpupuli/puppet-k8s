@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 kubectl_provider = Puppet::Type.type(:kubectl_apply).provider(:kubectl)
@@ -59,7 +61,7 @@ RSpec.describe kubectl_provider do
     let(:resource) { Puppet::Type::Kubectl_apply.new(resource_properties) }
     let(:provider) { kubectl_provider.new(resource) }
 
-    before(:each) do
+    before do
       resource.provider = provider
 
       allow(kubectl_provider).to receive(:suitable?).and_return(true)
@@ -106,7 +108,7 @@ RSpec.describe kubectl_provider do
           'metadata' => {
             'name' => 'bootstrap-token-example',
             'namespace' => 'kube-system',
-          },
+          }
         )
       end
 
@@ -133,10 +135,10 @@ RSpec.describe kubectl_provider do
       end
 
       it 'applies without action if exists' do
-        expect(provider).to receive(:kubectl).never
+        expect(provider).not_to receive(:kubectl)
         expect(provider).to receive(:exists?).and_return(true)
-        expect(provider).to receive(:create).never
-        expect(provider).to receive(:resource_diff).never
+        expect(provider).not_to receive(:create)
+        expect(provider).not_to receive(:resource_diff)
 
         allow(Puppet::Util::Storage).to receive(:store)
 
@@ -163,9 +165,9 @@ RSpec.describe kubectl_provider do
               'example.com/spec': 'true',
               'example.kubernetes.io/attribute': 'generated',
             },
-            finalizers: [
-              'puppet-example',
-              'kubernetes-example',
+            finalizers: %w[
+              puppet-example
+              kubernetes-example
             ],
             something: [
               {
@@ -209,7 +211,7 @@ RSpec.describe kubectl_provider do
       end
 
       it 'returns a reasonable difference output' do
-        expect(provider).to receive(:kubectl).never
+        expect(provider).not_to receive(:kubectl)
         allow(provider).to receive(:exists?).and_return(false)
         expect(provider).to receive(:create).and_return(true)
         allow(provider).to receive(:resource_diff).and_return(provider.content_diff(upstream_data))
@@ -258,7 +260,7 @@ RSpec.describe kubectl_provider do
               'metadata' => {
                 something: nil
               },
-            },
+            }
           )
         end
       end
@@ -360,9 +362,9 @@ RSpec.describe kubectl_provider do
               'annotations' => {
                 'example.com/spec': 'true',
               },
-              finalizers: [ 'puppet-example' ],
+              finalizers: ['puppet-example'],
             },
-          },
+          }
         )
       end
 
@@ -401,7 +403,7 @@ RSpec.describe kubectl_provider do
                   'example.com/spec': 'true',
                 },
               },
-            },
+            }
           )
         end
       end
@@ -462,9 +464,9 @@ RSpec.describe kubectl_provider do
       end
 
       it 'applies correctly' do
-        expect(provider).to receive(:kubectl).never
+        expect(provider).not_to receive(:kubectl)
         allow(provider).to receive(:exists?).and_return(true)
-        expect(provider).to receive(:create).never
+        expect(provider).not_to receive(:create)
         expect(provider).to receive(:destroy)
 
         allow(Puppet::Util::Storage).to receive(:store)
@@ -481,12 +483,12 @@ RSpec.describe kubectl_provider do
     context 'coredns Service' do
       let(:resource_properties) do
         {
-          'ensure'        => :present,
-          'name'          => 'kube-dns',
-          'namespace'     => 'kube-system',
-          'api_version'   => 'v1',
-          'kind'          => 'Service',
-          'content'       => {
+          'ensure' => :present,
+          'name' => 'kube-dns',
+          'namespace' => 'kube-system',
+          'api_version' => 'v1',
+          'kind' => 'Service',
+          'content' => {
             'metadata' => {
               'annotations' => {
                 'prometheus.io/port'   => '9153',
@@ -521,104 +523,104 @@ RSpec.describe kubectl_provider do
       end
 
       let(:upstream_data) do
-        JSON.parse(<<'JSON')
-{
-    "apiVersion": "v1",
-    "kind": "Service",
-    "metadata": {
-        "annotations": {
-            "prometheus.io/port": "9153",
-            "prometheus.io/scrape": "true"
-        },
-        "creationTimestamp": "2021-05-05T15:41:15Z",
-        "labels": {
-            "k8s-app": "kube-dns",
-            "kubernetes.io/cluster-service": "true",
-            "kubernetes.io/name": "CoreDNS"
-        },
-        "managedFields": [
-            {
-                "apiVersion": "v1",
-                "fieldsType": "FieldsV1",
-                "fieldsV1": {
-                    "f:metadata": {
-                        "f:annotations": {
-                            ".": {},
-                            "f:prometheus.io/port": {},
-                            "f:prometheus.io/scrape": {}
-                        },
-                        "f:labels": {
-                            ".": {},
-                            "f:k8s-app": {},
-                            "f:kubernetes.io/cluster-service": {},
-                            "f:kubernetes.io/name": {}
-                        }
-                    },
-                    "f:spec": {
-                        "f:clusterIP": {},
-                        "f:ports": {
-                            ".": {},
-                            "k:{\"port\":53,\"protocol\":\"TCP\"}": {
-                                ".": {},
-                                "f:name": {},
-                                "f:port": {},
-                                "f:protocol": {},
-                                "f:targetPort": {}
-                            },
-                            "k:{\"port\":53,\"protocol\":\"UDP\"}": {
-                                ".": {},
-                                "f:name": {},
-                                "f:port": {},
-                                "f:protocol": {},
-                                "f:targetPort": {}
-                            }
-                        },
-                        "f:selector": {
-                            ".": {},
-                            "f:k8s-app": {}
-                        },
-                        "f:sessionAffinity": {},
-                        "f:type": {}
-                    }
-                },
-                "manager": "kubectl",
-                "operation": "Update",
-                "time": "2021-05-05T15:41:15Z"
-            }
-        ],
-        "name": "kube-dns",
-        "namespace": "kube-system",
-        "resourceVersion": "241",
-        "selfLink": "/api/v1/namespaces/kube-system/services/kube-dns",
-        "uid": "27a40dd3-ea12-4080-9243-fd2514a47977"
-    },
-    "spec": {
-        "clusterIP": "10.1.0.2",
-        "ports": [
-            {
-                "name": "dns",
-                "port": 53,
-                "protocol": "UDP",
-                "targetPort": 53
-            },
-            {
-                "name": "dns-tcp",
-                "port": 53,
-                "protocol": "TCP",
-                "targetPort": 53
-            }
-        ],
-        "selector": {
-            "k8s-app": "kube-dns"
-        },
-        "sessionAffinity": "None",
-        "type": "ClusterIP"
-    },
-    "status": {
-        "loadBalancer": {}
-    }
-}
-JSON
+        JSON.parse(<<~'JSON')
+          {
+              "apiVersion": "v1",
+              "kind": "Service",
+              "metadata": {
+                  "annotations": {
+                      "prometheus.io/port": "9153",
+                      "prometheus.io/scrape": "true"
+                  },
+                  "creationTimestamp": "2021-05-05T15:41:15Z",
+                  "labels": {
+                      "k8s-app": "kube-dns",
+                      "kubernetes.io/cluster-service": "true",
+                      "kubernetes.io/name": "CoreDNS"
+                  },
+                  "managedFields": [
+                      {
+                          "apiVersion": "v1",
+                          "fieldsType": "FieldsV1",
+                          "fieldsV1": {
+                              "f:metadata": {
+                                  "f:annotations": {
+                                      ".": {},
+                                      "f:prometheus.io/port": {},
+                                      "f:prometheus.io/scrape": {}
+                                  },
+                                  "f:labels": {
+                                      ".": {},
+                                      "f:k8s-app": {},
+                                      "f:kubernetes.io/cluster-service": {},
+                                      "f:kubernetes.io/name": {}
+                                  }
+                              },
+                              "f:spec": {
+                                  "f:clusterIP": {},
+                                  "f:ports": {
+                                      ".": {},
+                                      "k:{\"port\":53,\"protocol\":\"TCP\"}": {
+                                          ".": {},
+                                          "f:name": {},
+                                          "f:port": {},
+                                          "f:protocol": {},
+                                          "f:targetPort": {}
+                                      },
+                                      "k:{\"port\":53,\"protocol\":\"UDP\"}": {
+                                          ".": {},
+                                          "f:name": {},
+                                          "f:port": {},
+                                          "f:protocol": {},
+                                          "f:targetPort": {}
+                                      }
+                                  },
+                                  "f:selector": {
+                                      ".": {},
+                                      "f:k8s-app": {}
+                                  },
+                                  "f:sessionAffinity": {},
+                                  "f:type": {}
+                              }
+                          },
+                          "manager": "kubectl",
+                          "operation": "Update",
+                          "time": "2021-05-05T15:41:15Z"
+                      }
+                  ],
+                  "name": "kube-dns",
+                  "namespace": "kube-system",
+                  "resourceVersion": "241",
+                  "selfLink": "/api/v1/namespaces/kube-system/services/kube-dns",
+                  "uid": "27a40dd3-ea12-4080-9243-fd2514a47977"
+              },
+              "spec": {
+                  "clusterIP": "10.1.0.2",
+                  "ports": [
+                      {
+                          "name": "dns",
+                          "port": 53,
+                          "protocol": "UDP",
+                          "targetPort": 53
+                      },
+                      {
+                          "name": "dns-tcp",
+                          "port": 53,
+                          "protocol": "TCP",
+                          "targetPort": 53
+                      }
+                  ],
+                  "selector": {
+                      "k8s-app": "kube-dns"
+                  },
+                  "sessionAffinity": "None",
+                  "type": "ClusterIP"
+              },
+              "status": {
+                  "loadBalancer": {}
+              }
+          }
+        JSON
       end
 
       it 'correctly verifies the expanded upstream resource hash' do

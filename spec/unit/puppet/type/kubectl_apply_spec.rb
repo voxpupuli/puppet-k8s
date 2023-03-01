@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'puppet'
 
@@ -14,7 +16,7 @@ describe Puppet::Type.type(:kubectl_apply) do
         'token-id': 'id',
         'token-secret': 'secret',
         'usage-bootstrap-authentication': 'true',
-      },
+      }
     )
   end
 
@@ -23,10 +25,10 @@ describe Puppet::Type.type(:kubectl_apply) do
     it { expect(resource[:update]).to eq true }
   end
 
-  [
-    'simplename',
-    'default-token-6mqpl',
-    'metrics-server-7cb45bbfd5-gz4t6',
+  %w[
+    simplename
+    default-token-6mqpl
+    metrics-server-7cb45bbfd5-gz4t6
   ].each do |name|
     it 'accepts valid names' do
       expect { resource[:resource_name] = name }.not_to raise_error
@@ -44,10 +46,10 @@ describe Puppet::Type.type(:kubectl_apply) do
     end
   end
 
-  [
-    'default',
-    'kube-system',
-    'some-ridiculously-long-name-thats-still-inside-of-the-limitations-kubernetes-has',
+  %w[
+    default
+    kube-system
+    some-ridiculously-long-name-thats-still-inside-of-the-limitations-kubernetes-has
   ].each do |name|
     it 'accepts valid namespaces' do
       expect { resource[:namespace] = name }.not_to raise_error
@@ -90,7 +92,7 @@ describe Puppet::Type.type(:kubectl_apply) do
         namespace: 'default',
         api_version: 'v1',
         kind: 'ConfigMap',
-        kubeconfig: '/root/.kube/config',
+        kubeconfig: '/root/.kube/config'
       )
     end
 
@@ -105,6 +107,7 @@ describe Puppet::Type.type(:kubectl_apply) do
     it 'creates relationship' do
       expect(auto_req.size).to be 1
     end
+
     it 'links to file resource' do
       expect(auto_req[0].target).to eql kubectl_apply_resource
     end

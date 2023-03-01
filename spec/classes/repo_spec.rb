@@ -5,9 +5,9 @@ require 'spec_helper'
 describe 'k8s::repo' do
   let(:pre_condition) do
     <<~PUPPET
-    class { '::k8s':
-      manage_repo => false,
-    }
+      class { '::k8s':
+        manage_repo => false,
+      }
     PUPPET
   end
 

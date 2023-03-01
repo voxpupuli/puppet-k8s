@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require File.expand_path('../../../util/k8s', __FILE__)
+require File.expand_path('../../util/k8s', __dir__)
 require 'tempfile'
 
 # Applies resources as data in a Kubernetes cluster

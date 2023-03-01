@@ -10,17 +10,17 @@ describe 'k8s::server::etcd::setup' do
   end
   let(:pre_condition) do
     <<~PUPPET
-    include ::k8s
-    class { '::k8s::server':
-      manage_etcd => false,
-      manage_certs => false,
-      manage_components => false,
-      manage_resources => false,
-      node_on_server => false,
-    }
-    class { '::k8s::server::etcd':
-      manage_setup => false,
-    }
+      include ::k8s
+      class { '::k8s::server':
+        manage_etcd => false,
+        manage_certs => false,
+        manage_components => false,
+        manage_resources => false,
+        node_on_server => false,
+      }
+      class { '::k8s::server::etcd':
+        manage_setup => false,
+      }
     PUPPET
   end
 
@@ -38,9 +38,10 @@ describe 'k8s::server::etcd::setup' do
           extract_command: 'tar xfz %s --strip-components=1',
           extract_path: '/usr/local/bin',
           cleanup: true,
-          creates: [ '/usr/local/bin/etcd', '/usr/local/bin/etcdctl' ],
+          creates: ['/usr/local/bin/etcd', '/usr/local/bin/etcdctl']
         ).that_notifies('Service[etcd]')
       end
+
       it { is_expected.to contain_user('etcd') }
       it { is_expected.to contain_group('etcd') }
       it { is_expected.to contain_file('/etc/etcd').with_ensure('directory') }

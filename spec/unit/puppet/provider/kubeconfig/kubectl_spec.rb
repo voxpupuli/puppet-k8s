@@ -1,17 +1,19 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'mkmf'
 
 # To remove mkmf log files;
 module MakeMakefile::Logging
-  def self::open
+  def self.open
     yield
   end
 
-  def self::postpone
+  def self.postpone
     yield File.open('/dev/null', 'wb')
   end
 
-  def self::message(*_); end
+  def self.message(*_); end
 end
 
 kubectl_provider = Puppet::Type.type(:kubeconfig).provider(:kubectl)
@@ -70,7 +72,7 @@ RSpec.describe kubectl_provider do
       }
     end
 
-    before(:each) do
+    before do
       resource.provider = provider
     end
 
@@ -82,7 +84,7 @@ RSpec.describe kubectl_provider do
           'config',
           'set-cluster',
           resource[:cluster],
-          "--server=#{resource[:server]}",
+          "--server=#{resource[:server]}"
         )
         expect(provider).to receive(:kubectl).with(
           '--kubeconfig',
@@ -92,21 +94,21 @@ RSpec.describe kubectl_provider do
           resource[:context],
           "--cluster=#{resource[:cluster]}",
           "--user=#{resource[:user]}",
-          "--namespace=#{resource[:namespace]}",
+          "--namespace=#{resource[:namespace]}"
         )
         expect(provider).to receive(:kubectl).with(
           '--kubeconfig',
           resource[:path],
           'config',
           'set-credentials',
-          resource[:user],
+          resource[:user]
         )
         expect(provider).to receive(:kubectl).with(
           '--kubeconfig',
           resource[:path],
           'config',
           'use-context',
-          resource[:current_context],
+          resource[:current_context]
         )
         expect(FileUtils).to receive(:chown).with(resource[:owner], resource[:group], resource[:path])
 

@@ -22,9 +22,9 @@ describe 'k8s::binary' do
 
       it { is_expected.to contain_file('/opt/k8s/1.0').with(ensure: 'directory') }
 
-      [ 'package', 'tarball', 'loose', 'hyperkube' ].each do |method|
+      %w[package tarball loose hyperkube].each do |method|
         context "using #{method} packaging" do
-          [ 'kubelet', 'kube-apiserver', 'kubectl' ].each do |binary|
+          %w[kubelet kube-apiserver kubectl].each do |binary|
             context "for binary #{binary}" do
               let(:title) { binary }
               let(:params) do
@@ -36,33 +36,36 @@ describe 'k8s::binary' do
               end
 
               it { is_expected.to compile }
+
               it do
                 is_expected.to contain_file("/opt/k8s/1.0/#{binary}").with(
                   ensure: 'present',
-                  mode: '0755',
-                )
-              end
-              it do
-                is_expected.to contain_file("/usr/bin/#{binary}").with(
-                  ensure: 'present',
-                  mode: '0755',
+                  mode: '0755'
                 )
               end
 
-              if method == 'loose'
+              it do
+                is_expected.to contain_file("/usr/bin/#{binary}").with(
+                  ensure: 'present',
+                  mode: '0755'
+                )
+              end
+
+              case method
+              when 'loose'
                 it do
                   is_expected.to contain_file("/opt/k8s/1.0/#{binary}").with(
                     ensure: 'present',
                     mode: '0755',
-                    source: "https://storage.googleapis.com/kubernetes-release/release/v1.0/bin/linux/amd64/#{binary}",
+                    source: "https://storage.googleapis.com/kubernetes-release/release/v1.0/bin/linux/amd64/#{binary}"
                   )
                 end
-              elsif method == 'hyperkube'
+              when 'hyperkube'
                 it do
                   is_expected.to contain_file('/opt/k8s/1.0/hyperkube').with(
                     ensure: 'present',
                     mode: '0755',
-                    source: 'https://storage.googleapis.com/kubernetes-release/release/v1.0/bin/linux/amd64/hyperkube',
+                    source: 'https://storage.googleapis.com/kubernetes-release/release/v1.0/bin/linux/amd64/hyperkube'
                   )
                 end
               end

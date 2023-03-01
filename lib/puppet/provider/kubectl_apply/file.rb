@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require File.expand_path('../../../util/k8s', __FILE__)
+require File.expand_path('../../util/k8s', __dir__)
 
 # Applies resources as YAML files on disk
 Puppet::Type.type(:kubectl_apply).provide(:file) do
@@ -54,7 +54,7 @@ Puppet::Type.type(:kubectl_apply).provide(:file) do
     return nil unless File.exist? resource[:file]
 
     JSON.parse(File.read(resource[:file]))
-  rescue
+  rescue StandardError
     {}
   end
 end

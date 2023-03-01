@@ -4,12 +4,12 @@ require 'spec_helper'
 
 describe 'K8s::Native_packaging' do
   describe 'valid native_packaging' do
-    [
-      'package',
-      'tarball',
-      'loose',
-      'hyperkube',
-      'manual'
+    %w[
+      package
+      tarball
+      loose
+      hyperkube
+      manual
     ].each do |value|
       describe value.inspect do
         it { is_expected.to allow_value(value) }
