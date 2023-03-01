@@ -69,6 +69,7 @@ Sets up a Kubernetes instance - either as a node or as a server
 The following parameters are available in the `k8s` class:
 
 * [`manage_kernel_modules`](#-k8s--manage_kernel_modules)
+* [`manage_sysctl_settings`](#-k8s--manage_sysctl_settings)
 * [`ensure`](#-k8s--ensure)
 * [`packaging`](#-k8s--packaging)
 * [`native_packaging`](#-k8s--native_packaging)
@@ -83,7 +84,6 @@ The following parameters are available in the `k8s` class:
 * [`runc_version`](#-k8s--runc_version)
 * [`manage_etcd`](#-k8s--manage_etcd)
 * [`manage_firewall`](#-k8s--manage_firewall)
-* [`manage_kernel_modules`](#-k8s--manage_kernel_modules)
 * [`manage_image`](#-k8s--manage_image)
 * [`manage_repo`](#-k8s--manage_repo)
 * [`manage_packages`](#-k8s--manage_packages)
@@ -112,6 +112,14 @@ The following parameters are available in the `k8s` class:
 Data type: `Boolean`
 
 A flag to manage required Kernel modules.
+
+Default value: `true`
+
+##### <a name="-k8s--manage_sysctl_settings"></a>`manage_sysctl_settings`
+
+Data type: `Boolean`
+
+A flag to manage required sysctl settings.
 
 Default value: `true`
 
@@ -226,14 +234,6 @@ Data type: `Boolean`
 
 
 Default value: `false`
-
-##### <a name="-k8s--manage_kernel_modules"></a>`manage_kernel_modules`
-
-Data type: `Boolean`
-
-
-
-Default value: `true`
 
 ##### <a name="-k8s--manage_image"></a>`manage_image`
 
@@ -427,6 +427,7 @@ The following parameters are available in the `k8s::node` class:
 * [`manage_proxy`](#-k8s--node--manage_proxy)
 * [`manage_firewall`](#-k8s--node--manage_firewall)
 * [`manage_kernel_modules`](#-k8s--node--manage_kernel_modules)
+* [`manage_sysctl_settings`](#-k8s--node--manage_sysctl_settings)
 * [`puppetdb_discovery_tag`](#-k8s--node--puppetdb_discovery_tag)
 * [`cert_path`](#-k8s--node--cert_path)
 * [`ca_cert`](#-k8s--node--ca_cert)
@@ -500,6 +501,14 @@ Data type: `Boolean`
 
 
 Default value: `$k8s::manage_kernel_modules`
+
+##### <a name="-k8s--node--manage_sysctl_settings"></a>`manage_sysctl_settings`
+
+Data type: `Boolean`
+
+
+
+Default value: `$k8s::manage_sysctl_settings`
 
 ##### <a name="-k8s--node--puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
 
@@ -718,6 +727,7 @@ The following parameters are available in the `k8s::node::kubelet` class:
 * [`rotate_server_tls`](#-k8s--node--kubelet--rotate_server_tls)
 * [`manage_firewall`](#-k8s--node--kubelet--manage_firewall)
 * [`manage_kernel_modules`](#-k8s--node--kubelet--manage_kernel_modules)
+* [`manage_sysctl_settings`](#-k8s--node--kubelet--manage_sysctl_settings)
 * [`support_dualstack`](#-k8s--node--kubelet--support_dualstack)
 * [`cert_path`](#-k8s--node--kubelet--cert_path)
 * [`kubeconfig`](#-k8s--node--kubelet--kubeconfig)
@@ -813,6 +823,14 @@ Data type: `Boolean`
 
 
 Default value: `$k8s::node::manage_kernel_modules`
+
+##### <a name="-k8s--node--kubelet--manage_sysctl_settings"></a>`manage_sysctl_settings`
+
+Data type: `Boolean`
+
+
+
+Default value: `$k8s::node::manage_sysctl_settings`
 
 ##### <a name="-k8s--node--kubelet--support_dualstack"></a>`support_dualstack`
 
@@ -3141,3 +3159,4 @@ Alias of `Pattern[/^[a-z]+:\/\//]`
 A type for handling Kubernetes version numbers
 
 Alias of `Pattern[/^(\d+\.){2}\d+$/]`
+
