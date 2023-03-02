@@ -12,7 +12,7 @@ class k8s (
   Enum['docker', 'crio'] $container_manager = 'crio',
   String[1] $container_runtime_service      = "${container_manager}.service",
   Optional[String[1]] $crio_package         = undef,
-  String $runc_version                      = 'installed',
+  String[1] $runc_version                   = 'installed',
 
   Boolean $manage_etcd              = true,
   Boolean $manage_firewall          = false,
