@@ -196,7 +196,7 @@ Default value: `undef`
 
 ##### <a name="-k8s--runc_version"></a>`runc_version`
 
-Data type: `String`
+Data type: `String[1]`
 
 
 
