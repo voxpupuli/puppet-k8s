@@ -12,6 +12,7 @@ class k8s (
   Enum['docker', 'crio'] $container_manager = 'crio',
   String[1] $container_runtime_service      = "${container_manager}.service",
   Optional[String[1]] $crio_package         = undef,
+  String $runc_version                      = 'installed',
 
   Boolean $manage_etcd              = true,
   Boolean $manage_firewall          = false,
@@ -89,6 +90,12 @@ class k8s (
       line  => 'cgroup_manager = "systemd"',
       match => '^cgroup_manager',
     }
+
+    # is needed by cri-o but its not a dependency of the package
+    package { 'runc':
+      ensure => $runc_version,
+    }
+
     if $manage_repo {
       Class['k8s::repo'] -> Package['k8s container manager']
     }
@@ -135,7 +142,7 @@ class k8s (
     content => epp('k8s/sysconfig.epp', {
         comment               => 'General Kubernetes Configuration',
         environment_variables => {
-          'KUBE_LOGTOSTDERR' => '--alsologtostderr',
+          # 'KUBE_LOGTOSTDERR' => '--alsologtostderr',
           'KUBE_LOG_LEVEL'   => '',
         },
     }),

@@ -79,6 +79,7 @@ The following parameters are available in the `k8s` class:
 * [`container_manager`](#-k8s--container_manager)
 * [`container_runtime_service`](#-k8s--container_runtime_service)
 * [`crio_package`](#-k8s--crio_package)
+* [`runc_version`](#-k8s--runc_version)
 * [`manage_etcd`](#-k8s--manage_etcd)
 * [`manage_firewall`](#-k8s--manage_firewall)
 * [`manage_image`](#-k8s--manage_image)
@@ -192,6 +193,14 @@ Data type: `Optional[String[1]]`
 
 
 Default value: `undef`
+
+##### <a name="-k8s--runc_version"></a>`runc_version`
+
+Data type: `String`
+
+
+
+Default value: `'installed'`
 
 ##### <a name="-k8s--manage_etcd"></a>`manage_etcd`
 
@@ -1119,7 +1128,7 @@ Data type: `Optional[Array[Stdlib::HTTPUrl]]`
 
 
 
-Default value: `undef`
+Default value: `$k8s::etcd_servers`
 
 ##### <a name="-k8s--server--apiserver--discover_etcd_servers"></a>`discover_etcd_servers`
 
@@ -3073,9 +3082,11 @@ a type to describe TLS alternative names in certificates
 Alias of
 
 ```puppet
-Array[Variant[
-    Stdlib::Fqdn,
-    Stdlib::IP::Address::Nosubnet,
+Array[Optional[
+    Variant[
+      Stdlib::Fqdn,
+      Stdlib::IP::Address::Nosubnet,
+    ]
   ]]
 ```
 
