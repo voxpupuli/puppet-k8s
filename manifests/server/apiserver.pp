@@ -32,6 +32,10 @@ class k8s::server::apiserver (
     ensure => $ensure,
   }
 
+  unless $discover_etcd_servers or $etcd_servers {
+    fail('please specify $etcd_servers or activate $discover_etcd_servers')
+  }
+
   if $discover_etcd_servers and !$etcd_servers {
     # Needs the PuppetDB terminus installed
     $pql_query = [

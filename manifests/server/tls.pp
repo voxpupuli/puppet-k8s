@@ -92,21 +92,26 @@ class k8s::server::tls (
 
       'kube-apiserver':
         extended_key_usage => ['serverAuth'],
-        addn_names         => ([
-            'kubernetes',
-            'kubernetes.default',
-            'kubernetes.default.svc',
-            "kubernetes.default.svc.${cluster_domain}",
-            'kubernetes.service.discover',
-            'localhost',
-            fact('networking.hostname'),
-            fact('networking.fqdn'),
-            $api_service_address,
-            '127.0.0.1',
-            '::1',
-            fact('networking.ip'),
-            fact('networking.ip6'),
-        ] + $api_addn_names).unique(),
+        # prevent undef value if ipv6 is turned off
+        addn_names         => delete_undef_values(
+          (
+            [
+              'kubernetes',
+              'kubernetes.default',
+              'kubernetes.default.svc',
+              "kubernetes.default.svc.${cluster_domain}",
+              'kubernetes.service.discover',
+              'localhost',
+              fact('networking.hostname'),
+              fact('networking.fqdn'),
+              $api_service_address,
+              '127.0.0.1',
+              '::1',
+              fact('networking.ip'),
+              fact('networking.ip6'),
+            ] + $api_addn_names
+          ).unique()
+        ),
         distinguished_name => {
           commonName => 'kube-apiserver',
         };
@@ -141,11 +146,14 @@ class k8s::server::tls (
 
       'node':
         extended_key_usage => ['serverAuth', 'clientAuth'],
-        addn_names         => [
-          fact('networking.fqdn'),
-          fact('networking.ip'),
-          fact('networking.ip6'),
-        ],
+        # prevent undef value if ipv6 is turned off
+        addn_names         => delete_undef_values(
+          [
+            fact('networking.fqdn'),
+            fact('networking.ip'),
+            fact('networking.ip6'),
+          ]
+        ),
         distinguished_name => {
           organizationName => 'system:nodes',
           commonName       => "system:node:${fact('networking.fqdn')}",

@@ -136,9 +136,10 @@ define k8s::binary (
       }
     } else {
       file { "/usr/bin/${name}":
-        ensure => $ensure,
-        mode   => '0755',
-        target => "${target}/${name}",
+        ensure  => link,
+        mode    => '0755',
+        replace => true,
+        target  => "${target}/${name}",
       }
     }
   }
