@@ -79,6 +79,7 @@ The following parameters are available in the `k8s` class:
 * [`container_manager`](#-k8s--container_manager)
 * [`container_runtime_service`](#-k8s--container_runtime_service)
 * [`crio_package`](#-k8s--crio_package)
+* [`runc_version`](#-k8s--runc_version)
 * [`manage_etcd`](#-k8s--manage_etcd)
 * [`manage_firewall`](#-k8s--manage_firewall)
 * [`manage_image`](#-k8s--manage_image)
@@ -97,7 +98,6 @@ The following parameters are available in the `k8s` class:
 * [`node_auth`](#-k8s--node_auth)
 * [`incluster_master`](#-k8s--incluster_master)
 * [`master`](#-k8s--master)
-* [`etcd_servers`](#-k8s--etcd_servers)
 * [`service_cluster_cidr`](#-k8s--service_cluster_cidr)
 * [`cluster_cidr`](#-k8s--cluster_cidr)
 * [`api_service_address`](#-k8s--api_service_address)
@@ -135,7 +135,7 @@ Data type: `String[1]`
 
 
 
-Default value: `'1.20.14'`
+Default value: `'1.26.1'`
 
 ##### <a name="-k8s--etcd_version"></a>`etcd_version`
 
@@ -192,6 +192,14 @@ Data type: `Optional[String[1]]`
 
 
 Default value: `undef`
+
+##### <a name="-k8s--runc_version"></a>`runc_version`
+
+Data type: `String[1]`
+
+
+
+Default value: `'installed'`
 
 ##### <a name="-k8s--manage_etcd"></a>`manage_etcd`
 
@@ -336,14 +344,6 @@ Data type: `Stdlib::HTTPUrl`
 
 
 Default value: `'https://kubernetes:6443'`
-
-##### <a name="-k8s--etcd_servers"></a>`etcd_servers`
-
-Data type: `Optional[Array[Stdlib::HTTPUrl]]`
-
-
-
-Default value: `undef`
 
 ##### <a name="-k8s--service_cluster_cidr"></a>`service_cluster_cidr`
 
@@ -890,6 +890,7 @@ The following parameters are available in the `k8s::server` class:
 * [`manage_resources`](#-k8s--server--manage_resources)
 * [`node_on_server`](#-k8s--server--node_on_server)
 * [`puppetdb_discovery_tag`](#-k8s--server--puppetdb_discovery_tag)
+* [`etcd_servers`](#-k8s--server--etcd_servers)
 
 ##### <a name="-k8s--server--ensure"></a>`ensure`
 
@@ -1059,6 +1060,14 @@ Data type: `String[1]`
 
 Default value: `$k8s::puppetdb_discovery_tag`
 
+##### <a name="-k8s--server--etcd_servers"></a>`etcd_servers`
+
+Data type: `Optional[Array[Stdlib::HTTPUrl]]`
+
+
+
+Default value: `undef`
+
 ### <a name="k8s--server--apiserver"></a>`k8s::server::apiserver`
 
 Installs and configures a Kubernetes apiserver
@@ -1119,7 +1128,7 @@ Data type: `Optional[Array[Stdlib::HTTPUrl]]`
 
 
 
-Default value: `undef`
+Default value: `$k8s::server::etcd_servers`
 
 ##### <a name="-k8s--server--apiserver--discover_etcd_servers"></a>`discover_etcd_servers`
 

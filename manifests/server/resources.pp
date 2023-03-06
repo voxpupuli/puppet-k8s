@@ -459,7 +459,6 @@ class k8s::server::resources (
                       '/usr/local/bin/kube-proxy',
                     ],
                     args            => k8s::format_arguments({
-                        alsologtostderr   => true,
                         log_file          => '/var/log/kube-proxy.log',
                         cluster_cidr      => $cluster_cidr,
                         hostname_override => '$(NODE_NAME)',
