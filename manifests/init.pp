@@ -3,7 +3,7 @@ class k8s (
   K8s::Ensure $ensure       = 'present',
   Enum['container', 'native'] $packaging  = 'native',
   K8s::Native_packaging $native_packaging = 'loose',
-  String[1] $version                      = '1.20.14',
+  String[1] $version                      = '1.26.1',
   String[1] $etcd_version                 = '3.5.1',
 
   String[1] $container_registry             = 'gcr.io/google_containers',
@@ -36,7 +36,6 @@ class k8s (
 
   Stdlib::HTTPUrl $incluster_master                  = 'https://kubernetes.default.svc',
   Stdlib::HTTPUrl $master                            = 'https://kubernetes:6443',
-  Optional[Array[Stdlib::HTTPUrl]] $etcd_servers     = undef,
   K8s::CIDR $service_cluster_cidr                    = '10.1.0.0/24',
   K8s::CIDR $cluster_cidr                            = '10.0.0.0/16',
   Stdlib::IP::Address::Nosubnet $api_service_address = k8s::ip_in_cidr($service_cluster_cidr, 'first'),
@@ -142,7 +141,6 @@ class k8s (
     content => epp('k8s/sysconfig.epp', {
         comment               => 'General Kubernetes Configuration',
         environment_variables => {
-          # 'KUBE_LOGTOSTDERR' => '--alsologtostderr',
           'KUBE_LOG_LEVEL'   => '',
         },
     }),

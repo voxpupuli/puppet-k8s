@@ -6,7 +6,7 @@ class k8s::server::apiserver (
 
   K8s::CIDR $service_cluster_cidr = $k8s::service_cluster_cidr,
 
-  Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = $k8s::etcd_servers,
+  Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = $k8s::server::etcd_servers,
   Boolean $discover_etcd_servers                 = $k8s::puppetdb_discovery,
   Boolean $manage_firewall                       = $k8s::server::manage_firewall,
   String $puppetdb_discovery_tag                 = $k8s::server::puppetdb_discovery_tag,
