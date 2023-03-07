@@ -48,7 +48,7 @@ describe 'k8s::binary' do
                 it do
                   is_expected.to contain_file("/usr/bin/#{binary}").with(
                     ensure: 'present',
-                    mode: '0755',
+                    mode: '0755'
                   )
                 end
               else
@@ -57,7 +57,7 @@ describe 'k8s::binary' do
                     ensure: 'link',
                     mode: '0755',
                     replace: true,
-                    target: "/opt/k8s/1.0/#{binary}",
+                    target: "/opt/k8s/1.0/#{binary}"
                   )
                 end
               end
