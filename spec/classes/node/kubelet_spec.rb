@@ -20,6 +20,8 @@ describe 'k8s::node::kubelet' do
       let(:facts) { os_facts }
 
       it { is_expected.to compile }
+      it { is_expected.to contain_kmod__load('overlay') }
+      it { is_expected.to contain_kmod__load('br_netfilter') }
     end
   end
 end

@@ -1,6 +1,10 @@
 # @summary Sets up a Kubernetes instance - either as a node or as a server
+# 
+# @param manage_kernel_modules
+#   A flag to manage required Kernel modules.
+#
 class k8s (
-  K8s::Ensure $ensure       = 'present',
+  K8s::Ensure $ensure                     = 'present',
   Enum['container', 'native'] $packaging  = 'native',
   K8s::Native_packaging $native_packaging = 'loose',
   String[1] $version                      = '1.26.1',
@@ -16,6 +20,7 @@ class k8s (
 
   Boolean $manage_etcd              = true,
   Boolean $manage_firewall          = false,
+  Boolean $manage_kernel_modules    = true,
   Boolean $manage_image             = false,
   Boolean $manage_repo              = true,
   Boolean $manage_packages          = true,
