@@ -7,3 +7,5 @@ fixtures:
     stdlib: "puppetlabs/stdlib"
     systemd: "camptocamp/systemd"
     kmod: "puppet/kmod"
+    augeasproviders_sysctl: "herculesteam/augeasproviders_sysctl"
+    augeasproviders_core: "puppet/augeasproviders_core"

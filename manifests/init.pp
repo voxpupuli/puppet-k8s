@@ -3,6 +3,9 @@
 # @param manage_kernel_modules
 #   A flag to manage required Kernel modules.
 #
+# @param manage_sysctl_settings
+#   A flag to manage required sysctl settings.
+#
 class k8s (
   K8s::Ensure $ensure                     = 'present',
   Enum['container', 'native'] $packaging  = 'native',
@@ -21,6 +24,7 @@ class k8s (
   Boolean $manage_etcd              = true,
   Boolean $manage_firewall          = false,
   Boolean $manage_kernel_modules    = true,
+  Boolean $manage_sysctl_settings   = true,
   Boolean $manage_image             = false,
   Boolean $manage_repo              = true,
   Boolean $manage_packages          = true,

@@ -10,11 +10,12 @@ class k8s::node::kubelet (
   String $runtime_service           = $k8s::container_runtime_service,
   String[1] $puppetdb_discovery_tag = $k8s::node::puppetdb_discovery_tag,
 
-  K8s::Node_auth $auth           = $k8s::node::node_auth,
-  Boolean $rotate_server_tls     = $auth == 'bootstrap',
-  Boolean $manage_firewall       = $k8s::node::manage_firewall,
-  Boolean $manage_kernel_modules = $k8s::node::manage_kernel_modules,
-  Boolean $support_dualstack     = $k8s::cluster_cidr =~ Array[Data, 2],
+  K8s::Node_auth $auth            = $k8s::node::node_auth,
+  Boolean $rotate_server_tls      = $auth == 'bootstrap',
+  Boolean $manage_firewall        = $k8s::node::manage_firewall,
+  Boolean $manage_kernel_modules  = $k8s::node::manage_kernel_modules,
+  Boolean $manage_sysctl_settings = $k8s::node::manage_sysctl_settings,
+  Boolean $support_dualstack      = $k8s::cluster_cidr =~ Array[Data, 2],
 
   Stdlib::Unixpath $cert_path  = $k8s::node::cert_path,
   Stdlib::Unixpath $kubeconfig = '/srv/kubernetes/kubelet.kubeconf',
@@ -146,14 +147,19 @@ class k8s::node::kubelet (
     }
   }
 
-  file { '/etc/sysctl.d/99-k8s.conf':
-    ensure  => $ensure,
-    content => file('k8s/etc/sysctl.d/99-k8s.conf'),
-  }
-  exec { 'sysctl --system':
-    path        => ['/sbin', '/usr/sbin'],
-    refreshonly => true,
-    subscribe   => File['/etc/sysctl.d/99-k8s.conf'],
+  if $manage_sysctl_settings {
+    sysctl {
+      default:
+        ensure => $ensure,
+        value  => '1';
+
+      'net.bridge.bridge-nf-call-iptables':
+        before => Sysctl['net.ipv4.ip_forward'];
+      'net.bridge.bridge-nf-call-ip6tables':
+        before => Sysctl['net.ipv6.conf.all.forwarding'];
+      'net.ipv4.ip_forward':;
+      'net.ipv6.conf.all.forwarding':;
+    }
   }
 
   file { '/etc/kubernetes/kubelet.conf':
