@@ -5,13 +5,14 @@ require 'spec_helper'
 describe 'k8s::server' do
   let(:pre_condition) do
     <<~PUPPET
-      include ::k8s
+      include k8s
     PUPPET
   end
 
   let(:params) do
     {
-      node_on_server: false
+      node_on_server: false,
+      etcd_servers: ['https://localhost:2379']
     }
   end
 
