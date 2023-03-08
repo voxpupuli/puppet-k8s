@@ -11,7 +11,7 @@ describe 'k8s::binary' do
   end
 
   let(:pre_condition) do
-    'include ::k8s'
+    'include k8s'
   end
 
   on_supported_os.each do |os, os_facts|
@@ -44,11 +44,22 @@ describe 'k8s::binary' do
                 )
               end
 
-              it do
-                is_expected.to contain_file("/usr/bin/#{binary}").with(
-                  ensure: 'present',
-                  mode: '0755'
-                )
+              if method == 'package'
+                it do
+                  is_expected.to contain_file("/usr/bin/#{binary}").with(
+                    ensure: 'present',
+                    mode: '0755'
+                  )
+                end
+              else
+                it do
+                  is_expected.to contain_file("/usr/bin/#{binary}").with(
+                    ensure: 'link',
+                    mode: '0755',
+                    replace: true,
+                    target: "/opt/k8s/1.0/#{binary}"
+                  )
+                end
               end
 
               case method

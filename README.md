@@ -19,6 +19,8 @@ should be able to handle both older and newer versions without issues.
 
 ## Usage
 
+Set k8s::server::etcd_servers to a list of servers or k8s::puppetdb_discovery to `true`.
+
 Setting up a server node (apiserver, controller-manager, scheduler);
 ```puppet
 class { 'k8s':

@@ -31,6 +31,16 @@ class k8s::server::etcd (
       }
     }
 
+    $addn_names = [
+      fact('networking.hostname'),
+      fact('networking.fqdn'),
+      fact('networking.ip'),
+      fact('networking.ip6'),
+      'localhost',
+      '127.0.0.1',
+      '::1',
+    ]
+
     k8s::server::tls::ca {
       default:
         ensure   => $ensure,
@@ -57,15 +67,7 @@ class k8s::server::etcd (
       'etcd-server':
         ca_key             => $client_ca_key,
         ca_cert            => $client_ca_cert,
-        addn_names         => [
-          fact('networking.hostname'),
-          fact('networking.fqdn'),
-          fact('networking.ip'),
-          fact('networking.ip6'),
-          'localhost',
-          '127.0.0.1',
-          '::1',
-        ],
+        addn_names         => delete_undef_values($addn_names), # prevent undef value if ipv6 is turned off
         distinguished_name => {
           commonName => fact('networking.fqdn'),
         },
@@ -74,15 +76,7 @@ class k8s::server::etcd (
       'etcd-peer':
         ca_key             => $peer_ca_key,
         ca_cert            => $peer_ca_cert,
-        addn_names         => [
-          fact('networking.hostname'),
-          fact('networking.fqdn'),
-          fact('networking.ip'),
-          fact('networking.ip6'),
-          'localhost',
-          '127.0.0.1',
-          '::1',
-        ],
+        addn_names         => delete_undef_values($addn_names), # prevent undef value if ipv6 is turned off
         distinguished_name => {
           commonName => fact('networking.fqdn'),
         },
