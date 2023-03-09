@@ -13,8 +13,9 @@ define k8s::server::tls::k8s_sign (
   ].join(' | ')
 
   exec { "Sign ${name} cert":
-    path    => ['/usr/local/bin','/usr/bin','/bin'],
+    path    => $facts['path'],
     command => $exec_command,
     onlyif  => "kubectl --kubeconfig='${kubeconfig}' get csr | grep 'system:node:${name}' | grep Pending",
+    require => 'File[/usr/bin/kubectl]',
   }
 }
