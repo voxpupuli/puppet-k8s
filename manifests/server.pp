@@ -98,8 +98,8 @@ class k8s::server (
     $cluster_nodes.each |$node| { k8s::server::tls::k8s_sign { $node['certname']: } }
   }
 
-  include k8s::node::kubectl
-  include k8s::server::kubeadm
+  include k8s::install::kubectl
+  include k8s::install::kubeadm
 
   kubeconfig { '/root/.kube/config':
     ensure          => $ensure,

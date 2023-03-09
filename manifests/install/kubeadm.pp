@@ -2,7 +2,7 @@
 #
 # @param ensure
 #
-class k8s::server::kubeadm (
+class k8s::install::kubeadm (
   K8s::Ensure $ensure = $k8s::ensure,
 ) {
   k8s::binary { 'kubeadm':
