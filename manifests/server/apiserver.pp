@@ -268,10 +268,22 @@ class k8s::server::apiserver (
   }
 
   if $manage_firewall {
-    firewalld_service { 'Allow k8s apiserver access':
-      ensure  => $ensure,
-      zone    => 'public',
-      service => 'kube-apiserver',
+    case fact('os.family') {
+      'Debian': {
+        firewall { '100 allow k8s apiserver access':
+          dport  => 6443,
+          proto  => 'tcp',
+          action => 'accept',
+        }
+      }
+      'RedHat': {
+        firewalld_service { 'Allow k8s apiserver access':
+          ensure  => $ensure,
+          zone    => 'public',
+          service => 'kube-apiserver',
+        }
+      }
+      default: {}
     }
   }
 }

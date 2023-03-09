@@ -139,16 +139,33 @@ class k8s::server::etcd (
   }
 
   if $manage_firewall {
-    firewalld_service {
-      default:
-        ensure => $ensure,
-        zone   => 'public';
+    case fact('os.family') {
+      'Debian': {
+        firewall { '100 allow etcd server access':
+          dport  => 2379,
+          proto  => 'tcp',
+          action => 'accept',
+        }
+        firewall { '100 allow etcd client access':
+          dport  => 2380,
+          proto  => 'tcp',
+          action => 'accept',
+        }
+      }
+      'RedHat': {
+        firewalld_service {
+          default:
+            ensure => $ensure,
+            zone   => 'public';
 
-      'Allow etcd server access':
-        service => 'etcd-server';
+          'Allow etcd server access':
+            service => 'etcd-server';
 
-      'Allow etcd client access':
-        service => 'etcd-client';
+          'Allow etcd client access':
+            service => 'etcd-client';
+        }
+      }
+      default: {}
     }
   }
 }
