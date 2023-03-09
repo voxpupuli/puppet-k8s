@@ -236,21 +236,33 @@ class k8s::node::kubelet (
   Package <| title == 'containernetworking-plugins' |> -> Service['kubelet']
 
   if $manage_firewall {
-    firewalld_custom_service { 'kubelet':
-      ensure      => $ensure,
-      short       => 'kubelet',
-      description => 'Kubernetes kubelet daemon',
-      ports       => [
-        {
-          port     => '10250',
-          protocol => 'tcp',
-        },
-      ],
-    }
-    firewalld_service { 'Allow k8s kubelet access':
-      ensure  => $ensure,
-      zone    => 'public',
-      service => 'kubelet',
+    case fact('os.family') {
+      'Debian': {
+        firewall { '100 allow kubelet access':
+          dport  => 10250,
+          proto  => 'tcp',
+          action => 'accept',
+        }
+      }
+      'RedHat': {
+        firewalld_custom_service { 'kubelet':
+          ensure      => $ensure,
+          short       => 'kubelet',
+          description => 'Kubernetes kubelet daemon',
+          ports       => [
+            {
+              port     => '10250',
+              protocol => 'tcp',
+            },
+          ],
+        }
+        firewalld_service { 'Allow k8s kubelet access':
+          ensure  => $ensure,
+          zone    => 'public',
+          service => 'kubelet',
+        }
+      }
+      default: {}
     }
   }
 }
