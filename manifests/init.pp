@@ -1,5 +1,5 @@
 # @summary Sets up a Kubernetes instance - either as a node or as a server
-# 
+#
 # @param manage_kernel_modules
 #   A flag to manage required Kernel modules.
 #
