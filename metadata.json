@@ -31,6 +31,14 @@
     {
       "name": "puppet-systemd",
       "version_requirement": ">= 2.0.0 < 4.0.0"
+    },
+    {
+      "name": "puppetlabs-firewall",
+      "version_requirement": ">= 4.0.0 < 6.0.0"
+    },
+    {
+      "name": "puppet-firewalld",
+      "version_requirement": ">= 4.5.0 < 6.0.0"
     }
   ],
   "operatingsystem_support": [
@@ -52,7 +60,8 @@
       "operatingsystemrelease": [
         "18.04",
         "20.04",
-        "20.10"
+        "20.10",
+        "22.04"
       ]
     }
   ],
