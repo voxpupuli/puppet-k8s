@@ -99,6 +99,8 @@ class k8s::server (
   }
 
   include k8s::node::kubectl
+  include k8s::server::kubeadm
+
   kubeconfig { '/root/.kube/config':
     ensure          => $ensure,
     server          => "https://localhost:${api_port}",
