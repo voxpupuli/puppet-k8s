@@ -270,6 +270,8 @@ class k8s::server::apiserver (
   if $manage_firewall {
     case fact('os.family') {
       'Debian': {
+        include firewall
+
         firewall { '100 allow k8s apiserver access':
           dport  => 6443,
           proto  => 'tcp',

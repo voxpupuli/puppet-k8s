@@ -238,6 +238,8 @@ class k8s::node::kubelet (
   if $manage_firewall {
     case fact('os.family') {
       'Debian': {
+        include firewall
+
         firewall { '100 allow kubelet access':
           dport  => 10250,
           proto  => 'tcp',

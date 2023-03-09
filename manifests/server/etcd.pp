@@ -141,6 +141,8 @@ class k8s::server::etcd (
   if $manage_firewall {
     case fact('os.family') {
       'Debian': {
+        include firewall
+
         firewall { '100 allow etcd server access':
           dport  => 2379,
           proto  => 'tcp',
