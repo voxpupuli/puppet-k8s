@@ -10,7 +10,6 @@ class k8s::server::apiserver (
   Boolean $discover_etcd_servers                 = $k8s::puppetdb_discovery,
   Boolean $manage_firewall                       = $k8s::server::manage_firewall,
   String $puppetdb_discovery_tag                 = $k8s::server::puppetdb_discovery_tag,
-
   Stdlib::Unixpath $cert_path              = $k8s::server::tls::cert_path,
   Stdlib::Unixpath $ca_cert                = $k8s::server::tls::ca_cert,
   Stdlib::Unixpath $aggregator_ca_cert     = $k8s::server::tls::aggregator_ca_cert,
@@ -25,6 +24,8 @@ class k8s::server::apiserver (
   Stdlib::Unixpath $etcd_ca                = "${cert_path}/etcd-ca.pem",
   Stdlib::Unixpath $etcd_cert              = "${cert_path}/etcd.pem",
   Stdlib::Unixpath $etcd_key               = "${cert_path}/etcd.key",
+
+  Stdlib::IP::Address::Nosubnet $advertise_address = fact('networking.ip'),
 ) {
   assert_private()
 
@@ -93,7 +94,7 @@ class k8s::server::apiserver (
         'Priority',
         'NodeRestriction',
       ],
-      advertise_address                  => fact('networking.ip'),
+      advertise_address                  => $advertise_address,
       allow_privileged                   => true,
       anonymous_auth                     => true,
       authorization_mode                 => ['Node', 'RBAC'],
