@@ -160,6 +160,14 @@ class k8s::node::kubelet (
       'net.ipv4.ip_forward':;
       'net.ipv6.conf.all.forwarding':;
     }
+
+    if $manage_kernel_modules {
+      Kmod::Load['br_netfilter']
+      -> [
+        Sysctl['net.bridge.bridge-nf-call-iptables'],
+        Sysctl['net.bridge.bridge-nf-call-ip6tables']
+      ]
+    }
   }
 
   file { '/etc/kubernetes/kubelet.conf':
