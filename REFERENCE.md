@@ -903,7 +903,7 @@ The following parameters are available in the `k8s::repo` class:
 
 Data type: `Boolean`
 
-
+wether to add cri-o repository or not
 
 Default value: `$k8s::manage_container_manager`
 
@@ -911,7 +911,7 @@ Default value: `$k8s::manage_container_manager`
 
 Data type: `String[1]`
 
-
+version o cri-o
 
 Default value: `$k8s::version.split('\.')[0, 2].join('.')`
 
@@ -923,116 +923,28 @@ Sets up a Kubernetes server instance
 
 The following parameters are available in the `k8s::server` class:
 
-* [`ensure`](#-k8s--server--ensure)
+* [`aggregator_ca_cert`](#-k8s--server--aggregator_ca_cert)
+* [`aggregator_ca_key`](#-k8s--server--aggregator_ca_key)
 * [`api_port`](#-k8s--server--api_port)
+* [`ca_cert`](#-k8s--server--ca_cert)
+* [`ca_key`](#-k8s--server--ca_key)
+* [`cert_path`](#-k8s--server--cert_path)
 * [`cluster_cidr`](#-k8s--server--cluster_cidr)
-* [`dns_service_address`](#-k8s--server--dns_service_address)
 * [`cluster_domain`](#-k8s--server--cluster_domain)
 * [`direct_master`](#-k8s--server--direct_master)
-* [`master`](#-k8s--server--master)
-* [`cert_path`](#-k8s--server--cert_path)
-* [`ca_key`](#-k8s--server--ca_key)
-* [`ca_cert`](#-k8s--server--ca_cert)
-* [`aggregator_ca_key`](#-k8s--server--aggregator_ca_key)
-* [`aggregator_ca_cert`](#-k8s--server--aggregator_ca_cert)
+* [`dns_service_address`](#-k8s--server--dns_service_address)
+* [`ensure`](#-k8s--server--ensure)
+* [`etcd_servers`](#-k8s--server--etcd_servers)
 * [`generate_ca`](#-k8s--server--generate_ca)
+* [`manage_certs`](#-k8s--server--manage_certs)
+* [`manage_components`](#-k8s--server--manage_components)
 * [`manage_etcd`](#-k8s--server--manage_etcd)
 * [`manage_firewall`](#-k8s--server--manage_firewall)
-* [`manage_certs`](#-k8s--server--manage_certs)
-* [`manage_signing`](#-k8s--server--manage_signing)
-* [`manage_components`](#-k8s--server--manage_components)
 * [`manage_resources`](#-k8s--server--manage_resources)
+* [`manage_signing`](#-k8s--server--manage_signing)
+* [`master`](#-k8s--server--master)
 * [`node_on_server`](#-k8s--server--node_on_server)
 * [`puppetdb_discovery_tag`](#-k8s--server--puppetdb_discovery_tag)
-* [`etcd_servers`](#-k8s--server--etcd_servers)
-
-##### <a name="-k8s--server--ensure"></a>`ensure`
-
-Data type: `K8s::Ensure`
-
-
-
-Default value: `$k8s::ensure`
-
-##### <a name="-k8s--server--api_port"></a>`api_port`
-
-Data type: `Integer[1]`
-
-
-
-Default value: `6443`
-
-##### <a name="-k8s--server--cluster_cidr"></a>`cluster_cidr`
-
-Data type: `K8s::CIDR`
-
-
-
-Default value: `$k8s::cluster_cidr`
-
-##### <a name="-k8s--server--dns_service_address"></a>`dns_service_address`
-
-Data type: `K8s::IP_addresses`
-
-
-
-Default value: `$k8s::dns_service_address`
-
-##### <a name="-k8s--server--cluster_domain"></a>`cluster_domain`
-
-Data type: `String`
-
-
-
-Default value: `$k8s::cluster_domain`
-
-##### <a name="-k8s--server--direct_master"></a>`direct_master`
-
-Data type: `String`
-
-
-
-Default value: `"https://${fact('networking.ip')}:${api_port}"`
-
-##### <a name="-k8s--server--master"></a>`master`
-
-Data type: `String`
-
-
-
-Default value: `$k8s::master`
-
-##### <a name="-k8s--server--cert_path"></a>`cert_path`
-
-Data type: `Stdlib::Unixpath`
-
-
-
-Default value: `'/etc/kubernetes/certs'`
-
-##### <a name="-k8s--server--ca_key"></a>`ca_key`
-
-Data type: `Stdlib::Unixpath`
-
-
-
-Default value: `"${cert_path}/ca.key"`
-
-##### <a name="-k8s--server--ca_cert"></a>`ca_cert`
-
-Data type: `Stdlib::Unixpath`
-
-
-
-Default value: `"${cert_path}/ca.pem"`
-
-##### <a name="-k8s--server--aggregator_ca_key"></a>`aggregator_ca_key`
-
-Data type: `Stdlib::Unixpath`
-
-
-
-Default value: `"${cert_path}/aggregator-ca.key"`
 
 ##### <a name="-k8s--server--aggregator_ca_cert"></a>`aggregator_ca_cert`
 
@@ -1042,19 +954,123 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/aggregator-ca.pem"`
 
+##### <a name="-k8s--server--aggregator_ca_key"></a>`aggregator_ca_key`
+
+Data type: `Stdlib::Unixpath`
+
+
+
+Default value: `"${cert_path}/aggregator-ca.key"`
+
+##### <a name="-k8s--server--api_port"></a>`api_port`
+
+Data type: `Integer[1]`
+
+Cluster API port
+
+Default value: `6443`
+
+##### <a name="-k8s--server--ca_cert"></a>`ca_cert`
+
+Data type: `Stdlib::Unixpath`
+
+path to the ca cert
+
+Default value: `"${cert_path}/ca.pem"`
+
+##### <a name="-k8s--server--ca_key"></a>`ca_key`
+
+Data type: `Stdlib::Unixpath`
+
+path to the ca key
+
+Default value: `"${cert_path}/ca.key"`
+
+##### <a name="-k8s--server--cert_path"></a>`cert_path`
+
+Data type: `Stdlib::Unixpath`
+
+path to cert files
+
+Default value: `'/etc/kubernetes/certs'`
+
+##### <a name="-k8s--server--cluster_cidr"></a>`cluster_cidr`
+
+Data type: `K8s::CIDR`
+
+cluster cidr
+
+Default value: `$k8s::cluster_cidr`
+
+##### <a name="-k8s--server--cluster_domain"></a>`cluster_domain`
+
+Data type: `String`
+
+cluster domain name
+
+Default value: `$k8s::cluster_domain`
+
+##### <a name="-k8s--server--direct_master"></a>`direct_master`
+
+Data type: `String`
+
+direct clust API connection
+
+Default value: `"https://${fact('networking.ip')}:${api_port}"`
+
+##### <a name="-k8s--server--dns_service_address"></a>`dns_service_address`
+
+Data type: `K8s::IP_addresses`
+
+cluster dns service address
+
+Default value: `$k8s::dns_service_address`
+
+##### <a name="-k8s--server--ensure"></a>`ensure`
+
+Data type: `K8s::Ensure`
+
+
+
+Default value: `$k8s::ensure`
+
+##### <a name="-k8s--server--etcd_servers"></a>`etcd_servers`
+
+Data type: `Optional[Array[Stdlib::HTTPUrl]]`
+
+list etcd servers if no puppetdb is used
+
+Default value: `undef`
+
 ##### <a name="-k8s--server--generate_ca"></a>`generate_ca`
 
 Data type: `Boolean`
 
-
+initially generate ca
 
 Default value: `false`
+
+##### <a name="-k8s--server--manage_certs"></a>`manage_certs`
+
+Data type: `Boolean`
+
+wether to manage certs or not
+
+Default value: `true`
+
+##### <a name="-k8s--server--manage_components"></a>`manage_components`
+
+Data type: `Boolean`
+
+wether to manage components or not
+
+Default value: `true`
 
 ##### <a name="-k8s--server--manage_etcd"></a>`manage_etcd`
 
 Data type: `Boolean`
 
-
+wether to manage etcd or not
 
 Default value: `$k8s::manage_etcd`
 
@@ -1062,15 +1078,15 @@ Default value: `$k8s::manage_etcd`
 
 Data type: `Boolean`
 
-
+wether to manage firewall or not
 
 Default value: `$k8s::manage_firewall`
 
-##### <a name="-k8s--server--manage_certs"></a>`manage_certs`
+##### <a name="-k8s--server--manage_resources"></a>`manage_resources`
 
 Data type: `Boolean`
 
-
+wether to manage cluster internal resources or not
 
 Default value: `true`
 
@@ -1078,31 +1094,23 @@ Default value: `true`
 
 Data type: `Boolean`
 
-
+wether to manage cert signing or not
 
 Default value: `$k8s::puppetdb_discovery`
 
-##### <a name="-k8s--server--manage_components"></a>`manage_components`
+##### <a name="-k8s--server--master"></a>`master`
 
-Data type: `Boolean`
+Data type: `String`
 
+cluster API connection
 
-
-Default value: `true`
-
-##### <a name="-k8s--server--manage_resources"></a>`manage_resources`
-
-Data type: `Boolean`
-
-
-
-Default value: `true`
+Default value: `$k8s::master`
 
 ##### <a name="-k8s--server--node_on_server"></a>`node_on_server`
 
 Data type: `Boolean`
 
-
+wether to use controller also as nodes or not
 
 Default value: `true`
 
@@ -1110,17 +1118,9 @@ Default value: `true`
 
 Data type: `String[1]`
 
-
+enable puppetdb resource searching
 
 Default value: `$k8s::puppetdb_discovery_tag`
-
-##### <a name="-k8s--server--etcd_servers"></a>`etcd_servers`
-
-Data type: `Optional[Array[Stdlib::HTTPUrl]]`
-
-
-
-Default value: `undef`
 
 ### <a name="k8s--server--apiserver"></a>`k8s::server::apiserver`
 
@@ -1151,6 +1151,7 @@ The following parameters are available in the `k8s::server::apiserver` class:
 * [`etcd_ca`](#-k8s--server--apiserver--etcd_ca)
 * [`etcd_cert`](#-k8s--server--apiserver--etcd_cert)
 * [`etcd_key`](#-k8s--server--apiserver--etcd_key)
+* [`advertise_address`](#-k8s--server--apiserver--advertise_address)
 
 ##### <a name="-k8s--server--apiserver--ensure"></a>`ensure`
 
@@ -1319,6 +1320,14 @@ Data type: `Stdlib::Unixpath`
 
 
 Default value: `"${cert_path}/etcd.key"`
+
+##### <a name="-k8s--server--apiserver--advertise_address"></a>`advertise_address`
+
+Data type: `Stdlib::IP::Address::Nosubnet`
+
+
+
+Default value: `fact('networking.ip')`
 
 ### <a name="k8s--server--controller_manager"></a>`k8s::server::controller_manager`
 

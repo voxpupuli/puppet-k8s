@@ -1,4 +1,28 @@
 # @summary Sets up a Kubernetes server instance
+#
+# @param aggregator_ca_cert
+# @param aggregator_ca_key
+# @param api_port Cluster API port
+# @param ca_cert path to the ca cert
+# @param ca_key path to the ca key
+# @param cert_path path to cert files
+# @param cluster_cidr cluster cidr
+# @param cluster_domain cluster domain name
+# @param direct_master direct clust API connection
+# @param dns_service_address cluster dns service address
+# @param ensure
+# @param etcd_servers list etcd servers if no puppetdb is used
+# @param generate_ca initially generate ca
+# @param manage_certs wether to manage certs or not
+# @param manage_components wether to manage components or not
+# @param manage_etcd wether to manage etcd or not
+# @param manage_firewall wether to manage firewall or not
+# @param manage_resources wether to manage cluster internal resources or not
+# @param manage_signing wether to manage cert signing or not
+# @param master cluster API connection
+# @param node_on_server wether to use controller also as nodes or not
+# @param puppetdb_discovery_tag enable puppetdb resource searching
+#
 class k8s::server (
   K8s::Ensure $ensure  = $k8s::ensure,
   Integer[1] $api_port = 6443,
