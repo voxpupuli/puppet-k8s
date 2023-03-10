@@ -13,14 +13,14 @@
 # @param ensure
 # @param etcd_servers list etcd servers if no puppetdb is used
 # @param generate_ca initially generate ca
-# @param manage_certs wether to manage certs or not
-# @param manage_components wether to manage components or not
-# @param manage_etcd wether to manage etcd or not
-# @param manage_firewall wether to manage firewall or not
-# @param manage_resources wether to manage cluster internal resources or not
-# @param manage_signing wether to manage cert signing or not
+# @param manage_certs whether to manage certs or not
+# @param manage_components whether to manage components or not
+# @param manage_etcd whether to manage etcd or not
+# @param manage_firewall whether to manage firewall or not
+# @param manage_resources whether to manage cluster internal resources or not
+# @param manage_signing whether to manage cert signing or not
 # @param master cluster API connection
-# @param node_on_server wether to use controller also as nodes or not
+# @param node_on_server whether to use controller also as nodes or not
 # @param puppetdb_discovery_tag enable puppetdb resource searching
 #
 class k8s::server (

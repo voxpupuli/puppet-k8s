@@ -1,6 +1,6 @@
 # @summary Handles repositories for the container runtime
 #
-# @param manage_container_manager wether to add cri-o repository or not
+# @param manage_container_manager whether to add cri-o repository or not
 # @param crio_version version o cri-o
 #
 class k8s::repo (
