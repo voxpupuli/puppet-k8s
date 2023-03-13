@@ -1,4 +1,29 @@
 # @summary Installs and configures a Kubernetes apiserver
+#
+# @param advertise_address bind address of the apiserver
+# @param aggregator_ca_cert
+# @param apiserver_cert path to the apiserver cert file
+# @param apiserver_client_cert path to the apiserver client cert file
+# @param apiserver_client_key path to the apiserver client key file
+# @param apiserver_key path to the apiserver cert file
+# @param arguments
+# @param ca_cert path to the ca cert
+# @param cert_path path to cert files
+# @param discover_etcd_servers enable puppetdb resource searching
+# @param ensure set ensure for installation or deinstallation
+# @param etcd_ca path to the etcd ca cert file
+# @param etcd_cert path to the etcd cert file
+# @param etcd_key path to the etcd key file
+# @param etcd_servers list etcd servers if no puppetdb is used
+# @param firewall_type define the type of firewall to use
+# @param front_proxy_cert
+# @param front_proxy_key
+# @param manage_firewall whether to manage firewall or not
+# @param puppetdb_discovery_tag enable puppetdb resource searching
+# @param service_cluster_cidr
+# @param serviceaccount_private
+# @param serviceaccount_public
+#
 class k8s::server::apiserver (
   K8s::Ensure $ensure = $k8s::server::ensure,
 
@@ -26,7 +51,7 @@ class k8s::server::apiserver (
   Stdlib::Unixpath $etcd_key               = "${cert_path}/etcd.key",
 
   Stdlib::IP::Address::Nosubnet $advertise_address = fact('networking.ip'),
-  K8s::Firewall $firewall_type = $k8s::server::firewall_type
+  K8s::Firewall $firewall_type                     = $k8s::server::firewall_type
 ) {
   assert_private()
 

@@ -1,4 +1,25 @@
 # @summary Installs a Kubernetes node
+#
+# @param ca_cert path to the ca cert
+# @param cert_path path to cert files
+# @param ensure set ensure for installation or deinstallation
+# @param firewall_type define the type of firewall to use
+# @param manage_firewall whether to manage firewall or not
+# @param manage_kernel_modules whether to load kernel modules or not
+# @param manage_kubelet whether to manage kublet or not
+# @param manage_proxy whether to manage kube-proxy or not
+# @param manage_sysctl_settings whether to manage sysctl settings or not
+# @param master cluster API connection
+# @param node_auth type of node authentication
+# @param node_cert path to node cert file
+# @param node_key path to node key file
+# @param node_token k8s token to join a cluster
+# @param proxy_auth which proxy auth to use
+# @param proxy_cert path to proxy cert file
+# @param proxy_key path to proxy key file
+# @param proxy_token k8s token for kube-proxy
+# @param puppetdb_discovery_tag enable puppetdb resource searching
+#
 class k8s::node (
   K8s::Ensure $ensure = $k8s::ensure,
 
