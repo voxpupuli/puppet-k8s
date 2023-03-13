@@ -18,6 +18,8 @@ class k8s::server::etcd (
   Stdlib::Unixpath $peer_ca_cert   = "${cert_path}/peer-ca.pem",
   Stdlib::Unixpath $client_ca_key  = "${cert_path}/client-ca.key",
   Stdlib::Unixpath $client_ca_cert = "${cert_path}/client-ca.pem",
+
+  K8s::Firewall $firewall_type = $k8s::server::firewall_type,
 ) {
   if (!$self_signed_tls and $manage_certs) or $ensure == 'absent' {
     if !defined(File[$cert_path]) {
@@ -139,35 +141,31 @@ class k8s::server::etcd (
   }
 
   if $manage_firewall {
-    case fact('os.family') {
-      'Debian': {
-        include firewall
+    if $facts['firewalld_version'] and $firewall_type == 'firewalld' {
+      firewalld_service {
+        default:
+          ensure => $ensure,
+          zone   => 'public';
 
-        firewall { '100 allow etcd server access':
-          dport  => 2379,
-          proto  => 'tcp',
-          action => 'accept',
-        }
-        firewall { '100 allow etcd client access':
-          dport  => 2380,
-          proto  => 'tcp',
-          action => 'accept',
-        }
+        'Allow etcd server access':
+          service => 'etcd-server';
+
+        'Allow etcd client access':
+          service => 'etcd-client';
       }
-      'RedHat': {
-        firewalld_service {
-          default:
-            ensure => $ensure,
-            zone   => 'public';
+    } else {
+      include firewall
 
-          'Allow etcd server access':
-            service => 'etcd-server';
-
-          'Allow etcd client access':
-            service => 'etcd-client';
-        }
+      firewall { '100 allow etcd server access':
+        dport  => 2379,
+        proto  => 'tcp',
+        action => 'accept',
       }
-      default: {}
+      firewall { '100 allow etcd client access':
+        dport  => 2380,
+        proto  => 'tcp',
+        action => 'accept',
+      }
     }
   }
 }

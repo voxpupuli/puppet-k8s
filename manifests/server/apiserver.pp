@@ -26,6 +26,7 @@ class k8s::server::apiserver (
   Stdlib::Unixpath $etcd_key               = "${cert_path}/etcd.key",
 
   Stdlib::IP::Address::Nosubnet $advertise_address = fact('networking.ip'),
+  K8s::Firewall $firewall_type = $k8s::server::firewall_type
 ) {
   assert_private()
 
@@ -268,24 +269,20 @@ class k8s::server::apiserver (
   }
 
   if $manage_firewall {
-    case fact('os.family') {
-      'Debian': {
-        include firewall
+    if $facts['firewalld_version'] and $firewall_type == 'firewalld' {
+      firewalld_service { 'Allow k8s apiserver access':
+        ensure  => $ensure,
+        zone    => 'public',
+        service => 'kube-apiserver',
+      }
+    } else {
+      include firewall
 
-        firewall { '100 allow k8s apiserver access':
-          dport  => 6443,
-          proto  => 'tcp',
-          action => 'accept',
-        }
+      firewall { '100 allow k8s apiserver access':
+        dport  => 6443,
+        proto  => 'tcp',
+        action => 'accept',
       }
-      'RedHat': {
-        firewalld_service { 'Allow k8s apiserver access':
-          ensure  => $ensure,
-          zone    => 'public',
-          service => 'kube-apiserver',
-        }
-      }
-      default: {}
     }
   }
 }
