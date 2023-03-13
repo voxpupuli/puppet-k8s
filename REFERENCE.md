@@ -7,6 +7,8 @@
 ### Classes
 
 * [`k8s`](#k8s): Sets up a Kubernetes instance - either as a node or as a server
+* [`k8s::install::kubeadm`](#k8s--install--kubeadm): Installs the kubeadm binary
+* [`k8s::install::kubectl`](#k8s--install--kubectl): Installs the kubectl binary
 * [`k8s::node`](#k8s--node): Installs a Kubernetes node
 * [`k8s::node::kube_proxy`](#k8s--node--kube_proxy): Sets up a on-node kube-proxy instance
 * [`k8s::node::kubectl`](#k8s--node--kubectl): Installs the kubectl binary
@@ -47,6 +49,7 @@
 * [`K8s::Duration`](#K8s--Duration): This regexp matches Go duration values, as taken from;
 * [`K8s::Ensure`](#K8s--Ensure): a type to describe the ensure pattern
 * [`K8s::Extended_key_usage`](#K8s--Extended_key_usage): a type to describe extended key usage for a TLS certificate
+* [`K8s::Firewall`](#K8s--Firewall): a type to describe the type of the firewall to use
 * [`K8s::IP_addresses`](#K8s--IP_addresses): a type to describe multiple IP addresses without subnet sizes
 * [`K8s::Native_packaging`](#K8s--Native_packaging): a type to describe Kubernetes native packaging methods
 * [`K8s::Node_auth`](#K8s--Node_auth): a type to describe node/kubelet authentication methods
@@ -106,6 +109,7 @@ The following parameters are available in the `k8s` class:
 * [`dns_service_address`](#-k8s--dns_service_address)
 * [`cluster_domain`](#-k8s--cluster_domain)
 * [`role`](#-k8s--role)
+* [`firewall_type`](#-k8s--firewall_type)
 
 ##### <a name="-k8s--manage_kernel_modules"></a>`manage_kernel_modules`
 
@@ -411,6 +415,50 @@ Data type: `Enum['node','server','none']`
 
 Default value: `'none'`
 
+##### <a name="-k8s--firewall_type"></a>`firewall_type`
+
+Data type: `K8s::Firewall`
+
+
+
+Default value: `'firewalld'`
+
+### <a name="k8s--install--kubeadm"></a>`k8s::install::kubeadm`
+
+Installs the kubeadm binary
+
+#### Parameters
+
+The following parameters are available in the `k8s::install::kubeadm` class:
+
+* [`ensure`](#-k8s--install--kubeadm--ensure)
+
+##### <a name="-k8s--install--kubeadm--ensure"></a>`ensure`
+
+Data type: `K8s::Ensure`
+
+set ensure for installation or deinstallation
+
+Default value: `$k8s::ensure`
+
+### <a name="k8s--install--kubectl"></a>`k8s::install::kubectl`
+
+Installs the kubectl binary
+
+#### Parameters
+
+The following parameters are available in the `k8s::install::kubectl` class:
+
+* [`ensure`](#-k8s--install--kubectl--ensure)
+
+##### <a name="-k8s--install--kubectl--ensure"></a>`ensure`
+
+Data type: `K8s::Ensure`
+
+set ensure for installation or deinstallation
+
+Default value: `$k8s::ensure`
+
 ### <a name="k8s--node"></a>`k8s::node`
 
 Installs a Kubernetes node
@@ -437,6 +485,7 @@ The following parameters are available in the `k8s::node` class:
 * [`proxy_key`](#-k8s--node--proxy_key)
 * [`node_token`](#-k8s--node--node_token)
 * [`proxy_token`](#-k8s--node--proxy_token)
+* [`firewall_type`](#-k8s--node--firewall_type)
 
 ##### <a name="-k8s--node--ensure"></a>`ensure`
 
@@ -581,6 +630,14 @@ Data type: `Optional[String[1]]`
 
 
 Default value: `undef`
+
+##### <a name="-k8s--node--firewall_type"></a>`firewall_type`
+
+Data type: `K8s::Firewall`
+
+
+
+Default value: `$k8s::firewall_type`
 
 ### <a name="k8s--node--kube_proxy"></a>`k8s::node::kube_proxy`
 
@@ -735,6 +792,7 @@ The following parameters are available in the `k8s::node::kubelet` class:
 * [`cert`](#-k8s--node--kubelet--cert)
 * [`key`](#-k8s--node--kubelet--key)
 * [`token`](#-k8s--node--kubelet--token)
+* [`firewall_type`](#-k8s--node--kubelet--firewall_type)
 
 ##### <a name="-k8s--node--kubelet--ensure"></a>`ensure`
 
@@ -888,6 +946,14 @@ Data type: `Optional[String[1]]`
 
 Default value: `$k8s::node::node_token`
 
+##### <a name="-k8s--node--kubelet--firewall_type"></a>`firewall_type`
+
+Data type: `K8s::Firewall`
+
+
+
+Default value: `$k8s::node::firewall_type`
+
 ### <a name="k8s--repo"></a>`k8s::repo`
 
 Handles repositories for the container runtime
@@ -903,7 +969,7 @@ The following parameters are available in the `k8s::repo` class:
 
 Data type: `Boolean`
 
-wether to add cri-o repository or not
+whether to add cri-o repository or not
 
 Default value: `$k8s::manage_container_manager`
 
@@ -935,11 +1001,13 @@ The following parameters are available in the `k8s::server` class:
 * [`dns_service_address`](#-k8s--server--dns_service_address)
 * [`ensure`](#-k8s--server--ensure)
 * [`etcd_servers`](#-k8s--server--etcd_servers)
+* [`firewall_type`](#-k8s--server--firewall_type)
 * [`generate_ca`](#-k8s--server--generate_ca)
 * [`manage_certs`](#-k8s--server--manage_certs)
 * [`manage_components`](#-k8s--server--manage_components)
 * [`manage_etcd`](#-k8s--server--manage_etcd)
 * [`manage_firewall`](#-k8s--server--manage_firewall)
+* [`manage_kubeadm`](#-k8s--server--manage_kubeadm)
 * [`manage_resources`](#-k8s--server--manage_resources)
 * [`manage_signing`](#-k8s--server--manage_signing)
 * [`master`](#-k8s--server--master)
@@ -1030,7 +1098,7 @@ Default value: `$k8s::dns_service_address`
 
 Data type: `K8s::Ensure`
 
-
+set ensure for installation or deinstallation
 
 Default value: `$k8s::ensure`
 
@@ -1041,6 +1109,14 @@ Data type: `Optional[Array[Stdlib::HTTPUrl]]`
 list etcd servers if no puppetdb is used
 
 Default value: `undef`
+
+##### <a name="-k8s--server--firewall_type"></a>`firewall_type`
+
+Data type: `K8s::Firewall`
+
+define the type of firewall to use
+
+Default value: `$k8s::firewall_type`
 
 ##### <a name="-k8s--server--generate_ca"></a>`generate_ca`
 
@@ -1054,7 +1130,7 @@ Default value: `false`
 
 Data type: `Boolean`
 
-wether to manage certs or not
+whether to manage certs or not
 
 Default value: `true`
 
@@ -1062,7 +1138,7 @@ Default value: `true`
 
 Data type: `Boolean`
 
-wether to manage components or not
+whether to manage components or not
 
 Default value: `true`
 
@@ -1070,7 +1146,7 @@ Default value: `true`
 
 Data type: `Boolean`
 
-wether to manage etcd or not
+whether to manage etcd or not
 
 Default value: `$k8s::manage_etcd`
 
@@ -1078,15 +1154,23 @@ Default value: `$k8s::manage_etcd`
 
 Data type: `Boolean`
 
-wether to manage firewall or not
+whether to manage firewall or not
 
 Default value: `$k8s::manage_firewall`
+
+##### <a name="-k8s--server--manage_kubeadm"></a>`manage_kubeadm`
+
+Data type: `Boolean`
+
+whether to install kubeadm or not
+
+Default value: `false`
 
 ##### <a name="-k8s--server--manage_resources"></a>`manage_resources`
 
 Data type: `Boolean`
 
-wether to manage cluster internal resources or not
+whether to manage cluster internal resources or not
 
 Default value: `true`
 
@@ -1094,7 +1178,7 @@ Default value: `true`
 
 Data type: `Boolean`
 
-wether to manage cert signing or not
+whether to manage cert signing or not
 
 Default value: `$k8s::puppetdb_discovery`
 
@@ -1110,7 +1194,7 @@ Default value: `$k8s::master`
 
 Data type: `Boolean`
 
-wether to use controller also as nodes or not
+whether to use controller also as nodes or not
 
 Default value: `true`
 
@@ -1152,6 +1236,7 @@ The following parameters are available in the `k8s::server::apiserver` class:
 * [`etcd_cert`](#-k8s--server--apiserver--etcd_cert)
 * [`etcd_key`](#-k8s--server--apiserver--etcd_key)
 * [`advertise_address`](#-k8s--server--apiserver--advertise_address)
+* [`firewall_type`](#-k8s--server--apiserver--firewall_type)
 
 ##### <a name="-k8s--server--apiserver--ensure"></a>`ensure`
 
@@ -1329,6 +1414,14 @@ Data type: `Stdlib::IP::Address::Nosubnet`
 
 Default value: `fact('networking.ip')`
 
+##### <a name="-k8s--server--apiserver--firewall_type"></a>`firewall_type`
+
+Data type: `K8s::Firewall`
+
+
+
+Default value: `$k8s::server::firewall_type`
+
 ### <a name="k8s--server--controller_manager"></a>`k8s::server::controller_manager`
 
 Installs and configures a Kubernetes controller manager
@@ -1451,6 +1544,7 @@ The following parameters are available in the `k8s::server::etcd` class:
 * [`peer_ca_cert`](#-k8s--server--etcd--peer_ca_cert)
 * [`client_ca_key`](#-k8s--server--etcd--client_ca_key)
 * [`client_ca_cert`](#-k8s--server--etcd--client_ca_cert)
+* [`firewall_type`](#-k8s--server--etcd--firewall_type)
 
 ##### <a name="-k8s--server--etcd--ensure"></a>`ensure`
 
@@ -1571,6 +1665,14 @@ Data type: `Stdlib::Unixpath`
 
 
 Default value: `"${cert_path}/client-ca.pem"`
+
+##### <a name="-k8s--server--etcd--firewall_type"></a>`firewall_type`
+
+Data type: `K8s::Firewall`
+
+
+
+Default value: `$k8s::server::firewall_type`
 
 ### <a name="k8s--server--etcd--setup"></a>`k8s::server::etcd::setup`
 
@@ -3092,6 +3194,12 @@ Array[Enum[
     'serverAuth'
   ]]
 ```
+
+### <a name="K8s--Firewall"></a>`K8s::Firewall`
+
+a type to describe the type of the firewall to use
+
+Alias of `Enum['iptables', 'firewalld']`
 
 ### <a name="K8s--IP_addresses"></a>`K8s::IP_addresses`
 
