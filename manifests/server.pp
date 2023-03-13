@@ -10,13 +10,15 @@
 # @param cluster_domain cluster domain name
 # @param direct_master direct clust API connection
 # @param dns_service_address cluster dns service address
-# @param ensure
+# @param ensure set ensure for installation or deinstallation
 # @param etcd_servers list etcd servers if no puppetdb is used
+# @param firewall_type define the type of firewall to use
 # @param generate_ca initially generate ca
 # @param manage_certs whether to manage certs or not
 # @param manage_components whether to manage components or not
 # @param manage_etcd whether to manage etcd or not
 # @param manage_firewall whether to manage firewall or not
+# @param manage_kubeadm whether to install kubeadm or not
 # @param manage_resources whether to manage cluster internal resources or not
 # @param manage_signing whether to manage cert signing or not
 # @param master cluster API connection
@@ -47,9 +49,11 @@ class k8s::server (
   Boolean $manage_components        = true,
   Boolean $manage_resources         = true,
   Boolean $node_on_server           = true,
+  Boolean $manage_kubeadm           = false,
   String[1] $puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag,
 
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
+  K8s::Firewall $firewall_type = $k8s::firewall_type,
 ) {
   if $manage_etcd {
     class { 'k8s::server::etcd':
@@ -99,7 +103,10 @@ class k8s::server (
   }
 
   include k8s::install::kubectl
-  include k8s::install::kubeadm
+
+  if $manage_kubeadm {
+    include k8s::install::kubeadm
+  }
 
   kubeconfig { '/root/.kube/config':
     ensure          => $ensure,
