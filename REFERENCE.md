@@ -1112,7 +1112,7 @@ Default value: `undef`
 
 ##### <a name="-k8s--server--firewall_type"></a>`firewall_type`
 
-Data type: `K8s::Firewall`
+Data type: `Optional[K8s::Firewall]`
 
 define the type of firewall to use
 

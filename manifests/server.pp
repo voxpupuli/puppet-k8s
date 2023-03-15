@@ -53,7 +53,7 @@ class k8s::server (
   String[1] $puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag,
 
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
-  K8s::Firewall $firewall_type = $k8s::firewall_type,
+  Optional[K8s::Firewall] $firewall_type = $k8s::firewall_type,
 ) {
   if $manage_etcd {
     class { 'k8s::server::etcd':
