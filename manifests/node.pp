@@ -48,7 +48,7 @@ class k8s::node (
   Optional[String[1]] $node_token  = undef,
   Optional[String[1]] $proxy_token = undef,
 
-  K8s::Firewall $firewall_type = $k8s::firewall_type,
+  Optional[K8s::Firewall] $firewall_type = $k8s::firewall_type,
 ) {
   if $manage_kubelet {
     include k8s::node::kubelet

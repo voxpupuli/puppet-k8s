@@ -417,11 +417,11 @@ Default value: `'none'`
 
 ##### <a name="-k8s--firewall_type"></a>`firewall_type`
 
-Data type: `K8s::Firewall`
+Data type: `Optional[K8s::Firewall]`
 
 
 
-Default value: `'firewalld'`
+Default value: `undef`
 
 ### <a name="k8s--install--kubeadm"></a>`k8s::install::kubeadm`
 
@@ -513,7 +513,7 @@ Default value: `$k8s::ensure`
 
 ##### <a name="-k8s--node--firewall_type"></a>`firewall_type`
 
-Data type: `K8s::Firewall`
+Data type: `Optional[K8s::Firewall]`
 
 define the type of firewall to use
 
@@ -852,7 +852,7 @@ Default value: `$k8s::node::ensure`
 
 ##### <a name="-k8s--node--kubelet--firewall_type"></a>`firewall_type`
 
-Data type: `K8s::Firewall`
+Data type: `Optional[K8s::Firewall]`
 
 define the type of firewall to use
 
@@ -1360,7 +1360,7 @@ Default value: `$k8s::server::etcd_servers`
 
 ##### <a name="-k8s--server--apiserver--firewall_type"></a>`firewall_type`
 
-Data type: `K8s::Firewall`
+Data type: `Optional[K8s::Firewall]`
 
 define the type of firewall to use
 
@@ -1668,7 +1668,7 @@ Default value: `"${cert_path}/client-ca.pem"`
 
 ##### <a name="-k8s--server--etcd--firewall_type"></a>`firewall_type`
 
-Data type: `K8s::Firewall`
+Data type: `Optional[K8s::Firewall]`
 
 
 

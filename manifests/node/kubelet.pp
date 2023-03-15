@@ -50,7 +50,7 @@ class k8s::node::kubelet (
   # For token and bootstrap auth
   Optional[String[1]] $token = $k8s::node::node_token,
 
-  K8s::Firewall $firewall_type = $k8s::node::firewall_type,
+  Optional[K8s::Firewall] $firewall_type = $k8s::node::firewall_type,
 ) {
   k8s::binary { 'kubelet':
     ensure => $ensure,
@@ -260,31 +260,41 @@ class k8s::node::kubelet (
   Package <| title == 'containernetworking-plugins' |> -> Service['kubelet']
 
   if $manage_firewall {
-    if $facts['firewalld_version'] and $firewall_type == 'firewalld' {
-      firewalld_custom_service { 'kubelet':
-        ensure      => $ensure,
-        short       => 'kubelet',
-        description => 'Kubernetes kubelet daemon',
-        ports       => [
-          {
-            port     => '10250',
-            protocol => 'tcp',
-          },
-        ],
-      }
-      firewalld_service { 'Allow k8s kubelet access':
-        ensure  => $ensure,
-        zone    => 'public',
-        service => 'kubelet',
-      }
+    if $facts['firewalld_version'] {
+      $_firewall_type = pick($firewall_type, 'firewalld')
     } else {
-      include firewall
+      $_firewall_type = pick($firewall_type, 'iptables')
+    }
 
-      firewall { '100 allow kubelet access':
-        dport  => 10250,
-        proto  => 'tcp',
-        action => 'accept',
+    case $_firewall_type {
+      'firewalld' : {
+        firewalld_custom_service { 'kubelet':
+          ensure      => $ensure,
+          short       => 'kubelet',
+          description => 'Kubernetes kubelet daemon',
+          ports       => [
+            {
+              port     => '10250',
+              protocol => 'tcp',
+            },
+          ],
+        }
+        firewalld_service { 'Allow k8s kubelet access':
+          ensure  => $ensure,
+          zone    => 'public',
+          service => 'kubelet',
+        }
       }
+      'iptables': {
+        include firewall
+
+        firewall { '100 allow kubelet access':
+          dport  => 10250,
+          proto  => 'tcp',
+          action => 'accept',
+        }
+      }
+      default: {}
     }
   }
 }

@@ -52,7 +52,7 @@ class k8s (
   Stdlib::Fqdn $cluster_domain                       = 'cluster.local',
 
   Enum['node','server','none']  $role = 'none',
-  K8s::Firewall $firewall_type = 'firewalld',
+  Optional[K8s::Firewall] $firewall_type = undef,
 ) {
   if $manage_container_manager {
     if $container_manager == 'docker' {

@@ -19,7 +19,7 @@ class k8s::server::etcd (
   Stdlib::Unixpath $client_ca_key  = "${cert_path}/client-ca.key",
   Stdlib::Unixpath $client_ca_cert = "${cert_path}/client-ca.pem",
 
-  K8s::Firewall $firewall_type = $k8s::server::firewall_type,
+  Optional[K8s::Firewall] $firewall_type = $k8s::server::firewall_type,
 ) {
   if (!$self_signed_tls and $manage_certs) or $ensure == 'absent' {
     if !defined(File[$cert_path]) {
@@ -141,31 +141,41 @@ class k8s::server::etcd (
   }
 
   if $manage_firewall {
-    if $facts['firewalld_version'] and $firewall_type == 'firewalld' {
-      firewalld_service {
-        default:
-          ensure => $ensure,
-          zone   => 'public';
-
-        'Allow etcd server access':
-          service => 'etcd-server';
-
-        'Allow etcd client access':
-          service => 'etcd-client';
-      }
+    if $facts['firewalld_version'] {
+      $_firewall_type = pick($firewall_type, 'firewalld')
     } else {
-      include firewall
+      $_firewall_type = pick($firewall_type, 'iptables')
+    }
 
-      firewall { '100 allow etcd server access':
-        dport  => 2379,
-        proto  => 'tcp',
-        action => 'accept',
+    case $_firewall_type {
+      'firewalld' : {
+        firewalld_service {
+          default:
+            ensure => $ensure,
+            zone   => 'public';
+
+          'Allow etcd server access':
+            service => 'etcd-server';
+
+          'Allow etcd client access':
+            service => 'etcd-client';
+        }
       }
-      firewall { '100 allow etcd client access':
-        dport  => 2380,
-        proto  => 'tcp',
-        action => 'accept',
+      'iptables': {
+        include firewall
+
+        firewall { '100 allow etcd server access':
+          dport  => 2379,
+          proto  => 'tcp',
+          action => 'accept',
+        }
+        firewall { '100 allow etcd client access':
+          dport  => 2380,
+          proto  => 'tcp',
+          action => 'accept',
+        }
       }
+      default: {}
     }
   }
 }
