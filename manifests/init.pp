@@ -1,5 +1,5 @@
 # @summary Sets up a Kubernetes instance - either as a node or as a server
-# 
+#
 # @param manage_kernel_modules
 #   A flag to manage required Kernel modules.
 #
@@ -52,6 +52,7 @@ class k8s (
   Stdlib::Fqdn $cluster_domain                       = 'cluster.local',
 
   Enum['node','server','none']  $role = 'none',
+  Optional[K8s::Firewall] $firewall_type = undef,
 ) {
   if $manage_container_manager {
     if $container_manager == 'docker' {

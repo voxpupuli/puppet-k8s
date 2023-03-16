@@ -1,4 +1,26 @@
 # @summary Installs and configures kubelet
+#
+# @param arguments
+# @param auth type of node authentication
+# @param ca_cert path to the ca cert
+# @param cert path to node cert file
+# @param cert_path path to cert files
+# @param config
+# @param ensure set ensure for installation or deinstallation
+# @param firewall_type define the type of firewall to use
+# @param key path to node key file
+# @param kubeconfig path to kubeconfig
+# @param manage_firewall whether to manage firewall or not
+# @param manage_kernel_modules whether to load kernel modules or not
+# @param manage_sysctl_settings whether to manage sysctl settings or not
+# @param master cluster API connection
+# @param puppetdb_discovery_tag enable puppetdb resource searching
+# @param rotate_server_tls
+# @param runtime which container runtime to use
+# @param runtime_service name of the service of the container runtime
+# @param support_dualstack
+# @param token k8s token to join a cluster
+#
 class k8s::node::kubelet (
   K8s::Ensure $ensure = $k8s::node::ensure,
 
@@ -27,6 +49,8 @@ class k8s::node::kubelet (
 
   # For token and bootstrap auth
   Optional[String[1]] $token = $k8s::node::node_token,
+
+  Optional[K8s::Firewall] $firewall_type = $k8s::node::firewall_type,
 ) {
   k8s::binary { 'kubelet':
     ensure => $ensure,
@@ -160,6 +184,14 @@ class k8s::node::kubelet (
       'net.ipv4.ip_forward':;
       'net.ipv6.conf.all.forwarding':;
     }
+
+    if $manage_kernel_modules {
+      Kmod::Load['br_netfilter']
+      -> [
+        Sysctl['net.bridge.bridge-nf-call-iptables'],
+        Sysctl['net.bridge.bridge-nf-call-ip6tables']
+      ]
+    }
   }
 
   file { '/etc/kubernetes/kubelet.conf':
@@ -228,21 +260,41 @@ class k8s::node::kubelet (
   Package <| title == 'containernetworking-plugins' |> -> Service['kubelet']
 
   if $manage_firewall {
-    firewalld_custom_service { 'kubelet':
-      ensure      => $ensure,
-      short       => 'kubelet',
-      description => 'Kubernetes kubelet daemon',
-      ports       => [
-        {
-          port     => '10250',
-          protocol => 'tcp',
-        },
-      ],
+    if $facts['firewalld_version'] {
+      $_firewall_type = pick($firewall_type, 'firewalld')
+    } else {
+      $_firewall_type = pick($firewall_type, 'iptables')
     }
-    firewalld_service { 'Allow k8s kubelet access':
-      ensure  => $ensure,
-      zone    => 'public',
-      service => 'kubelet',
+
+    case $_firewall_type {
+      'firewalld' : {
+        firewalld_custom_service { 'kubelet':
+          ensure      => $ensure,
+          short       => 'kubelet',
+          description => 'Kubernetes kubelet daemon',
+          ports       => [
+            {
+              port     => '10250',
+              protocol => 'tcp',
+            },
+          ],
+        }
+        firewalld_service { 'Allow k8s kubelet access':
+          ensure  => $ensure,
+          zone    => 'public',
+          service => 'kubelet',
+        }
+      }
+      'iptables': {
+        include firewall
+
+        firewall { '100 allow kubelet access':
+          dport  => 10250,
+          proto  => 'tcp',
+          action => 'accept',
+        }
+      }
+      default: {}
     }
   }
 }

@@ -1,4 +1,29 @@
 # @summary Installs and configures a Kubernetes apiserver
+#
+# @param advertise_address bind address of the apiserver
+# @param aggregator_ca_cert
+# @param apiserver_cert path to the apiserver cert file
+# @param apiserver_client_cert path to the apiserver client cert file
+# @param apiserver_client_key path to the apiserver client key file
+# @param apiserver_key path to the apiserver cert file
+# @param arguments
+# @param ca_cert path to the ca cert
+# @param cert_path path to cert files
+# @param discover_etcd_servers enable puppetdb resource searching
+# @param ensure set ensure for installation or deinstallation
+# @param etcd_ca path to the etcd ca cert file
+# @param etcd_cert path to the etcd cert file
+# @param etcd_key path to the etcd key file
+# @param etcd_servers list etcd servers if no puppetdb is used
+# @param firewall_type define the type of firewall to use
+# @param front_proxy_cert
+# @param front_proxy_key
+# @param manage_firewall whether to manage firewall or not
+# @param puppetdb_discovery_tag enable puppetdb resource searching
+# @param service_cluster_cidr
+# @param serviceaccount_private
+# @param serviceaccount_public
+#
 class k8s::server::apiserver (
   K8s::Ensure $ensure = $k8s::server::ensure,
 
@@ -10,7 +35,6 @@ class k8s::server::apiserver (
   Boolean $discover_etcd_servers                 = $k8s::puppetdb_discovery,
   Boolean $manage_firewall                       = $k8s::server::manage_firewall,
   String $puppetdb_discovery_tag                 = $k8s::server::puppetdb_discovery_tag,
-
   Stdlib::Unixpath $cert_path              = $k8s::server::tls::cert_path,
   Stdlib::Unixpath $ca_cert                = $k8s::server::tls::ca_cert,
   Stdlib::Unixpath $aggregator_ca_cert     = $k8s::server::tls::aggregator_ca_cert,
@@ -25,6 +49,9 @@ class k8s::server::apiserver (
   Stdlib::Unixpath $etcd_ca                = "${cert_path}/etcd-ca.pem",
   Stdlib::Unixpath $etcd_cert              = "${cert_path}/etcd.pem",
   Stdlib::Unixpath $etcd_key               = "${cert_path}/etcd.key",
+
+  Stdlib::IP::Address::Nosubnet $advertise_address = fact('networking.ip'),
+  Optional[K8s::Firewall] $firewall_type           = $k8s::server::firewall_type,
 ) {
   assert_private()
 
@@ -93,7 +120,7 @@ class k8s::server::apiserver (
         'Priority',
         'NodeRestriction',
       ],
-      advertise_address                  => fact('networking.ip'),
+      advertise_address                  => $advertise_address,
       allow_privileged                   => true,
       anonymous_auth                     => true,
       authorization_mode                 => ['Node', 'RBAC'],
@@ -267,10 +294,30 @@ class k8s::server::apiserver (
   }
 
   if $manage_firewall {
-    firewalld_service { 'Allow k8s apiserver access':
-      ensure  => $ensure,
-      zone    => 'public',
-      service => 'kube-apiserver',
+    if $facts['firewalld_version'] {
+      $_firewall_type = pick($firewall_type, 'firewalld')
+    } else {
+      $_firewall_type = pick($firewall_type, 'iptables')
+    }
+
+    case $_firewall_type {
+      'firewalld' : {
+        firewalld_service { 'Allow k8s apiserver access':
+          ensure  => $ensure,
+          zone    => 'public',
+          service => 'kube-apiserver',
+        }
+      }
+      'iptables': {
+        include firewall
+
+        firewall { '100 allow k8s apiserver access':
+          dport  => 6443,
+          proto  => 'tcp',
+          action => 'accept',
+        }
+      }
+      default: {}
     }
   }
 }

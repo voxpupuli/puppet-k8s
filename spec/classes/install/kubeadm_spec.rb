@@ -2,16 +2,10 @@
 
 require 'spec_helper'
 
-describe 'k8s::node::kubectl' do
+describe 'k8s::install::kubeadm' do
   let(:pre_condition) do
     <<~PUPPET
-      function assert_private() {}
-
-      include ::k8s
-      class { '::k8s::node':
-        manage_kubelet => false,
-        manage_proxy => false,
-      }
+      include k8s
     PUPPET
   end
 

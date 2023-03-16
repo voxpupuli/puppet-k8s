@@ -1,4 +1,30 @@
 # @summary Sets up a Kubernetes server instance
+#
+# @param aggregator_ca_cert
+# @param aggregator_ca_key
+# @param api_port Cluster API port
+# @param ca_cert path to the ca cert
+# @param ca_key path to the ca key
+# @param cert_path path to cert files
+# @param cluster_cidr cluster cidr
+# @param cluster_domain cluster domain name
+# @param direct_master direct clust API connection
+# @param dns_service_address cluster dns service address
+# @param ensure set ensure for installation or deinstallation
+# @param etcd_servers list etcd servers if no puppetdb is used
+# @param firewall_type define the type of firewall to use
+# @param generate_ca initially generate ca
+# @param manage_certs whether to manage certs or not
+# @param manage_components whether to manage components or not
+# @param manage_etcd whether to manage etcd or not
+# @param manage_firewall whether to manage firewall or not
+# @param manage_kubeadm whether to install kubeadm or not
+# @param manage_resources whether to manage cluster internal resources or not
+# @param manage_signing whether to manage cert signing or not
+# @param master cluster API connection
+# @param node_on_server whether to use controller also as nodes or not
+# @param puppetdb_discovery_tag enable puppetdb resource searching
+#
 class k8s::server (
   K8s::Ensure $ensure  = $k8s::ensure,
   Integer[1] $api_port = 6443,
@@ -23,9 +49,11 @@ class k8s::server (
   Boolean $manage_components        = true,
   Boolean $manage_resources         = true,
   Boolean $node_on_server           = true,
+  Boolean $manage_kubeadm           = false,
   String[1] $puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag,
 
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
+  Optional[K8s::Firewall] $firewall_type = $k8s::firewall_type,
 ) {
   if $manage_etcd {
     class { 'k8s::server::etcd':
@@ -74,7 +102,12 @@ class k8s::server (
     $cluster_nodes.each |$node| { k8s::server::tls::k8s_sign { $node['certname']: } }
   }
 
-  include k8s::node::kubectl
+  include k8s::install::kubectl
+
+  if $manage_kubeadm {
+    include k8s::install::kubeadm
+  }
+
   kubeconfig { '/root/.kube/config':
     ensure          => $ensure,
     server          => "https://localhost:${api_port}",
