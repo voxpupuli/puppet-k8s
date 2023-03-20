@@ -12,6 +12,7 @@ class k8s::server::resources (
   Boolean $manage_kube_proxy = $k8s::manage_kube_proxy,
   Boolean $manage_coredns    = true,
   Boolean $manage_flannel    = true,
+  Boolean $manage_cilium     = $k8s::manage_cilium,
 
   String[1] $kube_proxy_image                    = 'k8s.gcr.io/kube-proxy',
   String[1] $kube_proxy_tag                      = "v${k8s::version}",
@@ -896,6 +897,7 @@ class k8s::server::resources (
   }
 
   if $manage_flannel {
+    if $manage_cilium { fail('please disable manage_cilium') }
     kubectl_apply {
       default:
         kubeconfig    => $kubeconfig,
@@ -1185,6 +1187,13 @@ class k8s::server::resources (
     }
   }
 
+  if $manage_cilium {
+    if $manage_kube_proxy { fail('please disable manage_kube_proxy') }
+    if $manage_flannel { fail('please disable manage_flannel') }
+    include k8s::install::cilium
+  }
+
+  # Cluster role bindings
   kubectl_apply {
     default:
       kubeconfig  => $kubeconfig,

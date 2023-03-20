@@ -5,7 +5,8 @@
 #
 # @param manage_sysctl_settings
 #   A flag to manage required sysctl settings.
-#
+# @param ensure
+# @param packaging
 class k8s (
   K8s::Ensure $ensure                     = 'present',
   Enum['container', 'native'] $packaging  = 'native',
@@ -13,13 +14,17 @@ class k8s (
   String[1] $version                      = '1.26.1',
   String[1] $etcd_version                 = '3.5.1',
 
-  String[1] $container_registry             = 'gcr.io/google_containers',
-  String[1] $container_image                = 'hyperkube',
-  Optional[String] $container_image_tag     = undef,
-  Enum['docker', 'crio'] $container_manager = 'crio',
-  String[1] $container_runtime_service      = "${container_manager}.service",
-  Optional[String[1]] $crio_package         = undef,
-  String[1] $runc_version                   = 'installed',
+  String[1] $container_registry              = 'gcr.io/google_containers',
+  String[1] $container_image                 = 'hyperkube',
+  Optional[String] $container_image_tag      = undef,
+
+  K8s::Container_runtimes $container_manager = 'crio',
+  String[1] $container_runtime_service       = "${container_manager}.service",
+  Optional[String[1]] $crio_package          = undef,
+  Optional[String[1]] $containerd_package    = undef,
+  Optional[String[1]] $docker_package        = undef,
+  Optional[String[1]] $crictl_package        = undef,
+  String[1] $runc_version                    = 'installed',
 
   Boolean $manage_etcd              = true,
   Boolean $manage_firewall          = false,
@@ -31,6 +36,7 @@ class k8s (
   Boolean $manage_container_manager = true,
   Boolean $manage_kube_proxy        = true,
   Boolean $puppetdb_discovery       = false,
+  Boolean $manage_cilium            = false,
   String[1] $puppetdb_discovery_tag = 'default',
 
   Boolean $purge_manifests = true,
@@ -55,59 +61,7 @@ class k8s (
   Optional[K8s::Firewall] $firewall_type = undef,
 ) {
   if $manage_container_manager {
-    if $container_manager == 'docker' {
-      $pkg = 'docker'
-    } else {
-      if fact('os.family') == 'Debian' {
-        $_crio_version = $version.split('\.')[0, 2].join('.')
-        if versioncmp($_crio_version, '1.17') < 0 {
-          $pkg = pick($crio_package, "cri-o-${_crio_version}")
-        } else {
-          $pkg = pick($crio_package, 'cri-o')
-        }
-
-        # Avoid a potential issue with some CRI-o versions
-        file { ['/usr/lib/cri-o-runc/sbin', '/usr/lib/cri-o-runc']:
-          ensure => directory,
-        }
-        file { '/usr/lib/cri-o-runc/sbin/runc':
-          ensure  => link,
-          target  => '/usr/sbin/runc',
-          replace => false,
-        }
-      } else {
-        $pkg = pick($crio_package, 'cri-o')
-      }
-
-      file { '/usr/libexec/crio/conmon':
-        ensure  => link,
-        target  => '/usr/bin/conmon',
-        replace => false,
-        require => Package['k8s container manager'],
-      }
-      file { '/etc/cni/net.d/100-crio-bridge.conf':
-        ensure  => absent,
-        require => Package['k8s container manager'],
-      }
-    }
-
-    package { 'k8s container manager':
-      name => $pkg,
-    }
-    -> file_line { 'K8s crio cgroup manager':
-      path  => '/etc/crio/crio.conf',
-      line  => 'cgroup_manager = "systemd"',
-      match => '^cgroup_manager',
-    }
-
-    # is needed by cri-o but its not a dependency of the package
-    package { 'runc':
-      ensure => $runc_version,
-    }
-
-    if $manage_repo {
-      Class['k8s::repo'] -> Package['k8s container manager']
-    }
+    include k8s::install::container_runtime
   }
 
   group { 'kube':
@@ -115,6 +69,7 @@ class k8s (
     system => true,
     gid    => 888,
   }
+
   user { 'kube':
     ensure     => present,
     comment    => 'Kubernetes user',
@@ -139,6 +94,7 @@ class k8s (
     '/opt/k8s': ;
     '/opt/k8s/bin': ;
   }
+
   file { '/var/run/kubernetes':
     ensure => directory,
     owner  => 'kube',
@@ -160,11 +116,6 @@ class k8s (
     default:
       ensure => directory;
 
-    '/etc/cni': ;
-    '/etc/cni/net.d': ;
-    '/opt/cni': ;
-    '/opt/cni/bin': ;
-
     '/etc/kubernetes': ;
     '/etc/kubernetes/certs': ;
     '/etc/kubernetes/manifests':
@@ -183,9 +134,33 @@ class k8s (
     '/usr/share/containers/oci/hooks.d': ;
   }
 
+  if $manage_cilium {
+    if fact('os.name') == 'Ubuntu' and fact('os.release.full') == '22.04' {
+      # prepare system for cilium
+      # see https://docs.cilium.io/en/v1.13/operations/system_requirements/#systemd-based-distributions
+      ini_setting { 'ManageForeignRoutes':
+        ensure  => $ensure,
+        value   => 'no',
+        setting => 'ManageForeignRoutes',
+        section => 'Resolve',
+        path    => '/etc/systemd/resolved.conf',
+        notify  => Service['systemd-resolved'],
+      }
+      ini_setting { 'ManageForeignRoutingPolicyRules':
+        ensure  => $ensure,
+        value   => 'no',
+        setting => 'ManageForeignRoutes',
+        section => 'Resolve',
+        path    => '/etc/systemd/resolved.conf',
+        notify  => Service['systemd-resolved'],
+      }
+    }
+  }
+
   if $manage_repo {
     include k8s::repo
   }
+
   if $manage_packages {
     # Ensure conntrack is installed to properly handle networking cleanup
     if fact('os.family') == 'Debian' {
@@ -194,14 +169,10 @@ class k8s (
       $_conntrack = 'conntrack-tools'
     }
 
-    ensure_packages([
-        'containernetworking-plugins',
-        $_conntrack,
-    ])
-    if $manage_repo {
-      Class['k8s::repo'] -> Package['containernetworking-plugins']
-    }
+    ensure_packages([$_conntrack,])
   }
+
+  include k8s::install::cni_plugins
 
   if $role == 'server' {
     include k8s::server

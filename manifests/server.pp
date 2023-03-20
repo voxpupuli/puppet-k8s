@@ -16,6 +16,7 @@
 # @param generate_ca initially generate ca
 # @param manage_certs whether to manage certs or not
 # @param manage_components whether to manage components or not
+# @param manage_crictl whether to install crictl or not
 # @param manage_etcd whether to manage etcd or not
 # @param manage_firewall whether to manage firewall or not
 # @param manage_kubeadm whether to install kubeadm or not
@@ -50,6 +51,7 @@ class k8s::server (
   Boolean $manage_resources         = true,
   Boolean $node_on_server           = true,
   Boolean $manage_kubeadm           = false,
+  Boolean $manage_crictl            = false,
   String[1] $puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag,
 
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
@@ -106,6 +108,10 @@ class k8s::server (
 
   if $manage_kubeadm {
     include k8s::install::kubeadm
+  }
+
+  if $manage_crictl {
+    include k8s::install::crictl
   }
 
   kubeconfig { '/root/.kube/config':

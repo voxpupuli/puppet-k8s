@@ -12,6 +12,7 @@ class k8s::repo (
       if fact('os.name') == 'Debian' {
         if Integer(fact('os.release.major')) < 10 {
           warning('CRI-O is only available for Debian 10 and newer')
+          warning('containerD is only available for Debian 10 and newer')
         }
         if versioncmp($crio_version, '1.19') >= 0 {
           $release_name = "Debian_${fact('os.release.major')}"
@@ -63,6 +64,14 @@ class k8s::repo (
           baseurl  => $crio_url,
           gpgcheck => 1,
           gpgkey   => "${crio_url}repodata/repomd.xml.key",
+        }
+
+        # for docker binary and containerd binary
+        yumrepo { 'docker-ce-stable':
+          descr    => 'Docker CE Stable - $basearch',
+          baseurl  => 'https://download.docker.com/linux/centos/$releasever/$basearch/stable',
+          gpgcheck => 1,
+          gpgkey   => 'https://download.docker.com/linux/centos/gpg',
         }
       }
     }
