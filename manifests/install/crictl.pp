@@ -27,6 +27,8 @@ class k8s::install::crictl (
       ensure    => stdlib::ensure($ensure, 'package'),
     }
 
+    Class['k8s::repo'] -> Package[$pkg]
+
     $config_require = Package[$pkg]
   } else {
     archive { 'crictl':
