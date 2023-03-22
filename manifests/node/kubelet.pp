@@ -20,7 +20,6 @@
 # @param runtime_service name of the service of the container runtime
 # @param support_dualstack
 # @param token k8s token to join a cluster
-# @param systemd_resolved toggle to fix systemd-resolved coredns loop bug
 #
 class k8s::node::kubelet (
   K8s::Ensure $ensure = $k8s::node::ensure,
@@ -52,7 +51,6 @@ class k8s::node::kubelet (
   Optional[String[1]] $token = $k8s::node::node_token,
 
   Optional[K8s::Firewall] $firewall_type = $k8s::node::firewall_type,
-  Boolean $systemd_resolved              = false,
 ) {
   k8s::binary { 'kubelet':
     ensure => $ensure,
@@ -147,7 +145,7 @@ class k8s::node::kubelet (
     }
   }
 
-  if $systemd_resolved {
+  if $facts['systemd_internal_services']['systemd-resolved.service'] == 'enabled' {
     $systemd_resolved_fix = { 'resolvConf' => '/run/systemd/resolve/resolv.conf' }
   } else {
     $systemd_resolved_fix = {}

@@ -1074,7 +1074,6 @@ The following parameters are available in the `k8s::node::kubelet` class:
 * [`runtime_service`](#-k8s--node--kubelet--runtime_service)
 * [`support_dualstack`](#-k8s--node--kubelet--support_dualstack)
 * [`token`](#-k8s--node--kubelet--token)
-* [`systemd_resolved`](#-k8s--node--kubelet--systemd_resolved)
 
 ##### <a name="-k8s--node--kubelet--arguments"></a>`arguments`
 
@@ -1235,14 +1234,6 @@ Data type: `Optional[String[1]]`
 k8s token to join a cluster
 
 Default value: `$k8s::node::node_token`
-
-##### <a name="-k8s--node--kubelet--systemd_resolved"></a>`systemd_resolved`
-
-Data type: `Boolean`
-
-toggle to fix systemd-resolved coredns loop bug
-
-Default value: `false`
 
 ### <a name="k8s--node--simple_cni"></a>`k8s::node::simple_cni`
 
