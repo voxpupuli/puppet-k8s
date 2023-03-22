@@ -22,7 +22,6 @@ class k8s (
   String[1] $container_runtime_service       = "${container_manager}.service",
   Optional[String[1]] $crio_package          = undef,
   Optional[String[1]] $containerd_package    = undef,
-  Optional[String[1]] $docker_package        = undef,
   Optional[String[1]] $crictl_package        = undef,
   String[1] $runc_version                    = 'installed',
 
@@ -135,7 +134,7 @@ class k8s (
   }
 
   if $manage_cilium {
-    if fact('os.name') == 'Ubuntu' and fact('os.release.full') == '22.04' {
+    if $facts['systemd_internal_services']['systemd-resolved.service'] == 'enabled' {
       # prepare system for cilium
       # see https://docs.cilium.io/en/v1.13/operations/system_requirements/#systemd-based-distributions
       ini_setting { 'ManageForeignRoutes':
@@ -146,6 +145,7 @@ class k8s (
         path    => '/etc/systemd/resolved.conf',
         notify  => Service['systemd-resolved'],
       }
+
       ini_setting { 'ManageForeignRoutingPolicyRules':
         ensure  => $ensure,
         value   => 'no',

@@ -1,8 +1,12 @@
 # Class: k8s::node::simple_cni
 #
+# @summary Provide a simple bridged standard network interface.
+#          For basic usage if one does not have flannel, cilium, calico or something else yet.
+#          Uses the cni-plugins bridge binary to create a bridge interface to connect the containers
 #
+# @param pod_cidr cidr for pods in the network
 class k8s::node::simple_cni (
-  K8s::CIDR $pod_cidr = '10.0.0.0/24'
+  K8s::CIDR $pod_cidr = $k8s::cluster_cidr,
 ) {
   $bridge = {
     cniVersion => '0.4.0',

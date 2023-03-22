@@ -7,7 +7,6 @@ describe 'K8s::Container_runtimes' do
     %w[
       containerd
       crio
-      docker
     ].each do |value|
       describe value.inspect do
         it { is_expected.to allow_value(value) }

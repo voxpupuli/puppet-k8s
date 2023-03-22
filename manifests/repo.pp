@@ -66,7 +66,7 @@ class k8s::repo (
           gpgkey   => "${crio_url}repodata/repomd.xml.key",
         }
 
-        # for docker binary and containerd binary
+        # for containerd binary
         yumrepo { 'docker-ce-stable':
           descr    => 'Docker CE Stable - $basearch',
           baseurl  => 'https://download.docker.com/linux/centos/$releasever/$basearch/stable',

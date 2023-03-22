@@ -19,6 +19,7 @@
 # @param proxy_key path to proxy key file
 # @param proxy_token k8s token for kube-proxy
 # @param puppetdb_discovery_tag enable puppetdb resource searching
+# @param manage_simple_cni toggle to use a simple bridge network for containers
 #
 class k8s::node (
   K8s::Ensure $ensure = $k8s::ensure,

@@ -23,7 +23,7 @@ class k8s::install::cni_plugins (
   }
 
   case $method {
-    'loose': {
+    'tarball', 'loose': {
       file { '/opt/cni/bin':
         ensure => directory,
       }

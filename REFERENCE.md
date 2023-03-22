@@ -17,7 +17,9 @@
 * [`k8s::node::kube_proxy`](#k8s--node--kube_proxy): Sets up a on-node kube-proxy instance
 * [`k8s::node::kubectl`](#k8s--node--kubectl): Installs the kubectl binary
 * [`k8s::node::kubelet`](#k8s--node--kubelet): Installs and configures kubelet
-* [`k8s::node::simple_cni`](#k8s--node--simple_cni): Class: k8s::node::simple_cni
+* [`k8s::node::simple_cni`](#k8s--node--simple_cni): Provide a simple bridged standard network interface.
+For basic usage if one does not have flannel, cilium, calico or something else yet.
+Uses the cni-plugins bridge binary to create a bridge interface to connect the containers
 * [`k8s::repo`](#k8s--repo): Handles repositories for the container runtime
 * [`k8s::server`](#k8s--server): Sets up a Kubernetes server instance
 * [`k8s::server::apiserver`](#k8s--server--apiserver): Installs and configures a Kubernetes apiserver
@@ -91,7 +93,6 @@ The following parameters are available in the `k8s` class:
 * [`container_runtime_service`](#-k8s--container_runtime_service)
 * [`crio_package`](#-k8s--crio_package)
 * [`containerd_package`](#-k8s--containerd_package)
-* [`docker_package`](#-k8s--docker_package)
 * [`crictl_package`](#-k8s--crictl_package)
 * [`runc_version`](#-k8s--runc_version)
 * [`manage_etcd`](#-k8s--manage_etcd)
@@ -226,14 +227,6 @@ Data type: `Optional[String[1]]`
 Default value: `undef`
 
 ##### <a name="-k8s--containerd_package"></a>`containerd_package`
-
-Data type: `Optional[String[1]]`
-
-
-
-Default value: `undef`
-
-##### <a name="-k8s--docker_package"></a>`docker_package`
 
 Data type: `Optional[String[1]]`
 
@@ -576,7 +569,6 @@ The following parameters are available in the `k8s::install::container_runtime` 
 * [`container_manager`](#-k8s--install--container_runtime--container_manager)
 * [`crio_package`](#-k8s--install--container_runtime--crio_package)
 * [`containerd_package`](#-k8s--install--container_runtime--containerd_package)
-* [`docker_package`](#-k8s--install--container_runtime--docker_package)
 * [`k8s_version`](#-k8s--install--container_runtime--k8s_version)
 * [`runc_version`](#-k8s--install--container_runtime--runc_version)
 
@@ -611,14 +603,6 @@ Data type: `Optional[String[1]]`
 the containerd package anme
 
 Default value: `$k8s::containerd_package`
-
-##### <a name="-k8s--install--container_runtime--docker_package"></a>`docker_package`
-
-Data type: `Optional[String[1]]`
-
-the docker package name
-
-Default value: `$k8s::docker_package`
 
 ##### <a name="-k8s--install--container_runtime--k8s_version"></a>`k8s_version`
 
@@ -765,8 +749,8 @@ The following parameters are available in the `k8s::node` class:
 * [`proxy_key`](#-k8s--node--proxy_key)
 * [`proxy_token`](#-k8s--node--proxy_token)
 * [`puppetdb_discovery_tag`](#-k8s--node--puppetdb_discovery_tag)
-* [`manage_crictl`](#-k8s--node--manage_crictl)
 * [`manage_simple_cni`](#-k8s--node--manage_simple_cni)
+* [`manage_crictl`](#-k8s--node--manage_crictl)
 
 ##### <a name="-k8s--node--ca_cert"></a>`ca_cert`
 
@@ -920,15 +904,15 @@ enable puppetdb resource searching
 
 Default value: `$k8s::puppetdb_discovery_tag`
 
-##### <a name="-k8s--node--manage_crictl"></a>`manage_crictl`
+##### <a name="-k8s--node--manage_simple_cni"></a>`manage_simple_cni`
 
 Data type: `Boolean`
 
-
+toggle to use a simple bridge network for containers
 
 Default value: `false`
 
-##### <a name="-k8s--node--manage_simple_cni"></a>`manage_simple_cni`
+##### <a name="-k8s--node--manage_crictl"></a>`manage_crictl`
 
 Data type: `Boolean`
 
@@ -1274,9 +1258,9 @@ The following parameters are available in the `k8s::node::simple_cni` class:
 
 Data type: `K8s::CIDR`
 
+cidr for pods in the network
 
-
-Default value: `'10.0.0.0/24'`
+Default value: `$k8s::cluster_cidr`
 
 ### <a name="k8s--repo"></a>`k8s::repo`
 
@@ -3516,7 +3500,7 @@ Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[
 
 a type to describe the supported container runtimes
 
-Alias of `Enum['docker', 'crio', 'containerd']`
+Alias of `Enum['crio', 'containerd']`
 
 ### <a name="K8s--Duration"></a>`K8s::Duration`
 

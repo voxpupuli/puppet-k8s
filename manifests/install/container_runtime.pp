@@ -6,7 +6,6 @@
 # @param container_manager set the cri to use
 # @param crio_package cri-o the package name
 # @param containerd_package the containerd package anme
-# @param docker_package the docker package name
 # @param k8s_version the k8s version
 # @param runc_version the runc version
 #
@@ -15,14 +14,10 @@ class k8s::install::container_runtime (
   K8s::Container_runtimes $container_manager = $k8s::container_manager,
   Optional[String[1]] $crio_package          = $k8s::crio_package,
   Optional[String[1]] $containerd_package    = $k8s::containerd_package,
-  Optional[String[1]] $docker_package        = $k8s::docker_package,
   String[1] $k8s_version                     = $k8s::version,
   String[1] $runc_version                    = $k8s::runc_version,
 ) {
   case $container_manager {
-    'docker': {
-      $pkg = pick($docker_package, 'docker')
-    }
     'crio': {
       if fact('os.family') == 'Debian' {
         $_crio_version = $k8s_version.split('\.')[0, 2].join('.')
