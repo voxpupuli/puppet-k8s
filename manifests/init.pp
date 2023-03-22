@@ -134,7 +134,7 @@ class k8s (
   }
 
   if $manage_cilium {
-    if $facts['systemd_internal_services']['systemd-resolved.service'] == 'enabled' {
+    if fact('systemd_internal_services."systemd-resolved.service"') == 'enabled' {
       # prepare system for cilium
       # see https://docs.cilium.io/en/v1.13/operations/system_requirements/#systemd-based-distributions
       ini_setting { 'ManageForeignRoutes':

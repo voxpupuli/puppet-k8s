@@ -145,7 +145,7 @@ class k8s::node::kubelet (
     }
   }
 
-  if $facts['systemd_internal_services']['systemd-resolved.service'] == 'enabled' {
+  if fact('systemd_internal_services."systemd-resolved.service"') == 'enabled' {
     $systemd_resolved_fix = { 'resolvConf' => '/run/systemd/resolve/resolv.conf' }
   } else {
     $systemd_resolved_fix = {}
