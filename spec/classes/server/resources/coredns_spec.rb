@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'k8s::server::resources' do
+describe 'k8s::server::resources::coredns' do
   let(:pre_condition) do
     <<~PUPPET
       function assert_private() {}
@@ -15,6 +15,7 @@ describe 'k8s::server::resources' do
         manage_resources => false,
         node_on_server => false,
       }
+      include ::k8s::server::resources
     PUPPET
   end
 
