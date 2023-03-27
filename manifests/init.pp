@@ -35,7 +35,6 @@ class k8s (
   Boolean $manage_container_manager = true,
   Boolean $manage_kube_proxy        = true,
   Boolean $puppetdb_discovery       = false,
-  Boolean $manage_cilium            = false,
   String[1] $puppetdb_discovery_tag = 'default',
 
   Boolean $purge_manifests = true,
@@ -131,30 +130,6 @@ class k8s (
     '/usr/share/containers/': ;
     '/usr/share/containers/oci/': ;
     '/usr/share/containers/oci/hooks.d': ;
-  }
-
-  if $manage_cilium {
-    if fact('systemd_internal_services."systemd-resolved.service"') == 'enabled' {
-      # prepare system for cilium
-      # see https://docs.cilium.io/en/v1.13/operations/system_requirements/#systemd-based-distributions
-      ini_setting { 'ManageForeignRoutes':
-        ensure  => $ensure,
-        value   => 'no',
-        setting => 'ManageForeignRoutes',
-        section => 'Resolve',
-        path    => '/etc/systemd/resolved.conf',
-        notify  => Service['systemd-resolved'],
-      }
-
-      ini_setting { 'ManageForeignRoutingPolicyRules':
-        ensure  => $ensure,
-        value   => 'no',
-        setting => 'ManageForeignRoutes',
-        section => 'Resolve',
-        path    => '/etc/systemd/resolved.conf',
-        notify  => Service['systemd-resolved'],
-      }
-    }
   }
 
   if $manage_repo {

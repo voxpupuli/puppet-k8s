@@ -7,7 +7,6 @@
 ### Classes
 
 * [`k8s`](#k8s): Sets up a Kubernetes instance - either as a node or as a server
-* [`k8s::install::cilium`](#k8s--install--cilium): installs cilium k8s cni networking
 * [`k8s::install::cni_plugins`](#k8s--install--cni_plugins): manages the installation of the cni plugins
 * [`k8s::install::container_runtime`](#k8s--install--container_runtime): manages the installation of cri
 * [`k8s::install::crictl`](#k8s--install--crictl): installs the crictl debugging tool
@@ -103,7 +102,6 @@ The following parameters are available in the `k8s` class:
 * [`manage_container_manager`](#-k8s--manage_container_manager)
 * [`manage_kube_proxy`](#-k8s--manage_kube_proxy)
 * [`puppetdb_discovery`](#-k8s--puppetdb_discovery)
-* [`manage_cilium`](#-k8s--manage_cilium)
 * [`puppetdb_discovery_tag`](#-k8s--puppetdb_discovery_tag)
 * [`purge_manifests`](#-k8s--purge_manifests)
 * [`native_url_template`](#-k8s--native_url_template)
@@ -314,14 +312,6 @@ Data type: `Boolean`
 
 Default value: `false`
 
-##### <a name="-k8s--manage_cilium"></a>`manage_cilium`
-
-Data type: `Boolean`
-
-
-
-Default value: `false`
-
 ##### <a name="-k8s--puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
 
 Data type: `String[1]`
@@ -457,60 +447,6 @@ Data type: `Optional[K8s::Firewall]`
 
 
 Default value: `undef`
-
-### <a name="k8s--install--cilium"></a>`k8s::install::cilium`
-
-Class: k8s::install::cilium
-
-#### Parameters
-
-The following parameters are available in the `k8s::install::cilium` class:
-
-* [`version`](#-k8s--install--cilium--version)
-* [`arch`](#-k8s--install--cilium--arch)
-* [`checksum`](#-k8s--install--cilium--checksum)
-* [`checksum_type`](#-k8s--install--cilium--checksum_type)
-* [`incluster_version`](#-k8s--install--cilium--incluster_version)
-
-##### <a name="-k8s--install--cilium--version"></a>`version`
-
-Data type: `String[1]`
-
-sets the version to use
-
-Default value: `'v0.13.1'`
-
-##### <a name="-k8s--install--cilium--arch"></a>`arch`
-
-Data type: `String[1]`
-
-sets the arch to use for binary download
-
-Default value: `'amd64'`
-
-##### <a name="-k8s--install--cilium--checksum"></a>`checksum`
-
-Data type: `String[1]`
-
-the checksum to verify the download
-
-Default value: `'dfabb7a080cd2ae40c71e51980183949bd5ce76184ac439ef32f988825cb275d'`
-
-##### <a name="-k8s--install--cilium--checksum_type"></a>`checksum_type`
-
-Data type: `String[1]`
-
-which algorithm the checksum was created with, has to be checked with
-
-Default value: `'sha256'`
-
-##### <a name="-k8s--install--cilium--incluster_version"></a>`incluster_version`
-
-Data type: `String[1]`
-
-cilium internal version number in the cluster pods
-
-Default value: `'1.13.0'`
 
 ### <a name="k8s--install--cni_plugins"></a>`k8s::install::cni_plugins`
 
@@ -2252,7 +2188,6 @@ The following parameters are available in the `k8s::server::resources` class:
 * [`manage_kube_proxy`](#-k8s--server--resources--manage_kube_proxy)
 * [`manage_coredns`](#-k8s--server--resources--manage_coredns)
 * [`manage_flannel`](#-k8s--server--resources--manage_flannel)
-* [`manage_cilium`](#-k8s--server--resources--manage_cilium)
 * [`kube_proxy_image`](#-k8s--server--resources--kube_proxy_image)
 * [`kube_proxy_tag`](#-k8s--server--resources--kube_proxy_tag)
 * [`kube_proxy_daemonset_config`](#-k8s--server--resources--kube_proxy_daemonset_config)
@@ -2345,14 +2280,6 @@ Data type: `Boolean`
 
 
 Default value: `true`
-
-##### <a name="-k8s--server--resources--manage_cilium"></a>`manage_cilium`
-
-Data type: `Boolean`
-
-
-
-Default value: `$k8s::manage_cilium`
 
 ##### <a name="-k8s--server--resources--kube_proxy_image"></a>`kube_proxy_image`
 
