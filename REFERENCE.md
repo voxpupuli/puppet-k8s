@@ -20,6 +20,7 @@
 * [`k8s::server::etcd`](#k8s--server--etcd): Sets up an etcd cluster node
 * [`k8s::server::etcd::setup`](#k8s--server--etcd--setup): Installs and configures an etcd instance
 * [`k8s::server::resources`](#k8s--server--resources): Generates and deploys standard Kubernetes in-cluster services
+* [`k8s::server::resources::bootstrap`](#k8s--server--resources--bootstrap): Generates and deploys the default Puppet boostrap configuration into the cluster
 * [`k8s::server::resources::coredns`](#k8s--server--resources--coredns): Generates and deploys the default CoreDNS DNS provider for Kubernetes
 * [`k8s::server::resources::flannel`](#k8s--server--resources--flannel): Generates and deploys the default CoreDNS DNS provider for Kubernetes
 * [`k8s::server::resources::kube_proxy`](#k8s--server--resources--kube_proxy): Generates and deploys the default kube-proxy service for Kubernetes
@@ -2135,6 +2136,42 @@ Data type: `Hash[String,Data]`
 
 
 Default value: `{}`
+
+### <a name="k8s--server--resources--bootstrap"></a>`k8s::server::resources::bootstrap`
+
+Generates and deploys the default Puppet boostrap configuration into the cluster
+
+#### Parameters
+
+The following parameters are available in the `k8s::server::resources::bootstrap` class:
+
+* [`master`](#-k8s--server--resources--bootstrap--master)
+* [`ensure`](#-k8s--server--resources--bootstrap--ensure)
+* [`kubeconfig`](#-k8s--server--resources--bootstrap--kubeconfig)
+
+##### <a name="-k8s--server--resources--bootstrap--master"></a>`master`
+
+Data type: `String[1]`
+
+The main API URL to encode in the bootstrap configuration
+
+Default value: `$k8s::server::resources::master`
+
+##### <a name="-k8s--server--resources--bootstrap--ensure"></a>`ensure`
+
+Data type: `K8s::Ensure`
+
+
+
+Default value: `$k8s::ensure`
+
+##### <a name="-k8s--server--resources--bootstrap--kubeconfig"></a>`kubeconfig`
+
+Data type: `Stdlib::Unixpath`
+
+
+
+Default value: `$k8s::server::resources::kubeconfig`
 
 ### <a name="k8s--server--resources--coredns"></a>`k8s::server::resources::coredns`
 
