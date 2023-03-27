@@ -7,31 +7,31 @@
 ### Classes
 
 * [`k8s`](#k8s): Sets up a Kubernetes instance - either as a node or as a server
-* [`k8s::install::kubeadm`](#k8sinstallkubeadm): Installs the kubeadm binary
-* [`k8s::install::kubectl`](#k8sinstallkubectl): Installs the kubectl binary
-* [`k8s::node`](#k8snode): Installs a Kubernetes node
-* [`k8s::node::kube_proxy`](#k8snodekube_proxy): Sets up a on-node kube-proxy instance
-* [`k8s::node::kubectl`](#k8snodekubectl): Installs the kubectl binary
-* [`k8s::node::kubelet`](#k8snodekubelet): Installs and configures kubelet
-* [`k8s::repo`](#k8srepo): Handles repositories for the container runtime
-* [`k8s::server`](#k8sserver): Sets up a Kubernetes server instance
-* [`k8s::server::apiserver`](#k8sserverapiserver): Installs and configures a Kubernetes apiserver
-* [`k8s::server::controller_manager`](#k8sservercontroller_manager): Installs and configures a Kubernetes controller manager
-* [`k8s::server::etcd`](#k8sserveretcd): Sets up an etcd cluster node
-* [`k8s::server::etcd::setup`](#k8sserveretcdsetup): Installs and configures an etcd instance
-* [`k8s::server::resources`](#k8sserverresources): Generates and deploys standard Kubernetes in-cluster services
-* [`k8s::server::resources::coredns`](#k8sserverresourcescoredns): Generates and deploys the default CoreDNS DNS provider for Kubernetes
-* [`k8s::server::scheduler`](#k8sserverscheduler): Installs and configures a Kubernetes scheduler
-* [`k8s::server::tls`](#k8sservertls): Generates the necessary Kubernetes certificates for a server
+* [`k8s::install::kubeadm`](#k8s--install--kubeadm): Installs the kubeadm binary
+* [`k8s::install::kubectl`](#k8s--install--kubectl): Installs the kubectl binary
+* [`k8s::node`](#k8s--node): Installs a Kubernetes node
+* [`k8s::node::kube_proxy`](#k8s--node--kube_proxy): Sets up a on-node kube-proxy instance
+* [`k8s::node::kubectl`](#k8s--node--kubectl): Installs the kubectl binary
+* [`k8s::node::kubelet`](#k8s--node--kubelet): Installs and configures kubelet
+* [`k8s::repo`](#k8s--repo): Handles repositories for the container runtime
+* [`k8s::server`](#k8s--server): Sets up a Kubernetes server instance
+* [`k8s::server::apiserver`](#k8s--server--apiserver): Installs and configures a Kubernetes apiserver
+* [`k8s::server::controller_manager`](#k8s--server--controller_manager): Installs and configures a Kubernetes controller manager
+* [`k8s::server::etcd`](#k8s--server--etcd): Sets up an etcd cluster node
+* [`k8s::server::etcd::setup`](#k8s--server--etcd--setup): Installs and configures an etcd instance
+* [`k8s::server::resources`](#k8s--server--resources): Generates and deploys standard Kubernetes in-cluster services
+* [`k8s::server::resources::coredns`](#k8s--server--resources--coredns): Generates and deploys the default CoreDNS DNS provider for Kubernetes
+* [`k8s::server::scheduler`](#k8s--server--scheduler): Installs and configures a Kubernetes scheduler
+* [`k8s::server::tls`](#k8s--server--tls): Generates the necessary Kubernetes certificates for a server
 
 ### Defined types
 
-* [`k8s::binary`](#k8sbinary): Deploys a Kubernetes binary
-* [`k8s::server::bootstrap_token`](#k8sserverbootstrap_token): Generates and stores a kubelet bootstrap token into the cluster
-* [`k8s::server::etcd::member`](#k8sserveretcdmember): Adds another member to a local etcd cluster
-* [`k8s::server::tls::ca`](#k8sservertlsca): Generates a TLS CA
-* [`k8s::server::tls::cert`](#k8sservertlscert): Generates and signs a TLS certificate
-* [`k8s::server::tls::k8s_sign`](#k8sservertlsk8s_sign): Signs pending CSR requests for bootstrapping clients
+* [`k8s::binary`](#k8s--binary): Deploys a Kubernetes binary
+* [`k8s::server::bootstrap_token`](#k8s--server--bootstrap_token): Generates and stores a kubelet bootstrap token into the cluster
+* [`k8s::server::etcd::member`](#k8s--server--etcd--member): Adds another member to a local etcd cluster
+* [`k8s::server::tls::ca`](#k8s--server--tls--ca): Generates a TLS CA
+* [`k8s::server::tls::cert`](#k8s--server--tls--cert): Generates and signs a TLS certificate
+* [`k8s::server::tls::k8s_sign`](#k8s--server--tls--k8s_sign): Signs pending CSR requests for bootstrapping clients
 
 ### Resource types
 
@@ -40,27 +40,27 @@
 
 ### Functions
 
-* [`k8s::format_arguments`](#k8sformat_arguments): Formats a hash of arguments into something that can be passed to a kubernetes application
-* [`k8s::format_url`](#k8sformat_url): Formats a download URL for K8s binaries
-* [`k8s::ip_in_cidr`](#k8sip_in_cidr): Retrieves an IP inside of a CIDR based on an index
+* [`k8s::format_arguments`](#k8s--format_arguments): Formats a hash of arguments into something that can be passed to a kubernetes application
+* [`k8s::format_url`](#k8s--format_url): Formats a download URL for K8s binaries
+* [`k8s::ip_in_cidr`](#k8s--ip_in_cidr): Retrieves an IP inside of a CIDR based on an index
 
 ### Data types
 
-* [`K8s::CIDR`](#k8scidr): a type to describe one or more IPv4/6 CIDR
-* [`K8s::Duration`](#k8sduration): This regexp matches Go duration values, as taken from;
-* [`K8s::Ensure`](#k8sensure): a type to describe the ensure pattern
-* [`K8s::Extended_key_usage`](#k8sextended_key_usage): a type to describe extended key usage for a TLS certificate
-* [`K8s::Firewall`](#k8sfirewall): a type to describe the type of the firewall to use
-* [`K8s::IP_addresses`](#k8sip_addresses): a type to describe multiple IP addresses without subnet sizes
-* [`K8s::Native_packaging`](#k8snative_packaging): a type to describe Kubernetes native packaging methods
-* [`K8s::Node_auth`](#k8snode_auth): a type to describe node/kubelet authentication methods
-* [`K8s::PortRange`](#k8sportrange): This regexp matches port range values
-* [`K8s::Proxy_auth`](#k8sproxy_auth): a type to describe kube-proxy authentication methods
-* [`K8s::Quantity`](#k8squantity): This regexp matches quantities, like those for resource requests/limits
-* [`K8s::TLS_altnames`](#k8stls_altnames): a type to describe TLS alternative names in certificates
-* [`K8s::Timestamp`](#k8stimestamp): This regexp matches RFC3339 timestamps, the same as what Kubernetes expects to find
-* [`K8s::URI`](#k8suri): This regexp matches URI values
-* [`K8s::Version`](#k8sversion): A type for handling Kubernetes version numbers
+* [`K8s::CIDR`](#K8s--CIDR): a type to describe one or more IPv4/6 CIDR
+* [`K8s::Duration`](#K8s--Duration): This regexp matches Go duration values, as taken from;
+* [`K8s::Ensure`](#K8s--Ensure): a type to describe the ensure pattern
+* [`K8s::Extended_key_usage`](#K8s--Extended_key_usage): a type to describe extended key usage for a TLS certificate
+* [`K8s::Firewall`](#K8s--Firewall): a type to describe the type of the firewall to use
+* [`K8s::IP_addresses`](#K8s--IP_addresses): a type to describe multiple IP addresses without subnet sizes
+* [`K8s::Native_packaging`](#K8s--Native_packaging): a type to describe Kubernetes native packaging methods
+* [`K8s::Node_auth`](#K8s--Node_auth): a type to describe node/kubelet authentication methods
+* [`K8s::PortRange`](#K8s--PortRange): This regexp matches port range values
+* [`K8s::Proxy_auth`](#K8s--Proxy_auth): a type to describe kube-proxy authentication methods
+* [`K8s::Quantity`](#K8s--Quantity): This regexp matches quantities, like those for resource requests/limits
+* [`K8s::TLS_altnames`](#K8s--TLS_altnames): a type to describe TLS alternative names in certificates
+* [`K8s::Timestamp`](#K8s--Timestamp): This regexp matches RFC3339 timestamps, the same as what Kubernetes expects to find
+* [`K8s::URI`](#K8s--URI): This regexp matches URI values
+* [`K8s::Version`](#K8s--Version): A type for handling Kubernetes version numbers
 
 ## Classes
 
@@ -72,63 +72,63 @@ Sets up a Kubernetes instance - either as a node or as a server
 
 The following parameters are available in the `k8s` class:
 
-* [`manage_kernel_modules`](#manage_kernel_modules)
-* [`manage_sysctl_settings`](#manage_sysctl_settings)
-* [`ensure`](#ensure)
-* [`packaging`](#packaging)
-* [`native_packaging`](#native_packaging)
-* [`version`](#version)
-* [`etcd_version`](#etcd_version)
-* [`container_registry`](#container_registry)
-* [`container_image`](#container_image)
-* [`container_image_tag`](#container_image_tag)
-* [`container_manager`](#container_manager)
-* [`container_runtime_service`](#container_runtime_service)
-* [`crio_package`](#crio_package)
-* [`runc_version`](#runc_version)
-* [`manage_etcd`](#manage_etcd)
-* [`manage_firewall`](#manage_firewall)
-* [`manage_image`](#manage_image)
-* [`manage_repo`](#manage_repo)
-* [`manage_packages`](#manage_packages)
-* [`manage_container_manager`](#manage_container_manager)
-* [`manage_kube_proxy`](#manage_kube_proxy)
-* [`puppetdb_discovery`](#puppetdb_discovery)
-* [`puppetdb_discovery_tag`](#puppetdb_discovery_tag)
-* [`purge_manifests`](#purge_manifests)
-* [`native_url_template`](#native_url_template)
-* [`tarball_url_template`](#tarball_url_template)
-* [`package_template`](#package_template)
-* [`hyperkube_name`](#hyperkube_name)
-* [`sysconfig_path`](#sysconfig_path)
-* [`node_auth`](#node_auth)
-* [`incluster_master`](#incluster_master)
-* [`master`](#master)
-* [`service_cluster_cidr`](#service_cluster_cidr)
-* [`cluster_cidr`](#cluster_cidr)
-* [`api_service_address`](#api_service_address)
-* [`dns_service_address`](#dns_service_address)
-* [`cluster_domain`](#cluster_domain)
-* [`role`](#role)
-* [`firewall_type`](#firewall_type)
+* [`manage_kernel_modules`](#-k8s--manage_kernel_modules)
+* [`manage_sysctl_settings`](#-k8s--manage_sysctl_settings)
+* [`ensure`](#-k8s--ensure)
+* [`packaging`](#-k8s--packaging)
+* [`native_packaging`](#-k8s--native_packaging)
+* [`version`](#-k8s--version)
+* [`etcd_version`](#-k8s--etcd_version)
+* [`container_registry`](#-k8s--container_registry)
+* [`container_image`](#-k8s--container_image)
+* [`container_image_tag`](#-k8s--container_image_tag)
+* [`container_manager`](#-k8s--container_manager)
+* [`container_runtime_service`](#-k8s--container_runtime_service)
+* [`crio_package`](#-k8s--crio_package)
+* [`runc_version`](#-k8s--runc_version)
+* [`manage_etcd`](#-k8s--manage_etcd)
+* [`manage_firewall`](#-k8s--manage_firewall)
+* [`manage_image`](#-k8s--manage_image)
+* [`manage_repo`](#-k8s--manage_repo)
+* [`manage_packages`](#-k8s--manage_packages)
+* [`manage_container_manager`](#-k8s--manage_container_manager)
+* [`manage_kube_proxy`](#-k8s--manage_kube_proxy)
+* [`puppetdb_discovery`](#-k8s--puppetdb_discovery)
+* [`puppetdb_discovery_tag`](#-k8s--puppetdb_discovery_tag)
+* [`purge_manifests`](#-k8s--purge_manifests)
+* [`native_url_template`](#-k8s--native_url_template)
+* [`tarball_url_template`](#-k8s--tarball_url_template)
+* [`package_template`](#-k8s--package_template)
+* [`hyperkube_name`](#-k8s--hyperkube_name)
+* [`sysconfig_path`](#-k8s--sysconfig_path)
+* [`node_auth`](#-k8s--node_auth)
+* [`incluster_master`](#-k8s--incluster_master)
+* [`master`](#-k8s--master)
+* [`service_cluster_cidr`](#-k8s--service_cluster_cidr)
+* [`cluster_cidr`](#-k8s--cluster_cidr)
+* [`api_service_address`](#-k8s--api_service_address)
+* [`dns_service_address`](#-k8s--dns_service_address)
+* [`cluster_domain`](#-k8s--cluster_domain)
+* [`role`](#-k8s--role)
+* [`firewall_type`](#-k8s--firewall_type)
 
-##### <a name="manage_kernel_modules"></a>`manage_kernel_modules`
+##### <a name="-k8s--manage_kernel_modules"></a>`manage_kernel_modules`
 
 Data type: `Boolean`
 
 A flag to manage required Kernel modules.
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="manage_sysctl_settings"></a>`manage_sysctl_settings`
+##### <a name="-k8s--manage_sysctl_settings"></a>`manage_sysctl_settings`
 
 Data type: `Boolean`
 
 A flag to manage required sysctl settings.
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -136,7 +136,7 @@ Data type: `K8s::Ensure`
 
 Default value: `'present'`
 
-##### <a name="packaging"></a>`packaging`
+##### <a name="-k8s--packaging"></a>`packaging`
 
 Data type: `Enum['container', 'native']`
 
@@ -144,7 +144,7 @@ Data type: `Enum['container', 'native']`
 
 Default value: `'native'`
 
-##### <a name="native_packaging"></a>`native_packaging`
+##### <a name="-k8s--native_packaging"></a>`native_packaging`
 
 Data type: `K8s::Native_packaging`
 
@@ -152,7 +152,7 @@ Data type: `K8s::Native_packaging`
 
 Default value: `'loose'`
 
-##### <a name="version"></a>`version`
+##### <a name="-k8s--version"></a>`version`
 
 Data type: `String[1]`
 
@@ -160,7 +160,7 @@ Data type: `String[1]`
 
 Default value: `'1.26.1'`
 
-##### <a name="etcd_version"></a>`etcd_version`
+##### <a name="-k8s--etcd_version"></a>`etcd_version`
 
 Data type: `String[1]`
 
@@ -168,7 +168,7 @@ Data type: `String[1]`
 
 Default value: `'3.5.1'`
 
-##### <a name="container_registry"></a>`container_registry`
+##### <a name="-k8s--container_registry"></a>`container_registry`
 
 Data type: `String[1]`
 
@@ -176,7 +176,7 @@ Data type: `String[1]`
 
 Default value: `'gcr.io/google_containers'`
 
-##### <a name="container_image"></a>`container_image`
+##### <a name="-k8s--container_image"></a>`container_image`
 
 Data type: `String[1]`
 
@@ -184,15 +184,15 @@ Data type: `String[1]`
 
 Default value: `'hyperkube'`
 
-##### <a name="container_image_tag"></a>`container_image_tag`
+##### <a name="-k8s--container_image_tag"></a>`container_image_tag`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="container_manager"></a>`container_manager`
+##### <a name="-k8s--container_manager"></a>`container_manager`
 
 Data type: `Enum['docker', 'crio']`
 
@@ -200,7 +200,7 @@ Data type: `Enum['docker', 'crio']`
 
 Default value: `'crio'`
 
-##### <a name="container_runtime_service"></a>`container_runtime_service`
+##### <a name="-k8s--container_runtime_service"></a>`container_runtime_service`
 
 Data type: `String[1]`
 
@@ -208,15 +208,15 @@ Data type: `String[1]`
 
 Default value: `"${container_manager}.service"`
 
-##### <a name="crio_package"></a>`crio_package`
+##### <a name="-k8s--crio_package"></a>`crio_package`
 
 Data type: `Optional[String[1]]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="runc_version"></a>`runc_version`
+##### <a name="-k8s--runc_version"></a>`runc_version`
 
 Data type: `String[1]`
 
@@ -224,71 +224,71 @@ Data type: `String[1]`
 
 Default value: `'installed'`
 
-##### <a name="manage_etcd"></a>`manage_etcd`
+##### <a name="-k8s--manage_etcd"></a>`manage_etcd`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="manage_firewall"></a>`manage_firewall`
-
-Data type: `Boolean`
-
-
-
-Default value: ``false``
-
-##### <a name="manage_image"></a>`manage_image`
+##### <a name="-k8s--manage_firewall"></a>`manage_firewall`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="manage_repo"></a>`manage_repo`
-
-Data type: `Boolean`
-
-
-
-Default value: ``true``
-
-##### <a name="manage_packages"></a>`manage_packages`
+##### <a name="-k8s--manage_image"></a>`manage_image`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `false`
 
-##### <a name="manage_container_manager"></a>`manage_container_manager`
-
-Data type: `Boolean`
-
-
-
-Default value: ``true``
-
-##### <a name="manage_kube_proxy"></a>`manage_kube_proxy`
+##### <a name="-k8s--manage_repo"></a>`manage_repo`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="puppetdb_discovery"></a>`puppetdb_discovery`
+##### <a name="-k8s--manage_packages"></a>`manage_packages`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `true`
 
-##### <a name="puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
+##### <a name="-k8s--manage_container_manager"></a>`manage_container_manager`
+
+Data type: `Boolean`
+
+
+
+Default value: `true`
+
+##### <a name="-k8s--manage_kube_proxy"></a>`manage_kube_proxy`
+
+Data type: `Boolean`
+
+
+
+Default value: `true`
+
+##### <a name="-k8s--puppetdb_discovery"></a>`puppetdb_discovery`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
+
+##### <a name="-k8s--puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
 
 Data type: `String[1]`
 
@@ -296,15 +296,15 @@ Data type: `String[1]`
 
 Default value: `'default'`
 
-##### <a name="purge_manifests"></a>`purge_manifests`
+##### <a name="-k8s--purge_manifests"></a>`purge_manifests`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="native_url_template"></a>`native_url_template`
+##### <a name="-k8s--native_url_template"></a>`native_url_template`
 
 Data type: `String[1]`
 
@@ -312,7 +312,7 @@ Data type: `String[1]`
 
 Default value: `'https://storage.googleapis.com/kubernetes-release/release/v%{version}/bin/%{kernel}/%{arch}/%{binary}'`
 
-##### <a name="tarball_url_template"></a>`tarball_url_template`
+##### <a name="-k8s--tarball_url_template"></a>`tarball_url_template`
 
 Data type: `String[1]`
 
@@ -320,7 +320,7 @@ Data type: `String[1]`
 
 Default value: `'https://dl.k8s.io/v%{version}/kubernetes-%{component}-%{kernel}-%{arch}.tar.gz'`
 
-##### <a name="package_template"></a>`package_template`
+##### <a name="-k8s--package_template"></a>`package_template`
 
 Data type: `String[1]`
 
@@ -328,7 +328,7 @@ Data type: `String[1]`
 
 Default value: `'kubernetes-%{component}'`
 
-##### <a name="hyperkube_name"></a>`hyperkube_name`
+##### <a name="-k8s--hyperkube_name"></a>`hyperkube_name`
 
 Data type: `String[1]`
 
@@ -336,15 +336,15 @@ Data type: `String[1]`
 
 Default value: `'hyperkube'`
 
-##### <a name="sysconfig_path"></a>`sysconfig_path`
+##### <a name="-k8s--sysconfig_path"></a>`sysconfig_path`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="node_auth"></a>`node_auth`
+##### <a name="-k8s--node_auth"></a>`node_auth`
 
 Data type: `K8s::Node_auth`
 
@@ -352,7 +352,7 @@ Data type: `K8s::Node_auth`
 
 Default value: `'bootstrap'`
 
-##### <a name="incluster_master"></a>`incluster_master`
+##### <a name="-k8s--incluster_master"></a>`incluster_master`
 
 Data type: `Stdlib::HTTPUrl`
 
@@ -360,7 +360,7 @@ Data type: `Stdlib::HTTPUrl`
 
 Default value: `'https://kubernetes.default.svc'`
 
-##### <a name="master"></a>`master`
+##### <a name="-k8s--master"></a>`master`
 
 Data type: `Stdlib::HTTPUrl`
 
@@ -368,7 +368,7 @@ Data type: `Stdlib::HTTPUrl`
 
 Default value: `'https://kubernetes:6443'`
 
-##### <a name="service_cluster_cidr"></a>`service_cluster_cidr`
+##### <a name="-k8s--service_cluster_cidr"></a>`service_cluster_cidr`
 
 Data type: `K8s::CIDR`
 
@@ -376,7 +376,7 @@ Data type: `K8s::CIDR`
 
 Default value: `'10.1.0.0/24'`
 
-##### <a name="cluster_cidr"></a>`cluster_cidr`
+##### <a name="-k8s--cluster_cidr"></a>`cluster_cidr`
 
 Data type: `K8s::CIDR`
 
@@ -384,7 +384,7 @@ Data type: `K8s::CIDR`
 
 Default value: `'10.0.0.0/16'`
 
-##### <a name="api_service_address"></a>`api_service_address`
+##### <a name="-k8s--api_service_address"></a>`api_service_address`
 
 Data type: `Stdlib::IP::Address::Nosubnet`
 
@@ -392,7 +392,7 @@ Data type: `Stdlib::IP::Address::Nosubnet`
 
 Default value: `k8s::ip_in_cidr($service_cluster_cidr, 'first')`
 
-##### <a name="dns_service_address"></a>`dns_service_address`
+##### <a name="-k8s--dns_service_address"></a>`dns_service_address`
 
 Data type: `K8s::IP_addresses`
 
@@ -400,7 +400,7 @@ Data type: `K8s::IP_addresses`
 
 Default value: `k8s::ip_in_cidr($service_cluster_cidr, 'second')`
 
-##### <a name="cluster_domain"></a>`cluster_domain`
+##### <a name="-k8s--cluster_domain"></a>`cluster_domain`
 
 Data type: `Stdlib::Fqdn`
 
@@ -408,7 +408,7 @@ Data type: `Stdlib::Fqdn`
 
 Default value: `'cluster.local'`
 
-##### <a name="role"></a>`role`
+##### <a name="-k8s--role"></a>`role`
 
 Data type: `Enum['node','server','none']`
 
@@ -416,15 +416,15 @@ Data type: `Enum['node','server','none']`
 
 Default value: `'none'`
 
-##### <a name="firewall_type"></a>`firewall_type`
+##### <a name="-k8s--firewall_type"></a>`firewall_type`
 
 Data type: `Optional[K8s::Firewall]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-### <a name="k8sinstallkubeadm"></a>`k8s::install::kubeadm`
+### <a name="k8s--install--kubeadm"></a>`k8s::install::kubeadm`
 
 Installs the kubeadm binary
 
@@ -432,9 +432,9 @@ Installs the kubeadm binary
 
 The following parameters are available in the `k8s::install::kubeadm` class:
 
-* [`ensure`](#ensure)
+* [`ensure`](#-k8s--install--kubeadm--ensure)
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--install--kubeadm--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -442,7 +442,7 @@ set ensure for installation or deinstallation
 
 Default value: `$k8s::ensure`
 
-### <a name="k8sinstallkubectl"></a>`k8s::install::kubectl`
+### <a name="k8s--install--kubectl"></a>`k8s::install::kubectl`
 
 Installs the kubectl binary
 
@@ -450,9 +450,9 @@ Installs the kubectl binary
 
 The following parameters are available in the `k8s::install::kubectl` class:
 
-* [`ensure`](#ensure)
+* [`ensure`](#-k8s--install--kubectl--ensure)
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--install--kubectl--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -460,7 +460,7 @@ set ensure for installation or deinstallation
 
 Default value: `$k8s::ensure`
 
-### <a name="k8snode"></a>`k8s::node`
+### <a name="k8s--node"></a>`k8s::node`
 
 Installs a Kubernetes node
 
@@ -468,27 +468,27 @@ Installs a Kubernetes node
 
 The following parameters are available in the `k8s::node` class:
 
-* [`ca_cert`](#ca_cert)
-* [`cert_path`](#cert_path)
-* [`ensure`](#ensure)
-* [`firewall_type`](#firewall_type)
-* [`manage_firewall`](#manage_firewall)
-* [`manage_kernel_modules`](#manage_kernel_modules)
-* [`manage_kubelet`](#manage_kubelet)
-* [`manage_proxy`](#manage_proxy)
-* [`manage_sysctl_settings`](#manage_sysctl_settings)
-* [`master`](#master)
-* [`node_auth`](#node_auth)
-* [`node_cert`](#node_cert)
-* [`node_key`](#node_key)
-* [`node_token`](#node_token)
-* [`proxy_auth`](#proxy_auth)
-* [`proxy_cert`](#proxy_cert)
-* [`proxy_key`](#proxy_key)
-* [`proxy_token`](#proxy_token)
-* [`puppetdb_discovery_tag`](#puppetdb_discovery_tag)
+* [`ca_cert`](#-k8s--node--ca_cert)
+* [`cert_path`](#-k8s--node--cert_path)
+* [`ensure`](#-k8s--node--ensure)
+* [`firewall_type`](#-k8s--node--firewall_type)
+* [`manage_firewall`](#-k8s--node--manage_firewall)
+* [`manage_kernel_modules`](#-k8s--node--manage_kernel_modules)
+* [`manage_kubelet`](#-k8s--node--manage_kubelet)
+* [`manage_proxy`](#-k8s--node--manage_proxy)
+* [`manage_sysctl_settings`](#-k8s--node--manage_sysctl_settings)
+* [`master`](#-k8s--node--master)
+* [`node_auth`](#-k8s--node--node_auth)
+* [`node_cert`](#-k8s--node--node_cert)
+* [`node_key`](#-k8s--node--node_key)
+* [`node_token`](#-k8s--node--node_token)
+* [`proxy_auth`](#-k8s--node--proxy_auth)
+* [`proxy_cert`](#-k8s--node--proxy_cert)
+* [`proxy_key`](#-k8s--node--proxy_key)
+* [`proxy_token`](#-k8s--node--proxy_token)
+* [`puppetdb_discovery_tag`](#-k8s--node--puppetdb_discovery_tag)
 
-##### <a name="ca_cert"></a>`ca_cert`
+##### <a name="-k8s--node--ca_cert"></a>`ca_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -496,7 +496,7 @@ path to the ca cert
 
 Default value: `"${cert_path}/ca.pem"`
 
-##### <a name="cert_path"></a>`cert_path`
+##### <a name="-k8s--node--cert_path"></a>`cert_path`
 
 Data type: `Stdlib::Unixpath`
 
@@ -504,7 +504,7 @@ path to cert files
 
 Default value: `'/var/lib/kubelet/pki'`
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--node--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -512,7 +512,7 @@ set ensure for installation or deinstallation
 
 Default value: `$k8s::ensure`
 
-##### <a name="firewall_type"></a>`firewall_type`
+##### <a name="-k8s--node--firewall_type"></a>`firewall_type`
 
 Data type: `Optional[K8s::Firewall]`
 
@@ -520,7 +520,7 @@ define the type of firewall to use
 
 Default value: `$k8s::firewall_type`
 
-##### <a name="manage_firewall"></a>`manage_firewall`
+##### <a name="-k8s--node--manage_firewall"></a>`manage_firewall`
 
 Data type: `Boolean`
 
@@ -528,7 +528,7 @@ whether to manage firewall or not
 
 Default value: `$k8s::manage_firewall`
 
-##### <a name="manage_kernel_modules"></a>`manage_kernel_modules`
+##### <a name="-k8s--node--manage_kernel_modules"></a>`manage_kernel_modules`
 
 Data type: `Boolean`
 
@@ -536,23 +536,23 @@ whether to load kernel modules or not
 
 Default value: `$k8s::manage_kernel_modules`
 
-##### <a name="manage_kubelet"></a>`manage_kubelet`
+##### <a name="-k8s--node--manage_kubelet"></a>`manage_kubelet`
 
 Data type: `Boolean`
 
 whether to manage kublet or not
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="manage_proxy"></a>`manage_proxy`
+##### <a name="-k8s--node--manage_proxy"></a>`manage_proxy`
 
 Data type: `Boolean`
 
 whether to manage kube-proxy or not
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="manage_sysctl_settings"></a>`manage_sysctl_settings`
+##### <a name="-k8s--node--manage_sysctl_settings"></a>`manage_sysctl_settings`
 
 Data type: `Boolean`
 
@@ -560,7 +560,7 @@ whether to manage sysctl settings or not
 
 Default value: `$k8s::manage_sysctl_settings`
 
-##### <a name="master"></a>`master`
+##### <a name="-k8s--node--master"></a>`master`
 
 Data type: `Stdlib::HTTPUrl`
 
@@ -568,7 +568,7 @@ cluster API connection
 
 Default value: `$k8s::master`
 
-##### <a name="node_auth"></a>`node_auth`
+##### <a name="-k8s--node--node_auth"></a>`node_auth`
 
 Data type: `K8s::Node_auth`
 
@@ -576,31 +576,31 @@ type of node authentication
 
 Default value: `$k8s::node_auth`
 
-##### <a name="node_cert"></a>`node_cert`
+##### <a name="-k8s--node--node_cert"></a>`node_cert`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
 path to node cert file
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="node_key"></a>`node_key`
+##### <a name="-k8s--node--node_key"></a>`node_key`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
 path to node key file
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="node_token"></a>`node_token`
+##### <a name="-k8s--node--node_token"></a>`node_token`
 
 Data type: `Optional[String[1]]`
 
 k8s token to join a cluster
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="proxy_auth"></a>`proxy_auth`
+##### <a name="-k8s--node--proxy_auth"></a>`proxy_auth`
 
 Data type: `K8s::Proxy_auth`
 
@@ -608,31 +608,31 @@ which proxy auth to use
 
 Default value: `'incluster'`
 
-##### <a name="proxy_cert"></a>`proxy_cert`
+##### <a name="-k8s--node--proxy_cert"></a>`proxy_cert`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
 path to proxy cert file
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="proxy_key"></a>`proxy_key`
+##### <a name="-k8s--node--proxy_key"></a>`proxy_key`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
 path to proxy key file
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="proxy_token"></a>`proxy_token`
+##### <a name="-k8s--node--proxy_token"></a>`proxy_token`
 
 Data type: `Optional[String[1]]`
 
 k8s token for kube-proxy
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
+##### <a name="-k8s--node--puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
 
 Data type: `String[1]`
 
@@ -640,7 +640,7 @@ enable puppetdb resource searching
 
 Default value: `$k8s::puppetdb_discovery_tag`
 
-### <a name="k8snodekube_proxy"></a>`k8s::node::kube_proxy`
+### <a name="k8s--node--kube_proxy"></a>`k8s::node::kube_proxy`
 
 For most use-cases, running kube-proxy inside the cluster itself is recommended
 
@@ -648,19 +648,19 @@ For most use-cases, running kube-proxy inside the cluster itself is recommended
 
 The following parameters are available in the `k8s::node::kube_proxy` class:
 
-* [`ensure`](#ensure)
-* [`master`](#master)
-* [`config`](#config)
-* [`arguments`](#arguments)
-* [`puppetdb_discovery_tag`](#puppetdb_discovery_tag)
-* [`cluster_cidr`](#cluster_cidr)
-* [`auth`](#auth)
-* [`ca_cert`](#ca_cert)
-* [`cert`](#cert)
-* [`key`](#key)
-* [`token`](#token)
+* [`ensure`](#-k8s--node--kube_proxy--ensure)
+* [`master`](#-k8s--node--kube_proxy--master)
+* [`config`](#-k8s--node--kube_proxy--config)
+* [`arguments`](#-k8s--node--kube_proxy--arguments)
+* [`puppetdb_discovery_tag`](#-k8s--node--kube_proxy--puppetdb_discovery_tag)
+* [`cluster_cidr`](#-k8s--node--kube_proxy--cluster_cidr)
+* [`auth`](#-k8s--node--kube_proxy--auth)
+* [`ca_cert`](#-k8s--node--kube_proxy--ca_cert)
+* [`cert`](#-k8s--node--kube_proxy--cert)
+* [`key`](#-k8s--node--kube_proxy--key)
+* [`token`](#-k8s--node--kube_proxy--token)
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--node--kube_proxy--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -668,7 +668,7 @@ Data type: `K8s::Ensure`
 
 Default value: `$k8s::node::ensure`
 
-##### <a name="master"></a>`master`
+##### <a name="-k8s--node--kube_proxy--master"></a>`master`
 
 Data type: `Stdlib::HTTPUrl`
 
@@ -676,7 +676,7 @@ Data type: `Stdlib::HTTPUrl`
 
 Default value: `$k8s::node::master`
 
-##### <a name="config"></a>`config`
+##### <a name="-k8s--node--kube_proxy--config"></a>`config`
 
 Data type: `Hash[String, Data]`
 
@@ -684,7 +684,7 @@ Data type: `Hash[String, Data]`
 
 Default value: `{}`
 
-##### <a name="arguments"></a>`arguments`
+##### <a name="-k8s--node--kube_proxy--arguments"></a>`arguments`
 
 Data type: `Hash[String, Data]`
 
@@ -692,7 +692,7 @@ Data type: `Hash[String, Data]`
 
 Default value: `{}`
 
-##### <a name="puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
+##### <a name="-k8s--node--kube_proxy--puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
 
 Data type: `String`
 
@@ -700,7 +700,7 @@ Data type: `String`
 
 Default value: `$k8s::node::puppetdb_discovery_tag`
 
-##### <a name="cluster_cidr"></a>`cluster_cidr`
+##### <a name="-k8s--node--kube_proxy--cluster_cidr"></a>`cluster_cidr`
 
 Data type: `K8s::CIDR`
 
@@ -708,7 +708,7 @@ Data type: `K8s::CIDR`
 
 Default value: `$k8s::cluster_cidr`
 
-##### <a name="auth"></a>`auth`
+##### <a name="-k8s--node--kube_proxy--auth"></a>`auth`
 
 Data type: `K8s::Proxy_auth`
 
@@ -716,7 +716,7 @@ Data type: `K8s::Proxy_auth`
 
 Default value: `$k8s::node::proxy_auth`
 
-##### <a name="ca_cert"></a>`ca_cert`
+##### <a name="-k8s--node--kube_proxy--ca_cert"></a>`ca_cert`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
@@ -724,7 +724,7 @@ Data type: `Optional[Stdlib::Unixpath]`
 
 Default value: `$k8s::node::ca_cert`
 
-##### <a name="cert"></a>`cert`
+##### <a name="-k8s--node--kube_proxy--cert"></a>`cert`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
@@ -732,7 +732,7 @@ Data type: `Optional[Stdlib::Unixpath]`
 
 Default value: `$k8s::node::proxy_cert`
 
-##### <a name="key"></a>`key`
+##### <a name="-k8s--node--kube_proxy--key"></a>`key`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
@@ -740,7 +740,7 @@ Data type: `Optional[Stdlib::Unixpath]`
 
 Default value: `$k8s::node::proxy_key`
 
-##### <a name="token"></a>`token`
+##### <a name="-k8s--node--kube_proxy--token"></a>`token`
 
 Data type: `Optional[String[1]]`
 
@@ -748,7 +748,7 @@ Data type: `Optional[String[1]]`
 
 Default value: `$k8s::node::proxy_token`
 
-### <a name="k8snodekubectl"></a>`k8s::node::kubectl`
+### <a name="k8s--node--kubectl"></a>`k8s::node::kubectl`
 
 Installs the kubectl binary
 
@@ -756,9 +756,9 @@ Installs the kubectl binary
 
 The following parameters are available in the `k8s::node::kubectl` class:
 
-* [`ensure`](#ensure)
+* [`ensure`](#-k8s--node--kubectl--ensure)
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--node--kubectl--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -766,7 +766,7 @@ Data type: `K8s::Ensure`
 
 Default value: `$k8s::ensure`
 
-### <a name="k8snodekubelet"></a>`k8s::node::kubelet`
+### <a name="k8s--node--kubelet"></a>`k8s::node::kubelet`
 
 Installs and configures kubelet
 
@@ -774,28 +774,28 @@ Installs and configures kubelet
 
 The following parameters are available in the `k8s::node::kubelet` class:
 
-* [`arguments`](#arguments)
-* [`auth`](#auth)
-* [`ca_cert`](#ca_cert)
-* [`cert`](#cert)
-* [`cert_path`](#cert_path)
-* [`config`](#config)
-* [`ensure`](#ensure)
-* [`firewall_type`](#firewall_type)
-* [`key`](#key)
-* [`kubeconfig`](#kubeconfig)
-* [`manage_firewall`](#manage_firewall)
-* [`manage_kernel_modules`](#manage_kernel_modules)
-* [`manage_sysctl_settings`](#manage_sysctl_settings)
-* [`master`](#master)
-* [`puppetdb_discovery_tag`](#puppetdb_discovery_tag)
-* [`rotate_server_tls`](#rotate_server_tls)
-* [`runtime`](#runtime)
-* [`runtime_service`](#runtime_service)
-* [`support_dualstack`](#support_dualstack)
-* [`token`](#token)
+* [`arguments`](#-k8s--node--kubelet--arguments)
+* [`auth`](#-k8s--node--kubelet--auth)
+* [`ca_cert`](#-k8s--node--kubelet--ca_cert)
+* [`cert`](#-k8s--node--kubelet--cert)
+* [`cert_path`](#-k8s--node--kubelet--cert_path)
+* [`config`](#-k8s--node--kubelet--config)
+* [`ensure`](#-k8s--node--kubelet--ensure)
+* [`firewall_type`](#-k8s--node--kubelet--firewall_type)
+* [`key`](#-k8s--node--kubelet--key)
+* [`kubeconfig`](#-k8s--node--kubelet--kubeconfig)
+* [`manage_firewall`](#-k8s--node--kubelet--manage_firewall)
+* [`manage_kernel_modules`](#-k8s--node--kubelet--manage_kernel_modules)
+* [`manage_sysctl_settings`](#-k8s--node--kubelet--manage_sysctl_settings)
+* [`master`](#-k8s--node--kubelet--master)
+* [`puppetdb_discovery_tag`](#-k8s--node--kubelet--puppetdb_discovery_tag)
+* [`rotate_server_tls`](#-k8s--node--kubelet--rotate_server_tls)
+* [`runtime`](#-k8s--node--kubelet--runtime)
+* [`runtime_service`](#-k8s--node--kubelet--runtime_service)
+* [`support_dualstack`](#-k8s--node--kubelet--support_dualstack)
+* [`token`](#-k8s--node--kubelet--token)
 
-##### <a name="arguments"></a>`arguments`
+##### <a name="-k8s--node--kubelet--arguments"></a>`arguments`
 
 Data type: `Hash[String, Data]`
 
@@ -803,7 +803,7 @@ Data type: `Hash[String, Data]`
 
 Default value: `{}`
 
-##### <a name="auth"></a>`auth`
+##### <a name="-k8s--node--kubelet--auth"></a>`auth`
 
 Data type: `K8s::Node_auth`
 
@@ -811,7 +811,7 @@ type of node authentication
 
 Default value: `$k8s::node::node_auth`
 
-##### <a name="ca_cert"></a>`ca_cert`
+##### <a name="-k8s--node--kubelet--ca_cert"></a>`ca_cert`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
@@ -819,7 +819,7 @@ path to the ca cert
 
 Default value: `$k8s::node::ca_cert`
 
-##### <a name="cert"></a>`cert`
+##### <a name="-k8s--node--kubelet--cert"></a>`cert`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
@@ -827,7 +827,7 @@ path to node cert file
 
 Default value: `$k8s::node::node_cert`
 
-##### <a name="cert_path"></a>`cert_path`
+##### <a name="-k8s--node--kubelet--cert_path"></a>`cert_path`
 
 Data type: `Stdlib::Unixpath`
 
@@ -835,7 +835,7 @@ path to cert files
 
 Default value: `$k8s::node::cert_path`
 
-##### <a name="config"></a>`config`
+##### <a name="-k8s--node--kubelet--config"></a>`config`
 
 Data type: `Hash[String, Data]`
 
@@ -843,7 +843,7 @@ Data type: `Hash[String, Data]`
 
 Default value: `{}`
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--node--kubelet--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -851,7 +851,7 @@ set ensure for installation or deinstallation
 
 Default value: `$k8s::node::ensure`
 
-##### <a name="firewall_type"></a>`firewall_type`
+##### <a name="-k8s--node--kubelet--firewall_type"></a>`firewall_type`
 
 Data type: `Optional[K8s::Firewall]`
 
@@ -859,7 +859,7 @@ define the type of firewall to use
 
 Default value: `$k8s::node::firewall_type`
 
-##### <a name="key"></a>`key`
+##### <a name="-k8s--node--kubelet--key"></a>`key`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
@@ -867,7 +867,7 @@ path to node key file
 
 Default value: `$k8s::node::node_key`
 
-##### <a name="kubeconfig"></a>`kubeconfig`
+##### <a name="-k8s--node--kubelet--kubeconfig"></a>`kubeconfig`
 
 Data type: `Stdlib::Unixpath`
 
@@ -875,7 +875,7 @@ path to kubeconfig
 
 Default value: `'/srv/kubernetes/kubelet.kubeconf'`
 
-##### <a name="manage_firewall"></a>`manage_firewall`
+##### <a name="-k8s--node--kubelet--manage_firewall"></a>`manage_firewall`
 
 Data type: `Boolean`
 
@@ -883,7 +883,7 @@ whether to manage firewall or not
 
 Default value: `$k8s::node::manage_firewall`
 
-##### <a name="manage_kernel_modules"></a>`manage_kernel_modules`
+##### <a name="-k8s--node--kubelet--manage_kernel_modules"></a>`manage_kernel_modules`
 
 Data type: `Boolean`
 
@@ -891,7 +891,7 @@ whether to load kernel modules or not
 
 Default value: `$k8s::node::manage_kernel_modules`
 
-##### <a name="manage_sysctl_settings"></a>`manage_sysctl_settings`
+##### <a name="-k8s--node--kubelet--manage_sysctl_settings"></a>`manage_sysctl_settings`
 
 Data type: `Boolean`
 
@@ -899,7 +899,7 @@ whether to manage sysctl settings or not
 
 Default value: `$k8s::node::manage_sysctl_settings`
 
-##### <a name="master"></a>`master`
+##### <a name="-k8s--node--kubelet--master"></a>`master`
 
 Data type: `Stdlib::HTTPUrl`
 
@@ -907,7 +907,7 @@ cluster API connection
 
 Default value: `$k8s::node::master`
 
-##### <a name="puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
+##### <a name="-k8s--node--kubelet--puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
 
 Data type: `String[1]`
 
@@ -915,15 +915,15 @@ enable puppetdb resource searching
 
 Default value: `$k8s::node::puppetdb_discovery_tag`
 
-##### <a name="rotate_server_tls"></a>`rotate_server_tls`
+##### <a name="-k8s--node--kubelet--rotate_server_tls"></a>`rotate_server_tls`
 
 Data type: `Boolean`
 
 
 
-Default value: `==`
+Default value: `$auth == 'bootstrap'`
 
-##### <a name="runtime"></a>`runtime`
+##### <a name="-k8s--node--kubelet--runtime"></a>`runtime`
 
 Data type: `String`
 
@@ -931,7 +931,7 @@ which container runtime to use
 
 Default value: `$k8s::container_manager`
 
-##### <a name="runtime_service"></a>`runtime_service`
+##### <a name="-k8s--node--kubelet--runtime_service"></a>`runtime_service`
 
 Data type: `String`
 
@@ -939,15 +939,15 @@ name of the service of the container runtime
 
 Default value: `$k8s::container_runtime_service`
 
-##### <a name="support_dualstack"></a>`support_dualstack`
+##### <a name="-k8s--node--kubelet--support_dualstack"></a>`support_dualstack`
 
 Data type: `Boolean`
 
 
 
-Default value: `=~`
+Default value: `$k8s::cluster_cidr =~ Array[Data, 2]`
 
-##### <a name="token"></a>`token`
+##### <a name="-k8s--node--kubelet--token"></a>`token`
 
 Data type: `Optional[String[1]]`
 
@@ -955,7 +955,7 @@ k8s token to join a cluster
 
 Default value: `$k8s::node::node_token`
 
-### <a name="k8srepo"></a>`k8s::repo`
+### <a name="k8s--repo"></a>`k8s::repo`
 
 Handles repositories for the container runtime
 
@@ -963,10 +963,10 @@ Handles repositories for the container runtime
 
 The following parameters are available in the `k8s::repo` class:
 
-* [`manage_container_manager`](#manage_container_manager)
-* [`crio_version`](#crio_version)
+* [`manage_container_manager`](#-k8s--repo--manage_container_manager)
+* [`crio_version`](#-k8s--repo--crio_version)
 
-##### <a name="manage_container_manager"></a>`manage_container_manager`
+##### <a name="-k8s--repo--manage_container_manager"></a>`manage_container_manager`
 
 Data type: `Boolean`
 
@@ -974,15 +974,15 @@ whether to add cri-o repository or not
 
 Default value: `$k8s::manage_container_manager`
 
-##### <a name="crio_version"></a>`crio_version`
+##### <a name="-k8s--repo--crio_version"></a>`crio_version`
 
 Data type: `String[1]`
 
 version o cri-o
 
-Default value: `('.')`
+Default value: `$k8s::version.split('\.')[0, 2].join('.')`
 
-### <a name="k8sserver"></a>`k8s::server`
+### <a name="k8s--server"></a>`k8s::server`
 
 Sets up a Kubernetes server instance
 
@@ -990,32 +990,32 @@ Sets up a Kubernetes server instance
 
 The following parameters are available in the `k8s::server` class:
 
-* [`aggregator_ca_cert`](#aggregator_ca_cert)
-* [`aggregator_ca_key`](#aggregator_ca_key)
-* [`api_port`](#api_port)
-* [`ca_cert`](#ca_cert)
-* [`ca_key`](#ca_key)
-* [`cert_path`](#cert_path)
-* [`cluster_cidr`](#cluster_cidr)
-* [`cluster_domain`](#cluster_domain)
-* [`direct_master`](#direct_master)
-* [`dns_service_address`](#dns_service_address)
-* [`ensure`](#ensure)
-* [`etcd_servers`](#etcd_servers)
-* [`firewall_type`](#firewall_type)
-* [`generate_ca`](#generate_ca)
-* [`manage_certs`](#manage_certs)
-* [`manage_components`](#manage_components)
-* [`manage_etcd`](#manage_etcd)
-* [`manage_firewall`](#manage_firewall)
-* [`manage_kubeadm`](#manage_kubeadm)
-* [`manage_resources`](#manage_resources)
-* [`manage_signing`](#manage_signing)
-* [`master`](#master)
-* [`node_on_server`](#node_on_server)
-* [`puppetdb_discovery_tag`](#puppetdb_discovery_tag)
+* [`aggregator_ca_cert`](#-k8s--server--aggregator_ca_cert)
+* [`aggregator_ca_key`](#-k8s--server--aggregator_ca_key)
+* [`api_port`](#-k8s--server--api_port)
+* [`ca_cert`](#-k8s--server--ca_cert)
+* [`ca_key`](#-k8s--server--ca_key)
+* [`cert_path`](#-k8s--server--cert_path)
+* [`cluster_cidr`](#-k8s--server--cluster_cidr)
+* [`cluster_domain`](#-k8s--server--cluster_domain)
+* [`direct_master`](#-k8s--server--direct_master)
+* [`dns_service_address`](#-k8s--server--dns_service_address)
+* [`ensure`](#-k8s--server--ensure)
+* [`etcd_servers`](#-k8s--server--etcd_servers)
+* [`firewall_type`](#-k8s--server--firewall_type)
+* [`generate_ca`](#-k8s--server--generate_ca)
+* [`manage_certs`](#-k8s--server--manage_certs)
+* [`manage_components`](#-k8s--server--manage_components)
+* [`manage_etcd`](#-k8s--server--manage_etcd)
+* [`manage_firewall`](#-k8s--server--manage_firewall)
+* [`manage_kubeadm`](#-k8s--server--manage_kubeadm)
+* [`manage_resources`](#-k8s--server--manage_resources)
+* [`manage_signing`](#-k8s--server--manage_signing)
+* [`master`](#-k8s--server--master)
+* [`node_on_server`](#-k8s--server--node_on_server)
+* [`puppetdb_discovery_tag`](#-k8s--server--puppetdb_discovery_tag)
 
-##### <a name="aggregator_ca_cert"></a>`aggregator_ca_cert`
+##### <a name="-k8s--server--aggregator_ca_cert"></a>`aggregator_ca_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1023,7 +1023,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/aggregator-ca.pem"`
 
-##### <a name="aggregator_ca_key"></a>`aggregator_ca_key`
+##### <a name="-k8s--server--aggregator_ca_key"></a>`aggregator_ca_key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1031,7 +1031,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/aggregator-ca.key"`
 
-##### <a name="api_port"></a>`api_port`
+##### <a name="-k8s--server--api_port"></a>`api_port`
 
 Data type: `Integer[1]`
 
@@ -1039,7 +1039,7 @@ Cluster API port
 
 Default value: `6443`
 
-##### <a name="ca_cert"></a>`ca_cert`
+##### <a name="-k8s--server--ca_cert"></a>`ca_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1047,7 +1047,7 @@ path to the ca cert
 
 Default value: `"${cert_path}/ca.pem"`
 
-##### <a name="ca_key"></a>`ca_key`
+##### <a name="-k8s--server--ca_key"></a>`ca_key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1055,7 +1055,7 @@ path to the ca key
 
 Default value: `"${cert_path}/ca.key"`
 
-##### <a name="cert_path"></a>`cert_path`
+##### <a name="-k8s--server--cert_path"></a>`cert_path`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1063,7 +1063,7 @@ path to cert files
 
 Default value: `'/etc/kubernetes/certs'`
 
-##### <a name="cluster_cidr"></a>`cluster_cidr`
+##### <a name="-k8s--server--cluster_cidr"></a>`cluster_cidr`
 
 Data type: `K8s::CIDR`
 
@@ -1071,7 +1071,7 @@ cluster cidr
 
 Default value: `$k8s::cluster_cidr`
 
-##### <a name="cluster_domain"></a>`cluster_domain`
+##### <a name="-k8s--server--cluster_domain"></a>`cluster_domain`
 
 Data type: `String`
 
@@ -1079,7 +1079,7 @@ cluster domain name
 
 Default value: `$k8s::cluster_domain`
 
-##### <a name="direct_master"></a>`direct_master`
+##### <a name="-k8s--server--direct_master"></a>`direct_master`
 
 Data type: `String`
 
@@ -1087,7 +1087,7 @@ direct clust API connection
 
 Default value: `"https://${fact('networking.ip')}:${api_port}"`
 
-##### <a name="dns_service_address"></a>`dns_service_address`
+##### <a name="-k8s--server--dns_service_address"></a>`dns_service_address`
 
 Data type: `K8s::IP_addresses`
 
@@ -1095,7 +1095,7 @@ cluster dns service address
 
 Default value: `$k8s::dns_service_address`
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--server--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -1103,15 +1103,15 @@ set ensure for installation or deinstallation
 
 Default value: `$k8s::ensure`
 
-##### <a name="etcd_servers"></a>`etcd_servers`
+##### <a name="-k8s--server--etcd_servers"></a>`etcd_servers`
 
 Data type: `Optional[Array[Stdlib::HTTPUrl]]`
 
 list etcd servers if no puppetdb is used
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="firewall_type"></a>`firewall_type`
+##### <a name="-k8s--server--firewall_type"></a>`firewall_type`
 
 Data type: `Optional[K8s::Firewall]`
 
@@ -1119,31 +1119,31 @@ define the type of firewall to use
 
 Default value: `$k8s::firewall_type`
 
-##### <a name="generate_ca"></a>`generate_ca`
+##### <a name="-k8s--server--generate_ca"></a>`generate_ca`
 
 Data type: `Boolean`
 
 initially generate ca
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="manage_certs"></a>`manage_certs`
+##### <a name="-k8s--server--manage_certs"></a>`manage_certs`
 
 Data type: `Boolean`
 
 whether to manage certs or not
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="manage_components"></a>`manage_components`
+##### <a name="-k8s--server--manage_components"></a>`manage_components`
 
 Data type: `Boolean`
 
 whether to manage components or not
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="manage_etcd"></a>`manage_etcd`
+##### <a name="-k8s--server--manage_etcd"></a>`manage_etcd`
 
 Data type: `Boolean`
 
@@ -1151,7 +1151,7 @@ whether to manage etcd or not
 
 Default value: `$k8s::manage_etcd`
 
-##### <a name="manage_firewall"></a>`manage_firewall`
+##### <a name="-k8s--server--manage_firewall"></a>`manage_firewall`
 
 Data type: `Boolean`
 
@@ -1159,23 +1159,23 @@ whether to manage firewall or not
 
 Default value: `$k8s::manage_firewall`
 
-##### <a name="manage_kubeadm"></a>`manage_kubeadm`
+##### <a name="-k8s--server--manage_kubeadm"></a>`manage_kubeadm`
 
 Data type: `Boolean`
 
 whether to install kubeadm or not
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="manage_resources"></a>`manage_resources`
+##### <a name="-k8s--server--manage_resources"></a>`manage_resources`
 
 Data type: `Boolean`
 
 whether to manage cluster internal resources or not
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="manage_signing"></a>`manage_signing`
+##### <a name="-k8s--server--manage_signing"></a>`manage_signing`
 
 Data type: `Boolean`
 
@@ -1183,7 +1183,7 @@ whether to manage cert signing or not
 
 Default value: `$k8s::puppetdb_discovery`
 
-##### <a name="master"></a>`master`
+##### <a name="-k8s--server--master"></a>`master`
 
 Data type: `String`
 
@@ -1191,15 +1191,15 @@ cluster API connection
 
 Default value: `$k8s::master`
 
-##### <a name="node_on_server"></a>`node_on_server`
+##### <a name="-k8s--server--node_on_server"></a>`node_on_server`
 
 Data type: `Boolean`
 
 whether to use controller also as nodes or not
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
+##### <a name="-k8s--server--puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
 
 Data type: `String[1]`
 
@@ -1207,7 +1207,7 @@ enable puppetdb resource searching
 
 Default value: `$k8s::puppetdb_discovery_tag`
 
-### <a name="k8sserverapiserver"></a>`k8s::server::apiserver`
+### <a name="k8s--server--apiserver"></a>`k8s::server::apiserver`
 
 Installs and configures a Kubernetes apiserver
 
@@ -1215,31 +1215,31 @@ Installs and configures a Kubernetes apiserver
 
 The following parameters are available in the `k8s::server::apiserver` class:
 
-* [`advertise_address`](#advertise_address)
-* [`aggregator_ca_cert`](#aggregator_ca_cert)
-* [`apiserver_cert`](#apiserver_cert)
-* [`apiserver_client_cert`](#apiserver_client_cert)
-* [`apiserver_client_key`](#apiserver_client_key)
-* [`apiserver_key`](#apiserver_key)
-* [`arguments`](#arguments)
-* [`ca_cert`](#ca_cert)
-* [`cert_path`](#cert_path)
-* [`discover_etcd_servers`](#discover_etcd_servers)
-* [`ensure`](#ensure)
-* [`etcd_ca`](#etcd_ca)
-* [`etcd_cert`](#etcd_cert)
-* [`etcd_key`](#etcd_key)
-* [`etcd_servers`](#etcd_servers)
-* [`firewall_type`](#firewall_type)
-* [`front_proxy_cert`](#front_proxy_cert)
-* [`front_proxy_key`](#front_proxy_key)
-* [`manage_firewall`](#manage_firewall)
-* [`puppetdb_discovery_tag`](#puppetdb_discovery_tag)
-* [`service_cluster_cidr`](#service_cluster_cidr)
-* [`serviceaccount_private`](#serviceaccount_private)
-* [`serviceaccount_public`](#serviceaccount_public)
+* [`advertise_address`](#-k8s--server--apiserver--advertise_address)
+* [`aggregator_ca_cert`](#-k8s--server--apiserver--aggregator_ca_cert)
+* [`apiserver_cert`](#-k8s--server--apiserver--apiserver_cert)
+* [`apiserver_client_cert`](#-k8s--server--apiserver--apiserver_client_cert)
+* [`apiserver_client_key`](#-k8s--server--apiserver--apiserver_client_key)
+* [`apiserver_key`](#-k8s--server--apiserver--apiserver_key)
+* [`arguments`](#-k8s--server--apiserver--arguments)
+* [`ca_cert`](#-k8s--server--apiserver--ca_cert)
+* [`cert_path`](#-k8s--server--apiserver--cert_path)
+* [`discover_etcd_servers`](#-k8s--server--apiserver--discover_etcd_servers)
+* [`ensure`](#-k8s--server--apiserver--ensure)
+* [`etcd_ca`](#-k8s--server--apiserver--etcd_ca)
+* [`etcd_cert`](#-k8s--server--apiserver--etcd_cert)
+* [`etcd_key`](#-k8s--server--apiserver--etcd_key)
+* [`etcd_servers`](#-k8s--server--apiserver--etcd_servers)
+* [`firewall_type`](#-k8s--server--apiserver--firewall_type)
+* [`front_proxy_cert`](#-k8s--server--apiserver--front_proxy_cert)
+* [`front_proxy_key`](#-k8s--server--apiserver--front_proxy_key)
+* [`manage_firewall`](#-k8s--server--apiserver--manage_firewall)
+* [`puppetdb_discovery_tag`](#-k8s--server--apiserver--puppetdb_discovery_tag)
+* [`service_cluster_cidr`](#-k8s--server--apiserver--service_cluster_cidr)
+* [`serviceaccount_private`](#-k8s--server--apiserver--serviceaccount_private)
+* [`serviceaccount_public`](#-k8s--server--apiserver--serviceaccount_public)
 
-##### <a name="advertise_address"></a>`advertise_address`
+##### <a name="-k8s--server--apiserver--advertise_address"></a>`advertise_address`
 
 Data type: `Stdlib::IP::Address::Nosubnet`
 
@@ -1247,7 +1247,7 @@ bind address of the apiserver
 
 Default value: `fact('networking.ip')`
 
-##### <a name="aggregator_ca_cert"></a>`aggregator_ca_cert`
+##### <a name="-k8s--server--apiserver--aggregator_ca_cert"></a>`aggregator_ca_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1255,7 +1255,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `$k8s::server::tls::aggregator_ca_cert`
 
-##### <a name="apiserver_cert"></a>`apiserver_cert`
+##### <a name="-k8s--server--apiserver--apiserver_cert"></a>`apiserver_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1263,7 +1263,7 @@ path to the apiserver cert file
 
 Default value: `"${cert_path}/kube-apiserver.pem"`
 
-##### <a name="apiserver_client_cert"></a>`apiserver_client_cert`
+##### <a name="-k8s--server--apiserver--apiserver_client_cert"></a>`apiserver_client_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1271,7 +1271,7 @@ path to the apiserver client cert file
 
 Default value: `"${cert_path}/apiserver-kubelet-client.pem"`
 
-##### <a name="apiserver_client_key"></a>`apiserver_client_key`
+##### <a name="-k8s--server--apiserver--apiserver_client_key"></a>`apiserver_client_key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1279,7 +1279,7 @@ path to the apiserver client key file
 
 Default value: `"${cert_path}/apiserver-kubelet-client.key"`
 
-##### <a name="apiserver_key"></a>`apiserver_key`
+##### <a name="-k8s--server--apiserver--apiserver_key"></a>`apiserver_key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1287,7 +1287,7 @@ path to the apiserver cert file
 
 Default value: `"${cert_path}/kube-apiserver.key"`
 
-##### <a name="arguments"></a>`arguments`
+##### <a name="-k8s--server--apiserver--arguments"></a>`arguments`
 
 Data type: `Hash[String, Data]`
 
@@ -1295,7 +1295,7 @@ Data type: `Hash[String, Data]`
 
 Default value: `{}`
 
-##### <a name="ca_cert"></a>`ca_cert`
+##### <a name="-k8s--server--apiserver--ca_cert"></a>`ca_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1303,7 +1303,7 @@ path to the ca cert
 
 Default value: `$k8s::server::tls::ca_cert`
 
-##### <a name="cert_path"></a>`cert_path`
+##### <a name="-k8s--server--apiserver--cert_path"></a>`cert_path`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1311,7 +1311,7 @@ path to cert files
 
 Default value: `$k8s::server::tls::cert_path`
 
-##### <a name="discover_etcd_servers"></a>`discover_etcd_servers`
+##### <a name="-k8s--server--apiserver--discover_etcd_servers"></a>`discover_etcd_servers`
 
 Data type: `Boolean`
 
@@ -1319,7 +1319,7 @@ enable puppetdb resource searching
 
 Default value: `$k8s::puppetdb_discovery`
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--server--apiserver--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -1327,7 +1327,7 @@ set ensure for installation or deinstallation
 
 Default value: `$k8s::server::ensure`
 
-##### <a name="etcd_ca"></a>`etcd_ca`
+##### <a name="-k8s--server--apiserver--etcd_ca"></a>`etcd_ca`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1335,7 +1335,7 @@ path to the etcd ca cert file
 
 Default value: `"${cert_path}/etcd-ca.pem"`
 
-##### <a name="etcd_cert"></a>`etcd_cert`
+##### <a name="-k8s--server--apiserver--etcd_cert"></a>`etcd_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1343,7 +1343,7 @@ path to the etcd cert file
 
 Default value: `"${cert_path}/etcd.pem"`
 
-##### <a name="etcd_key"></a>`etcd_key`
+##### <a name="-k8s--server--apiserver--etcd_key"></a>`etcd_key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1351,7 +1351,7 @@ path to the etcd key file
 
 Default value: `"${cert_path}/etcd.key"`
 
-##### <a name="etcd_servers"></a>`etcd_servers`
+##### <a name="-k8s--server--apiserver--etcd_servers"></a>`etcd_servers`
 
 Data type: `Optional[Array[Stdlib::HTTPUrl]]`
 
@@ -1359,7 +1359,7 @@ list etcd servers if no puppetdb is used
 
 Default value: `$k8s::server::etcd_servers`
 
-##### <a name="firewall_type"></a>`firewall_type`
+##### <a name="-k8s--server--apiserver--firewall_type"></a>`firewall_type`
 
 Data type: `Optional[K8s::Firewall]`
 
@@ -1367,7 +1367,7 @@ define the type of firewall to use
 
 Default value: `$k8s::server::firewall_type`
 
-##### <a name="front_proxy_cert"></a>`front_proxy_cert`
+##### <a name="-k8s--server--apiserver--front_proxy_cert"></a>`front_proxy_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1375,7 +1375,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/front-proxy-client.pem"`
 
-##### <a name="front_proxy_key"></a>`front_proxy_key`
+##### <a name="-k8s--server--apiserver--front_proxy_key"></a>`front_proxy_key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1383,7 +1383,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/front-proxy-client.key"`
 
-##### <a name="manage_firewall"></a>`manage_firewall`
+##### <a name="-k8s--server--apiserver--manage_firewall"></a>`manage_firewall`
 
 Data type: `Boolean`
 
@@ -1391,7 +1391,7 @@ whether to manage firewall or not
 
 Default value: `$k8s::server::manage_firewall`
 
-##### <a name="puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
+##### <a name="-k8s--server--apiserver--puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
 
 Data type: `String`
 
@@ -1399,7 +1399,7 @@ enable puppetdb resource searching
 
 Default value: `$k8s::server::puppetdb_discovery_tag`
 
-##### <a name="service_cluster_cidr"></a>`service_cluster_cidr`
+##### <a name="-k8s--server--apiserver--service_cluster_cidr"></a>`service_cluster_cidr`
 
 Data type: `K8s::CIDR`
 
@@ -1407,7 +1407,7 @@ Data type: `K8s::CIDR`
 
 Default value: `$k8s::service_cluster_cidr`
 
-##### <a name="serviceaccount_private"></a>`serviceaccount_private`
+##### <a name="-k8s--server--apiserver--serviceaccount_private"></a>`serviceaccount_private`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1415,7 +1415,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/service-account.key"`
 
-##### <a name="serviceaccount_public"></a>`serviceaccount_public`
+##### <a name="-k8s--server--apiserver--serviceaccount_public"></a>`serviceaccount_public`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1423,7 +1423,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/service-account.pub"`
 
-### <a name="k8sservercontroller_manager"></a>`k8s::server::controller_manager`
+### <a name="k8s--server--controller_manager"></a>`k8s::server::controller_manager`
 
 Installs and configures a Kubernetes controller manager
 
@@ -1431,18 +1431,18 @@ Installs and configures a Kubernetes controller manager
 
 The following parameters are available in the `k8s::server::controller_manager` class:
 
-* [`ensure`](#ensure)
-* [`master`](#master)
-* [`arguments`](#arguments)
-* [`service_cluster_cidr`](#service_cluster_cidr)
-* [`cluster_cidr`](#cluster_cidr)
-* [`cert_path`](#cert_path)
-* [`ca_cert`](#ca_cert)
-* [`ca_key`](#ca_key)
-* [`cert`](#cert)
-* [`key`](#key)
+* [`ensure`](#-k8s--server--controller_manager--ensure)
+* [`master`](#-k8s--server--controller_manager--master)
+* [`arguments`](#-k8s--server--controller_manager--arguments)
+* [`service_cluster_cidr`](#-k8s--server--controller_manager--service_cluster_cidr)
+* [`cluster_cidr`](#-k8s--server--controller_manager--cluster_cidr)
+* [`cert_path`](#-k8s--server--controller_manager--cert_path)
+* [`ca_cert`](#-k8s--server--controller_manager--ca_cert)
+* [`ca_key`](#-k8s--server--controller_manager--ca_key)
+* [`cert`](#-k8s--server--controller_manager--cert)
+* [`key`](#-k8s--server--controller_manager--key)
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--server--controller_manager--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -1450,7 +1450,7 @@ Data type: `K8s::Ensure`
 
 Default value: `$k8s::server::ensure`
 
-##### <a name="master"></a>`master`
+##### <a name="-k8s--server--controller_manager--master"></a>`master`
 
 Data type: `Stdlib::HTTPUrl`
 
@@ -1458,7 +1458,7 @@ Data type: `Stdlib::HTTPUrl`
 
 Default value: `$k8s::master`
 
-##### <a name="arguments"></a>`arguments`
+##### <a name="-k8s--server--controller_manager--arguments"></a>`arguments`
 
 Data type: `Hash[String, Data]`
 
@@ -1466,7 +1466,7 @@ Data type: `Hash[String, Data]`
 
 Default value: `{}`
 
-##### <a name="service_cluster_cidr"></a>`service_cluster_cidr`
+##### <a name="-k8s--server--controller_manager--service_cluster_cidr"></a>`service_cluster_cidr`
 
 Data type: `K8s::CIDR`
 
@@ -1474,7 +1474,7 @@ Data type: `K8s::CIDR`
 
 Default value: `$k8s::service_cluster_cidr`
 
-##### <a name="cluster_cidr"></a>`cluster_cidr`
+##### <a name="-k8s--server--controller_manager--cluster_cidr"></a>`cluster_cidr`
 
 Data type: `K8s::CIDR`
 
@@ -1482,7 +1482,7 @@ Data type: `K8s::CIDR`
 
 Default value: `$k8s::cluster_cidr`
 
-##### <a name="cert_path"></a>`cert_path`
+##### <a name="-k8s--server--controller_manager--cert_path"></a>`cert_path`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1490,7 +1490,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `$k8s::server::tls::cert_path`
 
-##### <a name="ca_cert"></a>`ca_cert`
+##### <a name="-k8s--server--controller_manager--ca_cert"></a>`ca_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1498,7 +1498,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `$k8s::server::tls::ca_cert`
 
-##### <a name="ca_key"></a>`ca_key`
+##### <a name="-k8s--server--controller_manager--ca_key"></a>`ca_key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1506,7 +1506,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `$k8s::server::tls::ca_key`
 
-##### <a name="cert"></a>`cert`
+##### <a name="-k8s--server--controller_manager--cert"></a>`cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1514,7 +1514,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/kube-controller-manager.pem"`
 
-##### <a name="key"></a>`key`
+##### <a name="-k8s--server--controller_manager--key"></a>`key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1522,7 +1522,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/kube-controller-manager.key"`
 
-### <a name="k8sserveretcd"></a>`k8s::server::etcd`
+### <a name="k8s--server--etcd"></a>`k8s::server::etcd`
 
 Sets up an etcd cluster node
 
@@ -1530,24 +1530,24 @@ Sets up an etcd cluster node
 
 The following parameters are available in the `k8s::server::etcd` class:
 
-* [`ensure`](#ensure)
-* [`version`](#version)
-* [`manage_setup`](#manage_setup)
-* [`manage_firewall`](#manage_firewall)
-* [`manage_members`](#manage_members)
-* [`cluster_name`](#cluster_name)
-* [`puppetdb_discovery_tag`](#puppetdb_discovery_tag)
-* [`self_signed_tls`](#self_signed_tls)
-* [`manage_certs`](#manage_certs)
-* [`generate_ca`](#generate_ca)
-* [`cert_path`](#cert_path)
-* [`peer_ca_key`](#peer_ca_key)
-* [`peer_ca_cert`](#peer_ca_cert)
-* [`client_ca_key`](#client_ca_key)
-* [`client_ca_cert`](#client_ca_cert)
-* [`firewall_type`](#firewall_type)
+* [`ensure`](#-k8s--server--etcd--ensure)
+* [`version`](#-k8s--server--etcd--version)
+* [`manage_setup`](#-k8s--server--etcd--manage_setup)
+* [`manage_firewall`](#-k8s--server--etcd--manage_firewall)
+* [`manage_members`](#-k8s--server--etcd--manage_members)
+* [`cluster_name`](#-k8s--server--etcd--cluster_name)
+* [`puppetdb_discovery_tag`](#-k8s--server--etcd--puppetdb_discovery_tag)
+* [`self_signed_tls`](#-k8s--server--etcd--self_signed_tls)
+* [`manage_certs`](#-k8s--server--etcd--manage_certs)
+* [`generate_ca`](#-k8s--server--etcd--generate_ca)
+* [`cert_path`](#-k8s--server--etcd--cert_path)
+* [`peer_ca_key`](#-k8s--server--etcd--peer_ca_key)
+* [`peer_ca_cert`](#-k8s--server--etcd--peer_ca_cert)
+* [`client_ca_key`](#-k8s--server--etcd--client_ca_key)
+* [`client_ca_cert`](#-k8s--server--etcd--client_ca_cert)
+* [`firewall_type`](#-k8s--server--etcd--firewall_type)
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--server--etcd--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -1555,7 +1555,7 @@ Data type: `K8s::Ensure`
 
 Default value: `'present'`
 
-##### <a name="version"></a>`version`
+##### <a name="-k8s--server--etcd--version"></a>`version`
 
 Data type: `String[1]`
 
@@ -1563,31 +1563,31 @@ Data type: `String[1]`
 
 Default value: `pick($k8s::etcd_version, '3.5.1')`
 
-##### <a name="manage_setup"></a>`manage_setup`
+##### <a name="-k8s--server--etcd--manage_setup"></a>`manage_setup`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="manage_firewall"></a>`manage_firewall`
-
-Data type: `Boolean`
-
-
-
-Default value: ``false``
-
-##### <a name="manage_members"></a>`manage_members`
+##### <a name="-k8s--server--etcd--manage_firewall"></a>`manage_firewall`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="cluster_name"></a>`cluster_name`
+##### <a name="-k8s--server--etcd--manage_members"></a>`manage_members`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
+
+##### <a name="-k8s--server--etcd--cluster_name"></a>`cluster_name`
 
 Data type: `String[1]`
 
@@ -1595,7 +1595,7 @@ Data type: `String[1]`
 
 Default value: `'default'`
 
-##### <a name="puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
+##### <a name="-k8s--server--etcd--puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
 
 Data type: `String[1]`
 
@@ -1603,31 +1603,31 @@ Data type: `String[1]`
 
 Default value: `pick($k8s::server::puppetdb_discovery_tag, $cluster_name)`
 
-##### <a name="self_signed_tls"></a>`self_signed_tls`
+##### <a name="-k8s--server--etcd--self_signed_tls"></a>`self_signed_tls`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="manage_certs"></a>`manage_certs`
-
-Data type: `Boolean`
-
-
-
-Default value: ``true``
-
-##### <a name="generate_ca"></a>`generate_ca`
+##### <a name="-k8s--server--etcd--manage_certs"></a>`manage_certs`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `true`
 
-##### <a name="cert_path"></a>`cert_path`
+##### <a name="-k8s--server--etcd--generate_ca"></a>`generate_ca`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
+
+##### <a name="-k8s--server--etcd--cert_path"></a>`cert_path`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1635,7 +1635,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `'/var/lib/etcd/certs'`
 
-##### <a name="peer_ca_key"></a>`peer_ca_key`
+##### <a name="-k8s--server--etcd--peer_ca_key"></a>`peer_ca_key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1643,7 +1643,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/peer-ca.key"`
 
-##### <a name="peer_ca_cert"></a>`peer_ca_cert`
+##### <a name="-k8s--server--etcd--peer_ca_cert"></a>`peer_ca_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1651,7 +1651,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/peer-ca.pem"`
 
-##### <a name="client_ca_key"></a>`client_ca_key`
+##### <a name="-k8s--server--etcd--client_ca_key"></a>`client_ca_key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1659,7 +1659,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/client-ca.key"`
 
-##### <a name="client_ca_cert"></a>`client_ca_cert`
+##### <a name="-k8s--server--etcd--client_ca_cert"></a>`client_ca_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1667,7 +1667,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/client-ca.pem"`
 
-##### <a name="firewall_type"></a>`firewall_type`
+##### <a name="-k8s--server--etcd--firewall_type"></a>`firewall_type`
 
 Data type: `Optional[K8s::Firewall]`
 
@@ -1675,7 +1675,7 @@ Data type: `Optional[K8s::Firewall]`
 
 Default value: `$k8s::server::firewall_type`
 
-### <a name="k8sserveretcdsetup"></a>`k8s::server::etcd::setup`
+### <a name="k8s--server--etcd--setup"></a>`k8s::server::etcd::setup`
 
 Installs and configures an etcd instance
 
@@ -1683,35 +1683,35 @@ Installs and configures an etcd instance
 
 The following parameters are available in the `k8s::server::etcd::setup` class:
 
-* [`ensure`](#ensure)
-* [`install`](#install)
-* [`package`](#package)
-* [`version`](#version)
-* [`etcd_name`](#etcd_name)
-* [`fqdn`](#fqdn)
-* [`archive_template`](#archive_template)
-* [`data_dir`](#data_dir)
-* [`proxy`](#proxy)
-* [`listen_client_urls`](#listen_client_urls)
-* [`advertise_client_urls`](#advertise_client_urls)
-* [`listen_peer_urls`](#listen_peer_urls)
-* [`initial_advertise_peer_urls`](#initial_advertise_peer_urls)
-* [`peer_cert_file`](#peer_cert_file)
-* [`peer_key_file`](#peer_key_file)
-* [`peer_trusted_ca_file`](#peer_trusted_ca_file)
-* [`peer_client_cert_auth`](#peer_client_cert_auth)
-* [`peer_auto_tls`](#peer_auto_tls)
-* [`cert_file`](#cert_file)
-* [`key_file`](#key_file)
-* [`trusted_ca_file`](#trusted_ca_file)
-* [`client_cert_auth`](#client_cert_auth)
-* [`auto_tls`](#auto_tls)
-* [`auto_compaction_retention`](#auto_compaction_retention)
-* [`initial_cluster_state`](#initial_cluster_state)
-* [`initial_cluster_token`](#initial_cluster_token)
-* [`initial_cluster`](#initial_cluster)
+* [`ensure`](#-k8s--server--etcd--setup--ensure)
+* [`install`](#-k8s--server--etcd--setup--install)
+* [`package`](#-k8s--server--etcd--setup--package)
+* [`version`](#-k8s--server--etcd--setup--version)
+* [`etcd_name`](#-k8s--server--etcd--setup--etcd_name)
+* [`fqdn`](#-k8s--server--etcd--setup--fqdn)
+* [`archive_template`](#-k8s--server--etcd--setup--archive_template)
+* [`data_dir`](#-k8s--server--etcd--setup--data_dir)
+* [`proxy`](#-k8s--server--etcd--setup--proxy)
+* [`listen_client_urls`](#-k8s--server--etcd--setup--listen_client_urls)
+* [`advertise_client_urls`](#-k8s--server--etcd--setup--advertise_client_urls)
+* [`listen_peer_urls`](#-k8s--server--etcd--setup--listen_peer_urls)
+* [`initial_advertise_peer_urls`](#-k8s--server--etcd--setup--initial_advertise_peer_urls)
+* [`peer_cert_file`](#-k8s--server--etcd--setup--peer_cert_file)
+* [`peer_key_file`](#-k8s--server--etcd--setup--peer_key_file)
+* [`peer_trusted_ca_file`](#-k8s--server--etcd--setup--peer_trusted_ca_file)
+* [`peer_client_cert_auth`](#-k8s--server--etcd--setup--peer_client_cert_auth)
+* [`peer_auto_tls`](#-k8s--server--etcd--setup--peer_auto_tls)
+* [`cert_file`](#-k8s--server--etcd--setup--cert_file)
+* [`key_file`](#-k8s--server--etcd--setup--key_file)
+* [`trusted_ca_file`](#-k8s--server--etcd--setup--trusted_ca_file)
+* [`client_cert_auth`](#-k8s--server--etcd--setup--client_cert_auth)
+* [`auto_tls`](#-k8s--server--etcd--setup--auto_tls)
+* [`auto_compaction_retention`](#-k8s--server--etcd--setup--auto_compaction_retention)
+* [`initial_cluster_state`](#-k8s--server--etcd--setup--initial_cluster_state)
+* [`initial_cluster_token`](#-k8s--server--etcd--setup--initial_cluster_token)
+* [`initial_cluster`](#-k8s--server--etcd--setup--initial_cluster)
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--server--etcd--setup--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -1719,7 +1719,7 @@ Data type: `K8s::Ensure`
 
 Default value: `$k8s::server::etcd::ensure`
 
-##### <a name="install"></a>`install`
+##### <a name="-k8s--server--etcd--setup--install"></a>`install`
 
 Data type: `Enum['archive','package']`
 
@@ -1727,7 +1727,7 @@ Data type: `Enum['archive','package']`
 
 Default value: `'archive'`
 
-##### <a name="package"></a>`package`
+##### <a name="-k8s--server--etcd--setup--package"></a>`package`
 
 Data type: `String[1]`
 
@@ -1735,7 +1735,7 @@ Data type: `String[1]`
 
 Default value: `'etcd'`
 
-##### <a name="version"></a>`version`
+##### <a name="-k8s--server--etcd--setup--version"></a>`version`
 
 Data type: `String[1]`
 
@@ -1743,7 +1743,7 @@ Data type: `String[1]`
 
 Default value: `$k8s::server::etcd::version`
 
-##### <a name="etcd_name"></a>`etcd_name`
+##### <a name="-k8s--server--etcd--setup--etcd_name"></a>`etcd_name`
 
 Data type: `String[1]`
 
@@ -1751,7 +1751,7 @@ Data type: `String[1]`
 
 Default value: `$facts['networking']['hostname']`
 
-##### <a name="fqdn"></a>`fqdn`
+##### <a name="-k8s--server--etcd--setup--fqdn"></a>`fqdn`
 
 Data type: `String[1]`
 
@@ -1759,7 +1759,7 @@ Data type: `String[1]`
 
 Default value: `$facts['networking']['fqdn']`
 
-##### <a name="archive_template"></a>`archive_template`
+##### <a name="-k8s--server--etcd--setup--archive_template"></a>`archive_template`
 
 Data type: `Stdlib::HTTPUrl`
 
@@ -1767,7 +1767,7 @@ Data type: `Stdlib::HTTPUrl`
 
 Default value: `'https://storage.googleapis.com/etcd/v%{version}/etcd-v%{version}-%{kernel}-%{arch}.%{kernel_ext}'`
 
-##### <a name="data_dir"></a>`data_dir`
+##### <a name="-k8s--server--etcd--setup--data_dir"></a>`data_dir`
 
 Data type: `String[1]`
 
@@ -1775,7 +1775,7 @@ Data type: `String[1]`
 
 Default value: `"${etcd_name}.etcd"`
 
-##### <a name="proxy"></a>`proxy`
+##### <a name="-k8s--server--etcd--setup--proxy"></a>`proxy`
 
 Data type: `Enum['on','off','readonly']`
 
@@ -1783,7 +1783,7 @@ Data type: `Enum['on','off','readonly']`
 
 Default value: `'off'`
 
-##### <a name="listen_client_urls"></a>`listen_client_urls`
+##### <a name="-k8s--server--etcd--setup--listen_client_urls"></a>`listen_client_urls`
 
 Data type: `Array[Stdlib::HTTPUrl]`
 
@@ -1791,7 +1791,7 @@ Data type: `Array[Stdlib::HTTPUrl]`
 
 Default value: `['https://[::]:2379']`
 
-##### <a name="advertise_client_urls"></a>`advertise_client_urls`
+##### <a name="-k8s--server--etcd--setup--advertise_client_urls"></a>`advertise_client_urls`
 
 Data type: `Array[Stdlib::HTTPUrl]`
 
@@ -1799,7 +1799,7 @@ Data type: `Array[Stdlib::HTTPUrl]`
 
 Default value: `["https://${fqdn}:2379"]`
 
-##### <a name="listen_peer_urls"></a>`listen_peer_urls`
+##### <a name="-k8s--server--etcd--setup--listen_peer_urls"></a>`listen_peer_urls`
 
 Data type: `Array[Stdlib::HTTPUrl]`
 
@@ -1807,7 +1807,7 @@ Data type: `Array[Stdlib::HTTPUrl]`
 
 Default value: `['https://[::]:2380']`
 
-##### <a name="initial_advertise_peer_urls"></a>`initial_advertise_peer_urls`
+##### <a name="-k8s--server--etcd--setup--initial_advertise_peer_urls"></a>`initial_advertise_peer_urls`
 
 Data type: `Array[Stdlib::HTTPUrl]`
 
@@ -1815,79 +1815,39 @@ Data type: `Array[Stdlib::HTTPUrl]`
 
 Default value: `["https://${fqdn}:2380"]`
 
-##### <a name="peer_cert_file"></a>`peer_cert_file`
+##### <a name="-k8s--server--etcd--setup--peer_cert_file"></a>`peer_cert_file`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="peer_key_file"></a>`peer_key_file`
-
-Data type: `Optional[Stdlib::Unixpath]`
-
-
-
-Default value: ``undef``
-
-##### <a name="peer_trusted_ca_file"></a>`peer_trusted_ca_file`
+##### <a name="-k8s--server--etcd--setup--peer_key_file"></a>`peer_key_file`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="peer_client_cert_auth"></a>`peer_client_cert_auth`
+##### <a name="-k8s--server--etcd--setup--peer_trusted_ca_file"></a>`peer_trusted_ca_file`
+
+Data type: `Optional[Stdlib::Unixpath]`
+
+
+
+Default value: `undef`
+
+##### <a name="-k8s--server--etcd--setup--peer_client_cert_auth"></a>`peer_client_cert_auth`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="peer_auto_tls"></a>`peer_auto_tls`
-
-Data type: `Boolean`
-
-
-
-Default value: `$k8s::server::etcd::self_signed_tls`
-
-##### <a name="cert_file"></a>`cert_file`
-
-Data type: `Optional[Stdlib::Unixpath]`
-
-
-
-Default value: ``undef``
-
-##### <a name="key_file"></a>`key_file`
-
-Data type: `Optional[Stdlib::Unixpath]`
-
-
-
-Default value: ``undef``
-
-##### <a name="trusted_ca_file"></a>`trusted_ca_file`
-
-Data type: `Optional[Stdlib::Unixpath]`
-
-
-
-Default value: ``undef``
-
-##### <a name="client_cert_auth"></a>`client_cert_auth`
-
-Data type: `Boolean`
-
-
-
-Default value: ``false``
-
-##### <a name="auto_tls"></a>`auto_tls`
+##### <a name="-k8s--server--etcd--setup--peer_auto_tls"></a>`peer_auto_tls`
 
 Data type: `Boolean`
 
@@ -1895,31 +1855,71 @@ Data type: `Boolean`
 
 Default value: `$k8s::server::etcd::self_signed_tls`
 
-##### <a name="auto_compaction_retention"></a>`auto_compaction_retention`
+##### <a name="-k8s--server--etcd--setup--cert_file"></a>`cert_file`
+
+Data type: `Optional[Stdlib::Unixpath]`
+
+
+
+Default value: `undef`
+
+##### <a name="-k8s--server--etcd--setup--key_file"></a>`key_file`
+
+Data type: `Optional[Stdlib::Unixpath]`
+
+
+
+Default value: `undef`
+
+##### <a name="-k8s--server--etcd--setup--trusted_ca_file"></a>`trusted_ca_file`
+
+Data type: `Optional[Stdlib::Unixpath]`
+
+
+
+Default value: `undef`
+
+##### <a name="-k8s--server--etcd--setup--client_cert_auth"></a>`client_cert_auth`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
+
+##### <a name="-k8s--server--etcd--setup--auto_tls"></a>`auto_tls`
+
+Data type: `Boolean`
+
+
+
+Default value: `$k8s::server::etcd::self_signed_tls`
+
+##### <a name="-k8s--server--etcd--setup--auto_compaction_retention"></a>`auto_compaction_retention`
 
 Data type: `Optional[Integer]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="initial_cluster_state"></a>`initial_cluster_state`
+##### <a name="-k8s--server--etcd--setup--initial_cluster_state"></a>`initial_cluster_state`
 
 Data type: `Optional[Enum['existing', 'new']]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="initial_cluster_token"></a>`initial_cluster_token`
+##### <a name="-k8s--server--etcd--setup--initial_cluster_token"></a>`initial_cluster_token`
 
 Data type: `Optional[String[1]]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="initial_cluster"></a>`initial_cluster`
+##### <a name="-k8s--server--etcd--setup--initial_cluster"></a>`initial_cluster`
 
 Data type: `Array[String[1]]`
 
@@ -1927,7 +1927,7 @@ Data type: `Array[String[1]]`
 
 Default value: `[]`
 
-### <a name="k8sserverresources"></a>`k8s::server::resources`
+### <a name="k8s--server--resources"></a>`k8s::server::resources`
 
 Generates and deploys standard Kubernetes in-cluster services
 
@@ -1935,30 +1935,30 @@ Generates and deploys standard Kubernetes in-cluster services
 
 The following parameters are available in the `k8s::server::resources` class:
 
-* [`kubeconfig`](#kubeconfig)
-* [`cluster_cidr`](#cluster_cidr)
-* [`dns_service_address`](#dns_service_address)
-* [`ca_cert`](#ca_cert)
-* [`cluster_domain`](#cluster_domain)
-* [`master`](#master)
-* [`manage_bootstrap`](#manage_bootstrap)
-* [`manage_kube_proxy`](#manage_kube_proxy)
-* [`manage_coredns`](#manage_coredns)
-* [`manage_flannel`](#manage_flannel)
-* [`kube_proxy_image`](#kube_proxy_image)
-* [`kube_proxy_tag`](#kube_proxy_tag)
-* [`kube_proxy_daemonset_config`](#kube_proxy_daemonset_config)
-* [`extra_kube_proxy_args`](#extra_kube_proxy_args)
-* [`coredns_image`](#coredns_image)
-* [`coredns_tag`](#coredns_tag)
-* [`coredns_deployment_config`](#coredns_deployment_config)
-* [`flannel_cni_image`](#flannel_cni_image)
-* [`flannel_cni_tag`](#flannel_cni_tag)
-* [`flannel_image`](#flannel_image)
-* [`flannel_tag`](#flannel_tag)
-* [`flannel_daemonset_config`](#flannel_daemonset_config)
+* [`kubeconfig`](#-k8s--server--resources--kubeconfig)
+* [`cluster_cidr`](#-k8s--server--resources--cluster_cidr)
+* [`dns_service_address`](#-k8s--server--resources--dns_service_address)
+* [`ca_cert`](#-k8s--server--resources--ca_cert)
+* [`cluster_domain`](#-k8s--server--resources--cluster_domain)
+* [`master`](#-k8s--server--resources--master)
+* [`manage_bootstrap`](#-k8s--server--resources--manage_bootstrap)
+* [`manage_kube_proxy`](#-k8s--server--resources--manage_kube_proxy)
+* [`manage_coredns`](#-k8s--server--resources--manage_coredns)
+* [`manage_flannel`](#-k8s--server--resources--manage_flannel)
+* [`kube_proxy_image`](#-k8s--server--resources--kube_proxy_image)
+* [`kube_proxy_tag`](#-k8s--server--resources--kube_proxy_tag)
+* [`kube_proxy_daemonset_config`](#-k8s--server--resources--kube_proxy_daemonset_config)
+* [`extra_kube_proxy_args`](#-k8s--server--resources--extra_kube_proxy_args)
+* [`coredns_image`](#-k8s--server--resources--coredns_image)
+* [`coredns_tag`](#-k8s--server--resources--coredns_tag)
+* [`coredns_deployment_config`](#-k8s--server--resources--coredns_deployment_config)
+* [`flannel_cni_image`](#-k8s--server--resources--flannel_cni_image)
+* [`flannel_cni_tag`](#-k8s--server--resources--flannel_cni_tag)
+* [`flannel_image`](#-k8s--server--resources--flannel_image)
+* [`flannel_tag`](#-k8s--server--resources--flannel_tag)
+* [`flannel_daemonset_config`](#-k8s--server--resources--flannel_daemonset_config)
 
-##### <a name="kubeconfig"></a>`kubeconfig`
+##### <a name="-k8s--server--resources--kubeconfig"></a>`kubeconfig`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1966,7 +1966,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `'/root/.kube/config'`
 
-##### <a name="cluster_cidr"></a>`cluster_cidr`
+##### <a name="-k8s--server--resources--cluster_cidr"></a>`cluster_cidr`
 
 Data type: `K8s::CIDR`
 
@@ -1974,7 +1974,7 @@ Data type: `K8s::CIDR`
 
 Default value: `$k8s::server::cluster_cidr`
 
-##### <a name="dns_service_address"></a>`dns_service_address`
+##### <a name="-k8s--server--resources--dns_service_address"></a>`dns_service_address`
 
 Data type: `K8s::IP_addresses`
 
@@ -1982,7 +1982,7 @@ Data type: `K8s::IP_addresses`
 
 Default value: `$k8s::server::dns_service_address`
 
-##### <a name="ca_cert"></a>`ca_cert`
+##### <a name="-k8s--server--resources--ca_cert"></a>`ca_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -1990,7 +1990,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `$k8s::server::tls::ca_cert`
 
-##### <a name="cluster_domain"></a>`cluster_domain`
+##### <a name="-k8s--server--resources--cluster_domain"></a>`cluster_domain`
 
 Data type: `String[1]`
 
@@ -1998,7 +1998,7 @@ Data type: `String[1]`
 
 Default value: `$k8s::server::cluster_domain`
 
-##### <a name="master"></a>`master`
+##### <a name="-k8s--server--resources--master"></a>`master`
 
 Data type: `String[1]`
 
@@ -2006,15 +2006,15 @@ Data type: `String[1]`
 
 Default value: `$k8s::server::master`
 
-##### <a name="manage_bootstrap"></a>`manage_bootstrap`
+##### <a name="-k8s--server--resources--manage_bootstrap"></a>`manage_bootstrap`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="manage_kube_proxy"></a>`manage_kube_proxy`
+##### <a name="-k8s--server--resources--manage_kube_proxy"></a>`manage_kube_proxy`
 
 Data type: `Boolean`
 
@@ -2022,23 +2022,23 @@ Data type: `Boolean`
 
 Default value: `$k8s::manage_kube_proxy`
 
-##### <a name="manage_coredns"></a>`manage_coredns`
+##### <a name="-k8s--server--resources--manage_coredns"></a>`manage_coredns`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="manage_flannel"></a>`manage_flannel`
+##### <a name="-k8s--server--resources--manage_flannel"></a>`manage_flannel`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="kube_proxy_image"></a>`kube_proxy_image`
+##### <a name="-k8s--server--resources--kube_proxy_image"></a>`kube_proxy_image`
 
 Data type: `String[1]`
 
@@ -2046,7 +2046,7 @@ Data type: `String[1]`
 
 Default value: `'k8s.gcr.io/kube-proxy'`
 
-##### <a name="kube_proxy_tag"></a>`kube_proxy_tag`
+##### <a name="-k8s--server--resources--kube_proxy_tag"></a>`kube_proxy_tag`
 
 Data type: `String[1]`
 
@@ -2054,7 +2054,7 @@ Data type: `String[1]`
 
 Default value: `"v${k8s::version}"`
 
-##### <a name="kube_proxy_daemonset_config"></a>`kube_proxy_daemonset_config`
+##### <a name="-k8s--server--resources--kube_proxy_daemonset_config"></a>`kube_proxy_daemonset_config`
 
 Data type: `Hash[String,Data]`
 
@@ -2062,7 +2062,7 @@ Data type: `Hash[String,Data]`
 
 Default value: `{}`
 
-##### <a name="extra_kube_proxy_args"></a>`extra_kube_proxy_args`
+##### <a name="-k8s--server--resources--extra_kube_proxy_args"></a>`extra_kube_proxy_args`
 
 Data type: `Hash[String,Data]`
 
@@ -2070,7 +2070,7 @@ Data type: `Hash[String,Data]`
 
 Default value: `{}`
 
-##### <a name="coredns_image"></a>`coredns_image`
+##### <a name="-k8s--server--resources--coredns_image"></a>`coredns_image`
 
 Data type: `String[1]`
 
@@ -2078,7 +2078,7 @@ Data type: `String[1]`
 
 Default value: `'coredns/coredns'`
 
-##### <a name="coredns_tag"></a>`coredns_tag`
+##### <a name="-k8s--server--resources--coredns_tag"></a>`coredns_tag`
 
 Data type: `String[1]`
 
@@ -2086,7 +2086,7 @@ Data type: `String[1]`
 
 Default value: `'1.8.7'`
 
-##### <a name="coredns_deployment_config"></a>`coredns_deployment_config`
+##### <a name="-k8s--server--resources--coredns_deployment_config"></a>`coredns_deployment_config`
 
 Data type: `Hash[String,Data]`
 
@@ -2094,7 +2094,7 @@ Data type: `Hash[String,Data]`
 
 Default value: `{}`
 
-##### <a name="flannel_cni_image"></a>`flannel_cni_image`
+##### <a name="-k8s--server--resources--flannel_cni_image"></a>`flannel_cni_image`
 
 Data type: `String[1]`
 
@@ -2102,7 +2102,7 @@ Data type: `String[1]`
 
 Default value: `'rancher/mirrored-flannelcni-flannel-cni-plugin'`
 
-##### <a name="flannel_cni_tag"></a>`flannel_cni_tag`
+##### <a name="-k8s--server--resources--flannel_cni_tag"></a>`flannel_cni_tag`
 
 Data type: `String[1]`
 
@@ -2110,7 +2110,7 @@ Data type: `String[1]`
 
 Default value: `'v1.0.0'`
 
-##### <a name="flannel_image"></a>`flannel_image`
+##### <a name="-k8s--server--resources--flannel_image"></a>`flannel_image`
 
 Data type: `String[1]`
 
@@ -2118,7 +2118,7 @@ Data type: `String[1]`
 
 Default value: `'rancher/mirrored-flannelcni-flannel'`
 
-##### <a name="flannel_tag"></a>`flannel_tag`
+##### <a name="-k8s--server--resources--flannel_tag"></a>`flannel_tag`
 
 Data type: `String[1]`
 
@@ -2126,7 +2126,7 @@ Data type: `String[1]`
 
 Default value: `'v0.16.1'`
 
-##### <a name="flannel_daemonset_config"></a>`flannel_daemonset_config`
+##### <a name="-k8s--server--resources--flannel_daemonset_config"></a>`flannel_daemonset_config`
 
 Data type: `Hash[String,Data]`
 
@@ -2134,7 +2134,7 @@ Data type: `Hash[String,Data]`
 
 Default value: `{}`
 
-### <a name="k8sserverresourcescoredns"></a>`k8s::server::resources::coredns`
+### <a name="k8s--server--resources--coredns"></a>`k8s::server::resources::coredns`
 
 Generates and deploys the default CoreDNS DNS provider for Kubernetes
 
@@ -2142,16 +2142,16 @@ Generates and deploys the default CoreDNS DNS provider for Kubernetes
 
 The following parameters are available in the `k8s::server::resources::coredns` class:
 
-* [`dns_service_address`](#dns_service_address)
-* [`image`](#image)
-* [`tag`](#tag)
-* [`deployment_config`](#deployment_config)
-* [`hosts`](#hosts)
-* [`ensure`](#ensure)
-* [`kubeconfig`](#kubeconfig)
-* [`cluster_domain`](#cluster_domain)
+* [`dns_service_address`](#-k8s--server--resources--coredns--dns_service_address)
+* [`image`](#-k8s--server--resources--coredns--image)
+* [`tag`](#-k8s--server--resources--coredns--tag)
+* [`deployment_config`](#-k8s--server--resources--coredns--deployment_config)
+* [`hosts`](#-k8s--server--resources--coredns--hosts)
+* [`ensure`](#-k8s--server--resources--coredns--ensure)
+* [`kubeconfig`](#-k8s--server--resources--coredns--kubeconfig)
+* [`cluster_domain`](#-k8s--server--resources--coredns--cluster_domain)
 
-##### <a name="dns_service_address"></a>`dns_service_address`
+##### <a name="-k8s--server--resources--coredns--dns_service_address"></a>`dns_service_address`
 
 Data type: `K8s::IP_addresses`
 
@@ -2159,7 +2159,7 @@ The address for the DNS service
 
 Default value: `$k8s::server::resources::dns_service_address`
 
-##### <a name="image"></a>`image`
+##### <a name="-k8s--server--resources--coredns--image"></a>`image`
 
 Data type: `String[1]`
 
@@ -2167,7 +2167,7 @@ The CoreDNS image name to use
 
 Default value: `$k8s::server::resources::coredns_image`
 
-##### <a name="tag"></a>`tag`
+##### <a name="-k8s--server--resources--coredns--tag"></a>`tag`
 
 Data type: `String[1]`
 
@@ -2175,7 +2175,7 @@ The CoreDNS image tag to use
 
 Default value: `$k8s::server::resources::coredns_tag`
 
-##### <a name="deployment_config"></a>`deployment_config`
+##### <a name="-k8s--server--resources--coredns--deployment_config"></a>`deployment_config`
 
 Data type: `Hash[String,Data]`
 
@@ -2183,7 +2183,7 @@ Additional configuration to merge into the Kubernetes Deployment object
 
 Default value: `$k8s::server::resources::coredns_deployment_config`
 
-##### <a name="hosts"></a>`hosts`
+##### <a name="-k8s--server--resources--coredns--hosts"></a>`hosts`
 
 Data type: `Array[String[1]]`
 
@@ -2191,7 +2191,7 @@ Additional host-style entries for the CoreDNS deployment to serve
 
 Default value: `[]`
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--server--resources--coredns--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -2199,7 +2199,7 @@ Data type: `K8s::Ensure`
 
 Default value: `$k8s::ensure`
 
-##### <a name="kubeconfig"></a>`kubeconfig`
+##### <a name="-k8s--server--resources--coredns--kubeconfig"></a>`kubeconfig`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2207,7 +2207,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `$k8s::server::resources::kubeconfig`
 
-##### <a name="cluster_domain"></a>`cluster_domain`
+##### <a name="-k8s--server--resources--coredns--cluster_domain"></a>`cluster_domain`
 
 Data type: `String[1]`
 
@@ -2215,7 +2215,7 @@ Data type: `String[1]`
 
 Default value: `$k8s::server::resources::cluster_domain`
 
-### <a name="k8sserverscheduler"></a>`k8s::server::scheduler`
+### <a name="k8s--server--scheduler"></a>`k8s::server::scheduler`
 
 Installs and configures a Kubernetes scheduler
 
@@ -2223,15 +2223,15 @@ Installs and configures a Kubernetes scheduler
 
 The following parameters are available in the `k8s::server::scheduler` class:
 
-* [`ensure`](#ensure)
-* [`master`](#master)
-* [`arguments`](#arguments)
-* [`cert_path`](#cert_path)
-* [`ca_cert`](#ca_cert)
-* [`cert`](#cert)
-* [`key`](#key)
+* [`ensure`](#-k8s--server--scheduler--ensure)
+* [`master`](#-k8s--server--scheduler--master)
+* [`arguments`](#-k8s--server--scheduler--arguments)
+* [`cert_path`](#-k8s--server--scheduler--cert_path)
+* [`ca_cert`](#-k8s--server--scheduler--ca_cert)
+* [`cert`](#-k8s--server--scheduler--cert)
+* [`key`](#-k8s--server--scheduler--key)
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--server--scheduler--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -2239,7 +2239,7 @@ Data type: `K8s::Ensure`
 
 Default value: `$k8s::server::ensure`
 
-##### <a name="master"></a>`master`
+##### <a name="-k8s--server--scheduler--master"></a>`master`
 
 Data type: `Stdlib::HTTPUrl`
 
@@ -2247,7 +2247,7 @@ Data type: `Stdlib::HTTPUrl`
 
 Default value: `$k8s::master`
 
-##### <a name="arguments"></a>`arguments`
+##### <a name="-k8s--server--scheduler--arguments"></a>`arguments`
 
 Data type: `Hash[String, Data]`
 
@@ -2255,7 +2255,7 @@ Data type: `Hash[String, Data]`
 
 Default value: `{}`
 
-##### <a name="cert_path"></a>`cert_path`
+##### <a name="-k8s--server--scheduler--cert_path"></a>`cert_path`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2263,7 +2263,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `$k8s::server::tls::cert_path`
 
-##### <a name="ca_cert"></a>`ca_cert`
+##### <a name="-k8s--server--scheduler--ca_cert"></a>`ca_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2271,7 +2271,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `$k8s::server::tls::ca_cert`
 
-##### <a name="cert"></a>`cert`
+##### <a name="-k8s--server--scheduler--cert"></a>`cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2279,7 +2279,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/kube-scheduler.pem"`
 
-##### <a name="key"></a>`key`
+##### <a name="-k8s--server--scheduler--key"></a>`key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2287,7 +2287,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/kube-scheduler.key"`
 
-### <a name="k8sservertls"></a>`k8s::server::tls`
+### <a name="k8s--server--tls"></a>`k8s::server::tls`
 
 Generates the necessary Kubernetes certificates for a server
 
@@ -2295,21 +2295,21 @@ Generates the necessary Kubernetes certificates for a server
 
 The following parameters are available in the `k8s::server::tls` class:
 
-* [`ensure`](#ensure)
-* [`generate_ca`](#generate_ca)
-* [`manage_certs`](#manage_certs)
-* [`api_addn_names`](#api_addn_names)
-* [`cluster_domain`](#cluster_domain)
-* [`api_service_address`](#api_service_address)
-* [`cert_path`](#cert_path)
-* [`key_bits`](#key_bits)
-* [`valid_days`](#valid_days)
-* [`ca_key`](#ca_key)
-* [`ca_cert`](#ca_cert)
-* [`aggregator_ca_key`](#aggregator_ca_key)
-* [`aggregator_ca_cert`](#aggregator_ca_cert)
+* [`ensure`](#-k8s--server--tls--ensure)
+* [`generate_ca`](#-k8s--server--tls--generate_ca)
+* [`manage_certs`](#-k8s--server--tls--manage_certs)
+* [`api_addn_names`](#-k8s--server--tls--api_addn_names)
+* [`cluster_domain`](#-k8s--server--tls--cluster_domain)
+* [`api_service_address`](#-k8s--server--tls--api_service_address)
+* [`cert_path`](#-k8s--server--tls--cert_path)
+* [`key_bits`](#-k8s--server--tls--key_bits)
+* [`valid_days`](#-k8s--server--tls--valid_days)
+* [`ca_key`](#-k8s--server--tls--ca_key)
+* [`ca_cert`](#-k8s--server--tls--ca_cert)
+* [`aggregator_ca_key`](#-k8s--server--tls--aggregator_ca_key)
+* [`aggregator_ca_cert`](#-k8s--server--tls--aggregator_ca_cert)
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--server--tls--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -2317,7 +2317,7 @@ Data type: `K8s::Ensure`
 
 Default value: `'present'`
 
-##### <a name="generate_ca"></a>`generate_ca`
+##### <a name="-k8s--server--tls--generate_ca"></a>`generate_ca`
 
 Data type: `Boolean`
 
@@ -2325,7 +2325,7 @@ Data type: `Boolean`
 
 Default value: `$k8s::server::generate_ca`
 
-##### <a name="manage_certs"></a>`manage_certs`
+##### <a name="-k8s--server--tls--manage_certs"></a>`manage_certs`
 
 Data type: `Boolean`
 
@@ -2333,7 +2333,7 @@ Data type: `Boolean`
 
 Default value: `$k8s::server::manage_certs`
 
-##### <a name="api_addn_names"></a>`api_addn_names`
+##### <a name="-k8s--server--tls--api_addn_names"></a>`api_addn_names`
 
 Data type: `K8s::TLS_altnames`
 
@@ -2341,7 +2341,7 @@ Data type: `K8s::TLS_altnames`
 
 Default value: `[]`
 
-##### <a name="cluster_domain"></a>`cluster_domain`
+##### <a name="-k8s--server--tls--cluster_domain"></a>`cluster_domain`
 
 Data type: `String[1]`
 
@@ -2349,7 +2349,7 @@ Data type: `String[1]`
 
 Default value: `$k8s::cluster_domain`
 
-##### <a name="api_service_address"></a>`api_service_address`
+##### <a name="-k8s--server--tls--api_service_address"></a>`api_service_address`
 
 Data type: `Stdlib::IP::Address::Nosubnet`
 
@@ -2357,7 +2357,7 @@ Data type: `Stdlib::IP::Address::Nosubnet`
 
 Default value: `$k8s::api_service_address`
 
-##### <a name="cert_path"></a>`cert_path`
+##### <a name="-k8s--server--tls--cert_path"></a>`cert_path`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2365,7 +2365,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `$k8s::server::cert_path`
 
-##### <a name="key_bits"></a>`key_bits`
+##### <a name="-k8s--server--tls--key_bits"></a>`key_bits`
 
 Data type: `Integer[512]`
 
@@ -2373,7 +2373,7 @@ Data type: `Integer[512]`
 
 Default value: `2048`
 
-##### <a name="valid_days"></a>`valid_days`
+##### <a name="-k8s--server--tls--valid_days"></a>`valid_days`
 
 Data type: `Integer[1]`
 
@@ -2381,7 +2381,7 @@ Data type: `Integer[1]`
 
 Default value: `10000`
 
-##### <a name="ca_key"></a>`ca_key`
+##### <a name="-k8s--server--tls--ca_key"></a>`ca_key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2389,7 +2389,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `$k8s::server::ca_key`
 
-##### <a name="ca_cert"></a>`ca_cert`
+##### <a name="-k8s--server--tls--ca_cert"></a>`ca_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2397,7 +2397,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `$k8s::server::ca_cert`
 
-##### <a name="aggregator_ca_key"></a>`aggregator_ca_key`
+##### <a name="-k8s--server--tls--aggregator_ca_key"></a>`aggregator_ca_key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2405,7 +2405,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `$k8s::server::aggregator_ca_key`
 
-##### <a name="aggregator_ca_cert"></a>`aggregator_ca_cert`
+##### <a name="-k8s--server--tls--aggregator_ca_cert"></a>`aggregator_ca_cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2415,7 +2415,7 @@ Default value: `$k8s::server::aggregator_ca_cert`
 
 ## Defined types
 
-### <a name="k8sbinary"></a>`k8s::binary`
+### <a name="k8s--binary"></a>`k8s::binary`
 
 Deploys a Kubernetes binary
 
@@ -2423,15 +2423,15 @@ Deploys a Kubernetes binary
 
 The following parameters are available in the `k8s::binary` defined type:
 
-* [`ensure`](#ensure)
-* [`version`](#version)
-* [`packaging`](#packaging)
-* [`target`](#target)
-* [`tarball_target`](#tarball_target)
-* [`active`](#active)
-* [`component`](#component)
+* [`ensure`](#-k8s--binary--ensure)
+* [`version`](#-k8s--binary--version)
+* [`packaging`](#-k8s--binary--packaging)
+* [`target`](#-k8s--binary--target)
+* [`tarball_target`](#-k8s--binary--tarball_target)
+* [`active`](#-k8s--binary--active)
+* [`component`](#-k8s--binary--component)
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--binary--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -2439,7 +2439,7 @@ Data type: `K8s::Ensure`
 
 Default value: `$k8s::ensure`
 
-##### <a name="version"></a>`version`
+##### <a name="-k8s--binary--version"></a>`version`
 
 Data type: `String[1]`
 
@@ -2447,7 +2447,7 @@ Data type: `String[1]`
 
 Default value: `$k8s::version`
 
-##### <a name="packaging"></a>`packaging`
+##### <a name="-k8s--binary--packaging"></a>`packaging`
 
 Data type: `String[1]`
 
@@ -2455,7 +2455,7 @@ Data type: `String[1]`
 
 Default value: `$k8s::packaging`
 
-##### <a name="target"></a>`target`
+##### <a name="-k8s--binary--target"></a>`target`
 
 Data type: `String[1]`
 
@@ -2463,7 +2463,7 @@ Data type: `String[1]`
 
 Default value: `"/opt/k8s/${$version}"`
 
-##### <a name="tarball_target"></a>`tarball_target`
+##### <a name="-k8s--binary--tarball_target"></a>`tarball_target`
 
 Data type: `String[1]`
 
@@ -2471,23 +2471,23 @@ Data type: `String[1]`
 
 Default value: `'/opt/k8s/archives'`
 
-##### <a name="active"></a>`active`
+##### <a name="-k8s--binary--active"></a>`active`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="component"></a>`component`
+##### <a name="-k8s--binary--component"></a>`component`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-### <a name="k8sserverbootstrap_token"></a>`k8s::server::bootstrap_token`
+### <a name="k8s--server--bootstrap_token"></a>`k8s::server::bootstrap_token`
 
 You generally only want this to be done on a single Kubernetes server
 
@@ -2495,18 +2495,18 @@ You generally only want this to be done on a single Kubernetes server
 
 The following parameters are available in the `k8s::server::bootstrap_token` defined type:
 
-* [`ensure`](#ensure)
-* [`kubeconfig`](#kubeconfig)
-* [`id`](#id)
-* [`secret`](#secret)
-* [`use_authentication`](#use_authentication)
-* [`description`](#description)
-* [`expiration`](#expiration)
-* [`use_signing`](#use_signing)
-* [`extra_groups`](#extra_groups)
-* [`addn_data`](#addn_data)
+* [`ensure`](#-k8s--server--bootstrap_token--ensure)
+* [`kubeconfig`](#-k8s--server--bootstrap_token--kubeconfig)
+* [`id`](#-k8s--server--bootstrap_token--id)
+* [`secret`](#-k8s--server--bootstrap_token--secret)
+* [`use_authentication`](#-k8s--server--bootstrap_token--use_authentication)
+* [`description`](#-k8s--server--bootstrap_token--description)
+* [`expiration`](#-k8s--server--bootstrap_token--expiration)
+* [`use_signing`](#-k8s--server--bootstrap_token--use_signing)
+* [`extra_groups`](#-k8s--server--bootstrap_token--extra_groups)
+* [`addn_data`](#-k8s--server--bootstrap_token--addn_data)
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--server--bootstrap_token--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -2514,13 +2514,13 @@ Data type: `K8s::Ensure`
 
 Default value: `'present'`
 
-##### <a name="kubeconfig"></a>`kubeconfig`
+##### <a name="-k8s--server--bootstrap_token--kubeconfig"></a>`kubeconfig`
 
 Data type: `Stdlib::Unixpath`
 
 
 
-##### <a name="id"></a>`id`
+##### <a name="-k8s--server--bootstrap_token--id"></a>`id`
 
 Data type: `String[6,6]`
 
@@ -2528,55 +2528,55 @@ Data type: `String[6,6]`
 
 Default value: `$name`
 
-##### <a name="secret"></a>`secret`
+##### <a name="-k8s--server--bootstrap_token--secret"></a>`secret`
 
 Data type: `String[16,16]`
 
 
 
-Default value: `(`
+Default value: `fqdn_rand_string(16).downcase(`
 
-##### <a name="use_authentication"></a>`use_authentication`
+##### <a name="-k8s--server--bootstrap_token--use_authentication"></a>`use_authentication`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="description"></a>`description`
+##### <a name="-k8s--server--bootstrap_token--description"></a>`description`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="expiration"></a>`expiration`
+##### <a name="-k8s--server--bootstrap_token--expiration"></a>`expiration`
 
 Data type: `Optional[K8s::Timestamp]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="use_signing"></a>`use_signing`
+##### <a name="-k8s--server--bootstrap_token--use_signing"></a>`use_signing`
 
 Data type: `Optional[Boolean]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="extra_groups"></a>`extra_groups`
+##### <a name="-k8s--server--bootstrap_token--extra_groups"></a>`extra_groups`
 
 Data type: `Optional[Array[String]]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="addn_data"></a>`addn_data`
+##### <a name="-k8s--server--bootstrap_token--addn_data"></a>`addn_data`
 
 Data type: `Hash[String,Data]`
 
@@ -2584,7 +2584,7 @@ Data type: `Hash[String,Data]`
 
 Default value: `{}`
 
-### <a name="k8sserveretcdmember"></a>`k8s::server::etcd::member`
+### <a name="k8s--server--etcd--member"></a>`k8s::server::etcd::member`
 
 TODO - Convert to native type
 
@@ -2592,51 +2592,51 @@ TODO - Convert to native type
 
 The following parameters are available in the `k8s::server::etcd::member` defined type:
 
-* [`peer_urls`](#peer_urls)
-* [`cluster_urls`](#cluster_urls)
-* [`cluster_ca`](#cluster_ca)
-* [`cluster_cert`](#cluster_cert)
-* [`cluster_key`](#cluster_key)
+* [`peer_urls`](#-k8s--server--etcd--member--peer_urls)
+* [`cluster_urls`](#-k8s--server--etcd--member--cluster_urls)
+* [`cluster_ca`](#-k8s--server--etcd--member--cluster_ca)
+* [`cluster_cert`](#-k8s--server--etcd--member--cluster_cert)
+* [`cluster_key`](#-k8s--server--etcd--member--cluster_key)
 
-##### <a name="peer_urls"></a>`peer_urls`
+##### <a name="-k8s--server--etcd--member--peer_urls"></a>`peer_urls`
 
 Data type: `Array[String, 1]`
 
 
 
-##### <a name="cluster_urls"></a>`cluster_urls`
+##### <a name="-k8s--server--etcd--member--cluster_urls"></a>`cluster_urls`
 
 Data type: `Optional[Array[Stdlib::HTTPUrl]]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="cluster_ca"></a>`cluster_ca`
-
-Data type: `Optional[Stdlib::Unixpath]`
-
-
-
-Default value: ``undef``
-
-##### <a name="cluster_cert"></a>`cluster_cert`
+##### <a name="-k8s--server--etcd--member--cluster_ca"></a>`cluster_ca`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="cluster_key"></a>`cluster_key`
+##### <a name="-k8s--server--etcd--member--cluster_cert"></a>`cluster_cert`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-### <a name="k8sservertlsca"></a>`k8s::server::tls::ca`
+##### <a name="-k8s--server--etcd--member--cluster_key"></a>`cluster_key`
+
+Data type: `Optional[Stdlib::Unixpath]`
+
+
+
+Default value: `undef`
+
+### <a name="k8s--server--tls--ca"></a>`k8s::server::tls::ca`
 
 Generates a TLS CA
 
@@ -2644,17 +2644,17 @@ Generates a TLS CA
 
 The following parameters are available in the `k8s::server::tls::ca` defined type:
 
-* [`ensure`](#ensure)
-* [`key`](#key)
-* [`cert`](#cert)
-* [`subject`](#subject)
-* [`owner`](#owner)
-* [`group`](#group)
-* [`key_bits`](#key_bits)
-* [`valid_days`](#valid_days)
-* [`generate`](#generate)
+* [`ensure`](#-k8s--server--tls--ca--ensure)
+* [`key`](#-k8s--server--tls--ca--key)
+* [`cert`](#-k8s--server--tls--ca--cert)
+* [`subject`](#-k8s--server--tls--ca--subject)
+* [`owner`](#-k8s--server--tls--ca--owner)
+* [`group`](#-k8s--server--tls--ca--group)
+* [`key_bits`](#-k8s--server--tls--ca--key_bits)
+* [`valid_days`](#-k8s--server--tls--ca--valid_days)
+* [`generate`](#-k8s--server--tls--ca--generate)
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--server--tls--ca--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -2662,19 +2662,19 @@ Data type: `K8s::Ensure`
 
 Default value: `present`
 
-##### <a name="key"></a>`key`
+##### <a name="-k8s--server--tls--ca--key"></a>`key`
 
 Data type: `Stdlib::Unixpath`
 
 
 
-##### <a name="cert"></a>`cert`
+##### <a name="-k8s--server--tls--ca--cert"></a>`cert`
 
 Data type: `Stdlib::Unixpath`
 
 
 
-##### <a name="subject"></a>`subject`
+##### <a name="-k8s--server--tls--ca--subject"></a>`subject`
 
 Data type: `String[1]`
 
@@ -2682,7 +2682,7 @@ Data type: `String[1]`
 
 Default value: `"/CN=${title}"`
 
-##### <a name="owner"></a>`owner`
+##### <a name="-k8s--server--tls--ca--owner"></a>`owner`
 
 Data type: `String[1]`
 
@@ -2690,7 +2690,7 @@ Data type: `String[1]`
 
 Default value: `'root'`
 
-##### <a name="group"></a>`group`
+##### <a name="-k8s--server--tls--ca--group"></a>`group`
 
 Data type: `String[1]`
 
@@ -2698,7 +2698,7 @@ Data type: `String[1]`
 
 Default value: `'root'`
 
-##### <a name="key_bits"></a>`key_bits`
+##### <a name="-k8s--server--tls--ca--key_bits"></a>`key_bits`
 
 Data type: `Integer[512]`
 
@@ -2706,7 +2706,7 @@ Data type: `Integer[512]`
 
 Default value: `2048`
 
-##### <a name="valid_days"></a>`valid_days`
+##### <a name="-k8s--server--tls--ca--valid_days"></a>`valid_days`
 
 Data type: `Integer[1]`
 
@@ -2714,15 +2714,15 @@ Data type: `Integer[1]`
 
 Default value: `10000`
 
-##### <a name="generate"></a>`generate`
+##### <a name="-k8s--server--tls--ca--generate"></a>`generate`
 
 Data type: `Boolean`
 
 
 
-Default value: ``true``
+Default value: `true`
 
-### <a name="k8sservertlscert"></a>`k8s::server::tls::cert`
+### <a name="k8s--server--tls--cert"></a>`k8s::server::tls::cert`
 
 Generates and signs a TLS certificate
 
@@ -2730,47 +2730,47 @@ Generates and signs a TLS certificate
 
 The following parameters are available in the `k8s::server::tls::cert` defined type:
 
-* [`distinguished_name`](#distinguished_name)
-* [`cert_path`](#cert_path)
-* [`ca_key`](#ca_key)
-* [`ca_cert`](#ca_cert)
-* [`ensure`](#ensure)
-* [`key_bits`](#key_bits)
-* [`valid_days`](#valid_days)
-* [`extended_key_usage`](#extended_key_usage)
-* [`addn_names`](#addn_names)
-* [`config`](#config)
-* [`key`](#key)
-* [`csr`](#csr)
-* [`cert`](#cert)
-* [`owner`](#owner)
-* [`group`](#group)
+* [`distinguished_name`](#-k8s--server--tls--cert--distinguished_name)
+* [`cert_path`](#-k8s--server--tls--cert--cert_path)
+* [`ca_key`](#-k8s--server--tls--cert--ca_key)
+* [`ca_cert`](#-k8s--server--tls--cert--ca_cert)
+* [`ensure`](#-k8s--server--tls--cert--ensure)
+* [`key_bits`](#-k8s--server--tls--cert--key_bits)
+* [`valid_days`](#-k8s--server--tls--cert--valid_days)
+* [`extended_key_usage`](#-k8s--server--tls--cert--extended_key_usage)
+* [`addn_names`](#-k8s--server--tls--cert--addn_names)
+* [`config`](#-k8s--server--tls--cert--config)
+* [`key`](#-k8s--server--tls--cert--key)
+* [`csr`](#-k8s--server--tls--cert--csr)
+* [`cert`](#-k8s--server--tls--cert--cert)
+* [`owner`](#-k8s--server--tls--cert--owner)
+* [`group`](#-k8s--server--tls--cert--group)
 
-##### <a name="distinguished_name"></a>`distinguished_name`
+##### <a name="-k8s--server--tls--cert--distinguished_name"></a>`distinguished_name`
 
 Data type: `Hash[String, String]`
 
 
 
-##### <a name="cert_path"></a>`cert_path`
+##### <a name="-k8s--server--tls--cert--cert_path"></a>`cert_path`
 
 Data type: `Stdlib::Unixpath`
 
 
 
-##### <a name="ca_key"></a>`ca_key`
+##### <a name="-k8s--server--tls--cert--ca_key"></a>`ca_key`
 
 Data type: `Stdlib::Unixpath`
 
 
 
-##### <a name="ca_cert"></a>`ca_cert`
+##### <a name="-k8s--server--tls--cert--ca_cert"></a>`ca_cert`
 
 Data type: `Stdlib::Unixpath`
 
 
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-k8s--server--tls--cert--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
@@ -2778,7 +2778,7 @@ Data type: `K8s::Ensure`
 
 Default value: `present`
 
-##### <a name="key_bits"></a>`key_bits`
+##### <a name="-k8s--server--tls--cert--key_bits"></a>`key_bits`
 
 Data type: `Integer[512]`
 
@@ -2786,7 +2786,7 @@ Data type: `Integer[512]`
 
 Default value: `2048`
 
-##### <a name="valid_days"></a>`valid_days`
+##### <a name="-k8s--server--tls--cert--valid_days"></a>`valid_days`
 
 Data type: `Integer[1]`
 
@@ -2794,7 +2794,7 @@ Data type: `Integer[1]`
 
 Default value: `10000`
 
-##### <a name="extended_key_usage"></a>`extended_key_usage`
+##### <a name="-k8s--server--tls--cert--extended_key_usage"></a>`extended_key_usage`
 
 Data type: `K8s::Extended_key_usage`
 
@@ -2802,7 +2802,7 @@ Data type: `K8s::Extended_key_usage`
 
 Default value: `['clientAuth']`
 
-##### <a name="addn_names"></a>`addn_names`
+##### <a name="-k8s--server--tls--cert--addn_names"></a>`addn_names`
 
 Data type: `K8s::TLS_altnames`
 
@@ -2810,7 +2810,7 @@ Data type: `K8s::TLS_altnames`
 
 Default value: `[]`
 
-##### <a name="config"></a>`config`
+##### <a name="-k8s--server--tls--cert--config"></a>`config`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2818,7 +2818,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/${title}.cnf"`
 
-##### <a name="key"></a>`key`
+##### <a name="-k8s--server--tls--cert--key"></a>`key`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2826,7 +2826,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/${title}.key"`
 
-##### <a name="csr"></a>`csr`
+##### <a name="-k8s--server--tls--cert--csr"></a>`csr`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2834,7 +2834,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/${title}.csr"`
 
-##### <a name="cert"></a>`cert`
+##### <a name="-k8s--server--tls--cert--cert"></a>`cert`
 
 Data type: `Stdlib::Unixpath`
 
@@ -2842,7 +2842,7 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/${title}.pem"`
 
-##### <a name="owner"></a>`owner`
+##### <a name="-k8s--server--tls--cert--owner"></a>`owner`
 
 Data type: `String[1]`
 
@@ -2850,7 +2850,7 @@ Data type: `String[1]`
 
 Default value: `'root'`
 
-##### <a name="group"></a>`group`
+##### <a name="-k8s--server--tls--cert--group"></a>`group`
 
 Data type: `String[1]`
 
@@ -2858,7 +2858,7 @@ Data type: `String[1]`
 
 Default value: `'root'`
 
-### <a name="k8sservertlsk8s_sign"></a>`k8s::server::tls::k8s_sign`
+### <a name="k8s--server--tls--k8s_sign"></a>`k8s::server::tls::k8s_sign`
 
 TODO - This should probably be done as a service next to the apiservers
 
@@ -2866,9 +2866,9 @@ TODO - This should probably be done as a service next to the apiservers
 
 The following parameters are available in the `k8s::server::tls::k8s_sign` defined type:
 
-* [`kubeconfig`](#kubeconfig)
+* [`kubeconfig`](#-k8s--server--tls--k8s_sign--kubeconfig)
 
-##### <a name="kubeconfig"></a>`kubeconfig`
+##### <a name="-k8s--server--tls--k8s_sign--kubeconfig"></a>`kubeconfig`
 
 Data type: `Any`
 
@@ -2903,121 +2903,121 @@ Default value: `present`
 
 The following parameters are available in the `kubeconfig` type.
 
-* [`ca_cert`](#ca_cert)
-* [`client_cert`](#client_cert)
-* [`client_key`](#client_key)
-* [`cluster`](#cluster)
-* [`context`](#context)
-* [`current_context`](#current_context)
-* [`embed_certs`](#embed_certs)
-* [`group`](#group)
-* [`namespace`](#namespace)
-* [`owner`](#owner)
-* [`password`](#password)
-* [`path`](#path)
-* [`provider`](#provider)
-* [`server`](#server)
-* [`skip_tls_verify`](#skip_tls_verify)
-* [`tls_server_name`](#tls_server_name)
-* [`token`](#token)
-* [`token_file`](#token_file)
-* [`user`](#user)
-* [`username`](#username)
+* [`ca_cert`](#-kubeconfig--ca_cert)
+* [`client_cert`](#-kubeconfig--client_cert)
+* [`client_key`](#-kubeconfig--client_key)
+* [`cluster`](#-kubeconfig--cluster)
+* [`context`](#-kubeconfig--context)
+* [`current_context`](#-kubeconfig--current_context)
+* [`embed_certs`](#-kubeconfig--embed_certs)
+* [`group`](#-kubeconfig--group)
+* [`namespace`](#-kubeconfig--namespace)
+* [`owner`](#-kubeconfig--owner)
+* [`password`](#-kubeconfig--password)
+* [`path`](#-kubeconfig--path)
+* [`provider`](#-kubeconfig--provider)
+* [`server`](#-kubeconfig--server)
+* [`skip_tls_verify`](#-kubeconfig--skip_tls_verify)
+* [`tls_server_name`](#-kubeconfig--tls_server_name)
+* [`token`](#-kubeconfig--token)
+* [`token_file`](#-kubeconfig--token_file)
+* [`user`](#-kubeconfig--user)
+* [`username`](#-kubeconfig--username)
 
-##### <a name="ca_cert"></a>`ca_cert`
+##### <a name="-kubeconfig--ca_cert"></a>`ca_cert`
 
 The path to a CA certificate to include in the kubeconfig
 
-##### <a name="client_cert"></a>`client_cert`
+##### <a name="-kubeconfig--client_cert"></a>`client_cert`
 
 The path to a client certificate to include in the kubeconfig
 
-##### <a name="client_key"></a>`client_key`
+##### <a name="-kubeconfig--client_key"></a>`client_key`
 
 The path to a client key to include in the kubeconfig
 
-##### <a name="cluster"></a>`cluster`
+##### <a name="-kubeconfig--cluster"></a>`cluster`
 
 The name of the cluster to manage in the kubeconfig file
 
 Default value: `default`
 
-##### <a name="context"></a>`context`
+##### <a name="-kubeconfig--context"></a>`context`
 
 The name of the cluster to manage in the kubeconfig file
 
 Default value: `default`
 
-##### <a name="current_context"></a>`current_context`
+##### <a name="-kubeconfig--current_context"></a>`current_context`
 
 The current context to set
 
-##### <a name="embed_certs"></a>`embed_certs`
+##### <a name="-kubeconfig--embed_certs"></a>`embed_certs`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Should the certificate files be embedded into the kubeconfig file
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="group"></a>`group`
+##### <a name="-kubeconfig--group"></a>`group`
 
 The owner of the kubeconfig file
 
-##### <a name="namespace"></a>`namespace`
+##### <a name="-kubeconfig--namespace"></a>`namespace`
 
 The namespace to default to
 
 Default value: `default`
 
-##### <a name="owner"></a>`owner`
+##### <a name="-kubeconfig--owner"></a>`owner`
 
 The owner of the kubeconfig file
 
-##### <a name="password"></a>`password`
+##### <a name="-kubeconfig--password"></a>`password`
 
 The password of a user
 
-##### <a name="path"></a>`path`
+##### <a name="-kubeconfig--path"></a>`path`
 
 An arbitrary path used as the identity of the resource.
 
-##### <a name="provider"></a>`provider`
+##### <a name="-kubeconfig--provider"></a>`provider`
 
 The specific backend to use for this `kubeconfig` resource. You will seldom need to specify this --- Puppet will usually
 discover the appropriate provider for your platform.
 
-##### <a name="server"></a>`server`
+##### <a name="-kubeconfig--server"></a>`server`
 
 The server URL for the cluster
 
-##### <a name="skip_tls_verify"></a>`skip_tls_verify`
+##### <a name="-kubeconfig--skip_tls_verify"></a>`skip_tls_verify`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Skip verifying the TLS certs for the cluster
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="tls_server_name"></a>`tls_server_name`
+##### <a name="-kubeconfig--tls_server_name"></a>`tls_server_name`
 
 Specify an alternate server name to use for TLS verification
 
-##### <a name="token"></a>`token`
+##### <a name="-kubeconfig--token"></a>`token`
 
 An authentication token for a user
 
-##### <a name="token_file"></a>`token_file`
+##### <a name="-kubeconfig--token_file"></a>`token_file`
 
 The path to a file containing an authentication token
 
-##### <a name="user"></a>`user`
+##### <a name="-kubeconfig--user"></a>`user`
 
 The name of the user to manage in the kubeconfig file
 
 Default value: `default`
 
-##### <a name="username"></a>`username`
+##### <a name="-kubeconfig--username"></a>`username`
 
 The username of a user
 
@@ -3062,87 +3062,87 @@ Default value: `present`
 
 The following parameters are available in the `kubectl_apply` type.
 
-* [`api_version`](#api_version)
-* [`content`](#content)
-* [`file`](#file)
-* [`kind`](#kind)
-* [`kubeconfig`](#kubeconfig)
-* [`name`](#name)
-* [`namespace`](#namespace)
-* [`provider`](#provider)
-* [`recreate`](#recreate)
-* [`resource_name`](#resource_name)
-* [`show_diff`](#show_diff)
-* [`update`](#update)
+* [`api_version`](#-kubectl_apply--api_version)
+* [`content`](#-kubectl_apply--content)
+* [`file`](#-kubectl_apply--file)
+* [`kind`](#-kubectl_apply--kind)
+* [`kubeconfig`](#-kubectl_apply--kubeconfig)
+* [`name`](#-kubectl_apply--name)
+* [`namespace`](#-kubectl_apply--namespace)
+* [`provider`](#-kubectl_apply--provider)
+* [`recreate`](#-kubectl_apply--recreate)
+* [`resource_name`](#-kubectl_apply--resource_name)
+* [`show_diff`](#-kubectl_apply--show_diff)
+* [`update`](#-kubectl_apply--update)
 
-##### <a name="api_version"></a>`api_version`
+##### <a name="-kubectl_apply--api_version"></a>`api_version`
 
 The apiVersion of the resource
 
-##### <a name="content"></a>`content`
+##### <a name="-kubectl_apply--content"></a>`content`
 
 The resource content, will be used as the base for the resulting Kubernetes resource
 
 Default value: `{}`
 
-##### <a name="file"></a>`file`
+##### <a name="-kubectl_apply--file"></a>`file`
 
 The local file for the resource
 
-##### <a name="kind"></a>`kind`
+##### <a name="-kubectl_apply--kind"></a>`kind`
 
 The kind of the resource
 
-##### <a name="kubeconfig"></a>`kubeconfig`
+##### <a name="-kubectl_apply--kubeconfig"></a>`kubeconfig`
 
 The kubeconfig file to use for handling the resource
 
-##### <a name="name"></a>`name`
+##### <a name="-kubectl_apply--name"></a>`name`
 
 namevar
 
 The Puppet name of the instance
 
-##### <a name="namespace"></a>`namespace`
+##### <a name="-kubectl_apply--namespace"></a>`namespace`
 
 The namespace the resource is contained in
 
-##### <a name="provider"></a>`provider`
+##### <a name="-kubectl_apply--provider"></a>`provider`
 
 The specific backend to use for this `kubectl_apply` resource. You will seldom need to specify this --- Puppet will
 usually discover the appropriate provider for your platform.
 
-##### <a name="recreate"></a>`recreate`
+##### <a name="-kubectl_apply--recreate"></a>`recreate`
 
-Valid values: ``true``, ``false``, `yes`, `no`
+Valid values: `true`, `false`, `yes`, `no`
 
 Should updates be done by removal and recreation
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="resource_name"></a>`resource_name`
+##### <a name="-kubectl_apply--resource_name"></a>`resource_name`
 
 The name of the resource
 
-##### <a name="show_diff"></a>`show_diff`
+##### <a name="-kubectl_apply--show_diff"></a>`show_diff`
 
-Valid values: ``true``, ``false``, `yes`, `no`
+Valid values: `true`, `false`, `yes`, `no`
 
 Whether to display the difference when the resource changes
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="update"></a>`update`
+##### <a name="-kubectl_apply--update"></a>`update`
 
-Valid values: ``true``, ``false``, `yes`, `no`
+Valid values: `true`, `false`, `yes`, `no`
 
 Whether to update the resource if the content differs
 
-Default value: ``true``
+Default value: `true`
 
 ## Functions
 
-### <a name="k8sformat_arguments"></a>`k8s::format_arguments`
+### <a name="k8s--format_arguments"></a>`k8s::format_arguments`
 
 Type: Ruby 4.x API
 
@@ -3160,7 +3160,7 @@ Data type: `Hash[String,Data]`
 
 A hash of arguments to format
 
-### <a name="k8sformat_url"></a>`k8s::format_url`
+### <a name="k8s--format_url"></a>`k8s::format_url`
 
 Type: Ruby 4.x API
 
@@ -3184,7 +3184,7 @@ Data type: `Hash[String,Data]`
 
 A hash of additional arguments
 
-### <a name="k8sip_in_cidr"></a>`k8s::ip_in_cidr`
+### <a name="k8s--ip_in_cidr"></a>`k8s::ip_in_cidr`
 
 Type: Ruby 4.x API
 
@@ -3236,7 +3236,7 @@ The index of the IP to retrieve
 
 ## Data types
 
-### <a name="k8scidr"></a>`K8s::CIDR`
+### <a name="K8s--CIDR"></a>`K8s::CIDR`
 
 a type to describe one or more IPv4/6 CIDR
 
@@ -3252,27 +3252,19 @@ Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[
   ]]
 ```
 
-### <a name="k8sduration"></a>`K8s::Duration`
+### <a name="K8s--Duration"></a>`K8s::Duration`
 
 https://golang.org/pkg/time/#ParseDuration
 
-Alias of
+Alias of `Pattern[/^(-?[0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$/]`
 
-```puppet
-Pattern[/^(-?[0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$/]
-```
-
-### <a name="k8sensure"></a>`K8s::Ensure`
+### <a name="K8s--Ensure"></a>`K8s::Ensure`
 
 a type to describe the ensure pattern
 
-Alias of
+Alias of `Enum['present', 'absent']`
 
-```puppet
-Enum['present', 'absent']
-```
-
-### <a name="k8sextended_key_usage"></a>`K8s::Extended_key_usage`
+### <a name="K8s--Extended_key_usage"></a>`K8s::Extended_key_usage`
 
 a type to describe extended key usage for a TLS certificate
 
@@ -3285,17 +3277,13 @@ Array[Enum[
   ]]
 ```
 
-### <a name="k8sfirewall"></a>`K8s::Firewall`
+### <a name="K8s--Firewall"></a>`K8s::Firewall`
 
 a type to describe the type of the firewall to use
 
-Alias of
+Alias of `Enum['iptables', 'firewalld']`
 
-```puppet
-Enum['iptables', 'firewalld']
-```
-
-### <a name="k8sip_addresses"></a>`K8s::IP_addresses`
+### <a name="K8s--IP_addresses"></a>`K8s::IP_addresses`
 
 a type to describe multiple IP addresses without subnet sizes
 
@@ -3308,59 +3296,39 @@ Variant[Stdlib::IP::Address::Nosubnet, Array[
   ]]
 ```
 
-### <a name="k8snative_packaging"></a>`K8s::Native_packaging`
+### <a name="K8s--Native_packaging"></a>`K8s::Native_packaging`
 
 a type to describe Kubernetes native packaging methods
 
 * **Note** hyperkube is a legacy name for single-binary packages
 
-Alias of
+Alias of `Enum['package', 'tarball', 'loose', 'hyperkube', 'manual']`
 
-```puppet
-Enum['package', 'tarball', 'loose', 'hyperkube', 'manual']
-```
-
-### <a name="k8snode_auth"></a>`K8s::Node_auth`
+### <a name="K8s--Node_auth"></a>`K8s::Node_auth`
 
 a type to describe node/kubelet authentication methods
 
-Alias of
+Alias of `Enum['cert', 'token', 'bootstrap']`
 
-```puppet
-Enum['cert', 'token', 'bootstrap']
-```
-
-### <a name="k8sportrange"></a>`K8s::PortRange`
+### <a name="K8s--PortRange"></a>`K8s::PortRange`
 
 This regexp matches port range values
 
-Alias of
+Alias of `Pattern[/^[0-9]+(-[0-9]+)?$/]`
 
-```puppet
-Pattern[/^[0-9]+(-[0-9]+)?$/]
-```
-
-### <a name="k8sproxy_auth"></a>`K8s::Proxy_auth`
+### <a name="K8s--Proxy_auth"></a>`K8s::Proxy_auth`
 
 a type to describe kube-proxy authentication methods
 
-Alias of
+Alias of `Enum['cert', 'token', 'incluster']`
 
-```puppet
-Enum['cert', 'token', 'incluster']
-```
-
-### <a name="k8squantity"></a>`K8s::Quantity`
+### <a name="K8s--Quantity"></a>`K8s::Quantity`
 
 This regexp matches quantities, like those for resource requests/limits
 
-Alias of
+Alias of `Pattern[/^[+-]?([0-9]+|[0-9]+\.[0-9]{1,3}|\.[0-9]{1,3}|[0-9]+\.)([KMGTPE]i|[mkMGTPE]|[eE][0-9]+(\.[0-9]+)?)?$/]`
 
-```puppet
-Pattern[/^[+-]?([0-9]+|[0-9]+\.[0-9]{1,3}|\.[0-9]{1,3}|[0-9]+\.)([KMGTPE]i|[mkMGTPE]|[eE][0-9]+(\.[0-9]+)?)?$/]
-```
-
-### <a name="k8stls_altnames"></a>`K8s::TLS_altnames`
+### <a name="K8s--TLS_altnames"></a>`K8s::TLS_altnames`
 
 a type to describe TLS alternative names in certificates
 
@@ -3373,33 +3341,21 @@ Array[Variant[
   ]]
 ```
 
-### <a name="k8stimestamp"></a>`K8s::Timestamp`
+### <a name="K8s--Timestamp"></a>`K8s::Timestamp`
 
 This regexp matches RFC3339 timestamps, the same as what Kubernetes expects to find
 
-Alias of
+Alias of `Pattern[/^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?([Zz]|[+-]([01][0-9]|2[0-3]):[0-5][0-9])$/]`
 
-```puppet
-Pattern[/^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?([Zz]|[+-]([01][0-9]|2[0-3]):[0-5][0-9])$/]
-```
-
-### <a name="k8suri"></a>`K8s::URI`
+### <a name="K8s--URI"></a>`K8s::URI`
 
 This regexp matches URI values
 
-Alias of
+Alias of `Pattern[/^[a-z]+:\/\//]`
 
-```puppet
-Pattern[/^[a-z]+:\/\//]
-```
-
-### <a name="k8sversion"></a>`K8s::Version`
+### <a name="K8s--Version"></a>`K8s::Version`
 
 A type for handling Kubernetes version numbers
 
-Alias of
-
-```puppet
-Pattern[/^(\d+\.){2}\d+$/]
-```
+Alias of `Pattern[/^(\d+\.){2}\d+$/]`
 
