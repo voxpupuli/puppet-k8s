@@ -1,0 +1,90 @@
+---
+metadata:
+  labels:
+    tier: node
+    k8s-app: kube-proxy
+    kubernetes.io/managed-by: puppet
+spec:
+  selector:
+    matchLabels:
+      tier: node
+      k8s-app: kube-proxy
+      kubernetes.io/managed-by: puppet
+  template:
+    metadata:
+      labels:
+        tier: node
+        k8s-app: kube-proxy
+        kubernetes.io/managed-by: puppet
+    spec:
+      containers:
+      - name: kube-proxy
+        image: k8s.gcr.io/kube-proxy:v1.26.1
+        imagePullPolicy: IfNotPresent
+        command:
+        - "/go-runner"
+        args:
+        - "--log-file=/var/log/kube-proxy.log"
+        - "--also-stdout=true"
+        - "--"
+        - "/usr/local/bin/kube-proxy"
+        - "--hostname-override=$(NODE_NAME)"
+        - "--kubeconfig=/var/lib/kube-proxy/kubeconfig"
+        - "--config=/var/lib/kube-proxy/kube-proxy.conf"
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        resources:
+          requests:
+            cpu: 100m
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: "/var/lib/kube-proxy/kube-proxy.conf"
+          name: kube-proxy
+          subPath: kube-proxy.conf
+          readOnly: true
+        - mountPath: "/var/lib/kube-proxy/kubeconfig"
+          name: kubeconfig
+          subPath: kubeconfig
+          readOnly: true
+        - mountPath: "/lib/modules"
+          name: lib-modules
+          readOnly: true
+        - mountPath: "/run/xtables.lock"
+          name: iptables-lock
+      hostNetwork: true
+      priorityClassName: system-node-critical
+      serviceAccountName: kube-proxy
+      tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoSchedule
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
+      volumes:
+      - name: logfile
+        hostPath:
+          path: "/var/log/kube-proxy.log"
+          type: FileOrCreate
+      - name: lib-modules
+        hostPath:
+          path: "/lib/modules"
+          type: Directory
+      - name: iptables-lock
+        hostPath:
+          path: "/run/xtables.lock"
+          type: FileOrCreate
+      - name: kube-proxy
+        configMap:
+          name: kube-proxy
+      - name: kubeconfig
+        configMap:
+          name: kubeconfig-in-cluster
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate

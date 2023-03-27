@@ -21,6 +21,7 @@
 * [`k8s::server::etcd::setup`](#k8s--server--etcd--setup): Installs and configures an etcd instance
 * [`k8s::server::resources`](#k8s--server--resources): Generates and deploys standard Kubernetes in-cluster services
 * [`k8s::server::resources::coredns`](#k8s--server--resources--coredns): Generates and deploys the default CoreDNS DNS provider for Kubernetes
+* [`k8s::server::resources::kube_proxy`](#k8s--server--resources--kube_proxy): Generates and deploys the default kube-proxy service for Kubernetes
 * [`k8s::server::scheduler`](#k8s--server--scheduler): Installs and configures a Kubernetes scheduler
 * [`k8s::server::tls`](#k8s--server--tls): Generates the necessary Kubernetes certificates for a server
 
@@ -2144,7 +2145,7 @@ The following parameters are available in the `k8s::server::resources::coredns` 
 
 * [`dns_service_address`](#-k8s--server--resources--coredns--dns_service_address)
 * [`image`](#-k8s--server--resources--coredns--image)
-* [`tag`](#-k8s--server--resources--coredns--tag)
+* [`image_tag`](#-k8s--server--resources--coredns--image_tag)
 * [`deployment_config`](#-k8s--server--resources--coredns--deployment_config)
 * [`hosts`](#-k8s--server--resources--coredns--hosts)
 * [`ensure`](#-k8s--server--resources--coredns--ensure)
@@ -2167,7 +2168,7 @@ The CoreDNS image name to use
 
 Default value: `$k8s::server::resources::coredns_image`
 
-##### <a name="-k8s--server--resources--coredns--tag"></a>`tag`
+##### <a name="-k8s--server--resources--coredns--image_tag"></a>`image_tag`
 
 Data type: `String[1]`
 
@@ -2214,6 +2215,87 @@ Data type: `String[1]`
 
 
 Default value: `$k8s::server::resources::cluster_domain`
+
+### <a name="k8s--server--resources--kube_proxy"></a>`k8s::server::resources::kube_proxy`
+
+Generates and deploys the default kube-proxy service for Kubernetes
+
+#### Parameters
+
+The following parameters are available in the `k8s::server::resources::kube_proxy` class:
+
+* [`cluster_cidr`](#-k8s--server--resources--kube_proxy--cluster_cidr)
+* [`image`](#-k8s--server--resources--kube_proxy--image)
+* [`image_tag`](#-k8s--server--resources--kube_proxy--image_tag)
+* [`daemonset_config`](#-k8s--server--resources--kube_proxy--daemonset_config)
+* [`extra_args`](#-k8s--server--resources--kube_proxy--extra_args)
+* [`extra_config`](#-k8s--server--resources--kube_proxy--extra_config)
+* [`ensure`](#-k8s--server--resources--kube_proxy--ensure)
+* [`kubeconfig`](#-k8s--server--resources--kube_proxy--kubeconfig)
+
+##### <a name="-k8s--server--resources--kube_proxy--cluster_cidr"></a>`cluster_cidr`
+
+Data type: `K8s::CIDR`
+
+The internal cluster CIDR to proxy for
+
+Default value: `$k8s::server::resources::cluster_cidr`
+
+##### <a name="-k8s--server--resources--kube_proxy--image"></a>`image`
+
+Data type: `String[1]`
+
+The kube-proxy image name to use
+
+Default value: `$k8s::server::resources::kube_proxy_image`
+
+##### <a name="-k8s--server--resources--kube_proxy--image_tag"></a>`image_tag`
+
+Data type: `String[1]`
+
+The kube-proxy image tag to use
+
+Default value: `$k8s::server::resources::kube_proxy_tag`
+
+##### <a name="-k8s--server--resources--kube_proxy--daemonset_config"></a>`daemonset_config`
+
+Data type: `Hash[String,Data]`
+
+Additional configuration to merge into the DaemonSet object
+
+Default value: `{}`
+
+##### <a name="-k8s--server--resources--kube_proxy--extra_args"></a>`extra_args`
+
+Data type: `Hash[String,Data]`
+
+Additional arguments to specify to the kube-proxy application
+
+Default value: `{}`
+
+##### <a name="-k8s--server--resources--kube_proxy--extra_config"></a>`extra_config`
+
+Data type: `Hash[String,Data]`
+
+Additional configuration data to apply to the kube-proxy configuration file
+
+Default value: `{}`
+
+##### <a name="-k8s--server--resources--kube_proxy--ensure"></a>`ensure`
+
+Data type: `K8s::Ensure`
+
+
+
+Default value: `$k8s::ensure`
+
+##### <a name="-k8s--server--resources--kube_proxy--kubeconfig"></a>`kubeconfig`
+
+Data type: `Stdlib::Unixpath`
+
+
+
+Default value: `$k8s::server::resources::kubeconfig`
 
 ### <a name="k8s--server--scheduler"></a>`k8s::server::scheduler`
 
