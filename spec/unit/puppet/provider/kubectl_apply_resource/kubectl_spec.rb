@@ -313,7 +313,7 @@ RSpec.describe kubectl_provider do
           expect(provider).to receive(:kubectl).with(
             '--namespace', 'kube-system',
             'delete', '-f', '/tmp/kubectl_apply',
-            '--cascade=false', '--wait=false'
+            '--cascade=orphan', '--wait=false'
           )
           expect(provider).to receive(:kubectl).with(
             '--namespace', 'kube-system',
