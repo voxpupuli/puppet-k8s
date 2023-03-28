@@ -7,12 +7,18 @@
 ### Classes
 
 * [`k8s`](#k8s): Sets up a Kubernetes instance - either as a node or as a server
+* [`k8s::install::cni_plugins`](#k8s--install--cni_plugins): manages the installation of the cni plugins
+* [`k8s::install::container_runtime`](#k8s--install--container_runtime): manages the installation of cri
+* [`k8s::install::crictl`](#k8s--install--crictl): installs the crictl debugging tool
 * [`k8s::install::kubeadm`](#k8s--install--kubeadm): Installs the kubeadm binary
 * [`k8s::install::kubectl`](#k8s--install--kubectl): Installs the kubectl binary
 * [`k8s::node`](#k8s--node): Installs a Kubernetes node
 * [`k8s::node::kube_proxy`](#k8s--node--kube_proxy): Sets up a on-node kube-proxy instance
 * [`k8s::node::kubectl`](#k8s--node--kubectl): Installs the kubectl binary
 * [`k8s::node::kubelet`](#k8s--node--kubelet): Installs and configures kubelet
+* [`k8s::node::simple_cni`](#k8s--node--simple_cni): Provide a simple bridged standard network interface.
+For basic usage if one does not have flannel, cilium, calico or something else yet.
+Uses the cni-plugins bridge binary to create a bridge interface to connect the containers
 * [`k8s::repo`](#k8s--repo): Handles repositories for the container runtime
 * [`k8s::server`](#k8s--server): Sets up a Kubernetes server instance
 * [`k8s::server::apiserver`](#k8s--server--apiserver): Installs and configures a Kubernetes apiserver
@@ -46,6 +52,7 @@
 ### Data types
 
 * [`K8s::CIDR`](#K8s--CIDR): a type to describe one or more IPv4/6 CIDR
+* [`K8s::Container_runtimes`](#K8s--Container_runtimes): a type to describe the supported container runtimes
 * [`K8s::Duration`](#K8s--Duration): This regexp matches Go duration values, as taken from;
 * [`K8s::Ensure`](#K8s--Ensure): a type to describe the ensure pattern
 * [`K8s::Extended_key_usage`](#K8s--Extended_key_usage): a type to describe extended key usage for a TLS certificate
@@ -84,6 +91,8 @@ The following parameters are available in the `k8s` class:
 * [`container_manager`](#-k8s--container_manager)
 * [`container_runtime_service`](#-k8s--container_runtime_service)
 * [`crio_package`](#-k8s--crio_package)
+* [`containerd_package`](#-k8s--containerd_package)
+* [`crictl_package`](#-k8s--crictl_package)
 * [`runc_version`](#-k8s--runc_version)
 * [`manage_etcd`](#-k8s--manage_etcd)
 * [`manage_firewall`](#-k8s--manage_firewall)
@@ -193,7 +202,7 @@ Default value: `undef`
 
 ##### <a name="-k8s--container_manager"></a>`container_manager`
 
-Data type: `Enum['docker', 'crio']`
+Data type: `K8s::Container_runtimes`
 
 
 
@@ -208,6 +217,22 @@ Data type: `String[1]`
 Default value: `"${container_manager}.service"`
 
 ##### <a name="-k8s--crio_package"></a>`crio_package`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `undef`
+
+##### <a name="-k8s--containerd_package"></a>`containerd_package`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `undef`
+
+##### <a name="-k8s--crictl_package"></a>`crictl_package`
 
 Data type: `Optional[String[1]]`
 
@@ -423,6 +448,180 @@ Data type: `Optional[K8s::Firewall]`
 
 Default value: `undef`
 
+### <a name="k8s--install--cni_plugins"></a>`k8s::install::cni_plugins`
+
+Class: k8s::install::cni_plugins
+
+#### Parameters
+
+The following parameters are available in the `k8s::install::cni_plugins` class:
+
+* [`ensure`](#-k8s--install--cni_plugins--ensure)
+* [`version`](#-k8s--install--cni_plugins--version)
+* [`arch`](#-k8s--install--cni_plugins--arch)
+* [`method`](#-k8s--install--cni_plugins--method)
+
+##### <a name="-k8s--install--cni_plugins--ensure"></a>`ensure`
+
+Data type: `K8s::Ensure`
+
+set ensure for installation or deinstallation
+
+Default value: `$k8s::ensure`
+
+##### <a name="-k8s--install--cni_plugins--version"></a>`version`
+
+Data type: `String[1]`
+
+sets the version to use
+
+Default value: `'v1.2.0'`
+
+##### <a name="-k8s--install--cni_plugins--arch"></a>`arch`
+
+Data type: `String[1]`
+
+sets the arch to use for binary download
+
+Default value: `'amd64'`
+
+##### <a name="-k8s--install--cni_plugins--method"></a>`method`
+
+Data type: `String[1]`
+
+installation method
+
+Default value: `$k8s::native_packaging`
+
+### <a name="k8s--install--container_runtime"></a>`k8s::install::container_runtime`
+
+Class: k8s::install::container_runtime
+
+#### Parameters
+
+The following parameters are available in the `k8s::install::container_runtime` class:
+
+* [`manage_repo`](#-k8s--install--container_runtime--manage_repo)
+* [`container_manager`](#-k8s--install--container_runtime--container_manager)
+* [`crio_package`](#-k8s--install--container_runtime--crio_package)
+* [`containerd_package`](#-k8s--install--container_runtime--containerd_package)
+* [`k8s_version`](#-k8s--install--container_runtime--k8s_version)
+* [`runc_version`](#-k8s--install--container_runtime--runc_version)
+
+##### <a name="-k8s--install--container_runtime--manage_repo"></a>`manage_repo`
+
+Data type: `Boolean`
+
+whether to manage the repo or not
+
+Default value: `$k8s::manage_repo`
+
+##### <a name="-k8s--install--container_runtime--container_manager"></a>`container_manager`
+
+Data type: `K8s::Container_runtimes`
+
+set the cri to use
+
+Default value: `$k8s::container_manager`
+
+##### <a name="-k8s--install--container_runtime--crio_package"></a>`crio_package`
+
+Data type: `Optional[String[1]]`
+
+cri-o the package name
+
+Default value: `$k8s::crio_package`
+
+##### <a name="-k8s--install--container_runtime--containerd_package"></a>`containerd_package`
+
+Data type: `Optional[String[1]]`
+
+the containerd package anme
+
+Default value: `$k8s::containerd_package`
+
+##### <a name="-k8s--install--container_runtime--k8s_version"></a>`k8s_version`
+
+Data type: `String[1]`
+
+the k8s version
+
+Default value: `$k8s::version`
+
+##### <a name="-k8s--install--container_runtime--runc_version"></a>`runc_version`
+
+Data type: `String[1]`
+
+the runc version
+
+Default value: `$k8s::runc_version`
+
+### <a name="k8s--install--crictl"></a>`k8s::install::crictl`
+
+Class: k8s::install::crictl
+
+#### Parameters
+
+The following parameters are available in the `k8s::install::crictl` class:
+
+* [`ensure`](#-k8s--install--crictl--ensure)
+* [`version`](#-k8s--install--crictl--version)
+* [`arch`](#-k8s--install--crictl--arch)
+* [`config`](#-k8s--install--crictl--config)
+* [`crictl_package`](#-k8s--install--crictl--crictl_package)
+* [`manage_repo`](#-k8s--install--crictl--manage_repo)
+
+##### <a name="-k8s--install--crictl--ensure"></a>`ensure`
+
+Data type: `K8s::Ensure`
+
+set ensure for installation or deinstallation
+
+Default value: `$k8s::ensure`
+
+##### <a name="-k8s--install--crictl--version"></a>`version`
+
+Data type: `String[1]`
+
+the k8s version
+
+Default value: `'v1.26.0'`
+
+##### <a name="-k8s--install--crictl--arch"></a>`arch`
+
+Data type: `String[1]`
+
+os architecture
+
+Default value: `'amd64'`
+
+##### <a name="-k8s--install--crictl--config"></a>`config`
+
+Data type: `Hash`
+
+config for crictl, for example:
+k8s::install::crictl::config:
+  'runtime-endpoint': 'unix:///run/containerd/containerd.sock'
+  'image-endpoint': 'unix:///run/containerd/containerd.sock'
+
+Default value: `{}`
+
+##### <a name="-k8s--install--crictl--crictl_package"></a>`crictl_package`
+
+Data type: `Optional[String[1]]`
+
+the package name of crictl
+
+Default value: `$k8s::crictl_package`
+
+##### <a name="-k8s--install--crictl--manage_repo"></a>`manage_repo`
+
+Data type: `Boolean`
+
+whether to manage the repo or not
+
+Default value: `$k8s::manage_repo`
+
 ### <a name="k8s--install--kubeadm"></a>`k8s::install::kubeadm`
 
 Installs the kubeadm binary
@@ -486,6 +685,8 @@ The following parameters are available in the `k8s::node` class:
 * [`proxy_key`](#-k8s--node--proxy_key)
 * [`proxy_token`](#-k8s--node--proxy_token)
 * [`puppetdb_discovery_tag`](#-k8s--node--puppetdb_discovery_tag)
+* [`manage_simple_cni`](#-k8s--node--manage_simple_cni)
+* [`manage_crictl`](#-k8s--node--manage_crictl)
 
 ##### <a name="-k8s--node--ca_cert"></a>`ca_cert`
 
@@ -638,6 +839,22 @@ Data type: `String[1]`
 enable puppetdb resource searching
 
 Default value: `$k8s::puppetdb_discovery_tag`
+
+##### <a name="-k8s--node--manage_simple_cni"></a>`manage_simple_cni`
+
+Data type: `Boolean`
+
+toggle to use a simple bridge network for containers
+
+Default value: `false`
+
+##### <a name="-k8s--node--manage_crictl"></a>`manage_crictl`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
 
 ### <a name="k8s--node--kube_proxy"></a>`k8s::node::kube_proxy`
 
@@ -954,6 +1171,24 @@ k8s token to join a cluster
 
 Default value: `$k8s::node::node_token`
 
+### <a name="k8s--node--simple_cni"></a>`k8s::node::simple_cni`
+
+Class: k8s::node::simple_cni
+
+#### Parameters
+
+The following parameters are available in the `k8s::node::simple_cni` class:
+
+* [`pod_cidr`](#-k8s--node--simple_cni--pod_cidr)
+
+##### <a name="-k8s--node--simple_cni--pod_cidr"></a>`pod_cidr`
+
+Data type: `K8s::CIDR`
+
+cidr for pods in the network
+
+Default value: `$k8s::cluster_cidr`
+
 ### <a name="k8s--repo"></a>`k8s::repo`
 
 Handles repositories for the container runtime
@@ -1005,6 +1240,7 @@ The following parameters are available in the `k8s::server` class:
 * [`generate_ca`](#-k8s--server--generate_ca)
 * [`manage_certs`](#-k8s--server--manage_certs)
 * [`manage_components`](#-k8s--server--manage_components)
+* [`manage_crictl`](#-k8s--server--manage_crictl)
 * [`manage_etcd`](#-k8s--server--manage_etcd)
 * [`manage_firewall`](#-k8s--server--manage_firewall)
 * [`manage_kubeadm`](#-k8s--server--manage_kubeadm)
@@ -1141,6 +1377,14 @@ Data type: `Boolean`
 whether to manage components or not
 
 Default value: `true`
+
+##### <a name="-k8s--server--manage_crictl"></a>`manage_crictl`
+
+Data type: `Boolean`
+
+whether to install crictl or not
+
+Default value: `false`
 
 ##### <a name="-k8s--server--manage_etcd"></a>`manage_etcd`
 
@@ -3169,6 +3413,12 @@ Variant[Stdlib::IP::Address::V4::CIDR, Stdlib::IP::Address::V6::CIDR, Array[
     1
   ]]
 ```
+
+### <a name="K8s--Container_runtimes"></a>`K8s::Container_runtimes`
+
+a type to describe the supported container runtimes
+
+Alias of `Enum['crio', 'containerd']`
 
 ### <a name="K8s--Duration"></a>`K8s::Duration`
 

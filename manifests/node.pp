@@ -19,6 +19,7 @@
 # @param proxy_key path to proxy key file
 # @param proxy_token k8s token for kube-proxy
 # @param puppetdb_discovery_tag enable puppetdb resource searching
+# @param manage_simple_cni toggle to use a simple bridge network for containers
 #
 class k8s::node (
   K8s::Ensure $ensure = $k8s::ensure,
@@ -29,9 +30,11 @@ class k8s::node (
 
   Boolean $manage_kubelet           = true,
   Boolean $manage_proxy             = false,
+  Boolean $manage_crictl            = false,
   Boolean $manage_firewall          = $k8s::manage_firewall,
   Boolean $manage_kernel_modules    = $k8s::manage_kernel_modules,
   Boolean $manage_sysctl_settings   = $k8s::manage_sysctl_settings,
+  Boolean $manage_simple_cni        = false,
   String[1] $puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag,
 
   Stdlib::Unixpath $cert_path = '/var/lib/kubelet/pki',
@@ -50,10 +53,16 @@ class k8s::node (
 
   Optional[K8s::Firewall] $firewall_type = $k8s::firewall_type,
 ) {
+  if $manage_crictl {
+    include k8s::install::crictl
+  }
   if $manage_kubelet {
     include k8s::node::kubelet
   }
   if $manage_proxy {
     include k8s::node::kube_proxy
+  }
+  if $manage_simple_cni {
+    include k8s::node::simple_cni
   }
 }

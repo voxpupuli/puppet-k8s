@@ -1185,6 +1185,7 @@ class k8s::server::resources (
     }
   }
 
+  # Cluster role bindings
   kubectl_apply {
     default:
       kubeconfig  => $kubeconfig,

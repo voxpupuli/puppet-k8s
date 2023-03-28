@@ -145,6 +145,12 @@ class k8s::node::kubelet (
     }
   }
 
+  if fact('systemd_internal_services."systemd-resolved.service"') == 'enabled' {
+    $systemd_resolved_fix = { 'resolvConf' => '/run/systemd/resolve/resolv.conf' }
+  } else {
+    $systemd_resolved_fix = {}
+  }
+
   $config_hash = {
     'apiVersion'         => 'kubelet.config.k8s.io/v1beta1',
     'kind'               => 'KubeletConfiguration',
@@ -159,7 +165,7 @@ class k8s::node::kubelet (
       $k8s::dns_service_address,
     ].flatten,
     'cgroupDriver'       => 'systemd',
-  } + $_authentication_hash
+  } + $_authentication_hash + $systemd_resolved_fix
 
   if $manage_kernel_modules {
     kmod::load {
@@ -202,8 +208,8 @@ class k8s::node::kubelet (
     notify  => Service['kubelet'],
   }
 
-  if $runtime == 'crio' {
-    $_runtime_endpoint = 'unix:///var/run/crio/crio.sock'
+  if $runtime in ['crio', 'containerd'] {
+    $_runtime_endpoint = "unix:///var/run/${runtime}/${runtime}.sock"
     $_runtime = 'remote'
   } else {
     $_runtime_endpoint = undef
@@ -257,6 +263,8 @@ class k8s::node::kubelet (
     ensure => stdlib::ensure($ensure, 'service'),
     enable => true,
   }
+
+  Class['k8s::install::container_runtime'] -> Service['kubelet']
   Package <| title == 'containernetworking-plugins' |> -> Service['kubelet']
 
   if $manage_firewall {
