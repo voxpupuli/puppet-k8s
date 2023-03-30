@@ -285,7 +285,8 @@ class k8s::server::resources::flannel (
                 {
                   name     => 'run',
                   hostPath => {
-                    path => '/run',
+                    path => '/run/flannel',
+                    type => 'DirectoryOrCreate',
                   },
                 },
                 {
