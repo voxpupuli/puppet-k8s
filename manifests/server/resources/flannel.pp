@@ -6,17 +6,34 @@
 # @param image The Flannel image name to use
 # @param image_tag The Flannel image tag to use
 # @param daemonset_config Additional configuration to merge into the DaemonSet object
+# @param net_config Additional configuration to merge into net-conf.json for Flannel
 class k8s::server::resources::flannel (
-  K8s::Ensure $ensure                    = $k8s::ensure,
-  Stdlib::Unixpath $kubeconfig           = $k8s::server::resources::kubeconfig,
-  K8s::CIDR $cluster_cidr                = $k8s::server::resources::cluster_cidr,
-  String[1] $cni_image                   = $k8s::server::resources::flannel_cni_image,
-  String[1] $cni_image_tag               = $k8s::server::resources::flannel_cni_tag,
-  String[1] $image                       = $k8s::server::resources::flannel_image,
-  String[1] $image_tag                   = $k8s::server::resources::flannel_tag,
-  Hash[String,Data] $daemonset_config    = $k8s::server::resources::flannel_daemonset_config,
+  K8s::Ensure $ensure                 = $k8s::ensure,
+  Stdlib::Unixpath $kubeconfig        = $k8s::server::resources::kubeconfig,
+  K8s::CIDR $cluster_cidr             = $k8s::server::resources::cluster_cidr,
+  String[1] $cni_image                = $k8s::server::resources::flannel_cni_image,
+  String[1] $cni_image_tag            = $k8s::server::resources::flannel_cni_tag,
+  String[1] $image                    = $k8s::server::resources::flannel_image,
+  String[1] $image_tag                = $k8s::server::resources::flannel_tag,
+  Hash[String,Data] $daemonset_config = $k8s::server::resources::flannel_daemonset_config,
+  Hash[String,Data] $net_config       = {},
 ) {
   assert_private()
+
+  $_cluster_cidr_v4 = flatten($cluster_cidr).filter |$cidr| { $cidr =~ Stdlib::IP::Address::V4::CIDR }
+  $_cluster_cidr_v6 = flatten($cluster_cidr).filter |$cidr| { $cidr =~ Stdlib::IP::Address::V6::CIDR }
+
+  $_net_conf = delete_undef_values(
+    {
+      'Network'     => $_cluster_cidr_v4[0],
+      'IPv6Network' => $_cluster_cidr_v6[0],
+      'EnableIPv4'  => !$_cluster_cidr_v4.empty(),
+      'EnableIPv6'  => !$_cluster_cidr_v6.empty(),
+      'Backend'     => {
+        'Type' => 'vxlan',
+      },
+    } + $net_config
+  )
 
   kubectl_apply {
     default:
@@ -125,12 +142,7 @@ class k8s::server::resources::flannel (
                 },
               ],
           }),
-          'net-conf.json' => to_json({
-              'Network' => $cluster_cidr,
-              'Backend' => {
-                'Type' => 'vxlan',
-              },
-          }),
+          'net-conf.json' => $_net_conf.to_json(),
         },
       };
 
@@ -279,7 +291,7 @@ class k8s::server::resources::flannel (
                 {
                   name     => 'cni',
                   hostPath => {
-                    path => '/etc/kubernetes/cni/net.d',
+                    path => '/etc/cni/net.d',
                   },
                 },
                 {

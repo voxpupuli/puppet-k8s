@@ -2268,6 +2268,7 @@ The following parameters are available in the `k8s::server::resources::flannel` 
 * [`image`](#-k8s--server--resources--flannel--image)
 * [`image_tag`](#-k8s--server--resources--flannel--image_tag)
 * [`daemonset_config`](#-k8s--server--resources--flannel--daemonset_config)
+* [`net_config`](#-k8s--server--resources--flannel--net_config)
 * [`ensure`](#-k8s--server--resources--flannel--ensure)
 * [`kubeconfig`](#-k8s--server--resources--flannel--kubeconfig)
 
@@ -2318,6 +2319,14 @@ Data type: `Hash[String,Data]`
 Additional configuration to merge into the DaemonSet object
 
 Default value: `$k8s::server::resources::flannel_daemonset_config`
+
+##### <a name="-k8s--server--resources--flannel--net_config"></a>`net_config`
+
+Data type: `Hash[String,Data]`
+
+Additional configuration to merge into net-conf.json for Flannel
+
+Default value: `{}`
 
 ##### <a name="-k8s--server--resources--flannel--ensure"></a>`ensure`
 
