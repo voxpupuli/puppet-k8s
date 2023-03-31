@@ -18,7 +18,7 @@ class k8s::server::resources::bootstrap (
     addn_data          => {
       metadata => {
         labels => {
-          'puppet.com/managed' => 'true',
+          'kubernetes.io/managed-by' => 'puppet',
         },
       },
     },
