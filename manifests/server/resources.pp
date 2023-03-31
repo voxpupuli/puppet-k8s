@@ -149,6 +149,8 @@ class k8s::server::resources (
       kind        => 'ConfigMap',
       namespace   => 'kube-system';
 
+    # Default kubeconfig for using the local serviceaccount against an external apiserver URL
+    # This is useful for e.g. kube-proxy - and proxy-replacing network fabrics - where the internal URL (https://kubernetes.default) might not be available
     'kubeconfig-in-cluster':
       content => {
         metadata => {
