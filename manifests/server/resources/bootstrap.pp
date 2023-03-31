@@ -9,6 +9,7 @@ class k8s::server::resources::bootstrap (
   assert_private()
 
   k8s::server::bootstrap_token { 'puppet':
+    ensure             => $ensure,
     kubeconfig         => $kubeconfig,
 
     description        => 'Puppet generated token',
@@ -25,6 +26,7 @@ class k8s::server::resources::bootstrap (
 
   if $facts['k8s_ca'] {
     kubectl_apply { 'cluster-info':
+      ensure      => $ensure,
       kubeconfig  => $kubeconfig,
       provider    => 'kubectl',
       api_version => 'v1',
@@ -62,6 +64,7 @@ class k8s::server::resources::bootstrap (
 
   kubectl_apply {
     default:
+      ensure      => $ensure,
       kubeconfig  => $kubeconfig,
       provider    => 'kubectl',
       api_version => 'rbac.authorization.k8s.io/v1',
@@ -172,6 +175,7 @@ class k8s::server::resources::bootstrap (
 
   kubectl_apply {
     default:
+      ensure      => $ensure,
       kubeconfig  => $kubeconfig,
       provider    => 'kubectl',
       api_version => 'rbac.authorization.k8s.io/v1',

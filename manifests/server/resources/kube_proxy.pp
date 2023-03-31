@@ -36,6 +36,7 @@ class k8s::server::resources::kube_proxy (
 
   kubectl_apply {
     default:
+      ensure        => $ensure,
       kubeconfig    => $kubeconfig,
       provider      => 'kubectl',
       resource_name => 'kube-proxy',
@@ -65,6 +66,8 @@ class k8s::server::resources::kube_proxy (
         },
       };
 
+    ## Default kube-proxy configuration
+    # ---
     # apiVersion: kubeproxy.config.k8s.io/v1alpha1
     # bindAddress: 0.0.0.0
     # bindAddressHardFail: false
