@@ -126,9 +126,12 @@ class k8s::server::resources::kube_proxy (
         },
         data     => {
           'kube-proxy.conf' => to_yaml({
-              apiVersion  => 'kubeproxy.config.k8s.io/v1alpha1',
-              kind        => 'KubeProxyConfiguration',
-              clusterCIDR => flatten($cluster_cidr).join(','),
+              apiVersion       => 'kubeproxy.config.k8s.io/v1alpha1',
+              kind             => 'KubeProxyConfiguration',
+              clusterCIDR      => flatten($cluster_cidr).join(','),
+              clientConnection => {
+                kubeconfig => '/var/lib/kube-proxy/kubeconfig',
+              },
           } + $extra_config),
         },
       };
@@ -174,7 +177,6 @@ class k8s::server::resources::kube_proxy (
                     k8s::format_arguments(
                       {
                         hostname_override => '$(NODE_NAME)',
-                        kubeconfig        => '/var/lib/kube-proxy/kubeconfig',
                         config            => '/var/lib/kube-proxy/kube-proxy.conf',
                       } + $extra_args
                     )
