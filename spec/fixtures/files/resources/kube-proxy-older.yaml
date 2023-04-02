@@ -27,7 +27,6 @@ spec:
         - "--alsologtostderr=true"
         - "--log-file=/var/log/kube-proxy.log"
         - "--hostname-override=$(NODE_NAME)"
-        - "--kubeconfig=/var/lib/kube-proxy/kubeconfig"
         - "--config=/var/lib/kube-proxy/kube-proxy.conf"
         env:
         - name: NODE_NAME

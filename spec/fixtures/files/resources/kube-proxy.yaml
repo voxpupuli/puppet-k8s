@@ -29,7 +29,6 @@ spec:
         - "--"
         - "/usr/local/bin/kube-proxy"
         - "--hostname-override=$(NODE_NAME)"
-        - "--kubeconfig=/var/lib/kube-proxy/kubeconfig"
         - "--config=/var/lib/kube-proxy/kube-proxy.conf"
         env:
         - name: NODE_NAME
