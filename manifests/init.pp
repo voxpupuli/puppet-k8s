@@ -5,6 +5,10 @@
 #
 # @param manage_sysctl_settings
 #   A flag to manage required sysctl settings.
+#
+# @param manage_kube_proxy
+#   How/if the kube-proxy component should be managed, either as an in-cluster
+#   component (default), or as an on-node component for advanced use-cases.
 # @param ensure
 # @param packaging
 class k8s (
@@ -25,15 +29,16 @@ class k8s (
   Optional[String[1]] $crictl_package        = undef,
   String[1] $runc_version                    = 'installed',
 
-  Boolean $manage_etcd              = true,
-  Boolean $manage_firewall          = false,
-  Boolean $manage_kernel_modules    = true,
-  Boolean $manage_sysctl_settings   = true,
-  Boolean $manage_image             = false,
-  Boolean $manage_repo              = true,
-  Boolean $manage_packages          = true,
-  Boolean $manage_container_manager = true,
-  Boolean $manage_kube_proxy        = true,
+  Boolean $manage_etcd                 = true,
+  Boolean $manage_firewall             = false,
+  Boolean $manage_kernel_modules       = true,
+  Boolean $manage_sysctl_settings      = true,
+  Boolean $manage_image                = false,
+  Boolean $manage_repo                 = true,
+  Boolean $manage_packages             = true,
+  Boolean $manage_container_manager    = true,
+  K8s::Proxy_method $manage_kube_proxy = true,
+
   Boolean $puppetdb_discovery       = false,
   String[1] $puppetdb_discovery_tag = 'default',
 

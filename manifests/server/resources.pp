@@ -8,10 +8,10 @@ class k8s::server::resources (
   String[1] $cluster_domain              = $k8s::server::cluster_domain,
   String[1] $master                      = $k8s::server::master,
 
-  Boolean $manage_bootstrap  = true,
-  Boolean $manage_kube_proxy = $k8s::manage_kube_proxy,
-  Boolean $manage_coredns    = true,
-  Boolean $manage_flannel    = true,
+  Boolean $manage_bootstrap            = true,
+  Boolean $manage_coredns              = true,
+  Boolean $manage_flannel              = true,
+  K8s::Proxy_method $manage_kube_proxy = $k8s::manage_kube_proxy,
 
   String[1] $kube_proxy_image                    = 'k8s.gcr.io/kube-proxy',
   String[1] $kube_proxy_tag                      = "v${k8s::version}",
@@ -32,7 +32,7 @@ class k8s::server::resources (
     include k8s::server::resources::bootstrap
   }
 
-  if $manage_kube_proxy {
+  if $manage_kube_proxy and $manage_kube_proxy != 'on-node' {
     include k8s::server::resources::kube_proxy
   }
 

@@ -66,6 +66,7 @@ Uses the cni-plugins bridge binary to create a bridge interface to connect the c
 * [`K8s::Node_auth`](#K8s--Node_auth): a type to describe node/kubelet authentication methods
 * [`K8s::PortRange`](#K8s--PortRange): This regexp matches port range values
 * [`K8s::Proxy_auth`](#K8s--Proxy_auth): a type to describe kube-proxy authentication methods
+* [`K8s::Proxy_method`](#K8s--Proxy_method): a type to describe how kube-proxy should be deployed
 * [`K8s::Quantity`](#K8s--Quantity): This regexp matches quantities, like those for resource requests/limits
 * [`K8s::TLS_altnames`](#K8s--TLS_altnames): a type to describe TLS alternative names in certificates
 * [`K8s::Timestamp`](#K8s--Timestamp): This regexp matches RFC3339 timestamps, the same as what Kubernetes expects to find
@@ -84,6 +85,7 @@ The following parameters are available in the `k8s` class:
 
 * [`manage_kernel_modules`](#-k8s--manage_kernel_modules)
 * [`manage_sysctl_settings`](#-k8s--manage_sysctl_settings)
+* [`manage_kube_proxy`](#-k8s--manage_kube_proxy)
 * [`ensure`](#-k8s--ensure)
 * [`packaging`](#-k8s--packaging)
 * [`native_packaging`](#-k8s--native_packaging)
@@ -104,7 +106,6 @@ The following parameters are available in the `k8s` class:
 * [`manage_repo`](#-k8s--manage_repo)
 * [`manage_packages`](#-k8s--manage_packages)
 * [`manage_container_manager`](#-k8s--manage_container_manager)
-* [`manage_kube_proxy`](#-k8s--manage_kube_proxy)
 * [`puppetdb_discovery`](#-k8s--puppetdb_discovery)
 * [`puppetdb_discovery_tag`](#-k8s--puppetdb_discovery_tag)
 * [`purge_manifests`](#-k8s--purge_manifests)
@@ -137,6 +138,15 @@ Default value: `true`
 Data type: `Boolean`
 
 A flag to manage required sysctl settings.
+
+Default value: `true`
+
+##### <a name="-k8s--manage_kube_proxy"></a>`manage_kube_proxy`
+
+Data type: `K8s::Proxy_method`
+
+How/if the kube-proxy component should be managed, either as an in-cluster
+component (default), or as an on-node component for advanced use-cases.
 
 Default value: `true`
 
@@ -293,14 +303,6 @@ Data type: `Boolean`
 Default value: `true`
 
 ##### <a name="-k8s--manage_container_manager"></a>`manage_container_manager`
-
-Data type: `Boolean`
-
-
-
-Default value: `true`
-
-##### <a name="-k8s--manage_kube_proxy"></a>`manage_kube_proxy`
 
 Data type: `Boolean`
 
@@ -754,7 +756,7 @@ Data type: `Boolean`
 
 whether to manage kube-proxy or not
 
-Default value: `false`
+Default value: `$k8s::manage_kube_proxy == 'on-node'`
 
 ##### <a name="-k8s--node--manage_sysctl_settings"></a>`manage_sysctl_settings`
 
@@ -3781,6 +3783,19 @@ Alias of `Pattern[/^[0-9]+(-[0-9]+)?$/]`
 a type to describe kube-proxy authentication methods
 
 Alias of `Enum['cert', 'token', 'incluster']`
+
+### <a name="K8s--Proxy_method"></a>`K8s::Proxy_method`
+
+a type to describe how kube-proxy should be deployed
+
+Alias of
+
+```puppet
+Variant[Enum[
+    'on-node',
+    'in-cluster',
+  ], Boolean]
+```
 
 ### <a name="K8s--Quantity"></a>`K8s::Quantity`
 
