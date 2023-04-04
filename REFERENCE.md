@@ -2191,9 +2191,9 @@ The following parameters are available in the `k8s::server::resources` class:
 * [`cluster_domain`](#-k8s--server--resources--cluster_domain)
 * [`master`](#-k8s--server--resources--master)
 * [`manage_bootstrap`](#-k8s--server--resources--manage_bootstrap)
-* [`manage_kube_proxy`](#-k8s--server--resources--manage_kube_proxy)
 * [`manage_coredns`](#-k8s--server--resources--manage_coredns)
 * [`manage_flannel`](#-k8s--server--resources--manage_flannel)
+* [`manage_kube_proxy`](#-k8s--server--resources--manage_kube_proxy)
 * [`kube_proxy_image`](#-k8s--server--resources--kube_proxy_image)
 * [`kube_proxy_tag`](#-k8s--server--resources--kube_proxy_tag)
 * [`kube_proxy_daemonset_config`](#-k8s--server--resources--kube_proxy_daemonset_config)
@@ -2263,14 +2263,6 @@ Data type: `Boolean`
 
 Default value: `true`
 
-##### <a name="-k8s--server--resources--manage_kube_proxy"></a>`manage_kube_proxy`
-
-Data type: `Boolean`
-
-
-
-Default value: `$k8s::manage_kube_proxy`
-
 ##### <a name="-k8s--server--resources--manage_coredns"></a>`manage_coredns`
 
 Data type: `Boolean`
@@ -2286,6 +2278,14 @@ Data type: `Boolean`
 
 
 Default value: `true`
+
+##### <a name="-k8s--server--resources--manage_kube_proxy"></a>`manage_kube_proxy`
+
+Data type: `K8s::Proxy_method`
+
+
+
+Default value: `$k8s::manage_kube_proxy`
 
 ##### <a name="-k8s--server--resources--kube_proxy_image"></a>`kube_proxy_image`
 
