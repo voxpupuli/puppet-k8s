@@ -26,7 +26,7 @@ describe 'k8s::server::tls::ca' do
 
       it do
         is_expected.to contain_exec('Create namevar CA cert').with(
-          command: %r{openssl req -x509 -new -nodes -key '/tmp.ca.key'\s+-days '10000' -out '/tmp/ca.pem' -subj '/CN=namevar'},
+          command: %r{openssl req -x509 -new -nodes -key '/tmp.ca.key'\s+-days '10000' -out '/tmp/ca.pem' -subj '/CN=namevar'}
         ).that_requires('File[/tmp/ca.key]')
       end
 
