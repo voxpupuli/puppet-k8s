@@ -17,7 +17,7 @@ define k8s::server::tls::ca (
     Package <| title == 'openssl' |>
     -> exec {
       default:
-        path => pick($facts['path'], '/usr/bin:/bin');
+        path => $facts['path'];
 
       "Create ${title} CA key":
         command => "openssl genrsa -out '${key}' ${key_bits}",

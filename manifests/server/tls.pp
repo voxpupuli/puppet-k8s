@@ -18,39 +18,37 @@ class k8s::server::tls (
   Stdlib::Unixpath $aggregator_ca_cert = $k8s::server::aggregator_ca_cert,
 ) {
   if $manage_certs or $ensure == 'absent' {
-    ensure_packages(['openssl'])
-
     if !defined(File[$cert_path]) {
       file { $cert_path:
-        ensure => ($ensure ? {
-            'present' => directory,
-            default   => absent,
-        }),
+        ensure => stdlib::ensure($ensure, 'directory'),
         owner  => 'kube',
         group  => 'kube',
       }
     }
 
-    # Additional non-CA certs that should also only be generated on one node
-    if $generate_ca {
-      Package <| title == 'openssl' |>
-      -> exec { 'K8s create service account private key':
-        path    => pick($facts['path'], '/usr/bin'),
-        command => "openssl genrsa -out '${cert_path}/service-account.key' ${key_bits}; echo > '${cert_path}/service-account.pub'",
-        unless  => "openssl pkey -in '${cert_path}/service-account.key' -text | grep '${key_bits} bit'",
-        before  => [
-          File["${cert_path}/service-account.key"],
-          Exec['K8s get service account public key'],
-        ],
+    if $ensure == 'present' {
+      ensure_packages(['openssl'])
+      # Additional non-CA certs that should also only be generated on one node
+      if $generate_ca {
+        Package <| title == 'openssl' |>
+        -> exec { 'K8s create service account private key':
+          path    => $facts['path'],
+          command => "openssl genrsa -out '${cert_path}/service-account.key' ${key_bits}; echo > '${cert_path}/service-account.pub'",
+          unless  => "openssl pkey -in '${cert_path}/service-account.key' -text | grep '${key_bits} bit'",
+          before  => [
+            File["${cert_path}/service-account.key"],
+            Exec['K8s get service account public key'],
+          ],
+        }
       }
-    }
 
-    Package <| title == 'openssl' |>
-    -> exec { 'K8s get service account public key':
-      path    => pick($facts['path'], '/usr/bin'),
-      command => "openssl pkey -pubout -in '${cert_path}/service-account.key' -out '${cert_path}/service-account.pub'",
-      unless  => "openssl pkey -pubin -in '${cert_path}/service-account.pub' -noout",
-      before  => File["${cert_path}/service-account.pub"],
+      Package <| title == 'openssl' |>
+      -> exec { 'K8s get service account public key':
+        path    => $facts['path'],
+        command => "openssl pkey -pubout -in '${cert_path}/service-account.key' -out '${cert_path}/service-account.pub'",
+        unless  => "openssl pkey -pubin -in '${cert_path}/service-account.pub' -noout",
+        before  => File["${cert_path}/service-account.pub"],
+      }
     }
 
     # Generate K8s CA
@@ -182,6 +180,7 @@ class k8s::server::tls (
 
     if $generate_ca and !defined(File["${cert_path}/service-account.key"]) {
       file { "${cert_path}/service-account.key":
+        ensure  => $ensure,
         owner   => kube,
         group   => kube,
         replace => false,
@@ -190,6 +189,7 @@ class k8s::server::tls (
     }
     if !defined(File["${cert_path}/service-account.pub"]) {
       file { "${cert_path}/service-account.pub":
+        ensure  => $ensure,
         owner   => kube,
         group   => kube,
         replace => false,

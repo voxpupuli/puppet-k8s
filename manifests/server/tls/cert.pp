@@ -45,7 +45,7 @@ define k8s::server::tls::cert (
     Package <| title == 'openssl' |>
     -> exec {
       default:
-        path => pick($facts['path'], '/usr/bin:/bin');
+        path => $facts['path'];
 
       "Create K8s ${title} key":
         command => "openssl genrsa -out '${key}' ${key_bits}; echo > '${cert}'",
