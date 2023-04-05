@@ -29,7 +29,7 @@ class k8s::node (
   K8s::Proxy_auth $proxy_auth = 'incluster',
 
   Boolean $manage_kubelet           = true,
-  Boolean $manage_proxy             = false,
+  Boolean $manage_proxy             = $k8s::manage_kube_proxy == 'on-node',
   Boolean $manage_crictl            = false,
   Boolean $manage_firewall          = $k8s::manage_firewall,
   Boolean $manage_kernel_modules    = $k8s::manage_kernel_modules,
