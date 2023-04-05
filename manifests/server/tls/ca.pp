@@ -17,7 +17,7 @@ define k8s::server::tls::ca (
     Package <| title == 'openssl' |>
     -> exec {
       default:
-        path    => ['/usr/bin', '/bin'];
+        path => pick($facts['path'], '/usr/bin:/bin');
 
       "Create ${title} CA key":
         command => "openssl genrsa -out '${key}' ${key_bits}",
@@ -34,6 +34,7 @@ define k8s::server::tls::ca (
           -days '${valid_days}' -out '${cert}' -subj '${subject}'",
         refreshonly => true,
         subscribe   => Exec["Create ${title} CA key"],
+        require     => File[$key],
         before      => File[$cert];
     }
   }

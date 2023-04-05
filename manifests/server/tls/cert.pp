@@ -45,7 +45,7 @@ define k8s::server::tls::cert (
     Package <| title == 'openssl' |>
     -> exec {
       default:
-        path    => ['/usr/bin', '/bin'];
+        path => pick($facts['path'], '/usr/bin:/bin');
 
       "Create K8s ${title} key":
         command => "openssl genrsa -out '${key}' ${key_bits}",
@@ -58,6 +58,7 @@ define k8s::server::tls::cert (
           -out '${csr}' -config '${$config}'",
         refreshonly => true,
         notify      => Exec["Sign K8s ${title} cert"],
+        require     => File[$key],
         before      => File[$csr];
 
       # TODO - Don't generate 0-byte files in the first place
@@ -72,6 +73,10 @@ define k8s::server::tls::cert (
           -out '${cert}' -days '${valid_days}' \
           -extensions v3_req -extfile '${config}'",
         refreshonly => true,
+        require     => [
+          File[$csr],
+          File[$key],
+        ],
         before      => File[$cert];
     }
     File <| title == $ca_key or title == $ca_cert |> -> Exec["Sign K8s ${title} cert"]
