@@ -33,11 +33,11 @@ class k8s::server::tls (
 
     # Additional non-CA certs that should also only be generated on one node
     if $generate_ca {
-      exec { 'K8s create service account private key':
-        path    => ['/usr/bin'],
-        require => Package['openssl'],
-        command => "openssl genrsa -out '${cert_path}/service-account.key' ${key_bits}",
-        creates => "${cert_path}/service-account.key",
+      Package <| title == 'openssl' |>
+      -> exec { 'K8s create service account private key':
+        path    => pick($facts['path'], '/usr/bin'),
+        command => "openssl genrsa -out '${cert_path}/service-account.key' ${key_bits}; echo > '${cert_path}/service-account.pub'",
+        unless  => "openssl pkey -in '${cert_path}/service-account.key' -text | grep '${key_bits} bit'",
         before  => [
           File["${cert_path}/service-account.key"],
           Exec['K8s get service account public key'],
@@ -45,20 +45,12 @@ class k8s::server::tls (
       }
     }
 
-    exec {
-      default:
-        path    => ['/usr/bin'];
-
-      'K8s remove broken service account public key':
-        command => "rm '${cert_path}/service-account.pub'",
-        onlyif  => "file '${cert_path}/service-account.pub' | grep ': empty'",
-        notify  => Exec['K8s get service account public key'];
-
-      'K8s get service account public key':
-        require => Package['openssl'],
-        command => "openssl pkey -pubout -in '${cert_path}/service-account.key' -out '${cert_path}/service-account.pub'",
-        creates => "${cert_path}/service-account.pub",
-        before  => File["${cert_path}/service-account.pub"];
+    Package <| title == 'openssl' |>
+    -> exec { 'K8s get service account public key':
+      path    => pick($facts['path'], '/usr/bin'),
+      command => "openssl pkey -pubout -in '${cert_path}/service-account.key' -out '${cert_path}/service-account.pub'",
+      unless  => "openssl pkey -pubin -in '${cert_path}/service-account.pub' -noout",
+      before  => File["${cert_path}/service-account.pub"],
     }
 
     # Generate K8s CA

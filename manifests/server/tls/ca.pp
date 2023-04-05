@@ -21,21 +21,16 @@ define k8s::server::tls::ca (
 
       "Create ${title} CA key":
         command => "openssl genrsa -out '${key}' ${key_bits}",
-        creates => $key,
+        unless  => "openssl pkey -in '${key}' -text | grep '${key_bits} bit'",
         before  => File[$key];
 
-      "Remove broken ${title} CA cert":
-        command => "rm '${cert}'",
-        onlyif  => "file '${cert}' | grep ': empty'",
-        notify  => Exec["Create ${title} CA cert"];
-
       "Create ${title} CA cert":
-        command     => "openssl req -x509 -new -nodes -key '${key}' \
+        command   => "openssl req -x509 -new -nodes -key '${key}' \
           -days '${valid_days}' -out '${cert}' -subj '${subject}'",
-        refreshonly => true,
-        subscribe   => Exec["Create ${title} CA key"],
-        require     => File[$key],
-        before      => File[$cert];
+        unless    => "openssl x509 -CA '${cert}' -CAkey '${key}' -in '${cert}' -noout",
+        subscribe => Exec["Create ${title} CA key"],
+        require   => File[$key],
+        before    => File[$cert];
     }
   }
 

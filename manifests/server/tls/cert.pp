@@ -38,8 +38,8 @@ define k8s::server::tls::cert (
         dns_altnames       => $_dns_altnames,
         ip_altnames        => $_ip_altnames,
     }),
-    notify  => Exec["Create K8s ${title} CSR"],
   }
+  ~> Exec <| title == "Create K8s ${title} CSR" |>
 
   if $ensure == 'present' {
     Package <| title == 'openssl' |>
@@ -48,36 +48,30 @@ define k8s::server::tls::cert (
         path => pick($facts['path'], '/usr/bin:/bin');
 
       "Create K8s ${title} key":
-        command => "openssl genrsa -out '${key}' ${key_bits}",
-        creates => $key,
+        command => "openssl genrsa -out '${key}' ${key_bits}; echo > '${cert}'",
+        unless  => "openssl pkey -in '${key}' -text | grep '${key_bits} bit'",
         before  => File[$key],
         notify  => Exec["Create K8s ${title} CSR"];
 
       "Create K8s ${title} CSR":
         command     => "openssl req -new -key '${key}' \
-          -out '${csr}' -config '${$config}'",
+          -out '${csr}' -config '${$config}'; echo > '${cert}'",
         refreshonly => true,
         notify      => Exec["Sign K8s ${title} cert"],
         require     => File[$key],
         before      => File[$csr];
 
-      # TODO - Don't generate 0-byte files in the first place
-      "Remove broken K8s ${title} cert":
-        command => "rm '${cert}'",
-        onlyif  => "file '${cert}' | grep ': empty'",
-        notify  => Exec["Sign K8s ${title} cert"];
-
       "Sign K8s ${title} cert":
-        command     => "openssl x509 -req -in '${csr}' \
+        command => "openssl x509 -req -in '${csr}' \
           -CA '${ca_cert}' -CAkey '${ca_key}' -CAcreateserial \
           -out '${cert}' -days '${valid_days}' \
           -extensions v3_req -extfile '${config}'",
-        refreshonly => true,
-        require     => [
+        unless  => "openssl verify -CAfile '${ca_cert}' '${cert}'",
+        require => [
           File[$csr],
           File[$key],
         ],
-        before      => File[$cert];
+        before  => File[$cert];
     }
     File <| title == $ca_key or title == $ca_cert |> -> Exec["Sign K8s ${title} cert"]
   }
