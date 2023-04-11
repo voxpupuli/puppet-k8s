@@ -172,6 +172,12 @@ class k8s::server::tls (
         mode   => '0640',
         source => 'file:///var/lib/etcd/certs/etcd-client.key';
     }
+
+    # Require either generation or user-provided etcd secrets before creating k8s copies
+    K8s::Server::Tls::Ca <| 'etcd-client-ca' |> -> File["${cert_path}/etcd-ca.pem"]
+    K8s::Server::Tls::Cert <| 'etcd-client' |> -> File["${cert_path}/etcd.pem"]
+    K8s::Server::Tls::Cert <| 'etcd-client' |> -> File["${cert_path}/etcd.key"]
+
     File <| title == '/var/lib/etc/certs/client-ca.pem' |> -> File["${cert_path}/etcd-ca.pem"]
     File <| title == '/var/lib/etc/certs/etcd-client.pem' |> -> File["${cert_path}/etcd.pem"]
     File <| title == '/var/lib/etc/certs/etcd-client.key' |> -> File["${cert_path}/etcd.key"]
