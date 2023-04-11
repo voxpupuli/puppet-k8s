@@ -14,7 +14,9 @@
 # @param service_cidr address space for the services
 # @param pod_cidr address space for the pods
 #
+# lint:ignore:autoloader_layout
 class profile::k8s::controller (
+  # lint:endignore
   Boolean $manage_firewall                   = true,
   Boolean $manage_kube_proxy                 = true,
   Boolean $use_puppetdb                      = true,

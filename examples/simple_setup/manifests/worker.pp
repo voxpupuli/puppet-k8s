@@ -11,7 +11,9 @@
 # @param manage_kube_proxy whether to manage manage_kube_proxy or not, for cilium this is not needed
 # @param container_manager set the cri, like cri-o or containerd
 #
+# lint:ignore:autoloader_layout
 class profile::k8s::worker (
+  # lint:endignore
   Boolean $manage_firewall                   = true,
   Boolean $manage_kube_proxy                 = true,
   Boolean $use_puppetdb                      = true,
