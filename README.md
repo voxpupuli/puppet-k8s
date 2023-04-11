@@ -46,6 +46,7 @@ class { 'k8s':
 For more in-detail examples see the examples.
 
   - [Simple bridged setup](examples/simple_setup/Readme.md)
+  - [Cilium setup](examples/cilium/Readme.md)
 
 ## Reference
 
