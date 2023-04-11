@@ -250,6 +250,7 @@ class k8s::server::apiserver (
           },
       }),
     }
+    # TODO: Create a dummy kube-apiserver service that just requires kubelet
   } else {
     $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
     file { "${_sysconfig_path}/kube-apiserver":
@@ -286,7 +287,7 @@ class k8s::server::apiserver (
       subscribe => K8s::Binary['kube-apiserver'],
     }
 
-    Service['kube-apiserver'] -> Kubectl_apply<| |> ['kube-apiserver', 'front-proxy-client', 'apiserver-kubelet-client'].each |$cert| {
+    ['kube-apiserver', 'front-proxy-client', 'apiserver-kubelet-client'].each |$cert| {
       if defined(K8s::Server::Tls::Cert[$cert]) {
         K8s::Server::Tls::Cert[$cert] ~> Service['kube-apiserver']
       }
