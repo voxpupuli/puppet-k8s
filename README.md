@@ -21,7 +21,8 @@ should be able to handle both older and newer versions without issues.
 
 Set k8s::server::etcd_servers to a list of servers or k8s::puppetdb_discovery to `true`.
 
-Setting up a server node (apiserver, controller-manager, scheduler);
+Setting up a server node (apiserver, controller-manager, scheduler):
+
 ```puppet
 class { 'k8s':
   role               => 'server',
@@ -31,13 +32,20 @@ class { 'k8s':
 }
 ```
 
-Setting up a client node (kubelet, kube-proxy);
+Setting up a client node (kubelet, kube-proxy):
+
 ```puppet
 class { 'k8s':
   role   => 'node',
   master => 'https://kubernetes.example.com:6443',
 }
 ```
+
+### Examples
+
+For more in-detail examples see the examples.
+
+  - [Simple bridged setup](examples/simple_setup/Readme.md)
 
 ## Reference
 
