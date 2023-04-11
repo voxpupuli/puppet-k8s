@@ -2,10 +2,10 @@
 # See https://github.com/puppetlabs/puppetlabs_spec_helper#using-fixtures for details
 ---
 fixtures:
-  forge_modules:
-    archive: "puppet/archive"
-    stdlib: "puppetlabs/stdlib"
-    systemd: "camptocamp/systemd"
-    kmod: "puppet/kmod"
-    augeasproviders_sysctl: "herculesteam/augeasproviders_sysctl"
-    augeasproviders_core: "puppet/augeasproviders_core"
+  repositories:
+    archive: https://github.com/voxpupuli/puppet-archive
+    systemd: https://github.com/voxpupuli/puppet-systemd
+    kmod: https://github.com/voxpupuli/puppet-kmod
+    stdlib: https://github.com/puppetlabs/puppetlabs-stdlib
+    augeasproviders_sysctl: https://github.com/voxpupuli/puppet-augeasproviders_sysctl
+    augeasproviders_core: https://github.com/voxpupuli/puppet-augeasproviders_core
