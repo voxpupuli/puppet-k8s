@@ -17,21 +17,21 @@ define k8s::server::tls::ca (
     if $generate {
       Package <| title == 'openssl' |>
       -> exec { "Create ${title} CA key":
-          command => "openssl genrsa -out '${key}' ${key_bits}",
-          unless  => "openssl pkey -in '${key}' -text | grep '${key_bits} bit'",
-          path    => $facts['path'],
-          before  => File[$key],
+        command => "openssl genrsa -out '${key}' ${key_bits}",
+        unless  => "openssl pkey -in '${key}' -text | grep '${key_bits} bit'",
+        path    => $facts['path'],
+        before  => File[$key],
       }
     }
 
     Package <| title == 'openssl' |>
     -> exec { "Create ${title} CA cert":
-        command   => "openssl req -x509 -new -nodes -key '${key}' \
-          -days '${valid_days}' -out '${cert}' -subj '${subject}'",
-        unless    => "openssl x509 -CA '${cert}' -CAkey '${key}' -in '${cert}' -noout",
-        path      => $facts['path'],
-        subscribe => File[$key],
-        before    => File[$cert],
+      command   => "openssl req -x509 -new -nodes -key '${key}' \
+        -days '${valid_days}' -out '${cert}' -subj '${subject}'",
+      unless    => "openssl x509 -CA '${cert}' -CAkey '${key}' -in '${cert}' -noout",
+      path      => $facts['path'],
+      subscribe => File[$key],
+      before    => File[$cert],
     }
 
     # Add a subscription if CA key is generated
