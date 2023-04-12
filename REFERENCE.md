@@ -55,6 +55,7 @@ Uses the cni-plugins bridge binary to create a bridge interface to connect the c
 
 ### Data types
 
+* [`K8s::Bootstrap_token`](#K8s--Bootstrap_token): A Kubernetes bootstrap token, must be 16-characters lowercase alphanumerical
 * [`K8s::CIDR`](#K8s--CIDR): a type to describe one or more IPv4/6 CIDR
 * [`K8s::Container_runtimes`](#K8s--Container_runtimes): a type to describe the supported container runtimes
 * [`K8s::Duration`](#K8s--Duration): This regexp matches Go duration values, as taken from;
@@ -2392,6 +2393,7 @@ Generates and deploys the default Puppet boostrap configuration into the cluster
 The following parameters are available in the `k8s::server::resources::bootstrap` class:
 
 * [`master`](#-k8s--server--resources--bootstrap--master)
+* [`secret`](#-k8s--server--resources--bootstrap--secret)
 * [`ensure`](#-k8s--server--resources--bootstrap--ensure)
 * [`kubeconfig`](#-k8s--server--resources--bootstrap--kubeconfig)
 
@@ -2402,6 +2404,15 @@ Data type: `String[1]`
 The main API URL to encode in the bootstrap configuration
 
 Default value: `$k8s::server::resources::master`
+
+##### <a name="-k8s--server--resources--bootstrap--secret"></a>`secret`
+
+Data type: `Optional[K8s::Bootstrap_token]`
+
+The exact token secret to use, will be generated as a random 16-char string if left blank.
+The generated value can be retrieved from the bootstrap-token-puppet Secret in kube-system.
+
+Default value: `undef`
 
 ##### <a name="-k8s--server--resources--bootstrap--ensure"></a>`ensure`
 
@@ -2956,6 +2967,7 @@ The following parameters are available in the `k8s::server::bootstrap_token` def
 * [`id`](#-k8s--server--bootstrap_token--id)
 * [`secret`](#-k8s--server--bootstrap_token--secret)
 * [`use_authentication`](#-k8s--server--bootstrap_token--use_authentication)
+* [`update`](#-k8s--server--bootstrap_token--update)
 * [`description`](#-k8s--server--bootstrap_token--description)
 * [`expiration`](#-k8s--server--bootstrap_token--expiration)
 * [`use_signing`](#-k8s--server--bootstrap_token--use_signing)
@@ -2986,7 +2998,7 @@ Default value: `$name`
 
 ##### <a name="-k8s--server--bootstrap_token--secret"></a>`secret`
 
-Data type: `String[16,16]`
+Data type: `K8s::Bootstrap_token`
 
 
 
@@ -2999,6 +3011,14 @@ Data type: `Boolean`
 
 
 Default value: `true`
+
+##### <a name="-k8s--server--bootstrap_token--update"></a>`update`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
 
 ##### <a name="-k8s--server--bootstrap_token--description"></a>`description`
 
@@ -3691,6 +3711,12 @@ Data type: `Optional[Variant[Enum["first","second"], Integer[1]]]`
 The index of the IP to retrieve
 
 ## Data types
+
+### <a name="K8s--Bootstrap_token"></a>`K8s::Bootstrap_token`
+
+A Kubernetes bootstrap token, must be 16-characters lowercase alphanumerical
+
+Alias of `Pattern[/^[a-z0-9]{16}$/]`
 
 ### <a name="K8s--CIDR"></a>`K8s::CIDR`
 

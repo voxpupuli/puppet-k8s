@@ -15,7 +15,9 @@ describe 'k8s::server::resources::bootstrap' do
         manage_resources => false,
         node_on_server => false,
       }
-      include ::k8s::server::resources
+      class { 'k8s::server::resources':
+        manage_bootstrap => false,
+      }
     PUPPET
   end
 
@@ -26,6 +28,7 @@ describe 'k8s::server::resources::bootstrap' do
       it { is_expected.to compile }
 
       it { is_expected.to contain_k8s__server__bootstrap_token('puppet') }
+      it { is_expected.not_to contain_kubectl_apply('cluster-info') }
 
       it { is_expected.to contain_kubectl_apply('puppet:cluster-info:reader Role') }
       it { is_expected.to contain_kubectl_apply('system:certificates.k8s.io:certificatesigningrequests:nodeclient') }
@@ -42,6 +45,16 @@ describe 'k8s::server::resources::bootstrap' do
         let(:facts) { super().merge(k8s_ca: Base64.strict_encode64('This is actually a CA PEM')) }
 
         it { is_expected.to contain_kubectl_apply('cluster-info') }
+      end
+
+      describe 'with specified secret' do
+        let(:params) { { secret: '0123456789abcdef' } }
+
+        it do
+          is_expected.to contain_k8s__server__bootstrap_token('puppet').
+            with_secret('0123456789abcdef').
+            with_update(true)
+        end
       end
     end
   end

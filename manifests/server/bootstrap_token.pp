@@ -5,9 +5,10 @@ define k8s::server::bootstrap_token (
   K8s::Ensure $ensure = 'present',
   Stdlib::Unixpath $kubeconfig,
 
-  String[6,6] $id             = $name,
-  String[16,16] $secret       = fqdn_rand_string(16).downcase(),
-  Boolean $use_authentication = true,
+  String[6,6] $id              = $name,
+  K8s::Bootstrap_token $secret = fqdn_rand_string(16).downcase(),
+  Boolean $use_authentication  = true,
+  Boolean $update              = false,
 
   Optional[String] $description         = undef,
   Optional[K8s::Timestamp] $expiration  = undef,
@@ -36,7 +37,7 @@ define k8s::server::bootstrap_token (
     provider    => 'kubectl',
     kubeconfig  => $kubeconfig,
     namespace   => 'kube-system',
-    update      => false,
+    update      => $update,
 
     api_version => 'v1',
     kind        => 'Secret',
@@ -44,6 +45,6 @@ define k8s::server::bootstrap_token (
     content     => {
       'type' => 'bootstrap.kubernetes.io/token',
       'data' => $_secret_data,
-    } + $addn_data,
+    }.deep_merge($addn_data),
   }
 }
