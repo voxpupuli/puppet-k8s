@@ -1,6 +1,8 @@
 # Simple Setup
 
-With this two profiles on can setup a simple cluster with bridged network.
+With this two profiles one can setup a simple cluster with bridged network.
+This are traditional profile classes which wrap a module and pass some data to it.
+You also could load the class directly and pass the data directly to it via hiera in its own namespace.
 
 The control plane can also act as a worker but for this example it is disabled.
 Have also a look at the data. With this the CA will be auto-generated and deployed.

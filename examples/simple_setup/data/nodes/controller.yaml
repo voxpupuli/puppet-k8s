@@ -10,6 +10,9 @@ k8s::server::generate_ca: true
 k8s::server::manage_kubeadm: true
 
 ### K8S::Server::Apiserver
+# Choose an interface which is for cluster communictaions.
+# The apiserver will expose a port on the controller
+# and all the workers need to be able to reach it.
 k8s::server::apiserver::advertise_address: "%{facts.networking.interfaces.enp0s8.ip}"
 
 ### K8S::Server::Resources
