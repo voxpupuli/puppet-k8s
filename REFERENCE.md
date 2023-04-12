@@ -2990,7 +2990,7 @@ Data type: `Stdlib::Unixpath`
 
 ##### <a name="-k8s--server--bootstrap_token--id"></a>`id`
 
-Data type: `String[6,6]`
+Data type: `Pattern[/^[a-z0-9]{6}$/]`
 
 
 

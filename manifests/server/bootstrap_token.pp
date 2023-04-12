@@ -5,7 +5,7 @@ define k8s::server::bootstrap_token (
   K8s::Ensure $ensure = 'present',
   Stdlib::Unixpath $kubeconfig,
 
-  String[6,6] $id              = $name,
+  Pattern[/^[a-z0-9]{6}$/] $id = $name,
   K8s::Bootstrap_token $secret = fqdn_rand_string(16).downcase(),
   Boolean $use_authentication  = true,
   Boolean $update              = false,
