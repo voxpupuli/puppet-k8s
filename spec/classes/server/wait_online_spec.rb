@@ -28,7 +28,7 @@ describe 'k8s::server::wait_online' do
       it { is_expected.to compile }
 
       it do
-        is_expected.to contain_exec('k8s-apiserver wait online').
+        is_expected.to contain_exec('k8s apiserver wait online').
           that_requires('Kubeconfig[/root/.kube/config]').
           that_requires('K8s::Binary[kubectl]').
           that_requires('Service[kube-apiserver]')
