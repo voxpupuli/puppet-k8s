@@ -24,10 +24,7 @@ class k8s::server::etcd (
   if (!$self_signed_tls and $manage_certs) or $ensure == 'absent' {
     if !defined(File[$cert_path]) {
       file { $cert_path:
-        ensure => ($ensure ? {
-            'present' => directory,
-            default   => absent,
-        }),
+        ensure => stdlib::ensure($ensure, 'directory'),
         owner  => 'etcd',
         group  => 'etcd',
       }

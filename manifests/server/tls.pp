@@ -18,47 +18,37 @@ class k8s::server::tls (
   Stdlib::Unixpath $aggregator_ca_cert = $k8s::server::aggregator_ca_cert,
 ) {
   if $manage_certs or $ensure == 'absent' {
-    ensure_packages(['openssl'])
-
     if !defined(File[$cert_path]) {
       file { $cert_path:
-        ensure => ($ensure ? {
-            'present' => directory,
-            default   => absent,
-        }),
+        ensure => stdlib::ensure($ensure, 'directory'),
         owner  => 'kube',
         group  => 'kube',
       }
     }
 
-    # Additional non-CA certs that should also only be generated on one node
-    if $generate_ca {
-      exec { 'K8s create service account private key':
-        path    => ['/usr/bin'],
-        require => Package['openssl'],
-        command => "openssl genrsa -out '${cert_path}/service-account.key' ${key_bits}",
-        creates => "${cert_path}/service-account.key",
-        before  => [
-          File["${cert_path}/service-account.key"],
-          Exec['K8s get service account public key'],
-        ],
+    if $ensure == 'present' {
+      ensure_packages(['openssl'])
+      # Additional non-CA certs that should also only be generated on one node
+      if $generate_ca {
+        Package <| title == 'openssl' |>
+        -> exec { 'K8s create service account private key':
+          path    => $facts['path'],
+          command => "openssl genrsa -out '${cert_path}/service-account.key' ${key_bits}; echo > '${cert_path}/service-account.pub'",
+          unless  => "openssl pkey -in '${cert_path}/service-account.key' -text | grep '${key_bits} bit'",
+          before  => [
+            File["${cert_path}/service-account.key"],
+            Exec['K8s get service account public key'],
+          ],
+        }
       }
-    }
 
-    exec {
-      default:
-        path    => ['/usr/bin'];
-
-      'K8s remove broken service account public key':
-        command => "rm '${cert_path}/service-account.pub'",
-        onlyif  => "file '${cert_path}/service-account.pub' | grep ': empty'",
-        notify  => Exec['K8s get service account public key'];
-
-      'K8s get service account public key':
-        require => Package['openssl'],
+      Package <| title == 'openssl' |>
+      -> exec { 'K8s get service account public key':
+        path    => $facts['path'],
         command => "openssl pkey -pubout -in '${cert_path}/service-account.key' -out '${cert_path}/service-account.pub'",
-        creates => "${cert_path}/service-account.pub",
-        before  => File["${cert_path}/service-account.pub"];
+        unless  => "openssl pkey -pubin -in '${cert_path}/service-account.pub' -noout",
+        before  => File["${cert_path}/service-account.pub"],
+      }
     }
 
     # Generate K8s CA
@@ -180,14 +170,19 @@ class k8s::server::tls (
         mode   => '0640',
         source => 'file:///var/lib/etcd/certs/etcd-client.key';
     }
-    if defined(Class['k8s::server::etcd::setup']) {
-      Class['k8s::server::etcd::setup'] -> File["${cert_path}/etcd-ca.pem"]
-      Class['k8s::server::etcd::setup'] -> File["${cert_path}/etcd.pem"]
-      Class['k8s::server::etcd::setup'] -> File["${cert_path}/etcd.key"]
-    }
+
+    # Require either generation or user-provided etcd secrets before creating k8s copies
+    K8s::Server::Tls::Ca <| title == 'etcd-client-ca' |> -> File["${cert_path}/etcd-ca.pem"]
+    K8s::Server::Tls::Cert <| title == 'etcd-client' |> -> File["${cert_path}/etcd.pem"]
+    K8s::Server::Tls::Cert <| title == 'etcd-client' |> -> File["${cert_path}/etcd.key"]
+
+    File <| title == '/var/lib/etc/certs/client-ca.pem' |> -> File["${cert_path}/etcd-ca.pem"]
+    File <| title == '/var/lib/etc/certs/etcd-client.pem' |> -> File["${cert_path}/etcd.pem"]
+    File <| title == '/var/lib/etc/certs/etcd-client.key' |> -> File["${cert_path}/etcd.key"]
 
     if $generate_ca and !defined(File["${cert_path}/service-account.key"]) {
       file { "${cert_path}/service-account.key":
+        ensure  => $ensure,
         owner   => kube,
         group   => kube,
         replace => false,
@@ -196,6 +191,7 @@ class k8s::server::tls (
     }
     if !defined(File["${cert_path}/service-account.pub"]) {
       file { "${cert_path}/service-account.pub":
+        ensure  => $ensure,
         owner   => kube,
         group   => kube,
         replace => false,

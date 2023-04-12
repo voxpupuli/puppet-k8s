@@ -13,29 +13,29 @@ define k8s::server::tls::ca (
   Integer[1] $valid_days = 10000,
   Boolean $generate      = true,
 ) {
-  if $ensure == 'present' and $generate {
-    Package <| title == 'openssl' |>
-    -> exec {
-      default:
-        path    => ['/usr/bin', '/bin'];
-
-      "Create ${title} CA key":
+  if $ensure == 'present' {
+    if $generate {
+      Package <| title == 'openssl' |>
+      -> exec { "Create ${title} CA key":
         command => "openssl genrsa -out '${key}' ${key_bits}",
-        creates => $key,
-        before  => File[$key];
-
-      "Remove broken ${title} CA cert":
-        command => "rm '${cert}'",
-        onlyif  => "file '${cert}' | grep ': empty'",
-        notify  => Exec["Create ${title} CA cert"];
-
-      "Create ${title} CA cert":
-        command     => "openssl req -x509 -new -nodes -key '${key}' \
-          -days '${valid_days}' -out '${cert}' -subj '${subject}'",
-        refreshonly => true,
-        subscribe   => Exec["Create ${title} CA key"],
-        before      => File[$cert];
+        unless  => "openssl pkey -in '${key}' -text | grep '${key_bits} bit'",
+        path    => $facts['path'],
+        before  => File[$key],
+      }
     }
+
+    Package <| title == 'openssl' |>
+    -> exec { "Create ${title} CA cert":
+      command   => "openssl req -x509 -new -nodes -key '${key}' \
+        -days '${valid_days}' -out '${cert}' -subj '${subject}'",
+      unless    => "openssl x509 -CA '${cert}' -CAkey '${key}' -in '${cert}' -noout",
+      path      => $facts['path'],
+      subscribe => File[$key],
+      before    => File[$cert],
+    }
+
+    # Add a subscription if CA key is generated
+    Exec <| title == "Create ${title} CA key" |> ~> Exec["Create ${title} CA cert"]
   }
 
   if !defined(File[$key]) {

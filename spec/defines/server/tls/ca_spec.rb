@@ -19,17 +19,16 @@ describe 'k8s::server::tls::ca' do
 
       it do
         is_expected.to contain_exec('Create namevar CA key').with(
-          path: ['/usr/bin', '/bin'],
           command: "openssl genrsa -out '/tmp/ca.key' 2048",
-          creates: '/tmp/ca.key'
+          unless: "openssl pkey -in '/tmp/ca.key' -text | grep '2048 bit'"
         )
       end
 
       it do
         is_expected.to contain_exec('Create namevar CA cert').with(
-          path: ['/usr/bin', '/bin'],
-          command: %r{openssl req -x509 -new -nodes -key '/tmp.ca.key'\s+-days '10000' -out '/tmp/ca.pem' -subj '/CN=namevar'}
-        )
+          command: %r{openssl req -x509 -new -nodes -key '/tmp/ca.key'\s+-days '10000' -out '/tmp/ca.pem' -subj '/CN=namevar'},
+          unless: "openssl x509 -CA '/tmp/ca.pem' -CAkey '/tmp/ca.key' -in '/tmp/ca.pem' -noout"
+        ).that_subscribes_to('File[/tmp/ca.key]')
       end
 
       it do
