@@ -151,7 +151,7 @@ Puppet::Type.newtype(:kubectl_apply) do
     ['kube-apiserver']
   end
   autorequire(:exec) do
-    ['k8s-apiserver wait online']
+    ['k8s apiserver wait online']
   end
   autorequire(:file) do
     [
