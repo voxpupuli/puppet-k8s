@@ -2,7 +2,7 @@
 class k8s::server::wait_online {
   # Wait up to 30 seconds for kube-apiserver to start
   exec { 'k8s-apiserver wait online':
-    command     => 'kubectl version',
+    command     => 'kubectl --kubeconfig /root/.kube/config version',
     path        => $facts['path'],
     refreshonly => true,
     tries       => 15,
