@@ -193,6 +193,13 @@ class k8s::node::kubelet (
 
     if $manage_kernel_modules {
       Kmod::Load['br_netfilter']
+      ~> exec { 'Wait for br_netfilter to load before kubelet sysctls':
+        command     => 'sysctl -aNr net.bridge | grep nf-call-iptables',
+        path        => $facts['path'],
+        refreshonly => true,
+        tries       => 5,
+        try_sleep   => 1,
+      }
       -> [
         Sysctl['net.bridge.bridge-nf-call-iptables'],
         Sysctl['net.bridge.bridge-nf-call-ip6tables']
