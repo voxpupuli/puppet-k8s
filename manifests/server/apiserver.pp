@@ -281,7 +281,8 @@ class k8s::server::apiserver (
       ],
       notify  => Service['kube-apiserver'],
     }
-    service { 'kube-apiserver':
+    Service <| title == 'etcd' |>
+    -> service { 'kube-apiserver':
       ensure    => stdlib::ensure($ensure, 'service'),
       enable    => true,
       subscribe => K8s::Binary['kube-apiserver'],
