@@ -2407,7 +2407,7 @@ Default value: `$k8s::server::resources::master`
 
 ##### <a name="-k8s--server--resources--bootstrap--secret"></a>`secret`
 
-Data type: `Optional[K8s::Bootstrap_token]`
+Data type: `Optional[Sensitive[K8s::Bootstrap_token]]`
 
 The exact token secret to use, will be generated as a random 16-char string if left blank.
 The generated value can be retrieved from the bootstrap-token-puppet Secret in kube-system.
@@ -2998,11 +2998,11 @@ Default value: `$name`
 
 ##### <a name="-k8s--server--bootstrap_token--secret"></a>`secret`
 
-Data type: `K8s::Bootstrap_token`
+Data type: `Sensitive[K8s::Bootstrap_token]`
 
 
 
-Default value: `fqdn_rand_string(16).downcase(`
+Default value: `Sensitive(fqdn_rand_string(16).downcase())`
 
 ##### <a name="-k8s--server--bootstrap_token--use_authentication"></a>`use_authentication`
 

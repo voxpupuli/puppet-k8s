@@ -48,11 +48,11 @@ describe 'k8s::server::resources::bootstrap' do
       end
 
       describe 'with specified secret' do
-        let(:params) { { secret: '0123456789abcdef' } }
+        let(:params) { { secret: sensitive('0123456789abcdef') } }
 
         it do
           is_expected.to contain_k8s__server__bootstrap_token('puppet').
-            with_secret('0123456789abcdef').
+            with_secret(sensitive('0123456789abcdef')).
             with_update(true)
         end
       end
