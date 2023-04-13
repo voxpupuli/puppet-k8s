@@ -33,11 +33,12 @@ class k8s::server::etcd (
     $addn_names = [
       fact('networking.hostname'),
       fact('networking.fqdn'),
+      fact('networking.ip'),
+      fact('networking.ip6'),
       'localhost',
-      $facts.get('networking.interfaces', {}).map |$_,$v| {
-        ($v.get('bindings', []) + $v.get('bindings6', [])).map |$x| { $x.get('address') }
-      }.filter |$x| { !empty($x) },
-    ].flatten.sort.unique
+      '127.0.0.1',
+      '::1',
+    ]
 
     k8s::server::tls::ca {
       default:
