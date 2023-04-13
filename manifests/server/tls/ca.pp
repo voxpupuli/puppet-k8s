@@ -28,7 +28,7 @@ define k8s::server::tls::ca (
     -> exec { "Create ${title} CA cert":
       command   => "openssl req -x509 -new -nodes -key '${key}' \
         -days '${valid_days}' -out '${cert}' -subj '${subject}'",
-      unless    => "openssl x509 -CA '${cert}' -CAkey '${key}' -in '${cert}' -noout",
+      unless    => "openssl x509 -CA '${cert}' -CAkey '${key}' -in '${cert}' -noout -set_serial 00",
       path      => $facts['path'],
       subscribe => File[$key],
       before    => File[$cert],
