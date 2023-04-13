@@ -59,6 +59,10 @@ Puppet::Type.newtype(:kubeconfig) do
   newparam(:group) do
     desc 'The owner of the kubeconfig file'
   end
+  newparam(:mode) do
+    desc 'The access mode of the kubeconfig file'
+    defaultto '0600'
+  end
 
   newparam(:cluster) do
     desc 'The name of the cluster to manage in the kubeconfig file'

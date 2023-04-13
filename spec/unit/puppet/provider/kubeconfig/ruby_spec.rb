@@ -64,6 +64,9 @@ RSpec.describe ruby_provider do
       it 'creates default config, updates components' do
         provider.create
 
+        stat = File.stat(tmpfile)
+        expect(stat.mode & 0o777).to eq 0o600
+
         expect(Psych.load(File.read(tmpfile))).to eq default_kubeconfig
       end
     end

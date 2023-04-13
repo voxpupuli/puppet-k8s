@@ -20,6 +20,7 @@ describe Puppet::Type.type(:kubeconfig) do
     it { expect(resource[:namespace]).to eq 'default' }
     it { expect(resource[:skip_tls_verify]).not_to eq :true }
     it { expect(resource[:embed_certs]).to eq :true }
+    it { expect(resource[:mode]).to eq '0600' }
   end
 
   it 'verify resource[:path] is absolute filepath' do

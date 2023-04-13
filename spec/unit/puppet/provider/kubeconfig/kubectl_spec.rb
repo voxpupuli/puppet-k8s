@@ -111,6 +111,7 @@ RSpec.describe kubectl_provider do
           resource[:current_context]
         )
         expect(FileUtils).to receive(:chown).with(resource[:owner], resource[:group], resource[:path])
+        expect(FileUtils).to receive(:chmod).with(0o600, resource[:path])
 
         provider.create
       end
