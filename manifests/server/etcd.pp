@@ -13,6 +13,8 @@ class k8s::server::etcd (
   Boolean $manage_certs    = true,
   Boolean $generate_ca     = false,
 
+  K8s::TLS_altnames $addn_names = [],
+
   Stdlib::Unixpath $cert_path      = '/var/lib/etcd/certs',
   Stdlib::Unixpath $peer_ca_key    = "${cert_path}/peer-ca.key",
   Stdlib::Unixpath $peer_ca_cert   = "${cert_path}/peer-ca.pem",
@@ -30,15 +32,17 @@ class k8s::server::etcd (
       }
     }
 
-    $addn_names = [
-      fact('networking.hostname'),
-      fact('networking.fqdn'),
-      fact('networking.ip'),
-      fact('networking.ip6'),
-      'localhost',
-      '127.0.0.1',
-      '::1',
-    ]
+    $_addn_names = delete_undef_values( # prevent undef value if ipv6 is turned off
+      [
+        fact('networking.hostname'),
+        fact('networking.fqdn'),
+        fact('networking.ip'),
+        fact('networking.ip6'),
+        'localhost',
+        '127.0.0.1',
+        '::1',
+      ] + $addn_names
+    ).unique
 
     k8s::server::tls::ca {
       default:
@@ -66,7 +70,7 @@ class k8s::server::etcd (
       'etcd-server':
         ca_key             => $client_ca_key,
         ca_cert            => $client_ca_cert,
-        addn_names         => delete_undef_values($addn_names), # prevent undef value if ipv6 is turned off
+        addn_names         => $_addn_names,
         distinguished_name => {
           commonName => fact('networking.fqdn'),
         },
@@ -75,7 +79,7 @@ class k8s::server::etcd (
       'etcd-peer':
         ca_key             => $peer_ca_key,
         ca_cert            => $peer_ca_cert,
-        addn_names         => delete_undef_values($addn_names), # prevent undef value if ipv6 is turned off
+        addn_names         => $_addn_names,
         distinguished_name => {
           commonName => fact('networking.fqdn'),
         },
