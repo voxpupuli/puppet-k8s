@@ -11,6 +11,12 @@
 #   component (default), or as an on-node component for advanced use-cases.
 # @param ensure
 # @param packaging
+#
+# @param user username for kubernetes files and services
+# @param group groupname for kubernetes files and services
+# @param uid user id for kubernetes files and services
+# @param gid group id for kubernetes files and services
+#
 class k8s (
   K8s::Ensure $ensure                     = 'present',
   Enum['container', 'native'] $packaging  = 'native',
@@ -60,23 +66,28 @@ class k8s (
   K8s::IP_addresses $dns_service_address             = k8s::ip_in_cidr($service_cluster_cidr, 'second'),
   Stdlib::Fqdn $cluster_domain                       = 'cluster.local',
 
-  Enum['node','server','none']  $role = 'none',
+  Enum['node','server','none']  $role    = 'none',
   Optional[K8s::Firewall] $firewall_type = undef,
+
+  String[1] $user        = 'kube',
+  String[1] $group       = 'kube',
+  Integer[0, 65535] $uid = 888,
+  Integer[0, 65535] $gid = 888,
 ) {
   if $manage_container_manager {
     include k8s::install::container_runtime
   }
 
-  group { 'kube':
+  group { $group:
     ensure => present,
     system => true,
-    gid    => 888,
+    gid    => $gid,
   }
 
-  user { 'kube':
+  user { $user:
     ensure     => present,
     comment    => 'Kubernetes user',
-    gid        => 'kube',
+    gid        => $group,
     home       => '/srv/kubernetes',
     managehome => false,
     shell      => (fact('os.family') ? {
@@ -84,7 +95,7 @@ class k8s (
         default  => '/sbin/nologin',
     }),
     system     => true,
-    uid        => 888,
+    uid        => $uid,
   }
 
   file {
@@ -100,8 +111,8 @@ class k8s (
 
   file { '/var/run/kubernetes':
     ensure => directory,
-    owner  => 'kube',
-    group  => 'kube',
+    owner  => $user,
+    group  => $group,
   }
 
   $_sysconfig_path = pick($sysconfig_path, '/etc/sysconfig')
@@ -126,8 +137,8 @@ class k8s (
       recurse => true;
     '/root/.kube': ;
     '/srv/kubernetes':
-      owner => 'kube',
-      group => 'kube';
+      owner => $user,
+      group => $group;
     '/usr/libexec/kubernetes': ;
     '/var/lib/kubelet': ;
     '/var/lib/kubelet/pki': ;

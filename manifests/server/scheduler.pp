@@ -43,8 +43,8 @@ class k8s::server::scheduler (
   } else {
     kubeconfig { $_kubeconfig:
       ensure          => $ensure,
-      owner           => 'kube',
-      group           => 'kube',
+      owner           => $k8s::user,
+      group           => $k8s::group,
       server          => $master,
       current_context => 'default',
 
@@ -78,7 +78,7 @@ class k8s::server::scheduler (
       }),
       require => [
         File["${_sysconfig_path}/kube-scheduler"],
-        User['kube'],
+        User[$k8s::user],
       ],
       notify  => Service['kube-scheduler'],
     }

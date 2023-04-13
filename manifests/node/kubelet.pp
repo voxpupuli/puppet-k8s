@@ -89,8 +89,8 @@ class k8s::node::kubelet (
       }
       -> kubeconfig { $_bootstrap_kubeconfig:
         ensure          => $ensure,
-        owner           => 'kube',
-        group           => 'kube',
+        owner           => $k8s::user,
+        group           => $k8s::group,
         server          => $master,
         current_context => 'default',
         token           => $token,
@@ -111,8 +111,8 @@ class k8s::node::kubelet (
     'token': {
       kubeconfig { $kubeconfig:
         ensure          => $ensure,
-        owner           => 'kube',
-        group           => 'kube',
+        owner           => $k8s::user,
+        group           => $k8s::group,
         server          => $master,
         current_context => 'default',
         token           => $token,
@@ -123,8 +123,8 @@ class k8s::node::kubelet (
     'cert': {
       kubeconfig { $kubeconfig:
         ensure          => $ensure,
-        owner           => 'kube',
-        group           => 'kube',
+        owner           => $k8s::user,
+        group           => $k8s::group,
         server          => $master,
         current_context => 'default',
 
@@ -203,8 +203,8 @@ class k8s::node::kubelet (
   file { '/etc/kubernetes/kubelet.conf':
     ensure  => $ensure,
     content => to_yaml($config_hash + $config),
-    owner   => 'kube',
-    group   => 'kube',
+    owner   => $k8s::user,
+    group   => $k8s::group,
     notify  => Service['kubelet'],
   }
 
@@ -255,7 +255,7 @@ class k8s::node::kubelet (
     }),
     require => [
       File["${_sysconfig_path}/kubelet", '/etc/kubernetes/kubelet.conf'],
-      User['kube'],
+      User[$k8s::user],
     ],
     notify  => Service['kubelet'],
   }

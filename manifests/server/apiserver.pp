@@ -236,8 +236,8 @@ class k8s::server::apiserver (
                 ],
                 securityContext => {
                   runAsNonRoot => true,
-                  runAsGroup   => 888,
-                  runAsUser    => 888,
+                  runAsGroup   => $k8s::uid,
+                  runAsUser    => $k8s::gid,
                 },
               },
             },
@@ -276,7 +276,7 @@ class k8s::server::apiserver (
       }),
       require => [
         File["${_sysconfig_path}/kube-apiserver"],
-        User['kube'],
+        User[$k8s::user],
       ],
       notify  => Service['kube-apiserver'],
     }

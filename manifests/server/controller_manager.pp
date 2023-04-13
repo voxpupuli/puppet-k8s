@@ -61,8 +61,8 @@ class k8s::server::controller_manager (
   } else {
     kubeconfig { $_kubeconfig:
       ensure          => $ensure,
-      owner           => 'kube',
-      group           => 'kube',
+      owner           => $k8s::user,
+      group           => $k8s::group,
       server          => $master,
       current_context => 'default',
 
@@ -97,7 +97,7 @@ class k8s::server::controller_manager (
       }),
       require => [
         File["${_sysconfig_path}/kube-controller-manager"],
-        User['kube'],
+        User[$k8s::user],
       ],
       notify  => Service['kube-controller-manager'],
     }
