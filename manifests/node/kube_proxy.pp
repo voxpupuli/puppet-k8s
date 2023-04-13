@@ -40,8 +40,8 @@ class k8s::node::kube_proxy (
     'token': {
       kubeconfig { $kubeconfig:
         ensure          => $_ensure,
-        owner           => 'kube',
-        group           => 'kube',
+        owner           => $k8s::user,
+        group           => $k8s::group,
         server          => $master,
         token           => $token,
         current_context => 'default',
@@ -52,8 +52,8 @@ class k8s::node::kube_proxy (
     'cert': {
       kubeconfig { $kubeconfig:
         ensure          => $_ensure,
-        owner           => 'kube',
-        group           => 'kube',
+        owner           => $k8s::user,
+        group           => $k8s::group,
         server          => $master,
         client_cert     => $cert,
         client_key      => $key,
@@ -75,8 +75,8 @@ class k8s::node::kube_proxy (
   file { '/etc/kubernetes/kube-proxy.conf':
     ensure  => $_ensure,
     content => to_yaml($config_hash),
-    owner   => 'kube',
-    group   => 'kube',
+    owner   => $k8s::user,
+    group   => $k8s::group,
     notify  => Service['kube-proxy'],
   }
 
@@ -110,7 +110,7 @@ class k8s::node::kube_proxy (
       }),
       require => [
         File["${_sysconfig_path}/kube-proxy"],
-        User['kube'],
+        User[$k8s::user],
       ],
       notify  => Service['kube-proxy'],
     }

@@ -21,8 +21,8 @@ class k8s::server::tls (
     if !defined(File[$cert_path]) {
       file { $cert_path:
         ensure => stdlib::ensure($ensure, 'directory'),
-        owner  => 'kube',
-        group  => 'kube',
+        owner  => $k8s::user,
+        group  => $k8s::group,
       }
     }
 
@@ -55,8 +55,8 @@ class k8s::server::tls (
     k8s::server::tls::ca {
       default:
         ensure     => $ensure,
-        owner      => 'kube',
-        group      => 'kube',
+        owner      => $k8s::user,
+        group      => $k8s::group,
         key_bits   => $key_bits,
         valid_days => $valid_days,
         generate   => $generate_ca;
@@ -77,8 +77,8 @@ class k8s::server::tls (
         cert_path => $cert_path,
         ca_key    => $ca_key,
         ca_cert   => $ca_cert,
-        owner     => 'kube',
-        group     => 'kube';
+        owner     => $k8s::user,
+        group     => $k8s::group;
 
       'kube-apiserver':
         extended_key_usage => ['serverAuth'],
@@ -157,8 +157,8 @@ class k8s::server::tls (
     file {
       default:
         ensure => $ensure,
-        owner  => 'kube',
-        group  => 'kube';
+        owner  => $k8s::user,
+        group  => $k8s::group;
 
       "${cert_path}/etcd-ca.pem":
         source => 'file:///var/lib/etcd/certs/client-ca.pem';
