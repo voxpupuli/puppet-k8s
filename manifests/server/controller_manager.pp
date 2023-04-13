@@ -92,8 +92,8 @@ class k8s::server::controller_manager (
           dir   => '/srv/kubernetes',
           bin   => 'kube-controller-manager',
           needs => ['kube-apiserver.service'],
-          user  => kube,
-          group => kube,
+          user  => $k8s::user,
+          group => $k8s::group,
       }),
       require => [
         File["${_sysconfig_path}/kube-controller-manager"],

@@ -185,8 +185,8 @@ class k8s::server::tls (
     if $generate_ca and !defined(File["${cert_path}/service-account.key"]) {
       file { "${cert_path}/service-account.key":
         ensure  => $ensure,
-        owner   => kube,
-        group   => kube,
+        owner   => $k8s::user,
+        group   => $k8s::group,
         replace => false,
         mode    => '0600',
       }
@@ -194,8 +194,8 @@ class k8s::server::tls (
     if !defined(File["${cert_path}/service-account.pub"]) {
       file { "${cert_path}/service-account.pub":
         ensure  => $ensure,
-        owner   => kube,
-        group   => kube,
+        owner   => $k8s::user,
+        group   => $k8s::group,
         replace => false,
         mode    => '0640',
       }
