@@ -1,0 +1,8 @@
+---
+classes:
+  - profile::k8s::worker
+
+### K8S::Node
+# see common.yaml for the origin of the data
+k8s::node::node_token: "puppet.%{lookup('k8s::server::resources::bootstrap::secret')}"
+k8s::node::manage_crictl: true

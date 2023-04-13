@@ -1,0 +1,11 @@
+---
+k8s::node::manage_simple_cni: true
+
+### k8s::install::crictl
+k8s::install::crictl::config:
+  'runtime-endpoint': 'unix:///run/containerd/containerd.sock'
+  'image-endpoint': 'unix:///run/containerd/containerd.sock'
+
+# set token in an upper level, so that it can be used by controller and worker
+# see also worker.yaml for usage
+k8s::server::resources::bootstrap::secret: '0123456789abcdef'
