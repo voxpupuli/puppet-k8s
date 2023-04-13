@@ -271,8 +271,8 @@ class k8s::server::apiserver (
 
           dir   => '/srv/kubernetes',
           bin   => 'kube-apiserver',
-          user  => kube,
-          group => kube,
+          user  => $k8s::user,
+          group => $k8s::group,
       }),
       require => [
         File["${_sysconfig_path}/kube-apiserver"],
