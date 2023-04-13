@@ -88,6 +88,10 @@ The following parameters are available in the `k8s` class:
 * [`manage_kube_proxy`](#-k8s--manage_kube_proxy)
 * [`ensure`](#-k8s--ensure)
 * [`packaging`](#-k8s--packaging)
+* [`user`](#-k8s--user)
+* [`group`](#-k8s--group)
+* [`uid`](#-k8s--uid)
+* [`gid`](#-k8s--gid)
 * [`native_packaging`](#-k8s--native_packaging)
 * [`version`](#-k8s--version)
 * [`etcd_version`](#-k8s--etcd_version)
@@ -165,6 +169,38 @@ Data type: `Enum['container', 'native']`
 
 
 Default value: `'native'`
+
+##### <a name="-k8s--user"></a>`user`
+
+Data type: `String[1]`
+
+username for kubernetes files and services
+
+Default value: `'kube'`
+
+##### <a name="-k8s--group"></a>`group`
+
+Data type: `String[1]`
+
+groupname for kubernetes files and services
+
+Default value: `'kube'`
+
+##### <a name="-k8s--uid"></a>`uid`
+
+Data type: `Integer[0, 65535]`
+
+user id for kubernetes files and services
+
+Default value: `888`
+
+##### <a name="-k8s--gid"></a>`gid`
+
+Data type: `Integer[0, 65535]`
+
+group id for kubernetes files and services
+
+Default value: `888`
 
 ##### <a name="-k8s--native_packaging"></a>`native_packaging`
 
