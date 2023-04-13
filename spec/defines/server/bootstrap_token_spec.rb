@@ -7,7 +7,7 @@ describe 'k8s::server::bootstrap_token' do
   let(:params) do
     {
       kubeconfig: '/root/.kube/config',
-      secret: 'some-secret-valu'
+      secret: sensitive('some0secret0valu')
     }
   end
 
@@ -28,11 +28,22 @@ describe 'k8s::server::bootstrap_token' do
             'type' => 'bootstrap.kubernetes.io/token',
             'data' => {
               'token-id' => 'bmFtZXZh', # 'nameva'
-              'token-secret' => 'c29tZS1zZWNyZXQtdmFsdQ==', # 'some-secret-valu'
+              'token-secret' => 'c29tZTBzZWNyZXQwdmFsdQ==', # 'some0secret0valu'
               'usage-bootstrap-authentication' => 'dHJ1ZQ==', # true
             }
           }
         )
+      end
+
+      describe 'with invalid secret' do
+        let(:params) do
+          {
+            kubeconfig: '/root/.kube/config',
+            secret: sensitive('Something not supported by Kubernetes')
+          }
+        end
+
+        it { is_expected.not_to compile }
       end
     end
   end
