@@ -84,21 +84,23 @@ class k8s::server::tls (
         extended_key_usage => ['serverAuth'],
         # prevent undef value if ipv6 is turned off
         addn_names         => delete_undef_values(
-          [
-            'kubernetes',
-            'kubernetes.default',
-            'kubernetes.default.svc',
-            "kubernetes.default.svc.${cluster_domain}",
-            'kubernetes.service.discover',
-            'localhost',
-            fact('networking.hostname'),
-            fact('networking.fqdn'),
-            $api_service_address,
-            $api_addn_names,
-            $facts.get('networking.interfaces', {}).map |$_,$v| {
-              ($v.get('bindings', []) + $v.get('bindings6', [])).map |$x| { $x.get('address') }
-            }.filter |$x| { !empty($x) },
-          ].flatten.sort.unique
+          (
+            [
+              'kubernetes',
+              'kubernetes.default',
+              'kubernetes.default.svc',
+              "kubernetes.default.svc.${cluster_domain}",
+              'kubernetes.service.discover',
+              'localhost',
+              fact('networking.hostname'),
+              fact('networking.fqdn'),
+              $api_service_address,
+              '127.0.0.1',
+              '::1',
+              fact('networking.ip'),
+              fact('networking.ip6'),
+            ] + $api_addn_names
+          ).unique()
         ),
         distinguished_name => {
           commonName => 'kube-apiserver',

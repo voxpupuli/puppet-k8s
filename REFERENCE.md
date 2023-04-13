@@ -1825,6 +1825,7 @@ The following parameters are available in the `k8s::server::etcd` class:
 * [`self_signed_tls`](#-k8s--server--etcd--self_signed_tls)
 * [`manage_certs`](#-k8s--server--etcd--manage_certs)
 * [`generate_ca`](#-k8s--server--etcd--generate_ca)
+* [`addn_names`](#-k8s--server--etcd--addn_names)
 * [`cert_path`](#-k8s--server--etcd--cert_path)
 * [`peer_ca_key`](#-k8s--server--etcd--peer_ca_key)
 * [`peer_ca_cert`](#-k8s--server--etcd--peer_ca_cert)
@@ -1911,6 +1912,14 @@ Data type: `Boolean`
 
 
 Default value: `false`
+
+##### <a name="-k8s--server--etcd--addn_names"></a>`addn_names`
+
+Data type: `K8s::TLS_altnames`
+
+
+
+Default value: `[]`
 
 ##### <a name="-k8s--server--etcd--cert_path"></a>`cert_path`
 
