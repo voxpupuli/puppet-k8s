@@ -23,6 +23,7 @@
 # @param service_cluster_cidr
 # @param serviceaccount_private
 # @param serviceaccount_public
+# @param etcd_cluster_name name of the etcd cluster for searching its nodes in the puppetdb
 #
 class k8s::server::apiserver (
   K8s::Ensure $ensure = $k8s::server::ensure,
@@ -52,6 +53,7 @@ class k8s::server::apiserver (
 
   Stdlib::IP::Address::Nosubnet $advertise_address = fact('networking.ip'),
   Optional[K8s::Firewall] $firewall_type           = $k8s::server::firewall_type,
+  String[1] $etcd_cluster_name                     = $k8s::etcd_cluster_name,
 ) {
   assert_private()
 
@@ -67,13 +69,15 @@ class k8s::server::apiserver (
     # Needs the PuppetDB terminus installed
     $pql_query = [
       'resources[certname,parameters] {',
-      'type = \'Class\' and',
-      'title = \'K8s::Server::Etcd::Setup\' and',
-      'nodes {',
-      '  resources {',
-      '    type = \'Class\' and',
-      '    title = \'K8s::Server::Etcd\' and',
-      "    parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}'",
+      '  type = \'Class\' and',
+      '  title = \'K8s::Server::Etcd::Setup\' and',
+      '  nodes {',
+      '    resources {',
+      '      type = \'Class\' and',
+      '      title = \'K8s::Server::Etcd\' and',
+      "      parameters.cluster_name = '${etcd_cluster_name}' and",
+      "      parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}'",
+      '    }',
       '  }',
       '}',
       'order by certname }',
