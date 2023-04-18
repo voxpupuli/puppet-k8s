@@ -9,6 +9,8 @@
 # @param firewall_type define the type of firewall to use
 # @param generate_ca whether to generate a own ca or not
 # @param manage_certs whether to manage certs or not
+# @param manage_firewall whether to manage firewall or not
+# @param manage_members whether to manage the ectd cluster member joining or not
 # @param manage_setup whether to manage the setup of etcd or not
 # @param peer_ca_cert
 # @param peer_ca_key
@@ -23,7 +25,7 @@ class k8s::server::etcd (
   Boolean $manage_setup             = true,
   Boolean $manage_firewall          = false,
   Boolean $manage_members           = false,
-  String[1] $cluster_name           = $k8s::etcd_cluster_name,
+  String[1] $cluster_name           = pick($k8s::server::etcd_cluster_name, 'default'),
   String[1] $puppetdb_discovery_tag = pick($k8s::server::puppetdb_discovery_tag, $cluster_name),
 
   Boolean $self_signed_tls = false,
