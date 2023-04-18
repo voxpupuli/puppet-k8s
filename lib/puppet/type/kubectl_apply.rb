@@ -148,7 +148,10 @@ Puppet::Type.newtype(:kubectl_apply) do
     [self[:kubeconfig]]
   end
   autorequire(:service) do
-    ['k8s-apiserver']
+    ['kube-apiserver']
+  end
+  autorequire(:exec) do
+    ['k8s apiserver wait online']
   end
   autorequire(:file) do
     [

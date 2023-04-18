@@ -71,6 +71,7 @@ class k8s::server (
   }
   if $manage_components {
     include k8s::server::apiserver
+    include k8s::server::wait_online
 
     # XXX Think of a better way to do this
     if $master == 'https://kubernetes:6443' {

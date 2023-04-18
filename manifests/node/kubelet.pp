@@ -181,6 +181,7 @@ class k8s::node::kubelet (
     sysctl {
       default:
         ensure => $ensure,
+        silent => true,
         value  => '1';
 
       'net.bridge.bridge-nf-call-iptables':

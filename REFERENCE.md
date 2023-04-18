@@ -32,6 +32,7 @@ Uses the cni-plugins bridge binary to create a bridge interface to connect the c
 * [`k8s::server::resources::kube_proxy`](#k8s--server--resources--kube_proxy): Generates and deploys the default kube-proxy service for Kubernetes
 * [`k8s::server::scheduler`](#k8s--server--scheduler): Installs and configures a Kubernetes scheduler
 * [`k8s::server::tls`](#k8s--server--tls): Generates the necessary Kubernetes certificates for a server
+* [`k8s::server::wait_online`](#k8s--server--wait_online): Creates a dummy exec to allow deferring applies until the Kubernetes API server has started
 
 ### Defined types
 
@@ -2924,6 +2925,10 @@ Data type: `Stdlib::Unixpath`
 
 
 Default value: `$k8s::server::aggregator_ca_cert`
+
+### <a name="k8s--server--wait_online"></a>`k8s::server::wait_online`
+
+Creates a dummy exec to allow deferring applies until the Kubernetes API server has started
 
 ## Defined types
 
