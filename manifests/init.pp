@@ -16,6 +16,7 @@
 # @param group groupname for kubernetes files and services
 # @param uid user id for kubernetes files and services
 # @param gid group id for kubernetes files and services
+# @param etcd_cluster_name name of the etcd cluster for searching its nodes in the puppetdb
 #
 class k8s (
   K8s::Ensure $ensure                     = 'present',

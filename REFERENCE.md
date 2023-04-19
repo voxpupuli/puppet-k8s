@@ -94,6 +94,7 @@ The following parameters are available in the `k8s` class:
 * [`group`](#-k8s--group)
 * [`uid`](#-k8s--uid)
 * [`gid`](#-k8s--gid)
+* [`etcd_cluster_name`](#-k8s--etcd_cluster_name)
 * [`native_packaging`](#-k8s--native_packaging)
 * [`version`](#-k8s--version)
 * [`etcd_version`](#-k8s--etcd_version)
@@ -128,7 +129,6 @@ The following parameters are available in the `k8s` class:
 * [`api_service_address`](#-k8s--api_service_address)
 * [`dns_service_address`](#-k8s--dns_service_address)
 * [`cluster_domain`](#-k8s--cluster_domain)
-* [`etcd_cluster_name`](#-k8s--etcd_cluster_name)
 * [`role`](#-k8s--role)
 * [`firewall_type`](#-k8s--firewall_type)
 
@@ -204,6 +204,14 @@ Data type: `Integer[0, 65535]`
 group id for kubernetes files and services
 
 Default value: `888`
+
+##### <a name="-k8s--etcd_cluster_name"></a>`etcd_cluster_name`
+
+Data type: `String[1]`
+
+name of the etcd cluster for searching its nodes in the puppetdb
+
+Default value: `'default'`
 
 ##### <a name="-k8s--native_packaging"></a>`native_packaging`
 
@@ -476,14 +484,6 @@ Data type: `Stdlib::Fqdn`
 
 
 Default value: `'cluster.local'`
-
-##### <a name="-k8s--etcd_cluster_name"></a>`etcd_cluster_name`
-
-Data type: `String[1]`
-
-
-
-Default value: `'default'`
 
 ##### <a name="-k8s--role"></a>`role`
 
@@ -1288,6 +1288,7 @@ The following parameters are available in the `k8s::server` class:
 * [`direct_master`](#-k8s--server--direct_master)
 * [`dns_service_address`](#-k8s--server--dns_service_address)
 * [`ensure`](#-k8s--server--ensure)
+* [`etcd_cluster_name`](#-k8s--server--etcd_cluster_name)
 * [`etcd_servers`](#-k8s--server--etcd_servers)
 * [`firewall_type`](#-k8s--server--firewall_type)
 * [`generate_ca`](#-k8s--server--generate_ca)
@@ -1390,6 +1391,14 @@ Data type: `K8s::Ensure`
 set ensure for installation or deinstallation
 
 Default value: `$k8s::ensure`
+
+##### <a name="-k8s--server--etcd_cluster_name"></a>`etcd_cluster_name`
+
+Data type: `String[1]`
+
+name of the etcd cluster for searching its nodes in the puppetdb
+
+Default value: `$k8s::etcd_cluster_name`
 
 ##### <a name="-k8s--server--etcd_servers"></a>`etcd_servers`
 
@@ -1524,6 +1533,7 @@ The following parameters are available in the `k8s::server::apiserver` class:
 * [`ensure`](#-k8s--server--apiserver--ensure)
 * [`etcd_ca`](#-k8s--server--apiserver--etcd_ca)
 * [`etcd_cert`](#-k8s--server--apiserver--etcd_cert)
+* [`etcd_cluster_name`](#-k8s--server--apiserver--etcd_cluster_name)
 * [`etcd_key`](#-k8s--server--apiserver--etcd_key)
 * [`etcd_servers`](#-k8s--server--apiserver--etcd_servers)
 * [`firewall_type`](#-k8s--server--apiserver--firewall_type)
@@ -1534,7 +1544,6 @@ The following parameters are available in the `k8s::server::apiserver` class:
 * [`service_cluster_cidr`](#-k8s--server--apiserver--service_cluster_cidr)
 * [`serviceaccount_private`](#-k8s--server--apiserver--serviceaccount_private)
 * [`serviceaccount_public`](#-k8s--server--apiserver--serviceaccount_public)
-* [`etcd_cluster_name`](#-k8s--server--apiserver--etcd_cluster_name)
 
 ##### <a name="-k8s--server--apiserver--advertise_address"></a>`advertise_address`
 
@@ -1640,6 +1649,14 @@ path to the etcd cert file
 
 Default value: `"${cert_path}/etcd.pem"`
 
+##### <a name="-k8s--server--apiserver--etcd_cluster_name"></a>`etcd_cluster_name`
+
+Data type: `String[1]`
+
+name of the etcd cluster for searching its nodes in the puppetdb
+
+Default value: `$k8s::server::etcd_cluster_name`
+
 ##### <a name="-k8s--server--apiserver--etcd_key"></a>`etcd_key`
 
 Data type: `Stdlib::Unixpath`
@@ -1719,14 +1736,6 @@ Data type: `Stdlib::Unixpath`
 
 
 Default value: `"${cert_path}/service-account.pub"`
-
-##### <a name="-k8s--server--apiserver--etcd_cluster_name"></a>`etcd_cluster_name`
-
-Data type: `String[1]`
-
-name of the etcd cluster for searching its nodes in the puppetdb
-
-Default value: `$k8s::etcd_cluster_name`
 
 ### <a name="k8s--server--controller_manager"></a>`k8s::server::controller_manager`
 

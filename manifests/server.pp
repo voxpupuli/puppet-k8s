@@ -11,6 +11,7 @@
 # @param direct_master direct clust API connection
 # @param dns_service_address cluster dns service address
 # @param ensure set ensure for installation or deinstallation
+# @param etcd_cluster_name name of the etcd cluster for searching its nodes in the puppetdb
 # @param etcd_servers list etcd servers if no puppetdb is used
 # @param firewall_type define the type of firewall to use
 # @param generate_ca initially generate ca
@@ -55,7 +56,9 @@ class k8s::server (
   String[1] $puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag,
 
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
-  Optional[K8s::Firewall] $firewall_type = $k8s::firewall_type,
+  Optional[K8s::Firewall] $firewall_type         = $k8s::firewall_type,
+  String[1] $etcd_cluster_name                   = $k8s::etcd_cluster_name,
+
 ) {
   if $manage_etcd {
     class { 'k8s::server::etcd':

@@ -13,6 +13,7 @@
 # @param ensure set ensure for installation or deinstallation
 # @param etcd_ca path to the etcd ca cert file
 # @param etcd_cert path to the etcd cert file
+# @param etcd_cluster_name name of the etcd cluster for searching its nodes in the puppetdb
 # @param etcd_key path to the etcd key file
 # @param etcd_servers list etcd servers if no puppetdb is used
 # @param firewall_type define the type of firewall to use
@@ -23,7 +24,6 @@
 # @param service_cluster_cidr
 # @param serviceaccount_private
 # @param serviceaccount_public
-# @param etcd_cluster_name name of the etcd cluster for searching its nodes in the puppetdb
 #
 class k8s::server::apiserver (
   K8s::Ensure $ensure = $k8s::server::ensure,
@@ -53,7 +53,7 @@ class k8s::server::apiserver (
 
   Stdlib::IP::Address::Nosubnet $advertise_address = fact('networking.ip'),
   Optional[K8s::Firewall] $firewall_type           = $k8s::server::firewall_type,
-  String[1] $etcd_cluster_name                     = $k8s::etcd_cluster_name,
+  String[1] $etcd_cluster_name                     = $k8s::server::etcd_cluster_name,
 ) {
   assert_private()
 
