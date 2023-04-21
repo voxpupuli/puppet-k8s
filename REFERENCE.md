@@ -1834,6 +1834,8 @@ The following parameters are available in the `k8s::server::etcd` class:
 * [`client_ca_key`](#-k8s--server--etcd--client_ca_key)
 * [`client_ca_cert`](#-k8s--server--etcd--client_ca_cert)
 * [`firewall_type`](#-k8s--server--etcd--firewall_type)
+* [`user`](#-k8s--server--etcd--user)
+* [`group`](#-k8s--server--etcd--group)
 
 ##### <a name="-k8s--server--etcd--ensure"></a>`ensure`
 
@@ -1971,6 +1973,22 @@ Data type: `Optional[K8s::Firewall]`
 
 Default value: `$k8s::server::firewall_type`
 
+##### <a name="-k8s--server--etcd--user"></a>`user`
+
+Data type: `String[1]`
+
+
+
+Default value: `'etcd'`
+
+##### <a name="-k8s--server--etcd--group"></a>`group`
+
+Data type: `String[1]`
+
+
+
+Default value: `'etcd'`
+
 ### <a name="k8s--server--etcd--setup"></a>`k8s::server::etcd::setup`
 
 Installs and configures an etcd instance
@@ -1979,113 +1997,39 @@ Installs and configures an etcd instance
 
 The following parameters are available in the `k8s::server::etcd::setup` class:
 
+* [`advertise_client_urls`](#-k8s--server--etcd--setup--advertise_client_urls)
+* [`archive_template`](#-k8s--server--etcd--setup--archive_template)
+* [`auto_compaction_retention`](#-k8s--server--etcd--setup--auto_compaction_retention)
+* [`auto_tls`](#-k8s--server--etcd--setup--auto_tls)
+* [`binary_path`](#-k8s--server--etcd--setup--binary_path)
+* [`cert_file`](#-k8s--server--etcd--setup--cert_file)
+* [`client_cert_auth`](#-k8s--server--etcd--setup--client_cert_auth)
+* [`data_dir`](#-k8s--server--etcd--setup--data_dir)
 * [`ensure`](#-k8s--server--etcd--setup--ensure)
-* [`install`](#-k8s--server--etcd--setup--install)
-* [`package`](#-k8s--server--etcd--setup--package)
-* [`version`](#-k8s--server--etcd--setup--version)
 * [`etcd_name`](#-k8s--server--etcd--setup--etcd_name)
 * [`fqdn`](#-k8s--server--etcd--setup--fqdn)
-* [`archive_template`](#-k8s--server--etcd--setup--archive_template)
-* [`data_dir`](#-k8s--server--etcd--setup--data_dir)
-* [`proxy`](#-k8s--server--etcd--setup--proxy)
-* [`listen_client_urls`](#-k8s--server--etcd--setup--listen_client_urls)
-* [`advertise_client_urls`](#-k8s--server--etcd--setup--advertise_client_urls)
-* [`listen_peer_urls`](#-k8s--server--etcd--setup--listen_peer_urls)
+* [`group`](#-k8s--server--etcd--setup--group)
 * [`initial_advertise_peer_urls`](#-k8s--server--etcd--setup--initial_advertise_peer_urls)
-* [`peer_cert_file`](#-k8s--server--etcd--setup--peer_cert_file)
-* [`peer_key_file`](#-k8s--server--etcd--setup--peer_key_file)
-* [`peer_trusted_ca_file`](#-k8s--server--etcd--setup--peer_trusted_ca_file)
-* [`peer_client_cert_auth`](#-k8s--server--etcd--setup--peer_client_cert_auth)
-* [`peer_auto_tls`](#-k8s--server--etcd--setup--peer_auto_tls)
-* [`cert_file`](#-k8s--server--etcd--setup--cert_file)
-* [`key_file`](#-k8s--server--etcd--setup--key_file)
-* [`trusted_ca_file`](#-k8s--server--etcd--setup--trusted_ca_file)
-* [`client_cert_auth`](#-k8s--server--etcd--setup--client_cert_auth)
-* [`auto_tls`](#-k8s--server--etcd--setup--auto_tls)
-* [`auto_compaction_retention`](#-k8s--server--etcd--setup--auto_compaction_retention)
+* [`initial_cluster`](#-k8s--server--etcd--setup--initial_cluster)
 * [`initial_cluster_state`](#-k8s--server--etcd--setup--initial_cluster_state)
 * [`initial_cluster_token`](#-k8s--server--etcd--setup--initial_cluster_token)
-* [`initial_cluster`](#-k8s--server--etcd--setup--initial_cluster)
-
-##### <a name="-k8s--server--etcd--setup--ensure"></a>`ensure`
-
-Data type: `K8s::Ensure`
-
-
-
-Default value: `$k8s::server::etcd::ensure`
-
-##### <a name="-k8s--server--etcd--setup--install"></a>`install`
-
-Data type: `Enum['archive','package']`
-
-
-
-Default value: `'archive'`
-
-##### <a name="-k8s--server--etcd--setup--package"></a>`package`
-
-Data type: `String[1]`
-
-
-
-Default value: `'etcd'`
-
-##### <a name="-k8s--server--etcd--setup--version"></a>`version`
-
-Data type: `String[1]`
-
-
-
-Default value: `$k8s::server::etcd::version`
-
-##### <a name="-k8s--server--etcd--setup--etcd_name"></a>`etcd_name`
-
-Data type: `String[1]`
-
-
-
-Default value: `$facts['networking']['hostname']`
-
-##### <a name="-k8s--server--etcd--setup--fqdn"></a>`fqdn`
-
-Data type: `String[1]`
-
-
-
-Default value: `$facts['networking']['fqdn']`
-
-##### <a name="-k8s--server--etcd--setup--archive_template"></a>`archive_template`
-
-Data type: `Stdlib::HTTPUrl`
-
-
-
-Default value: `'https://storage.googleapis.com/etcd/v%{version}/etcd-v%{version}-%{kernel}-%{arch}.%{kernel_ext}'`
-
-##### <a name="-k8s--server--etcd--setup--data_dir"></a>`data_dir`
-
-Data type: `String[1]`
-
-
-
-Default value: `"${etcd_name}.etcd"`
-
-##### <a name="-k8s--server--etcd--setup--proxy"></a>`proxy`
-
-Data type: `Enum['on','off','readonly']`
-
-
-
-Default value: `'off'`
-
-##### <a name="-k8s--server--etcd--setup--listen_client_urls"></a>`listen_client_urls`
-
-Data type: `Array[Stdlib::HTTPUrl]`
-
-
-
-Default value: `['https://[::]:2379']`
+* [`install`](#-k8s--server--etcd--setup--install)
+* [`key_file`](#-k8s--server--etcd--setup--key_file)
+* [`listen_client_urls`](#-k8s--server--etcd--setup--listen_client_urls)
+* [`listen_peer_urls`](#-k8s--server--etcd--setup--listen_peer_urls)
+* [`package`](#-k8s--server--etcd--setup--package)
+* [`peer_auto_tls`](#-k8s--server--etcd--setup--peer_auto_tls)
+* [`peer_cert_file`](#-k8s--server--etcd--setup--peer_cert_file)
+* [`peer_client_cert_auth`](#-k8s--server--etcd--setup--peer_client_cert_auth)
+* [`peer_key_file`](#-k8s--server--etcd--setup--peer_key_file)
+* [`peer_trusted_ca_file`](#-k8s--server--etcd--setup--peer_trusted_ca_file)
+* [`proxy`](#-k8s--server--etcd--setup--proxy)
+* [`trusted_ca_file`](#-k8s--server--etcd--setup--trusted_ca_file)
+* [`user`](#-k8s--server--etcd--setup--user)
+* [`version`](#-k8s--server--etcd--setup--version)
+* [`workdir_path`](#-k8s--server--etcd--setup--workdir_path)
+* [`uid`](#-k8s--server--etcd--setup--uid)
+* [`gid`](#-k8s--server--etcd--setup--gid)
 
 ##### <a name="-k8s--server--etcd--setup--advertise_client_urls"></a>`advertise_client_urls`
 
@@ -2095,55 +2039,23 @@ Data type: `Array[Stdlib::HTTPUrl]`
 
 Default value: `["https://${fqdn}:2379"]`
 
-##### <a name="-k8s--server--etcd--setup--listen_peer_urls"></a>`listen_peer_urls`
+##### <a name="-k8s--server--etcd--setup--archive_template"></a>`archive_template`
 
-Data type: `Array[Stdlib::HTTPUrl]`
+Data type: `Stdlib::HTTPUrl`
 
+The download url template for the etc archive
 
+Default value: `'https://storage.googleapis.com/etcd/v%{version}/etcd-v%{version}-%{kernel}-%{arch}.%{kernel_ext}'`
 
-Default value: `['https://[::]:2380']`
+##### <a name="-k8s--server--etcd--setup--auto_compaction_retention"></a>`auto_compaction_retention`
 
-##### <a name="-k8s--server--etcd--setup--initial_advertise_peer_urls"></a>`initial_advertise_peer_urls`
-
-Data type: `Array[Stdlib::HTTPUrl]`
-
-
-
-Default value: `["https://${fqdn}:2380"]`
-
-##### <a name="-k8s--server--etcd--setup--peer_cert_file"></a>`peer_cert_file`
-
-Data type: `Optional[Stdlib::Unixpath]`
+Data type: `Optional[Integer]`
 
 
 
 Default value: `undef`
 
-##### <a name="-k8s--server--etcd--setup--peer_key_file"></a>`peer_key_file`
-
-Data type: `Optional[Stdlib::Unixpath]`
-
-
-
-Default value: `undef`
-
-##### <a name="-k8s--server--etcd--setup--peer_trusted_ca_file"></a>`peer_trusted_ca_file`
-
-Data type: `Optional[Stdlib::Unixpath]`
-
-
-
-Default value: `undef`
-
-##### <a name="-k8s--server--etcd--setup--peer_client_cert_auth"></a>`peer_client_cert_auth`
-
-Data type: `Boolean`
-
-
-
-Default value: `false`
-
-##### <a name="-k8s--server--etcd--setup--peer_auto_tls"></a>`peer_auto_tls`
+##### <a name="-k8s--server--etcd--setup--auto_tls"></a>`auto_tls`
 
 Data type: `Boolean`
 
@@ -2151,23 +2063,15 @@ Data type: `Boolean`
 
 Default value: `$k8s::server::etcd::self_signed_tls`
 
+##### <a name="-k8s--server--etcd--setup--binary_path"></a>`binary_path`
+
+Data type: `Stdlib::Unixpath`
+
+path to the etcd binary
+
+Default value: `'/usr/local/bin/etcd'`
+
 ##### <a name="-k8s--server--etcd--setup--cert_file"></a>`cert_file`
-
-Data type: `Optional[Stdlib::Unixpath]`
-
-
-
-Default value: `undef`
-
-##### <a name="-k8s--server--etcd--setup--key_file"></a>`key_file`
-
-Data type: `Optional[Stdlib::Unixpath]`
-
-
-
-Default value: `undef`
-
-##### <a name="-k8s--server--etcd--setup--trusted_ca_file"></a>`trusted_ca_file`
 
 Data type: `Optional[Stdlib::Unixpath]`
 
@@ -2183,21 +2087,61 @@ Data type: `Boolean`
 
 Default value: `false`
 
-##### <a name="-k8s--server--etcd--setup--auto_tls"></a>`auto_tls`
+##### <a name="-k8s--server--etcd--setup--data_dir"></a>`data_dir`
 
-Data type: `Boolean`
-
-
-
-Default value: `$k8s::server::etcd::self_signed_tls`
-
-##### <a name="-k8s--server--etcd--setup--auto_compaction_retention"></a>`auto_compaction_retention`
-
-Data type: `Optional[Integer]`
+Data type: `String[1]`
 
 
 
-Default value: `undef`
+Default value: `"${etcd_name}.etcd"`
+
+##### <a name="-k8s--server--etcd--setup--ensure"></a>`ensure`
+
+Data type: `K8s::Ensure`
+
+set ensure for installation or deinstallation
+
+Default value: `$k8s::server::etcd::ensure`
+
+##### <a name="-k8s--server--etcd--setup--etcd_name"></a>`etcd_name`
+
+Data type: `String[1]`
+
+The etcd instance name
+
+Default value: `$facts['networking']['hostname']`
+
+##### <a name="-k8s--server--etcd--setup--fqdn"></a>`fqdn`
+
+Data type: `String[1]`
+
+fully qualified domain name
+
+Default value: `$facts['networking']['fqdn']`
+
+##### <a name="-k8s--server--etcd--setup--group"></a>`group`
+
+Data type: `String[1]`
+
+etcd system user group
+
+Default value: `$k8s::server::etcd::group`
+
+##### <a name="-k8s--server--etcd--setup--initial_advertise_peer_urls"></a>`initial_advertise_peer_urls`
+
+Data type: `Array[Stdlib::HTTPUrl]`
+
+
+
+Default value: `["https://${fqdn}:2380"]`
+
+##### <a name="-k8s--server--etcd--setup--initial_cluster"></a>`initial_cluster`
+
+Data type: `Array[String[1]]`
+
+
+
+Default value: `[]`
 
 ##### <a name="-k8s--server--etcd--setup--initial_cluster_state"></a>`initial_cluster_state`
 
@@ -2215,13 +2159,141 @@ Data type: `Optional[String[1]]`
 
 Default value: `undef`
 
-##### <a name="-k8s--server--etcd--setup--initial_cluster"></a>`initial_cluster`
+##### <a name="-k8s--server--etcd--setup--install"></a>`install`
 
-Data type: `Array[String[1]]`
+Data type: `Enum['archive','package']`
+
+etcd installation method
+
+Default value: `'archive'`
+
+##### <a name="-k8s--server--etcd--setup--key_file"></a>`key_file`
+
+Data type: `Optional[Stdlib::Unixpath]`
 
 
 
-Default value: `[]`
+Default value: `undef`
+
+##### <a name="-k8s--server--etcd--setup--listen_client_urls"></a>`listen_client_urls`
+
+Data type: `Array[Stdlib::HTTPUrl]`
+
+
+
+Default value: `['https://[::]:2379']`
+
+##### <a name="-k8s--server--etcd--setup--listen_peer_urls"></a>`listen_peer_urls`
+
+Data type: `Array[Stdlib::HTTPUrl]`
+
+
+
+Default value: `['https://[::]:2380']`
+
+##### <a name="-k8s--server--etcd--setup--package"></a>`package`
+
+Data type: `String[1]`
+
+etcd package name
+
+Default value: `'etcd'`
+
+##### <a name="-k8s--server--etcd--setup--peer_auto_tls"></a>`peer_auto_tls`
+
+Data type: `Boolean`
+
+
+
+Default value: `$k8s::server::etcd::self_signed_tls`
+
+##### <a name="-k8s--server--etcd--setup--peer_cert_file"></a>`peer_cert_file`
+
+Data type: `Optional[Stdlib::Unixpath]`
+
+
+
+Default value: `undef`
+
+##### <a name="-k8s--server--etcd--setup--peer_client_cert_auth"></a>`peer_client_cert_auth`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
+
+##### <a name="-k8s--server--etcd--setup--peer_key_file"></a>`peer_key_file`
+
+Data type: `Optional[Stdlib::Unixpath]`
+
+
+
+Default value: `undef`
+
+##### <a name="-k8s--server--etcd--setup--peer_trusted_ca_file"></a>`peer_trusted_ca_file`
+
+Data type: `Optional[Stdlib::Unixpath]`
+
+
+
+Default value: `undef`
+
+##### <a name="-k8s--server--etcd--setup--proxy"></a>`proxy`
+
+Data type: `Enum['on','off','readonly']`
+
+
+
+Default value: `'off'`
+
+##### <a name="-k8s--server--etcd--setup--trusted_ca_file"></a>`trusted_ca_file`
+
+Data type: `Optional[Stdlib::Unixpath]`
+
+
+
+Default value: `undef`
+
+##### <a name="-k8s--server--etcd--setup--user"></a>`user`
+
+Data type: `String[1]`
+
+etcd system user
+
+Default value: `$k8s::server::etcd::user`
+
+##### <a name="-k8s--server--etcd--setup--version"></a>`version`
+
+Data type: `String[1]`
+
+The ectd version to install
+
+Default value: `$k8s::server::etcd::version`
+
+##### <a name="-k8s--server--etcd--setup--workdir_path"></a>`workdir_path`
+
+Data type: `Stdlib::Unixpath`
+
+path to the working dir of etcd
+
+Default value: `'/var/lib/etcd'`
+
+##### <a name="-k8s--server--etcd--setup--uid"></a>`uid`
+
+Data type: `Integer[0, 65535]`
+
+
+
+Default value: `113`
+
+##### <a name="-k8s--server--etcd--setup--gid"></a>`gid`
+
+Data type: `Integer[0, 65535]`
+
+
+
+Default value: `121`
 
 ### <a name="k8s--server--resources"></a>`k8s::server::resources`
 

@@ -1,4 +1,37 @@
 # @summary Installs and configures an etcd instance
+#
+# @param advertise_client_urls
+# @param archive_template The download url template for the etc archive
+# @param auto_compaction_retention
+# @param auto_tls
+# @param binary_path path to the etcd binary
+# @param cert_file
+# @param client_cert_auth
+# @param data_dir
+# @param ensure set ensure for installation or deinstallation
+# @param etcd_name The etcd instance name
+# @param fqdn fully qualified domain name
+# @param group etcd system user group
+# @param initial_advertise_peer_urls
+# @param initial_cluster
+# @param initial_cluster_state
+# @param initial_cluster_token
+# @param install etcd installation method
+# @param key_file
+# @param listen_client_urls
+# @param listen_peer_urls
+# @param package etcd package name
+# @param peer_auto_tls
+# @param peer_cert_file
+# @param peer_client_cert_auth
+# @param peer_key_file
+# @param peer_trusted_ca_file
+# @param proxy
+# @param trusted_ca_file
+# @param user etcd system user
+# @param version The ectd version to install
+# @param workdir_path path to the working dir of etcd
+#
 class k8s::server::etcd::setup (
   K8s::Ensure $ensure                = $k8s::server::etcd::ensure,
   Enum['archive','package'] $install = 'archive',
@@ -34,6 +67,13 @@ class k8s::server::etcd::setup (
   Optional[Enum['existing', 'new']] $initial_cluster_state = undef,
   Optional[String[1]] $initial_cluster_token               = undef,
   Array[String[1]] $initial_cluster                        = [],
+
+  Stdlib::Unixpath $binary_path  = '/usr/local/bin/etcd',
+  Stdlib::Unixpath $workdir_path = '/var/lib/etcd',
+  String[1] $user                = $k8s::server::etcd::user,
+  String[1] $group               = $k8s::server::etcd::group,
+  Integer[0, 65535] $uid         = 113,
+  Integer[0, 65535] $gid         = 121,
 ) {
   if $install == 'archive' {
     $_url  = k8s::format_url($archive_template, { version => $version, })
@@ -47,7 +87,6 @@ class k8s::server::etcd::setup (
       extract_path    => '/usr/local/bin',
       cleanup         => true,
       creates         => ['/usr/local/bin/etcd', '/usr/local/bin/etcdctl'],
-
       notify          => Service['etcd'],
     }
 
@@ -56,19 +95,30 @@ class k8s::server::etcd::setup (
         ensure => 'absent',
       }
     }
-  } else {
-    package { 'etcd':
-      ensure => $ensure,
-      name   => $package,
-    }
-  }
 
-  user { 'etcd':
-    ensure => $ensure,
-  }
-  group { 'etcd':
-    ensure  => $ensure,
-    members => ['etcd'],
+    group { $group:
+      ensure => $ensure,
+      system => true,
+      gid    => $gid,
+    }
+
+    user { $user:
+      ensure     => $ensure,
+      comment    => 'ETCD user',
+      gid        => $gid,
+      home       => $workdir_path,
+      managehome => false,
+      shell      => (fact('os.family') ? {
+          'Debian' => '/usr/sbin/nologin',
+          default  => '/sbin/nologin',
+      }),
+      system     => true,
+      uid        => $uid,
+    }
+  } else {
+    package { $package:
+      ensure => stdlib::ensure($ensure, 'package'),
+    }
   }
 
   file {
@@ -76,30 +126,30 @@ class k8s::server::etcd::setup (
       ensure => stdlib::ensure($ensure, 'directory');
 
     '/etc/etcd': ;
-    '/var/lib/etcd':
-      owner => 'etcd',
-      group => 'etcd';
+    $workdir_path:
+      owner => $user,
+      group => $group;
   }
 
   # Use generated certs by default
   if !$k8s::server::etcd::self_signed_tls and $k8s::server::etcd::manage_certs {
-    $_dir = '/var/lib/etcd/certs'
-    $_cert_file = pick($cert_file, "${_dir}/etcd-server.pem")
-    $_key_file = pick($key_file, "${_dir}/etcd-server.key")
-    $_trusted_ca_file = pick($trusted_ca_file, "${_dir}/client-ca.pem")
-    $_client_cert_auth = pick($client_cert_auth, true)
-    $_peer_cert_file = pick($peer_cert_file, "${_dir}/etcd-peer.pem")
-    $_peer_key_file = pick($peer_key_file, "${_dir}/etcd-peer.key")
-    $_peer_trusted_ca_file = pick($peer_trusted_ca_file, "${_dir}/peer-ca.pem")
+    $_dir                   = "${workdir_path}/certs"
+    $_cert_file             = pick($cert_file, "${_dir}/etcd-server.pem")
+    $_key_file              = pick($key_file, "${_dir}/etcd-server.key")
+    $_trusted_ca_file       = pick($trusted_ca_file, "${_dir}/client-ca.pem")
+    $_client_cert_auth      = pick($client_cert_auth, true)
+    $_peer_cert_file        = pick($peer_cert_file, "${_dir}/etcd-peer.pem")
+    $_peer_key_file         = pick($peer_key_file, "${_dir}/etcd-peer.key")
+    $_peer_trusted_ca_file  = pick($peer_trusted_ca_file, "${_dir}/peer-ca.pem")
     $_peer_client_cert_auth = pick($peer_client_cert_auth, true)
   } else {
-    $_cert_file = $cert_file
-    $_key_file = $key_file
-    $_trusted_ca_file = $trusted_ca_file
-    $_client_cert_auth = $client_cert_auth
-    $_peer_cert_file = $peer_cert_file
-    $_peer_key_file = $peer_key_file
-    $_peer_trusted_ca_file = $peer_trusted_ca_file
+    $_cert_file             = $cert_file
+    $_key_file              = $key_file
+    $_trusted_ca_file       = $trusted_ca_file
+    $_client_cert_auth      = $client_cert_auth
+    $_peer_cert_file        = $peer_cert_file
+    $_peer_key_file         = $peer_key_file
+    $_peer_trusted_ca_file  = $peer_trusted_ca_file
     $_peer_client_cert_auth = $peer_client_cert_auth
   }
 
@@ -109,7 +159,7 @@ class k8s::server::etcd::setup (
 
   file {
     default:
-      ensure => $ensure,
+      ensure => stdlib::ensure($ensure, 'file'),
       owner  => 'root',
       group  => 'root';
 
@@ -146,14 +196,19 @@ class k8s::server::etcd::setup (
   }
 
   systemd::unit_file { 'etcd.service':
-    ensure => $ensure,
-    source => 'puppet:///modules/k8s/etcd.service',
-    notify => Service['etcd'],
+    ensure  => $ensure,
+    content => epp('k8s/etcd.service.epp', {
+        binary_path  => $binary_path,
+        workdir_path => $workdir_path,
+        user         => $user,
+    }),
+    notify  => Service['etcd'],
   }
+
   service { 'etcd':
     ensure    => stdlib::ensure($ensure, 'service'),
     enable    => true,
-    require   => User['etcd'],
+    require   => User[$user],
     subscribe => File['/etc/etcd/etcd.conf'],
   }
 }
