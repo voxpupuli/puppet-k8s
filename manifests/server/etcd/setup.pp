@@ -70,12 +70,12 @@ class k8s::server::etcd::setup (
   Optional[String[1]] $initial_cluster_token               = undef,
   Array[String[1]] $initial_cluster                        = [],
 
-  Stdlib::Unixpath $binary_path  = '/usr/local/bin/etcd',
-  Stdlib::Unixpath $storage_path = '/var/lib/etcd',
-  String[1] $user                = $k8s::server::etcd::user,
-  String[1] $group               = $k8s::server::etcd::group,
-  Integer[0, 65535] $uid         = 113,
-  Integer[0, 65535] $gid         = 121,
+  Optional[Stdlib::Unixpath] $binary_path = undef,
+  Stdlib::Unixpath $storage_path          = '/var/lib/etcd',
+  String[1] $user                         = $k8s::server::etcd::user,
+  String[1] $group                        = $k8s::server::etcd::group,
+  Integer[0, 65535] $uid                  = 113,
+  Integer[0, 65535] $gid                  = 121,
 ) {
   if $install == 'archive' {
     $_url  = k8s::format_url($archive_template, { version => $version, })
@@ -197,10 +197,18 @@ class k8s::server::etcd::setup (
       });
   }
 
+  if $install == 'archive' {
+    $_binary_path    = pick($binary_path, '/usr/local/bin/etcd')
+    $service_require = User[$user]
+  } else {
+    $_binary_path    = pick($binary_path, '/usr/bin/etcd')
+    $service_require = Package[$package]
+  }
+
   systemd::unit_file { 'etcd.service':
     ensure  => $ensure,
     content => epp('k8s/etcd.service.epp', {
-        binary_path  => $binary_path,
+        binary_path  => $_binary_path,
         workdir_path => $storage_path,
         user         => $user,
     }),
@@ -210,7 +218,7 @@ class k8s::server::etcd::setup (
   service { 'etcd':
     ensure    => stdlib::ensure($ensure, 'service'),
     enable    => true,
-    require   => User[$user],
+    require   => $service_require,
     subscribe => File['/etc/etcd/etcd.conf'],
   }
 }
