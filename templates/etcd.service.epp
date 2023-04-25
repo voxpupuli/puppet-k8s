@@ -10,7 +10,7 @@ After=network-online.target local-fs.target remote-fs.target time-sync.target
 Wants=network-online.target local-fs.target remote-fs.target time-sync.target
 
 [Service]
-User=$user
+User=<%= $user %>
 Type=notify
 EnvironmentFile=/etc/etcd/etcd.conf
 EnvironmentFile=/etc/etcd/cluster.conf
