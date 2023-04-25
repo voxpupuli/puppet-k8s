@@ -1243,6 +1243,7 @@ The following parameters are available in the `k8s::repo` class:
 
 * [`manage_container_manager`](#-k8s--repo--manage_container_manager)
 * [`crio_version`](#-k8s--repo--crio_version)
+* [`container_manager`](#-k8s--repo--container_manager)
 
 ##### <a name="-k8s--repo--manage_container_manager"></a>`manage_container_manager`
 
@@ -1259,6 +1260,14 @@ Data type: `String[1]`
 version o cri-o
 
 Default value: `$k8s::version.split('\.')[0, 2].join('.')`
+
+##### <a name="-k8s--repo--container_manager"></a>`container_manager`
+
+Data type: `K8s::Container_runtimes`
+
+
+
+Default value: `$k8s::container_manager`
 
 ### <a name="k8s--server"></a>`k8s::server`
 
