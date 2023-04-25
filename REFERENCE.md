@@ -2065,11 +2065,11 @@ Default value: `$k8s::server::etcd::self_signed_tls`
 
 ##### <a name="-k8s--server--etcd--setup--binary_path"></a>`binary_path`
 
-Data type: `Stdlib::Unixpath`
+Data type: `Optional[Stdlib::Unixpath]`
 
 path to the etcd binary
 
-Default value: `'/usr/local/bin/etcd'`
+Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--cert_file"></a>`cert_file`
 
