@@ -1265,7 +1265,7 @@ Default value: `$k8s::version.split('\.')[0, 2].join('.')`
 
 Data type: `K8s::Container_runtimes`
 
-
+The name of the container manager
 
 Default value: `$k8s::container_manager`
 

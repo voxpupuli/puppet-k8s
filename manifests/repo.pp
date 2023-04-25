@@ -2,6 +2,7 @@
 #
 # @param manage_container_manager whether to add cri-o repository or not
 # @param crio_version version o cri-o
+# @param container_manager The name of the container manager
 #
 class k8s::repo (
   Boolean $manage_container_manager          = $k8s::manage_container_manager,
