@@ -11,6 +11,7 @@
 # @param ensure set ensure for installation or deinstallation
 # @param etcd_name The etcd instance name
 # @param fqdn fully qualified domain name
+# @param gid The group system id
 # @param group etcd system user group
 # @param initial_advertise_peer_urls
 # @param initial_cluster
@@ -27,10 +28,11 @@
 # @param peer_key_file
 # @param peer_trusted_ca_file
 # @param proxy
+# @param storage_path path to the working dir of etcd
 # @param trusted_ca_file
+# @param uid The user system id
 # @param user etcd system user
 # @param version The ectd version to install
-# @param workdir_path path to the working dir of etcd
 #
 class k8s::server::etcd::setup (
   K8s::Ensure $ensure                = $k8s::server::etcd::ensure,
@@ -69,7 +71,7 @@ class k8s::server::etcd::setup (
   Array[String[1]] $initial_cluster                        = [],
 
   Stdlib::Unixpath $binary_path  = '/usr/local/bin/etcd',
-  Stdlib::Unixpath $workdir_path = '/var/lib/etcd',
+  Stdlib::Unixpath $storage_path = '/var/lib/etcd',
   String[1] $user                = $k8s::server::etcd::user,
   String[1] $group               = $k8s::server::etcd::group,
   Integer[0, 65535] $uid         = 113,
@@ -106,7 +108,7 @@ class k8s::server::etcd::setup (
       ensure     => $ensure,
       comment    => 'ETCD user',
       gid        => $gid,
-      home       => $workdir_path,
+      home       => $storage_path,
       managehome => false,
       shell      => (fact('os.family') ? {
           'Debian' => '/usr/sbin/nologin',
@@ -126,14 +128,14 @@ class k8s::server::etcd::setup (
       ensure => stdlib::ensure($ensure, 'directory');
 
     '/etc/etcd': ;
-    $workdir_path:
+    $storage_path:
       owner => $user,
       group => $group;
   }
 
   # Use generated certs by default
   if !$k8s::server::etcd::self_signed_tls and $k8s::server::etcd::manage_certs {
-    $_dir                   = "${workdir_path}/certs"
+    $_dir                   = "${storage_path}/certs"
     $_cert_file             = pick($cert_file, "${_dir}/etcd-server.pem")
     $_key_file              = pick($key_file, "${_dir}/etcd-server.key")
     $_trusted_ca_file       = pick($trusted_ca_file, "${_dir}/client-ca.pem")
@@ -199,7 +201,7 @@ class k8s::server::etcd::setup (
     ensure  => $ensure,
     content => epp('k8s/etcd.service.epp', {
         binary_path  => $binary_path,
-        workdir_path => $workdir_path,
+        workdir_path => $storage_path,
         user         => $user,
     }),
     notify  => Service['etcd'],

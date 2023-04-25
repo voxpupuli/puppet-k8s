@@ -2008,6 +2008,7 @@ The following parameters are available in the `k8s::server::etcd::setup` class:
 * [`ensure`](#-k8s--server--etcd--setup--ensure)
 * [`etcd_name`](#-k8s--server--etcd--setup--etcd_name)
 * [`fqdn`](#-k8s--server--etcd--setup--fqdn)
+* [`gid`](#-k8s--server--etcd--setup--gid)
 * [`group`](#-k8s--server--etcd--setup--group)
 * [`initial_advertise_peer_urls`](#-k8s--server--etcd--setup--initial_advertise_peer_urls)
 * [`initial_cluster`](#-k8s--server--etcd--setup--initial_cluster)
@@ -2024,12 +2025,11 @@ The following parameters are available in the `k8s::server::etcd::setup` class:
 * [`peer_key_file`](#-k8s--server--etcd--setup--peer_key_file)
 * [`peer_trusted_ca_file`](#-k8s--server--etcd--setup--peer_trusted_ca_file)
 * [`proxy`](#-k8s--server--etcd--setup--proxy)
+* [`storage_path`](#-k8s--server--etcd--setup--storage_path)
 * [`trusted_ca_file`](#-k8s--server--etcd--setup--trusted_ca_file)
+* [`uid`](#-k8s--server--etcd--setup--uid)
 * [`user`](#-k8s--server--etcd--setup--user)
 * [`version`](#-k8s--server--etcd--setup--version)
-* [`workdir_path`](#-k8s--server--etcd--setup--workdir_path)
-* [`uid`](#-k8s--server--etcd--setup--uid)
-* [`gid`](#-k8s--server--etcd--setup--gid)
 
 ##### <a name="-k8s--server--etcd--setup--advertise_client_urls"></a>`advertise_client_urls`
 
@@ -2118,6 +2118,14 @@ Data type: `String[1]`
 fully qualified domain name
 
 Default value: `$facts['networking']['fqdn']`
+
+##### <a name="-k8s--server--etcd--setup--gid"></a>`gid`
+
+Data type: `Integer[0, 65535]`
+
+The group system id
+
+Default value: `121`
 
 ##### <a name="-k8s--server--etcd--setup--group"></a>`group`
 
@@ -2247,6 +2255,14 @@ Data type: `Enum['on','off','readonly']`
 
 Default value: `'off'`
 
+##### <a name="-k8s--server--etcd--setup--storage_path"></a>`storage_path`
+
+Data type: `Stdlib::Unixpath`
+
+path to the working dir of etcd
+
+Default value: `'/var/lib/etcd'`
+
 ##### <a name="-k8s--server--etcd--setup--trusted_ca_file"></a>`trusted_ca_file`
 
 Data type: `Optional[Stdlib::Unixpath]`
@@ -2254,6 +2270,14 @@ Data type: `Optional[Stdlib::Unixpath]`
 
 
 Default value: `undef`
+
+##### <a name="-k8s--server--etcd--setup--uid"></a>`uid`
+
+Data type: `Integer[0, 65535]`
+
+The user system id
+
+Default value: `113`
 
 ##### <a name="-k8s--server--etcd--setup--user"></a>`user`
 
@@ -2270,30 +2294,6 @@ Data type: `String[1]`
 The ectd version to install
 
 Default value: `$k8s::server::etcd::version`
-
-##### <a name="-k8s--server--etcd--setup--workdir_path"></a>`workdir_path`
-
-Data type: `Stdlib::Unixpath`
-
-path to the working dir of etcd
-
-Default value: `'/var/lib/etcd'`
-
-##### <a name="-k8s--server--etcd--setup--uid"></a>`uid`
-
-Data type: `Integer[0, 65535]`
-
-
-
-Default value: `113`
-
-##### <a name="-k8s--server--etcd--setup--gid"></a>`gid`
-
-Data type: `Integer[0, 65535]`
-
-
-
-Default value: `121`
 
 ### <a name="k8s--server--resources"></a>`k8s::server::resources`
 
