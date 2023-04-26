@@ -2121,11 +2121,11 @@ Default value: `$facts['networking']['fqdn']`
 
 ##### <a name="-k8s--server--etcd--setup--gid"></a>`gid`
 
-Data type: `Integer[0, 65535]`
+Data type: `Optional[Integer[0, 65535]]`
 
 The group system id
 
-Default value: `121`
+Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--group"></a>`group`
 
@@ -2273,11 +2273,11 @@ Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--uid"></a>`uid`
 
-Data type: `Integer[0, 65535]`
+Data type: `Optional[Integer[0, 65535]]`
 
 The user system id
 
-Default value: `113`
+Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--user"></a>`user`
 
