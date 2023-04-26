@@ -1861,13 +1861,8 @@ The following parameters are available in the `k8s::server::etcd` class:
 * [`puppetdb_discovery_tag`](#-k8s--server--etcd--puppetdb_discovery_tag)
 * [`self_signed_tls`](#-k8s--server--etcd--self_signed_tls)
 * [`version`](#-k8s--server--etcd--version)
-<<<<<<< HEAD
-* [`manage_firewall`](#-k8s--server--etcd--manage_firewall)
-* [`manage_members`](#-k8s--server--etcd--manage_members)
 * [`user`](#-k8s--server--etcd--user)
 * [`group`](#-k8s--server--etcd--group)
-=======
->>>>>>> 7277c85 (update REFERENCE.md)
 
 ##### <a name="-k8s--server--etcd--addn_names"></a>`addn_names`
 
@@ -2005,23 +2000,6 @@ version of ectd to install
 
 Default value: `pick($k8s::etcd_version, '3.5.1')`
 
-<<<<<<< HEAD
-##### <a name="-k8s--server--etcd--manage_firewall"></a>`manage_firewall`
-
-Data type: `Boolean`
-
-
-
-Default value: `false`
-
-##### <a name="-k8s--server--etcd--manage_members"></a>`manage_members`
-
-Data type: `Boolean`
-
-
-
-Default value: `false`
-
 ##### <a name="-k8s--server--etcd--user"></a>`user`
 
 Data type: `String[1]`
@@ -2038,8 +2016,6 @@ Data type: `String[1]`
 
 Default value: `'etcd'`
 
-=======
->>>>>>> 7277c85 (update REFERENCE.md)
 ### <a name="k8s--server--etcd--setup"></a>`k8s::server::etcd::setup`
 
 Installs and configures an etcd instance
