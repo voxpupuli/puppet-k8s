@@ -16,6 +16,7 @@
 # @param group groupname for kubernetes files and services
 # @param uid user id for kubernetes files and services
 # @param gid group id for kubernetes files and services
+# @param etcd_cluster_name name of the etcd cluster for searching its nodes in the puppetdb
 #
 class k8s (
   K8s::Ensure $ensure                     = 'present',
@@ -65,6 +66,7 @@ class k8s (
   Stdlib::IP::Address::Nosubnet $api_service_address = k8s::ip_in_cidr($service_cluster_cidr, 'first'),
   K8s::IP_addresses $dns_service_address             = k8s::ip_in_cidr($service_cluster_cidr, 'second'),
   Stdlib::Fqdn $cluster_domain                       = 'cluster.local',
+  String[1] $etcd_cluster_name                       = 'default',
 
   Enum['node','server','none']  $role    = 'none',
   Optional[K8s::Firewall] $firewall_type = undef,

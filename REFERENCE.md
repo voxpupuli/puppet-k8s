@@ -94,6 +94,7 @@ The following parameters are available in the `k8s` class:
 * [`group`](#-k8s--group)
 * [`uid`](#-k8s--uid)
 * [`gid`](#-k8s--gid)
+* [`etcd_cluster_name`](#-k8s--etcd_cluster_name)
 * [`native_packaging`](#-k8s--native_packaging)
 * [`version`](#-k8s--version)
 * [`etcd_version`](#-k8s--etcd_version)
@@ -203,6 +204,14 @@ Data type: `Integer[0, 65535]`
 group id for kubernetes files and services
 
 Default value: `888`
+
+##### <a name="-k8s--etcd_cluster_name"></a>`etcd_cluster_name`
+
+Data type: `String[1]`
+
+name of the etcd cluster for searching its nodes in the puppetdb
+
+Default value: `'default'`
 
 ##### <a name="-k8s--native_packaging"></a>`native_packaging`
 
@@ -1279,6 +1288,7 @@ The following parameters are available in the `k8s::server` class:
 * [`direct_master`](#-k8s--server--direct_master)
 * [`dns_service_address`](#-k8s--server--dns_service_address)
 * [`ensure`](#-k8s--server--ensure)
+* [`etcd_cluster_name`](#-k8s--server--etcd_cluster_name)
 * [`etcd_servers`](#-k8s--server--etcd_servers)
 * [`firewall_type`](#-k8s--server--firewall_type)
 * [`generate_ca`](#-k8s--server--generate_ca)
@@ -1381,6 +1391,14 @@ Data type: `K8s::Ensure`
 set ensure for installation or deinstallation
 
 Default value: `$k8s::ensure`
+
+##### <a name="-k8s--server--etcd_cluster_name"></a>`etcd_cluster_name`
+
+Data type: `String[1]`
+
+name of the etcd cluster for searching its nodes in the puppetdb
+
+Default value: `$k8s::etcd_cluster_name`
 
 ##### <a name="-k8s--server--etcd_servers"></a>`etcd_servers`
 
@@ -1515,6 +1533,7 @@ The following parameters are available in the `k8s::server::apiserver` class:
 * [`ensure`](#-k8s--server--apiserver--ensure)
 * [`etcd_ca`](#-k8s--server--apiserver--etcd_ca)
 * [`etcd_cert`](#-k8s--server--apiserver--etcd_cert)
+* [`etcd_cluster_name`](#-k8s--server--apiserver--etcd_cluster_name)
 * [`etcd_key`](#-k8s--server--apiserver--etcd_key)
 * [`etcd_servers`](#-k8s--server--apiserver--etcd_servers)
 * [`firewall_type`](#-k8s--server--apiserver--firewall_type)
@@ -1629,6 +1648,14 @@ Data type: `Stdlib::Unixpath`
 path to the etcd cert file
 
 Default value: `"${cert_path}/etcd.pem"`
+
+##### <a name="-k8s--server--apiserver--etcd_cluster_name"></a>`etcd_cluster_name`
+
+Data type: `String[1]`
+
+name of the etcd cluster for searching its nodes in the puppetdb
+
+Default value: `$k8s::server::etcd_cluster_name`
 
 ##### <a name="-k8s--server--apiserver--etcd_key"></a>`etcd_key`
 
@@ -1817,47 +1844,95 @@ Sets up an etcd cluster node
 
 The following parameters are available in the `k8s::server::etcd` class:
 
-* [`ensure`](#-k8s--server--etcd--ensure)
-* [`version`](#-k8s--server--etcd--version)
-* [`manage_setup`](#-k8s--server--etcd--manage_setup)
-* [`manage_firewall`](#-k8s--server--etcd--manage_firewall)
-* [`manage_members`](#-k8s--server--etcd--manage_members)
-* [`cluster_name`](#-k8s--server--etcd--cluster_name)
-* [`puppetdb_discovery_tag`](#-k8s--server--etcd--puppetdb_discovery_tag)
-* [`self_signed_tls`](#-k8s--server--etcd--self_signed_tls)
-* [`manage_certs`](#-k8s--server--etcd--manage_certs)
-* [`generate_ca`](#-k8s--server--etcd--generate_ca)
 * [`addn_names`](#-k8s--server--etcd--addn_names)
 * [`cert_path`](#-k8s--server--etcd--cert_path)
-* [`peer_ca_key`](#-k8s--server--etcd--peer_ca_key)
-* [`peer_ca_cert`](#-k8s--server--etcd--peer_ca_cert)
-* [`client_ca_key`](#-k8s--server--etcd--client_ca_key)
 * [`client_ca_cert`](#-k8s--server--etcd--client_ca_cert)
+* [`client_ca_key`](#-k8s--server--etcd--client_ca_key)
+* [`cluster_name`](#-k8s--server--etcd--cluster_name)
+* [`ensure`](#-k8s--server--etcd--ensure)
 * [`firewall_type`](#-k8s--server--etcd--firewall_type)
+* [`generate_ca`](#-k8s--server--etcd--generate_ca)
+* [`manage_certs`](#-k8s--server--etcd--manage_certs)
+* [`manage_firewall`](#-k8s--server--etcd--manage_firewall)
+* [`manage_members`](#-k8s--server--etcd--manage_members)
+* [`manage_setup`](#-k8s--server--etcd--manage_setup)
+* [`peer_ca_cert`](#-k8s--server--etcd--peer_ca_cert)
+* [`peer_ca_key`](#-k8s--server--etcd--peer_ca_key)
+* [`puppetdb_discovery_tag`](#-k8s--server--etcd--puppetdb_discovery_tag)
+* [`self_signed_tls`](#-k8s--server--etcd--self_signed_tls)
+* [`version`](#-k8s--server--etcd--version)
 * [`user`](#-k8s--server--etcd--user)
 * [`group`](#-k8s--server--etcd--group)
+
+##### <a name="-k8s--server--etcd--addn_names"></a>`addn_names`
+
+Data type: `K8s::TLS_altnames`
+
+additional names for certificates
+
+Default value: `[]`
+
+##### <a name="-k8s--server--etcd--cert_path"></a>`cert_path`
+
+Data type: `Stdlib::Unixpath`
+
+path to cert files
+
+Default value: `'/var/lib/etcd/certs'`
+
+##### <a name="-k8s--server--etcd--client_ca_cert"></a>`client_ca_cert`
+
+Data type: `Stdlib::Unixpath`
+
+
+
+Default value: `"${cert_path}/client-ca.pem"`
+
+##### <a name="-k8s--server--etcd--client_ca_key"></a>`client_ca_key`
+
+Data type: `Stdlib::Unixpath`
+
+
+
+Default value: `"${cert_path}/client-ca.key"`
+
+##### <a name="-k8s--server--etcd--cluster_name"></a>`cluster_name`
+
+Data type: `String[1]`
+
+name of the etcd cluster for searching its nodes in the puppetdb
+
+Default value: `pick($k8s::server::etcd_cluster_name, 'default')`
 
 ##### <a name="-k8s--server--etcd--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
-
+set ensure for installation or deinstallation
 
 Default value: `'present'`
 
-##### <a name="-k8s--server--etcd--version"></a>`version`
+##### <a name="-k8s--server--etcd--firewall_type"></a>`firewall_type`
 
-Data type: `String[1]`
+Data type: `Optional[K8s::Firewall]`
 
+define the type of firewall to use
 
+Default value: `$k8s::server::firewall_type`
 
-Default value: `pick($k8s::etcd_version, '3.5.1')`
-
-##### <a name="-k8s--server--etcd--manage_setup"></a>`manage_setup`
+##### <a name="-k8s--server--etcd--generate_ca"></a>`generate_ca`
 
 Data type: `Boolean`
 
+whether to generate a own ca or not
 
+Default value: `false`
+
+##### <a name="-k8s--server--etcd--manage_certs"></a>`manage_certs`
+
+Data type: `Boolean`
+
+whether to manage certs or not
 
 Default value: `true`
 
@@ -1865,7 +1940,7 @@ Default value: `true`
 
 Data type: `Boolean`
 
-
+whether to manage firewall or not
 
 Default value: `false`
 
@@ -1873,23 +1948,39 @@ Default value: `false`
 
 Data type: `Boolean`
 
-
+whether to manage the ectd cluster member joining or not
 
 Default value: `false`
 
-##### <a name="-k8s--server--etcd--cluster_name"></a>`cluster_name`
+##### <a name="-k8s--server--etcd--manage_setup"></a>`manage_setup`
 
-Data type: `String[1]`
+Data type: `Boolean`
+
+whether to manage the setup of etcd or not
+
+Default value: `true`
+
+##### <a name="-k8s--server--etcd--peer_ca_cert"></a>`peer_ca_cert`
+
+Data type: `Stdlib::Unixpath`
 
 
 
-Default value: `'default'`
+Default value: `"${cert_path}/peer-ca.pem"`
+
+##### <a name="-k8s--server--etcd--peer_ca_key"></a>`peer_ca_key`
+
+Data type: `Stdlib::Unixpath`
+
+
+
+Default value: `"${cert_path}/peer-ca.key"`
 
 ##### <a name="-k8s--server--etcd--puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
 
 Data type: `String[1]`
 
-
+enable puppetdb resource searching
 
 Default value: `pick($k8s::server::puppetdb_discovery_tag, $cluster_name)`
 
@@ -1901,77 +1992,13 @@ Data type: `Boolean`
 
 Default value: `false`
 
-##### <a name="-k8s--server--etcd--manage_certs"></a>`manage_certs`
+##### <a name="-k8s--server--etcd--version"></a>`version`
 
-Data type: `Boolean`
+Data type: `String[1]`
 
+version of ectd to install
 
-
-Default value: `true`
-
-##### <a name="-k8s--server--etcd--generate_ca"></a>`generate_ca`
-
-Data type: `Boolean`
-
-
-
-Default value: `false`
-
-##### <a name="-k8s--server--etcd--addn_names"></a>`addn_names`
-
-Data type: `K8s::TLS_altnames`
-
-
-
-Default value: `[]`
-
-##### <a name="-k8s--server--etcd--cert_path"></a>`cert_path`
-
-Data type: `Stdlib::Unixpath`
-
-
-
-Default value: `'/var/lib/etcd/certs'`
-
-##### <a name="-k8s--server--etcd--peer_ca_key"></a>`peer_ca_key`
-
-Data type: `Stdlib::Unixpath`
-
-
-
-Default value: `"${cert_path}/peer-ca.key"`
-
-##### <a name="-k8s--server--etcd--peer_ca_cert"></a>`peer_ca_cert`
-
-Data type: `Stdlib::Unixpath`
-
-
-
-Default value: `"${cert_path}/peer-ca.pem"`
-
-##### <a name="-k8s--server--etcd--client_ca_key"></a>`client_ca_key`
-
-Data type: `Stdlib::Unixpath`
-
-
-
-Default value: `"${cert_path}/client-ca.key"`
-
-##### <a name="-k8s--server--etcd--client_ca_cert"></a>`client_ca_cert`
-
-Data type: `Stdlib::Unixpath`
-
-
-
-Default value: `"${cert_path}/client-ca.pem"`
-
-##### <a name="-k8s--server--etcd--firewall_type"></a>`firewall_type`
-
-Data type: `Optional[K8s::Firewall]`
-
-
-
-Default value: `$k8s::server::firewall_type`
+Default value: `pick($k8s::etcd_version, '3.5.1')`
 
 ##### <a name="-k8s--server--etcd--user"></a>`user`
 
