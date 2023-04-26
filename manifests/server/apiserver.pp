@@ -79,8 +79,8 @@ class k8s::server::apiserver (
       "      parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}'",
       '    }',
       '  }',
+      '  order by certname',
       '}',
-      'order by certname }',
     ].join(' ')
 
     $cluster_nodes = puppetdb_query($pql_query)
