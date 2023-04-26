@@ -22,13 +22,15 @@ class k8s::server::etcd (
   Stdlib::Unixpath $client_ca_cert = "${cert_path}/client-ca.pem",
 
   Optional[K8s::Firewall] $firewall_type = $k8s::server::firewall_type,
+  String[1] $user  = 'etcd',
+  String[1] $group = 'etcd',
 ) {
   if (!$self_signed_tls and $manage_certs) or $ensure == 'absent' {
     if !defined(File[$cert_path]) {
       file { $cert_path:
         ensure => stdlib::ensure($ensure, 'directory'),
-        owner  => 'etcd',
-        group  => 'etcd',
+        owner  => $user,
+        group  => $group,
       }
     }
 
@@ -47,8 +49,8 @@ class k8s::server::etcd (
     k8s::server::tls::ca {
       default:
         ensure   => $ensure,
-        owner    => 'etcd',
-        group    => 'etcd',
+        owner    => $user,
+        group    => $group,
         generate => $generate_ca;
 
       'etcd-peer-ca':
@@ -63,8 +65,8 @@ class k8s::server::etcd (
     k8s::server::tls::cert {
       default:
         ensure    => $ensure,
-        owner     => 'etcd',
-        group     => 'etcd',
+        owner     => $user,
+        group     => $group,
         cert_path => $cert_path;
 
       'etcd-server':
