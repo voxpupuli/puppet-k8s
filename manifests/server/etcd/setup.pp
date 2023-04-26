@@ -106,7 +106,7 @@ class k8s::server::etcd::setup (
 
     user { $user:
       ensure     => $ensure,
-      comment    => 'ETCD user',
+      comment    => 'etcd user',
       gid        => $gid,
       home       => $storage_path,
       managehome => false,
@@ -197,12 +197,12 @@ class k8s::server::etcd::setup (
       });
   }
 
-  if $install == 'archive' {
-    $_binary_path    = pick($binary_path, '/usr/local/bin/etcd')
-    $service_require = User[$user]
-  } else {
+  if $install == 'package' {
     $_binary_path    = pick($binary_path, '/usr/bin/etcd')
     $service_require = Package[$package]
+  } else {
+    $_binary_path    = pick($binary_path, '/usr/local/bin/etcd')
+    $service_require = User[$user]
   }
 
   systemd::unit_file { 'etcd.service':
