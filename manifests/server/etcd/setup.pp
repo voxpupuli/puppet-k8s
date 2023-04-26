@@ -74,8 +74,8 @@ class k8s::server::etcd::setup (
   Stdlib::Unixpath $storage_path          = '/var/lib/etcd',
   String[1] $user                         = $k8s::server::etcd::user,
   String[1] $group                        = $k8s::server::etcd::group,
-  Integer[0, 65535] $uid                  = 113,
-  Integer[0, 65535] $gid                  = 121,
+  Optional[Integer[0, 65535]] $uid        = undef,
+  Optional[Integer[0, 65535]] $gid        = undef,
 ) {
   if $install == 'archive' {
     $_url  = k8s::format_url($archive_template, { version => $version, })
