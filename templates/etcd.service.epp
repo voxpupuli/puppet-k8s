@@ -3,6 +3,8 @@ Stdlib::Unixpath $binary_path,
 Stdlib::Unixpath $workdir_path,
 String[1] $user,
 | -%>
+# THIS FILE IS MANAGED BY PUPPET
+
 [Unit]
 Description=etcd key-value store
 Documentation=https://github.com/etcd-io/etcd
