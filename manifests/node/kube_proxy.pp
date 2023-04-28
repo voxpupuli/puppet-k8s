@@ -20,7 +20,7 @@ class k8s::node::kube_proxy (
   Optional[Stdlib::Unixpath] $key     = $k8s::node::proxy_key,
 
   # For token and bootstrap auth
-  Optional[String[1]] $token = $k8s::node::proxy_token,
+  Optional[Sensitive[String]] $token = $k8s::node::proxy_token,
 ) {
   assert_private()
 
@@ -43,7 +43,7 @@ class k8s::node::kube_proxy (
         owner           => $k8s::user,
         group           => $k8s::group,
         server          => $control_plane_url,
-        token           => $token,
+        token           => $token.unwrap,
         current_context => 'default',
         ca_cert         => $ca_cert,
         notify          => Service['kube-proxy'],
