@@ -856,7 +856,7 @@ Default value: `undef`
 
 ##### <a name="-k8s--node--node_token"></a>`node_token`
 
-Data type: `Optional[String[1]]`
+Data type: `Optional[Sensitive[String]]`
 
 k8s token to join a cluster
 
@@ -888,7 +888,7 @@ Default value: `undef`
 
 ##### <a name="-k8s--node--proxy_token"></a>`proxy_token`
 
-Data type: `Optional[String[1]]`
+Data type: `Optional[Sensitive[String]]`
 
 k8s token for kube-proxy
 
@@ -1020,7 +1020,7 @@ Default value: `$k8s::node::proxy_key`
 
 ##### <a name="-k8s--node--kube_proxy--token"></a>`token`
 
-Data type: `Optional[String[1]]`
+Data type: `Optional[Sensitive[String]]`
 
 
 
@@ -1227,7 +1227,7 @@ Default value: `$k8s::cluster_cidr =~ Array[Data, 2]`
 
 ##### <a name="-k8s--node--kubelet--token"></a>`token`
 
-Data type: `Optional[String[1]]`
+Data type: `Optional[Sensitive[String]]`
 
 k8s token to join a cluster
 
