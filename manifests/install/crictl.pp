@@ -11,6 +11,7 @@
 #     'image-endpoint': 'unix:///run/containerd/containerd.sock'
 # @param crictl_package the package name of crictl
 # @param manage_repo whether to manage the repo or not
+# @param download_url where to download the tar.gz from
 #
 class k8s::install::crictl (
   Boolean $manage_repo                = $k8s::manage_repo,
@@ -19,12 +20,13 @@ class k8s::install::crictl (
   Optional[String[1]] $crictl_package = $k8s::crictl_package,
   String[1] $arch                     = 'amd64',
   String[1] $version                  = 'v1.26.0',
+  Stdlib::HTTPUrl $download_url       = "https://github.com/kubernetes-sigs/cri-tools/releases/download/${version}/crictl-${version}-linux-${arch}.tar.gz",
 ) {
   if $manage_repo {
     $pkg = pick($crictl_package, 'cri-tools')
 
     package { $pkg:
-      ensure    => stdlib::ensure($ensure, 'package'),
+      ensure => stdlib::ensure($ensure, 'package'),
     }
 
     Class['k8s::repo'] -> Package[$pkg]
@@ -34,7 +36,7 @@ class k8s::install::crictl (
     archive { 'crictl':
       ensure       => $ensure,
       path         => "/tmp/crictl-${version}-linux-${arch}.tar.gz",
-      source       => "https://github.com/kubernetes-sigs/cri-tools/releases/download/${version}/crictl-${version}-linux-${arch}.tar.gz",
+      source       => $download_url,
       extract      => true,
       extract_path => '/usr/local/bin',
       creates      => '/usr/local/bin/crictl',
