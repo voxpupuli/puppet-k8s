@@ -623,6 +623,7 @@ The following parameters are available in the `k8s::install::crictl` class:
 * [`config`](#-k8s--install--crictl--config)
 * [`crictl_package`](#-k8s--install--crictl--crictl_package)
 * [`manage_repo`](#-k8s--install--crictl--manage_repo)
+* [`download_url`](#-k8s--install--crictl--download_url)
 
 ##### <a name="-k8s--install--crictl--ensure"></a>`ensure`
 
@@ -674,6 +675,14 @@ Data type: `Boolean`
 whether to manage the repo or not
 
 Default value: `$k8s::manage_repo`
+
+##### <a name="-k8s--install--crictl--download_url"></a>`download_url`
+
+Data type: `Stdlib::HTTPUrl`
+
+where to download the tar.gz from
+
+Default value: `"https://github.com/kubernetes-sigs/cri-tools/releases/download/${version}/crictl-${version}-linux-${arch}.tar.gz"`
 
 ### <a name="k8s--install--kubeadm"></a>`k8s::install::kubeadm`
 
