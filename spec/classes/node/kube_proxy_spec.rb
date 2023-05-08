@@ -56,7 +56,7 @@ describe 'k8s::node::kube_proxy' do
           {
             auth: 'token',
             ca_cert: '/tmp/ca.pem',
-            token: 'blah',
+            token: sensitive('blah'),
           }
         end
 
