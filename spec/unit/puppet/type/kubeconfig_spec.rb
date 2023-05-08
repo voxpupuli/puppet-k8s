@@ -43,6 +43,34 @@ describe Puppet::Type.type(:kubeconfig) do
     expect { resource[:token_file] = 'relative/file' }.to raise_error(Puppet::Error, %r{File paths must be fully qualified, not 'relative/file'})
   end
 
+  describe 'with numeric mode' do
+    let(:resource) do
+      Puppet::Type.type(:kubeconfig).new(
+        path: '/tmp/kubeconfig',
+        server: 'https://kubernetes.home.lan:6443',
+        mode: '0640'
+      )
+    end
+
+    it 'is munged to 0640' do
+      expect(resource[:mode]).to eq '0640'
+    end
+  end
+
+  describe 'with symbolic mode' do
+    let(:resource) do
+      Puppet::Type.type(:kubeconfig).new(
+        path: '/tmp/kubeconfig',
+        server: 'https://kubernetes.home.lan:6443',
+        mode: 'u=rw,g=r'
+      )
+    end
+
+    it 'is munged to 0640' do
+      expect(resource[:mode]).to eq '0640'
+    end
+  end
+
   describe 'archive autorequire' do
     let(:file_resource) { Puppet::Type.type(:file).new(name: '/tmp') }
     let(:kubeconfig_resource) do
