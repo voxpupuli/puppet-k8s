@@ -71,6 +71,20 @@ describe Puppet::Type.type(:kubeconfig) do
     end
   end
 
+  describe 'with complex symbolic mode' do
+    let(:resource) do
+      Puppet::Type.type(:kubeconfig).new(
+        path: '/tmp/kubeconfig',
+        server: 'https://kubernetes.home.lan:6443',
+        mode: 'u-x+rw,g-rwx,o-rwx'
+      )
+    end
+
+    it 'is munged to 0600' do
+      expect(resource[:mode]).to eq '0600'
+    end
+  end
+
   describe 'archive autorequire' do
     let(:file_resource) { Puppet::Type.type(:file).new(name: '/tmp') }
     let(:kubeconfig_resource) do
