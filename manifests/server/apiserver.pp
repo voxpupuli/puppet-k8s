@@ -51,6 +51,10 @@ class k8s::server::apiserver (
   Stdlib::Unixpath $etcd_cert              = "${cert_path}/etcd.pem",
   Stdlib::Unixpath $etcd_key               = "${cert_path}/etcd.key",
 
+  String[1] $container_registry            = $k8s::container_registry,
+  String[1] $container_image               = 'kube-apiserver',
+  Optional[String[1]] $container_image_tag = $k8s::container_image_tag,
+
   Stdlib::IP::Address::Nosubnet $advertise_address = fact('networking.ip'),
   Optional[K8s::Firewall] $firewall_type           = $k8s::server::firewall_type,
   String[1] $etcd_cluster_name                     = $k8s::server::etcd_cluster_name,
@@ -152,7 +156,7 @@ class k8s::server::apiserver (
   } + $_discovery + $_addn_args + $_service_account + $arguments)
 
   if $k8s::packaging == 'container' {
-    $_image = "${k8s::container_registry}/${k8s::container_image}:${pick($k8s::container_image_tag, $k8s::version)}"
+    $_image = "${container_registry}/${container_image}:${pick($container_image_tag, "v${k8s::version}")}"
     file { '/etc/kubernetes/manifests/kube-apiserver.yaml':
       ensure  => $ensure,
       content => to_yaml({

@@ -99,7 +99,6 @@ The following parameters are available in the `k8s` class:
 * [`version`](#-k8s--version)
 * [`etcd_version`](#-k8s--etcd_version)
 * [`container_registry`](#-k8s--container_registry)
-* [`container_image`](#-k8s--container_image)
 * [`container_image_tag`](#-k8s--container_image_tag)
 * [`container_manager`](#-k8s--container_manager)
 * [`container_runtime_service`](#-k8s--container_runtime_service)
@@ -243,19 +242,11 @@ Data type: `String[1]`
 
 
 
-Default value: `'gcr.io/google_containers'`
-
-##### <a name="-k8s--container_image"></a>`container_image`
-
-Data type: `String[1]`
-
-
-
-Default value: `'hyperkube'`
+Default value: `'registry.k8s.io'`
 
 ##### <a name="-k8s--container_image_tag"></a>`container_image_tag`
 
-Data type: `Optional[String]`
+Data type: `Optional[String[1]]`
 
 
 
@@ -1562,6 +1553,9 @@ The following parameters are available in the `k8s::server::apiserver` class:
 * [`service_cluster_cidr`](#-k8s--server--apiserver--service_cluster_cidr)
 * [`serviceaccount_private`](#-k8s--server--apiserver--serviceaccount_private)
 * [`serviceaccount_public`](#-k8s--server--apiserver--serviceaccount_public)
+* [`container_registry`](#-k8s--server--apiserver--container_registry)
+* [`container_image`](#-k8s--server--apiserver--container_image)
+* [`container_image_tag`](#-k8s--server--apiserver--container_image_tag)
 
 ##### <a name="-k8s--server--apiserver--advertise_address"></a>`advertise_address`
 
@@ -1755,6 +1749,30 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/service-account.pub"`
 
+##### <a name="-k8s--server--apiserver--container_registry"></a>`container_registry`
+
+Data type: `String[1]`
+
+
+
+Default value: `$k8s::container_registry`
+
+##### <a name="-k8s--server--apiserver--container_image"></a>`container_image`
+
+Data type: `String[1]`
+
+
+
+Default value: `'kube-apiserver'`
+
+##### <a name="-k8s--server--apiserver--container_image_tag"></a>`container_image_tag`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `$k8s::container_image_tag`
+
 ### <a name="k8s--server--controller_manager"></a>`k8s::server::controller_manager`
 
 Installs and configures a Kubernetes controller manager
@@ -1773,6 +1791,9 @@ The following parameters are available in the `k8s::server::controller_manager` 
 * [`ca_key`](#-k8s--server--controller_manager--ca_key)
 * [`cert`](#-k8s--server--controller_manager--cert)
 * [`key`](#-k8s--server--controller_manager--key)
+* [`container_registry`](#-k8s--server--controller_manager--container_registry)
+* [`container_image`](#-k8s--server--controller_manager--container_image)
+* [`container_image_tag`](#-k8s--server--controller_manager--container_image_tag)
 
 ##### <a name="-k8s--server--controller_manager--ensure"></a>`ensure`
 
@@ -1853,6 +1874,30 @@ Data type: `Stdlib::Unixpath`
 
 
 Default value: `"${cert_path}/kube-controller-manager.key"`
+
+##### <a name="-k8s--server--controller_manager--container_registry"></a>`container_registry`
+
+Data type: `String[1]`
+
+
+
+Default value: `$k8s::container_registry`
+
+##### <a name="-k8s--server--controller_manager--container_image"></a>`container_image`
+
+Data type: `String[1]`
+
+
+
+Default value: `'kube-controller-manager'`
+
+##### <a name="-k8s--server--controller_manager--container_image_tag"></a>`container_image_tag`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `$k8s::container_image_tag`
 
 ### <a name="k8s--server--etcd"></a>`k8s::server::etcd`
 
@@ -2457,7 +2502,7 @@ Data type: `String[1]`
 
 
 
-Default value: `'k8s.gcr.io/kube-proxy'`
+Default value: `"${k8s::container_registry}/kube-proxy"`
 
 ##### <a name="-k8s--server--resources--kube_proxy_tag"></a>`kube_proxy_tag`
 
@@ -2860,6 +2905,9 @@ The following parameters are available in the `k8s::server::scheduler` class:
 * [`ca_cert`](#-k8s--server--scheduler--ca_cert)
 * [`cert`](#-k8s--server--scheduler--cert)
 * [`key`](#-k8s--server--scheduler--key)
+* [`container_registry`](#-k8s--server--scheduler--container_registry)
+* [`container_image`](#-k8s--server--scheduler--container_image)
+* [`container_image_tag`](#-k8s--server--scheduler--container_image_tag)
 
 ##### <a name="-k8s--server--scheduler--ensure"></a>`ensure`
 
@@ -2916,6 +2964,30 @@ Data type: `Stdlib::Unixpath`
 
 
 Default value: `"${cert_path}/kube-scheduler.key"`
+
+##### <a name="-k8s--server--scheduler--container_registry"></a>`container_registry`
+
+Data type: `String[1]`
+
+
+
+Default value: `$k8s::container_registry`
+
+##### <a name="-k8s--server--scheduler--container_image"></a>`container_image`
+
+Data type: `String[1]`
+
+
+
+Default value: `'kube-scheduler'`
+
+##### <a name="-k8s--server--scheduler--container_image_tag"></a>`container_image_tag`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `$k8s::container_image_tag`
 
 ### <a name="k8s--server--tls"></a>`k8s::server::tls`
 

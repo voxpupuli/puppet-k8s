@@ -13,7 +13,7 @@ class k8s::server::resources (
   Boolean $manage_flannel              = true,
   K8s::Proxy_method $manage_kube_proxy = $k8s::manage_kube_proxy,
 
-  String[1] $kube_proxy_image                    = 'k8s.gcr.io/kube-proxy',
+  String[1] $kube_proxy_image                    = "${k8s::container_registry}/kube-proxy",
   String[1] $kube_proxy_tag                      = "v${k8s::version}",
   Hash[String,Data] $kube_proxy_daemonset_config = {},
   Hash[String,Data] $extra_kube_proxy_args       = {},

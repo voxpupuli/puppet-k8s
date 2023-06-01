@@ -10,6 +10,10 @@ class k8s::server::scheduler (
   Stdlib::Unixpath $ca_cert   = $k8s::server::tls::ca_cert,
   Stdlib::Unixpath $cert      = "${cert_path}/kube-scheduler.pem",
   Stdlib::Unixpath $key       = "${cert_path}/kube-scheduler.key",
+
+  String[1] $container_registry            = $k8s::container_registry,
+  String[1] $container_image               = 'kube-scheduler',
+  Optional[String[1]] $container_image_tag = $k8s::container_image_tag,
 ) {
   assert_private()
 
@@ -32,7 +36,7 @@ class k8s::server::scheduler (
 
   if $k8s::packaging == 'container' {
     fail('Not implemented yet')
-    $_image = "${k8s::container_registry}/${k8s::container_image}:${pick($k8s::container_image_tag, $k8s::version)}"
+    $_image = "${container_registry}/${container_image}:${pick($container_image_tag, "v${k8s::version}")}"
     kubectl_apply { 'kube-scheduler':
       kubeconfig  => '/root/.kube/config',
       api_version => 'apps/v1',
