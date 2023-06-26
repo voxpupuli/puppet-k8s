@@ -42,11 +42,21 @@ class k8s::server::resources::kube_proxy (
       resource_name => 'kube-proxy',
       namespace     => 'kube-system';
 
+    'kube-proxy ServiceAccount':
+      api_version => 'v1',
+      kind        => 'ServiceAccount',
+      content     => {
+        metadata => {
+          labels => {
+            'kubernetes.io/managed-by' => 'puppet',
+          },
+        },
+      };
+
     'kube-proxy ClusterRoleBinding':
-      api_version   => 'rbac.authorization.k8s.io/v1',
-      kind          => 'ClusterRoleBinding',
-      resource_name => 'kube-proxy',
-      content       => {
+      api_version => 'rbac.authorization.k8s.io/v1',
+      kind        => 'ClusterRoleBinding',
+      content     => {
         metadata => {
           labels => {
             'kubernetes.io/managed-by' => 'puppet',
