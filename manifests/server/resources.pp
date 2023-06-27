@@ -96,28 +96,6 @@ class k8s::server::resources (
           apiGroup => 'rbac.authorization.k8s.io',
         },
       };
-
-    'kube-proxy RoleBinding':
-      resource_name => 'kube-proxy',
-      content       => {
-        metadata => {
-          labels => {
-            'kubernetes.io/managed-by' => 'puppet',
-          },
-        },
-        subjects => [
-          {
-            kind      => 'ServiceAccount',
-            name      => 'kube-proxy',
-            namespace => 'kube-system',
-          },
-        ],
-        roleRef  => {
-          kind     => 'ClusterRole',
-          name     => 'system:node-proxier',
-          apiGroup => 'rbac.authorization.k8s.io',
-        },
-      };
   }
   # Service accounts
   kubectl_apply {
@@ -137,9 +115,6 @@ class k8s::server::resources (
 
     'kube-controller-manager SA':
       resource_name => 'kube-controller-manager';
-
-    'kube-proxy SA':
-      resource_name => 'kube-proxy';
   }
   # Config maps
   kubectl_apply {

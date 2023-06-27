@@ -29,6 +29,7 @@ describe 'k8s::server::resources::kube_proxy' do
 
       it { is_expected.to compile }
 
+      it { is_expected.to contain_kubectl_apply('kube-proxy ServiceAccount') }
       it { is_expected.to contain_kubectl_apply('kube-proxy ClusterRoleBinding') }
       it { is_expected.to contain_kubectl_apply('kube-proxy ConfigMap') }
 
