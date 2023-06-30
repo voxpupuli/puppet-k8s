@@ -202,7 +202,7 @@ class k8s::server::resources::coredns (
                   operator => 'Exists',
                 },
                 {
-                  key    => 'node-role.kubernetes.io/master',
+                  key    => 'node-role.kubernetes.io/control-plane',
                   effect => 'NoSchedule',
                 },
               ],

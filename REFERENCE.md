@@ -122,8 +122,8 @@ The following parameters are available in the `k8s` class:
 * [`hyperkube_name`](#-k8s--hyperkube_name)
 * [`sysconfig_path`](#-k8s--sysconfig_path)
 * [`node_auth`](#-k8s--node_auth)
-* [`incluster_master`](#-k8s--incluster_master)
-* [`master`](#-k8s--master)
+* [`incluster_control_plane_url`](#-k8s--incluster_control_plane_url)
+* [`control_plane_url`](#-k8s--control_plane_url)
 * [`service_cluster_cidr`](#-k8s--service_cluster_cidr)
 * [`cluster_cidr`](#-k8s--cluster_cidr)
 * [`api_service_address`](#-k8s--api_service_address)
@@ -429,7 +429,7 @@ Data type: `K8s::Node_auth`
 
 Default value: `'bootstrap'`
 
-##### <a name="-k8s--incluster_master"></a>`incluster_master`
+##### <a name="-k8s--incluster_control_plane_url"></a>`incluster_control_plane_url`
 
 Data type: `Stdlib::HTTPUrl`
 
@@ -437,7 +437,7 @@ Data type: `Stdlib::HTTPUrl`
 
 Default value: `'https://kubernetes.default.svc'`
 
-##### <a name="-k8s--master"></a>`master`
+##### <a name="-k8s--control_plane_url"></a>`control_plane_url`
 
 Data type: `Stdlib::HTTPUrl`
 
@@ -737,7 +737,7 @@ The following parameters are available in the `k8s::node` class:
 * [`manage_kubelet`](#-k8s--node--manage_kubelet)
 * [`manage_proxy`](#-k8s--node--manage_proxy)
 * [`manage_sysctl_settings`](#-k8s--node--manage_sysctl_settings)
-* [`master`](#-k8s--node--master)
+* [`control_plane_url`](#-k8s--node--control_plane_url)
 * [`node_auth`](#-k8s--node--node_auth)
 * [`node_cert`](#-k8s--node--node_cert)
 * [`node_key`](#-k8s--node--node_key)
@@ -822,13 +822,13 @@ whether to manage sysctl settings or not
 
 Default value: `$k8s::manage_sysctl_settings`
 
-##### <a name="-k8s--node--master"></a>`master`
+##### <a name="-k8s--node--control_plane_url"></a>`control_plane_url`
 
 Data type: `Stdlib::HTTPUrl`
 
 cluster API connection
 
-Default value: `$k8s::master`
+Default value: `$k8s::control_plane_url`
 
 ##### <a name="-k8s--node--node_auth"></a>`node_auth`
 
@@ -927,7 +927,7 @@ For most use-cases, running kube-proxy inside the cluster itself is recommended
 The following parameters are available in the `k8s::node::kube_proxy` class:
 
 * [`ensure`](#-k8s--node--kube_proxy--ensure)
-* [`master`](#-k8s--node--kube_proxy--master)
+* [`control_plane_url`](#-k8s--node--kube_proxy--control_plane_url)
 * [`config`](#-k8s--node--kube_proxy--config)
 * [`arguments`](#-k8s--node--kube_proxy--arguments)
 * [`puppetdb_discovery_tag`](#-k8s--node--kube_proxy--puppetdb_discovery_tag)
@@ -946,13 +946,13 @@ Data type: `K8s::Ensure`
 
 Default value: `$k8s::node::ensure`
 
-##### <a name="-k8s--node--kube_proxy--master"></a>`master`
+##### <a name="-k8s--node--kube_proxy--control_plane_url"></a>`control_plane_url`
 
 Data type: `Stdlib::HTTPUrl`
 
 
 
-Default value: `$k8s::node::master`
+Default value: `$k8s::node::control_plane_url`
 
 ##### <a name="-k8s--node--kube_proxy--config"></a>`config`
 
@@ -1065,7 +1065,7 @@ The following parameters are available in the `k8s::node::kubelet` class:
 * [`manage_firewall`](#-k8s--node--kubelet--manage_firewall)
 * [`manage_kernel_modules`](#-k8s--node--kubelet--manage_kernel_modules)
 * [`manage_sysctl_settings`](#-k8s--node--kubelet--manage_sysctl_settings)
-* [`master`](#-k8s--node--kubelet--master)
+* [`control_plane_url`](#-k8s--node--kubelet--control_plane_url)
 * [`puppetdb_discovery_tag`](#-k8s--node--kubelet--puppetdb_discovery_tag)
 * [`rotate_server_tls`](#-k8s--node--kubelet--rotate_server_tls)
 * [`runtime`](#-k8s--node--kubelet--runtime)
@@ -1177,13 +1177,13 @@ whether to manage sysctl settings or not
 
 Default value: `$k8s::node::manage_sysctl_settings`
 
-##### <a name="-k8s--node--kubelet--master"></a>`master`
+##### <a name="-k8s--node--kubelet--control_plane_url"></a>`control_plane_url`
 
 Data type: `Stdlib::HTTPUrl`
 
 cluster API connection
 
-Default value: `$k8s::node::master`
+Default value: `$k8s::node::control_plane_url`
 
 ##### <a name="-k8s--node--kubelet--puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
 
@@ -1303,7 +1303,7 @@ The following parameters are available in the `k8s::server` class:
 * [`cert_path`](#-k8s--server--cert_path)
 * [`cluster_cidr`](#-k8s--server--cluster_cidr)
 * [`cluster_domain`](#-k8s--server--cluster_domain)
-* [`direct_master`](#-k8s--server--direct_master)
+* [`direct_control_plane_url`](#-k8s--server--direct_control_plane_url)
 * [`dns_service_address`](#-k8s--server--dns_service_address)
 * [`ensure`](#-k8s--server--ensure)
 * [`etcd_cluster_name`](#-k8s--server--etcd_cluster_name)
@@ -1318,7 +1318,7 @@ The following parameters are available in the `k8s::server` class:
 * [`manage_kubeadm`](#-k8s--server--manage_kubeadm)
 * [`manage_resources`](#-k8s--server--manage_resources)
 * [`manage_signing`](#-k8s--server--manage_signing)
-* [`master`](#-k8s--server--master)
+* [`control_plane_url`](#-k8s--server--control_plane_url)
 * [`node_on_server`](#-k8s--server--node_on_server)
 * [`puppetdb_discovery_tag`](#-k8s--server--puppetdb_discovery_tag)
 
@@ -1386,7 +1386,7 @@ cluster domain name
 
 Default value: `$k8s::cluster_domain`
 
-##### <a name="-k8s--server--direct_master"></a>`direct_master`
+##### <a name="-k8s--server--direct_control_plane_url"></a>`direct_control_plane_url`
 
 Data type: `String`
 
@@ -1506,13 +1506,13 @@ whether to manage cert signing or not
 
 Default value: `$k8s::puppetdb_discovery`
 
-##### <a name="-k8s--server--master"></a>`master`
+##### <a name="-k8s--server--control_plane_url"></a>`control_plane_url`
 
 Data type: `String`
 
 cluster API connection
 
-Default value: `$k8s::master`
+Default value: `$k8s::control_plane_url`
 
 ##### <a name="-k8s--server--node_on_server"></a>`node_on_server`
 
@@ -1764,7 +1764,7 @@ Installs and configures a Kubernetes controller manager
 The following parameters are available in the `k8s::server::controller_manager` class:
 
 * [`ensure`](#-k8s--server--controller_manager--ensure)
-* [`master`](#-k8s--server--controller_manager--master)
+* [`control_plane_url`](#-k8s--server--controller_manager--control_plane_url)
 * [`arguments`](#-k8s--server--controller_manager--arguments)
 * [`service_cluster_cidr`](#-k8s--server--controller_manager--service_cluster_cidr)
 * [`cluster_cidr`](#-k8s--server--controller_manager--cluster_cidr)
@@ -1782,13 +1782,13 @@ Data type: `K8s::Ensure`
 
 Default value: `$k8s::server::ensure`
 
-##### <a name="-k8s--server--controller_manager--master"></a>`master`
+##### <a name="-k8s--server--controller_manager--control_plane_url"></a>`control_plane_url`
 
 Data type: `Stdlib::HTTPUrl`
 
 
 
-Default value: `$k8s::master`
+Default value: `$k8s::control_plane_url`
 
 ##### <a name="-k8s--server--controller_manager--arguments"></a>`arguments`
 
@@ -2353,7 +2353,7 @@ The following parameters are available in the `k8s::server::resources` class:
 * [`dns_service_address`](#-k8s--server--resources--dns_service_address)
 * [`ca_cert`](#-k8s--server--resources--ca_cert)
 * [`cluster_domain`](#-k8s--server--resources--cluster_domain)
-* [`master`](#-k8s--server--resources--master)
+* [`control_plane_url`](#-k8s--server--resources--control_plane_url)
 * [`manage_bootstrap`](#-k8s--server--resources--manage_bootstrap)
 * [`manage_coredns`](#-k8s--server--resources--manage_coredns)
 * [`manage_flannel`](#-k8s--server--resources--manage_flannel)
@@ -2411,13 +2411,13 @@ Data type: `String[1]`
 
 Default value: `$k8s::server::cluster_domain`
 
-##### <a name="-k8s--server--resources--master"></a>`master`
+##### <a name="-k8s--server--resources--control_plane_url"></a>`control_plane_url`
 
 Data type: `String[1]`
 
 
 
-Default value: `$k8s::server::master`
+Default value: `$k8s::server::control_plane_url`
 
 ##### <a name="-k8s--server--resources--manage_bootstrap"></a>`manage_bootstrap`
 
@@ -2555,18 +2555,18 @@ Generates and deploys the default Puppet boostrap configuration into the cluster
 
 The following parameters are available in the `k8s::server::resources::bootstrap` class:
 
-* [`master`](#-k8s--server--resources--bootstrap--master)
+* [`control_plane_url`](#-k8s--server--resources--bootstrap--control_plane_url)
 * [`secret`](#-k8s--server--resources--bootstrap--secret)
 * [`ensure`](#-k8s--server--resources--bootstrap--ensure)
 * [`kubeconfig`](#-k8s--server--resources--bootstrap--kubeconfig)
 
-##### <a name="-k8s--server--resources--bootstrap--master"></a>`master`
+##### <a name="-k8s--server--resources--bootstrap--control_plane_url"></a>`control_plane_url`
 
 Data type: `String[1]`
 
 The main API URL to encode in the bootstrap configuration
 
-Default value: `$k8s::server::resources::master`
+Default value: `$k8s::server::resources::control_plane_url`
 
 ##### <a name="-k8s--server--resources--bootstrap--secret"></a>`secret`
 
@@ -2854,7 +2854,7 @@ Installs and configures a Kubernetes scheduler
 The following parameters are available in the `k8s::server::scheduler` class:
 
 * [`ensure`](#-k8s--server--scheduler--ensure)
-* [`master`](#-k8s--server--scheduler--master)
+* [`control_plane_url`](#-k8s--server--scheduler--control_plane_url)
 * [`arguments`](#-k8s--server--scheduler--arguments)
 * [`cert_path`](#-k8s--server--scheduler--cert_path)
 * [`ca_cert`](#-k8s--server--scheduler--ca_cert)
@@ -2869,13 +2869,13 @@ Data type: `K8s::Ensure`
 
 Default value: `$k8s::server::ensure`
 
-##### <a name="-k8s--server--scheduler--master"></a>`master`
+##### <a name="-k8s--server--scheduler--control_plane_url"></a>`control_plane_url`
 
 Data type: `Stdlib::HTTPUrl`
 
 
 
-Default value: `$k8s::master`
+Default value: `$k8s::control_plane_url`
 
 ##### <a name="-k8s--server--scheduler--arguments"></a>`arguments`
 

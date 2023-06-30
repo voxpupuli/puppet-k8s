@@ -215,11 +215,11 @@ class k8s::server::apiserver (
                 ],
                 hostNetwork     => true,
                 nodeSelector    => {
-                  'node-role.kubernetes.io/master' => '',
+                  'node-role.kubernetes.io/control-plane' => '',
                 },
                 tolerations     => [
                   {
-                    key      => 'node-role.kubernetes.io/master',
+                    key      => 'node-role.kubernetes.io/control-plane',
                     operator => 'Exists',
                     effect   => 'NoSchedule',
                   },

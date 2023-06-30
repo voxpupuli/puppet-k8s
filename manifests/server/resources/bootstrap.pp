@@ -1,12 +1,12 @@
 # @summary Generates and deploys the default Puppet boostrap configuration into the cluster
 #
-# @param master The main API URL to encode in the bootstrap configuration
+# @param control_plane_url The main API URL to encode in the bootstrap configuration
 # @param secret The exact token secret to use, will be generated as a random 16-char string if left blank.
 #   The generated value can be retrieved from the bootstrap-token-puppet Secret in kube-system.
 class k8s::server::resources::bootstrap (
   K8s::Ensure $ensure          = $k8s::ensure,
   Stdlib::Unixpath $kubeconfig = $k8s::server::resources::kubeconfig,
-  String[1] $master            = $k8s::server::resources::master,
+  String[1] $control_plane_url = $k8s::server::resources::control_plane_url,
 
   Optional[Sensitive[K8s::Bootstrap_token]] $secret = undef,
 ) {
@@ -61,7 +61,7 @@ class k8s::server::resources::bootstrap (
                 {
                   name    => 'default',
                   cluster => {
-                    server                       => $master,
+                    server                       => $control_plane_url,
                     'certificate-authority-data' => $facts['k8s_ca'],
                   },
                 },

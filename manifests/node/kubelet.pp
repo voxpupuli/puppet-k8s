@@ -13,7 +13,7 @@
 # @param manage_firewall whether to manage firewall or not
 # @param manage_kernel_modules whether to load kernel modules or not
 # @param manage_sysctl_settings whether to manage sysctl settings or not
-# @param master cluster API connection
+# @param control_plane_url cluster API connection
 # @param puppetdb_discovery_tag enable puppetdb resource searching
 # @param rotate_server_tls
 # @param runtime which container runtime to use
@@ -24,7 +24,7 @@
 class k8s::node::kubelet (
   K8s::Ensure $ensure = $k8s::node::ensure,
 
-  Stdlib::HTTPUrl $master = $k8s::node::master,
+  Stdlib::HTTPUrl $control_plane_url = $k8s::node::control_plane_url,
 
   Hash[String, Data] $config        = {},
   Hash[String, Data] $arguments     = {},
@@ -79,7 +79,7 @@ class k8s::node::kubelet (
       }
       ~> exec { 'Retrieve K8s CA':
         path    => ['/usr/local/bin','/usr/bin','/bin'],
-        command => "kubectl --server='${master}' --username=anonymous --insecure-skip-tls-verify=true \
+        command => "kubectl --server='${control_plane_url}' --username=anonymous --insecure-skip-tls-verify=true \
           get --raw /api/v1/namespaces/kube-system/configmaps/cluster-info | jq .data.ca -r > '${_ca_cert}'",
         creates => $_ca_cert,
         require => [
@@ -91,7 +91,7 @@ class k8s::node::kubelet (
         ensure          => $ensure,
         owner           => $k8s::user,
         group           => $k8s::group,
-        server          => $master,
+        server          => $control_plane_url,
         current_context => 'default',
         token           => $token,
 
@@ -113,7 +113,7 @@ class k8s::node::kubelet (
         ensure          => $ensure,
         owner           => $k8s::user,
         group           => $k8s::group,
-        server          => $master,
+        server          => $control_plane_url,
         current_context => 'default',
         token           => $token,
         notify          => Service['kubelet'],
@@ -125,7 +125,7 @@ class k8s::node::kubelet (
         ensure          => $ensure,
         owner           => $k8s::user,
         group           => $k8s::group,
-        server          => $master,
+        server          => $control_plane_url,
         current_context => 'default',
 
         ca_cert         => $ca_cert,

@@ -4,7 +4,7 @@
 class k8s::node::kube_proxy (
   K8s::Ensure $ensure = $k8s::node::ensure,
 
-  Stdlib::HTTPUrl $master = $k8s::node::master,
+  Stdlib::HTTPUrl $control_plane_url = $k8s::node::control_plane_url,
 
   Hash[String, Data] $config     = {},
   Hash[String, Data] $arguments  = {},
@@ -42,7 +42,7 @@ class k8s::node::kube_proxy (
         ensure          => $_ensure,
         owner           => $k8s::user,
         group           => $k8s::group,
-        server          => $master,
+        server          => $control_plane_url,
         token           => $token,
         current_context => 'default',
         ca_cert         => $ca_cert,
@@ -54,7 +54,7 @@ class k8s::node::kube_proxy (
         ensure          => $_ensure,
         owner           => $k8s::user,
         group           => $k8s::group,
-        server          => $master,
+        server          => $control_plane_url,
         client_cert     => $cert,
         client_key      => $key,
         current_context => 'default',
