@@ -1,4 +1,6 @@
 # @summary Generates and deploys standard Kubernetes in-cluster services
+# @param image_pull_secrets the secrets to pull from private registries
+#
 class k8s::server::resources (
   Stdlib::Unixpath $kubeconfig = '/root/.kube/config',
 
@@ -25,6 +27,7 @@ class k8s::server::resources (
   String[1] $flannel_image                       = 'rancher/mirrored-flannelcni-flannel',
   String[1] $flannel_tag                         = 'v0.16.1',
   Hash[String,Data] $flannel_daemonset_config    = {},
+  Optional[Array] $image_pull_secrets            = undef,
 ) {
   assert_private()
 

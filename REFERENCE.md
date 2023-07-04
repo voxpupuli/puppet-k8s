@@ -2348,6 +2348,7 @@ Generates and deploys standard Kubernetes in-cluster services
 
 The following parameters are available in the `k8s::server::resources` class:
 
+* [`image_pull_secrets`](#-k8s--server--resources--image_pull_secrets)
 * [`kubeconfig`](#-k8s--server--resources--kubeconfig)
 * [`cluster_cidr`](#-k8s--server--resources--cluster_cidr)
 * [`dns_service_address`](#-k8s--server--resources--dns_service_address)
@@ -2370,6 +2371,14 @@ The following parameters are available in the `k8s::server::resources` class:
 * [`flannel_image`](#-k8s--server--resources--flannel_image)
 * [`flannel_tag`](#-k8s--server--resources--flannel_tag)
 * [`flannel_daemonset_config`](#-k8s--server--resources--flannel_daemonset_config)
+
+##### <a name="-k8s--server--resources--image_pull_secrets"></a>`image_pull_secrets`
+
+Data type: `Optional[Array]`
+
+the secrets to pull from private registries
+
+Default value: `undef`
 
 ##### <a name="-k8s--server--resources--kubeconfig"></a>`kubeconfig`
 
@@ -2606,6 +2615,7 @@ The following parameters are available in the `k8s::server::resources::coredns` 
 * [`image_tag`](#-k8s--server--resources--coredns--image_tag)
 * [`deployment_config`](#-k8s--server--resources--coredns--deployment_config)
 * [`hosts`](#-k8s--server--resources--coredns--hosts)
+* [`image_pull_secrets`](#-k8s--server--resources--coredns--image_pull_secrets)
 * [`ensure`](#-k8s--server--resources--coredns--ensure)
 * [`kubeconfig`](#-k8s--server--resources--coredns--kubeconfig)
 * [`cluster_domain`](#-k8s--server--resources--coredns--cluster_domain)
@@ -2650,6 +2660,14 @@ Additional host-style entries for the CoreDNS deployment to serve
 
 Default value: `[]`
 
+##### <a name="-k8s--server--resources--coredns--image_pull_secrets"></a>`image_pull_secrets`
+
+Data type: `Optional[Array]`
+
+the secrets to pull from private registries
+
+Default value: `$k8s::server::resources::image_pull_secrets`
+
 ##### <a name="-k8s--server--resources--coredns--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
@@ -2689,6 +2707,7 @@ The following parameters are available in the `k8s::server::resources::flannel` 
 * [`image_tag`](#-k8s--server--resources--flannel--image_tag)
 * [`daemonset_config`](#-k8s--server--resources--flannel--daemonset_config)
 * [`net_config`](#-k8s--server--resources--flannel--net_config)
+* [`image_pull_secrets`](#-k8s--server--resources--flannel--image_pull_secrets)
 * [`ensure`](#-k8s--server--resources--flannel--ensure)
 * [`kubeconfig`](#-k8s--server--resources--flannel--kubeconfig)
 
@@ -2748,6 +2767,14 @@ Additional configuration to merge into net-conf.json for Flannel
 
 Default value: `{}`
 
+##### <a name="-k8s--server--resources--flannel--image_pull_secrets"></a>`image_pull_secrets`
+
+Data type: `Optional[Array]`
+
+the secrets to pull from private registries
+
+Default value: `$k8s::server::resources::image_pull_secrets`
+
 ##### <a name="-k8s--server--resources--flannel--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
@@ -2778,6 +2805,7 @@ The following parameters are available in the `k8s::server::resources::kube_prox
 * [`daemonset_config`](#-k8s--server--resources--kube_proxy--daemonset_config)
 * [`extra_args`](#-k8s--server--resources--kube_proxy--extra_args)
 * [`extra_config`](#-k8s--server--resources--kube_proxy--extra_config)
+* [`image_pull_secrets`](#-k8s--server--resources--kube_proxy--image_pull_secrets)
 * [`ensure`](#-k8s--server--resources--kube_proxy--ensure)
 * [`kubeconfig`](#-k8s--server--resources--kube_proxy--kubeconfig)
 
@@ -2828,6 +2856,14 @@ Data type: `Hash[String,Data]`
 Additional configuration data to apply to the kube-proxy configuration file
 
 Default value: `{}`
+
+##### <a name="-k8s--server--resources--kube_proxy--image_pull_secrets"></a>`image_pull_secrets`
+
+Data type: `Optional[Array]`
+
+the secrets to pull from private registries
+
+Default value: `$k8s::server::resources::image_pull_secrets`
 
 ##### <a name="-k8s--server--resources--kube_proxy--ensure"></a>`ensure`
 

@@ -6,12 +6,15 @@
 # @param daemonset_config Additional configuration to merge into the DaemonSet object
 # @param extra_args Additional arguments to specify to the kube-proxy application
 # @param extra_config Additional configuration data to apply to the kube-proxy configuration file
+# @param image_pull_secrets the secrets to pull from private registries
+#
 class k8s::server::resources::kube_proxy (
   K8s::Ensure $ensure                    = $k8s::ensure,
   Stdlib::Unixpath $kubeconfig           = $k8s::server::resources::kubeconfig,
   K8s::CIDR $cluster_cidr                = $k8s::server::resources::cluster_cidr,
   String[1] $image                       = $k8s::server::resources::kube_proxy_image,
   String[1] $image_tag                   = $k8s::server::resources::kube_proxy_tag,
+  Optional[Array] $image_pull_secrets    = $k8s::server::resources::image_pull_secrets,
   Hash[String,Data] $daemonset_config    = {},
   Hash[String,Data] $extra_args          = {},
   Hash[String,Data] $extra_config        = {},
@@ -239,6 +242,7 @@ class k8s::server::resources::kube_proxy (
                   ],
                 }
               ],
+              imagePullSecrets   => $image_pull_secrets,
               hostNetwork        => true,
               priorityClassName  => 'system-node-critical',
               serviceAccountName => 'kube-proxy',

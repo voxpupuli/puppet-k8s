@@ -5,6 +5,8 @@
 # @param image_tag The CoreDNS image tag to use
 # @param deployment_config Additional configuration to merge into the Kubernetes Deployment object
 # @param hosts Additional host-style entries for the CoreDNS deployment to serve
+# @param image_pull_secrets the secrets to pull from private registries
+#
 class k8s::server::resources::coredns (
   K8s::Ensure $ensure                    = $k8s::ensure,
   Stdlib::Unixpath $kubeconfig           = $k8s::server::resources::kubeconfig,
@@ -12,6 +14,7 @@ class k8s::server::resources::coredns (
   String[1] $cluster_domain              = $k8s::server::resources::cluster_domain,
   String[1] $image                       = $k8s::server::resources::coredns_image,
   String[1] $image_tag                   = $k8s::server::resources::coredns_tag,
+  Optional[Array] $image_pull_secrets    = $k8s::server::resources::image_pull_secrets,
   Hash[String,Data] $deployment_config   = $k8s::server::resources::coredns_deployment_config,
   Array[String[1]] $hosts                = [],
 ) {
@@ -274,6 +277,7 @@ class k8s::server::resources::coredns (
                   },
                 },
               ],
+              imagePullSecrets   => $image_pull_secrets,
               dnsPolicy          => 'Default',
               volumes            => [
                 {
