@@ -26,7 +26,7 @@ Setting up a server node (apiserver, controller-manager, scheduler):
 ```puppet
 class { 'k8s':
   role               => 'server',
-  master             => 'https://kubernetes.example.com:6443',
+  control_plane_url  => 'https://kubernetes.example.com:6443',
 # generate_ca        => true, # Only set true temporarily to avoid overwriting the old secrets
 # puppetdb_discovery => true, # Will use PuppetDB PQL queries to manage etcd and nodes
 }
@@ -36,8 +36,8 @@ Setting up a client node (kubelet, kube-proxy):
 
 ```puppet
 class { 'k8s':
-  role   => 'node',
-  master => 'https://kubernetes.example.com:6443',
+  role              => 'node',
+  control_plane_url => 'https://kubernetes.example.com:6443',
 }
 ```
 
@@ -45,8 +45,8 @@ class { 'k8s':
 
 For more in-detail examples see the examples.
 
-  - [Simple bridged setup](examples/simple_setup/Readme.md)
-  - [Cilium setup](examples/cilium/Readme.md)
+- [Simple bridged setup](examples/simple_setup/Readme.md)
+- [Cilium setup](examples/cilium/Readme.md)
 
 ## Reference
 

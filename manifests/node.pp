@@ -9,7 +9,7 @@
 # @param manage_kubelet whether to manage kublet or not
 # @param manage_proxy whether to manage kube-proxy or not
 # @param manage_sysctl_settings whether to manage sysctl settings or not
-# @param master cluster API connection
+# @param control_plane_url cluster API connection
 # @param node_auth type of node authentication
 # @param node_cert path to node cert file
 # @param node_key path to node key file
@@ -24,9 +24,9 @@
 class k8s::node (
   K8s::Ensure $ensure = $k8s::ensure,
 
-  Stdlib::HTTPUrl $master     = $k8s::master,
-  K8s::Node_auth $node_auth   = $k8s::node_auth,
-  K8s::Proxy_auth $proxy_auth = 'incluster',
+  Stdlib::HTTPUrl $control_plane_url = $k8s::control_plane_url,
+  K8s::Node_auth $node_auth          = $k8s::node_auth,
+  K8s::Proxy_auth $proxy_auth        = 'incluster',
 
   Boolean $manage_kubelet           = true,
   Boolean $manage_proxy             = $k8s::manage_kube_proxy == 'on-node',

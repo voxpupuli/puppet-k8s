@@ -5,8 +5,8 @@
 # @param k8s_version version of kubernetes
 # @param manage_firewall whether to manage firewall or not
 # @param manage_kube_proxy whether to manage manage_kube_proxy or not
-# @param master
-#   cluster url where the server/nodes connect to.
+# @param control_plane_url
+#   api server url where the server/nodes connect to.
 #   this is most likely a load balanced dns with all the controllers in the backend.
 #   on single head clusters this may be the dns name:port of the controller node.
 # @param role role in the cluster, server, node, none
@@ -20,7 +20,7 @@ class profile::k8s::controller (
   Boolean $manage_firewall                   = true,                      # k8s-class default: false
   Boolean $manage_kube_proxy                 = true,                      # k8s-class default: true
   Boolean $puppetdb_discovery                = true,                      # k8s-class default: false
-  Stdlib::HTTPUrl $master                    = 'https://kubernetes:6443', # k8s-class default: https://kubernetes:6443
+  Stdlib::HTTPUrl $control_plane_url         = 'https://kubernetes:6443', # k8s-class default: https://kubernetes:6443
   String[1] $etcd_version                    = '3.5.1',                   # k8s-class default: 3.5.1
   String[1] $k8s_version                     = '1.26.1',                  # k8s-class default: 1.26.1
   Enum['server'] $role                       = 'server',                  # k8s-class default: none
@@ -33,7 +33,7 @@ class profile::k8s::controller (
     etcd_version         => $etcd_version,
     manage_firewall      => $manage_firewall,
     manage_kube_proxy    => $manage_kube_proxy,
-    master               => $master,
+    control_plane_url    => $control_plane_url,
     role                 => $role,
     version              => $k8s_version,
     service_cluster_cidr => $service_cidr,

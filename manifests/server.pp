@@ -8,7 +8,7 @@
 # @param cert_path path to cert files
 # @param cluster_cidr cluster cidr
 # @param cluster_domain cluster domain name
-# @param direct_master direct clust API connection
+# @param direct_control_plane_url direct clust API connection
 # @param dns_service_address cluster dns service address
 # @param ensure set ensure for installation or deinstallation
 # @param etcd_cluster_name name of the etcd cluster for searching its nodes in the puppetdb
@@ -23,7 +23,7 @@
 # @param manage_kubeadm whether to install kubeadm or not
 # @param manage_resources whether to manage cluster internal resources or not
 # @param manage_signing whether to manage cert signing or not
-# @param master cluster API connection
+# @param control_plane_url cluster API connection
 # @param node_on_server whether to use controller also as nodes or not
 # @param puppetdb_discovery_tag enable puppetdb resource searching
 #
@@ -34,8 +34,8 @@ class k8s::server (
   K8s::CIDR $cluster_cidr                = $k8s::cluster_cidr,
   K8s::IP_addresses $dns_service_address = $k8s::dns_service_address,
   String $cluster_domain                 = $k8s::cluster_domain,
-  String $direct_master                  = "https://${fact('networking.ip')}:${api_port}",
-  String $master                         = $k8s::master,
+  String $direct_control_plane_url       = "https://${fact('networking.ip')}:${api_port}",
+  String $control_plane_url              = $k8s::control_plane_url,
 
   Stdlib::Unixpath $cert_path          = '/etc/kubernetes/certs',
   Stdlib::Unixpath $ca_key             = "${cert_path}/ca.key",
@@ -77,12 +77,12 @@ class k8s::server (
     include k8s::server::wait_online
 
     # XXX Think of a better way to do this
-    if $master == 'https://kubernetes:6443' {
+    if $control_plane_url == 'https://kubernetes:6443' {
       class { 'k8s::server::controller_manager':
-        master => 'https://localhost:6443',
+        control_plane_url => 'https://localhost:6443',
       }
       class { 'k8s::server::scheduler':
-        master => 'https://localhost:6443',
+        control_plane_url => 'https://localhost:6443',
       }
     } else {
       include k8s::server::controller_manager
@@ -133,15 +133,15 @@ class k8s::server (
     $_dir = $k8s::server::tls::cert_path
 
     class { 'k8s::node':
-      ensure     => $ensure,
-      master     => "https://localhost:${api_port}",
-      node_auth  => 'cert',
-      proxy_auth => 'cert',
-      ca_cert    => $ca_cert,
-      node_cert  => "${_dir}/node.pem",
-      node_key   => "${_dir}/node.key",
-      proxy_cert => "${_dir}/kube-proxy.pem",
-      proxy_key  => "${_dir}/kube-proxy.key",
+      ensure            => $ensure,
+      control_plane_url => "https://localhost:${api_port}",
+      node_auth         => 'cert',
+      proxy_auth        => 'cert',
+      ca_cert           => $ca_cert,
+      node_cert         => "${_dir}/node.pem",
+      node_key          => "${_dir}/node.key",
+      proxy_cert        => "${_dir}/kube-proxy.pem",
+      proxy_key         => "${_dir}/kube-proxy.key",
     }
   }
 }

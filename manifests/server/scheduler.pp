@@ -2,7 +2,7 @@
 class k8s::server::scheduler (
   K8s::Ensure $ensure = $k8s::server::ensure,
 
-  Stdlib::HTTPUrl $master = $k8s::master,
+  Stdlib::HTTPUrl $control_plane_url = $k8s::control_plane_url,
 
   Hash[String, Data] $arguments = {},
 
@@ -45,7 +45,7 @@ class k8s::server::scheduler (
       ensure          => $ensure,
       owner           => $k8s::user,
       group           => $k8s::group,
-      server          => $master,
+      server          => $control_plane_url,
       current_context => 'default',
 
       ca_cert         => $ca_cert,

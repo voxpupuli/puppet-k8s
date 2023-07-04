@@ -6,7 +6,7 @@ class k8s::server::resources (
   K8s::IP_addresses $dns_service_address = $k8s::server::dns_service_address,
   Stdlib::Unixpath $ca_cert              = $k8s::server::tls::ca_cert,
   String[1] $cluster_domain              = $k8s::server::cluster_domain,
-  String[1] $master                      = $k8s::server::master,
+  String[1] $control_plane_url           = $k8s::server::control_plane_url,
 
   Boolean $manage_bootstrap            = true,
   Boolean $manage_coredns              = true,
@@ -143,7 +143,7 @@ class k8s::server::resources (
                 {
                   name    => 'local',
                   cluster => {
-                    server                  => $master,
+                    server                  => $control_plane_url,
                     'certificate-authority' => '/var/run/secrets/kubernetes.io/serviceaccount/ca.crt',
                   },
                 },

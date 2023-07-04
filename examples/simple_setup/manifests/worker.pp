@@ -1,7 +1,7 @@
 # Class: profile::k8s::worker
 #
 # @param role role in the cluster, server, node, none
-# @param master
+# @param control_plane_url
 #   cluster url where the server/nodes connect to.
 #   this is most likely a load balanced dns with all the controllers in the backend.
 #   on single head clusters this may be the dns name:port of the controller node.
@@ -19,14 +19,14 @@ class profile::k8s::worker (
   Boolean $puppetdb_discovery                = true,         # k8s-class default: false
   K8s::Container_runtimes $container_manager = 'containerd', # k8s-class default: crio
   Enum['node'] $role                         = 'node',       # k8s-class default: none
-  Stdlib::HTTPUrl $master                    = $profile::k8s::controller::master,
+  Stdlib::HTTPUrl $control_plane_url         = $profile::k8s::controller::control_plane_url,
   String[1] $k8s_version                     = $profile::k8s::controller::k8s_version,
 ) {
   class { 'k8s':
     container_manager  => $container_manager,
     manage_firewall    => $manage_firewall,
     manage_kube_proxy  => $manage_kube_proxy,
-    master             => $master,
+    control_plane_url  => $control_plane_url,
     puppetdb_discovery => $puppetdb_discovery,
     role               => $role,
     version            => $k8s_version,

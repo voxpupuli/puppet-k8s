@@ -59,8 +59,8 @@ class k8s (
 
   K8s::Node_auth $node_auth = 'bootstrap',
 
-  Stdlib::HTTPUrl $incluster_master                  = 'https://kubernetes.default.svc',
-  Stdlib::HTTPUrl $master                            = 'https://kubernetes:6443',
+  Stdlib::HTTPUrl $incluster_control_plane_url       = 'https://kubernetes.default.svc',
+  Stdlib::HTTPUrl $control_plane_url                 = 'https://kubernetes:6443',
   K8s::CIDR $service_cluster_cidr                    = '10.1.0.0/24',
   K8s::CIDR $cluster_cidr                            = '10.0.0.0/16',
   Stdlib::IP::Address::Nosubnet $api_service_address = k8s::ip_in_cidr($service_cluster_cidr, 'first'),
