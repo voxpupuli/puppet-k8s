@@ -54,6 +54,7 @@ spec:
           readOnly: true
         - mountPath: "/run/xtables.lock"
           name: iptables-lock
+      imagePullSecrets: null
       hostNetwork: true
       priorityClassName: system-node-critical
       serviceAccountName: kube-proxy

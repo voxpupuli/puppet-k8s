@@ -7,6 +7,8 @@
 # @param image_tag The Flannel image tag to use
 # @param daemonset_config Additional configuration to merge into the DaemonSet object
 # @param net_config Additional configuration to merge into net-conf.json for Flannel
+# @param image_pull_secrets the secrets to pull from private registries
+#
 class k8s::server::resources::flannel (
   K8s::Ensure $ensure                 = $k8s::ensure,
   Stdlib::Unixpath $kubeconfig        = $k8s::server::resources::kubeconfig,
@@ -16,6 +18,7 @@ class k8s::server::resources::flannel (
   String[1] $image                    = $k8s::server::resources::flannel_image,
   String[1] $image_tag                = $k8s::server::resources::flannel_tag,
   Hash[String,Data] $daemonset_config = $k8s::server::resources::flannel_daemonset_config,
+  Optional[Array] $image_pull_secrets = $k8s::server::resources::image_pull_secrets,
   Hash[String,Data] $net_config       = {},
 ) {
   assert_private()
@@ -243,6 +246,7 @@ class k8s::server::resources::flannel (
                   ],
                 },
               ],
+              imagePullSecrets   => $image_pull_secrets,
               initContainers     => [
                 {
                   name         => 'install-cni-plugin',
