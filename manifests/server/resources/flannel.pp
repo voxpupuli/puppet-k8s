@@ -1,8 +1,10 @@
 # @summary Generates and deploys the default CoreDNS DNS provider for Kubernetes
 #
 # @param cluster_cidr The internal cluster CIDR to proxy for
+# @param cni_registry The Flannel CNI plugin image registry to use
 # @param cni_image The Flannel CNI plugin image name to use
 # @param cni_image_tag The Flannel CNI plugin image tag to use
+# @param registry The Flannel image registry to use
 # @param image The Flannel image name to use
 # @param image_tag The Flannel image tag to use
 # @param daemonset_config Additional configuration to merge into the DaemonSet object
@@ -11,8 +13,10 @@ class k8s::server::resources::flannel (
   K8s::Ensure $ensure                 = $k8s::ensure,
   Stdlib::Unixpath $kubeconfig        = $k8s::server::resources::kubeconfig,
   K8s::CIDR $cluster_cidr             = $k8s::server::resources::cluster_cidr,
+  String[1] $cni_registry             = $k8s::server::resources::flannel_cni_registry,
   String[1] $cni_image                = $k8s::server::resources::flannel_cni_image,
   String[1] $cni_image_tag            = $k8s::server::resources::flannel_cni_tag,
+  String[1] $registry                 = $k8s::server::resources::flannel_registry,
   String[1] $image                    = $k8s::server::resources::flannel_image,
   String[1] $image_tag                = $k8s::server::resources::flannel_tag,
   Hash[String,Data] $daemonset_config = $k8s::server::resources::flannel_daemonset_config,
@@ -194,7 +198,7 @@ class k8s::server::resources::flannel (
               containers         => [
                 {
                   name            => 'flannel',
-                  image           => "${image}:${image_tag}",
+                  image           => "${registry}/${image}:${image_tag}",
                   command         => ['/opt/bin/flanneld'],
                   args            => ['--ip-masq', '--kube-subnet-mgr'],
                   resources       => {
@@ -246,7 +250,7 @@ class k8s::server::resources::flannel (
               initContainers     => [
                 {
                   name         => 'install-cni-plugin',
-                  image        => "${cni_image}:${cni_image_tag}",
+                  image        => "${cni_registry}/${cni_image}:${cni_image_tag}",
                   command      => ['cp'],
                   args         => [
                     '-f',
@@ -262,7 +266,7 @@ class k8s::server::resources::flannel (
                 },
                 {
                   name         => 'install-cni',
-                  image        => "${cni_image}:${cni_image_tag}",
+                  image        => "${cni_registry}/${cni_image}:${cni_image_tag}",
                   command      => ['cp'],
                   args         => [
                     '-f',
