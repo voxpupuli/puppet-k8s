@@ -48,7 +48,7 @@ class k8s::node::kubelet (
   Optional[Stdlib::Unixpath] $key     = $k8s::node::node_key,
 
   # For token and bootstrap auth
-  Optional[String[1]] $token = $k8s::node::node_token,
+  Optional[Sensitive[String]] $token  = $k8s::node::node_token,
 
   Optional[K8s::Firewall] $firewall_type = $k8s::node::firewall_type,
 ) {
@@ -93,7 +93,7 @@ class k8s::node::kubelet (
         group           => $k8s::group,
         server          => $control_plane_url,
         current_context => 'default',
-        token           => $token,
+        token           => $token.unwrap,
 
         ca_cert         => $_ca_cert,
 
@@ -115,7 +115,7 @@ class k8s::node::kubelet (
         group           => $k8s::group,
         server          => $control_plane_url,
         current_context => 'default',
-        token           => $token,
+        token           => $token.unwrap,
         notify          => Service['kubelet'],
       }
       $_authentication_hash = {}

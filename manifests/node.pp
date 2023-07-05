@@ -48,8 +48,8 @@ class k8s::node (
   Optional[Stdlib::Unixpath] $proxy_key  = undef,
 
   # For token and bootstrap auth
-  Optional[String[1]] $node_token  = undef,
-  Optional[String[1]] $proxy_token = undef,
+  Optional[Sensitive[String]] $node_token  = undef,
+  Optional[Sensitive[String]] $proxy_token = undef,
 
   Optional[K8s::Firewall] $firewall_type = $k8s::firewall_type,
 ) {
