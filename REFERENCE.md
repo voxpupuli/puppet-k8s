@@ -3554,6 +3554,7 @@ The following parameters are available in the `kubeconfig` type.
 * [`current_context`](#-kubeconfig--current_context)
 * [`embed_certs`](#-kubeconfig--embed_certs)
 * [`group`](#-kubeconfig--group)
+* [`mode`](#-kubeconfig--mode)
 * [`namespace`](#-kubeconfig--namespace)
 * [`owner`](#-kubeconfig--owner)
 * [`password`](#-kubeconfig--password)
@@ -3606,6 +3607,12 @@ Default value: `true`
 ##### <a name="-kubeconfig--group"></a>`group`
 
 The owner of the kubeconfig file
+
+##### <a name="-kubeconfig--mode"></a>`mode`
+
+The access mode of the kubeconfig file
+
+Default value: `0600`
 
 ##### <a name="-kubeconfig--namespace"></a>`namespace`
 

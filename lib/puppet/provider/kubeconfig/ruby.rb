@@ -23,7 +23,9 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     update_current_context if resource[:current_context]
 
     save if changed?
+
     chown
+    chmod
   end
 
   def destroy
@@ -38,6 +40,13 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
 
   def chown
     FileUtils.chown(resource[:owner], resource[:group], resource[:path])
+  end
+
+  def chmod
+    mode = resource[:mode]
+    raise Puppet::Error, "File mode is invalid" unless mode.is_a?(String) && mode =~ %r{^0[0-7]{3}$}
+
+    FileUtils.chmod(mode.to_i(8), resource[:path])
   end
 
   def find_cluster

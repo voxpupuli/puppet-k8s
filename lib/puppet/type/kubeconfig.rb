@@ -59,6 +59,29 @@ Puppet::Type.newtype(:kubeconfig) do
   newparam(:group) do
     desc 'The owner of the kubeconfig file'
   end
+  newparam(:mode) do
+    require 'puppet/util/symbolic_file_mode'
+    include Puppet::Util::SymbolicFileMode
+
+    desc 'The access mode of the kubeconfig file'
+    defaultto '0600'
+
+    validate do |value|
+      raise Puppet::Error, "The file mode specification must be a string, not '#{value.class.name}'" unless value.is_a? String
+      raise Puppet::Error, "The file mode specification is invalid: #{value.inspect}" unless value.nil? || valid_symbolic_mode?(value)
+    end
+
+    munge do |value|
+      return nil if value.nil?
+      raise Puppet::Error, "The file mode specification is invalid: #{value.inspect}" unless valid_symbolic_mode?(value)
+
+      "0#{symbolic_mode_to_int(normalize_symbolic_mode(value)).to_s(8)}"
+    end
+
+    unmunge do |value|
+      display_mode(value) if value
+    end
+  end
 
   newparam(:cluster) do
     desc 'The name of the cluster to manage in the kubeconfig file'
