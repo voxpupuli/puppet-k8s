@@ -1,6 +1,7 @@
 # @summary Generates and deploys the default CoreDNS DNS provider for Kubernetes
 #
 # @param dns_service_address The address for the DNS service
+# @param registry The CoreDNS image registry to use
 # @param image The CoreDNS image name to use
 # @param image_tag The CoreDNS image tag to use
 # @param deployment_config Additional configuration to merge into the Kubernetes Deployment object
@@ -12,6 +13,7 @@ class k8s::server::resources::coredns (
   Stdlib::Unixpath $kubeconfig           = $k8s::server::resources::kubeconfig,
   K8s::IP_addresses $dns_service_address = $k8s::server::resources::dns_service_address,
   String[1] $cluster_domain              = $k8s::server::resources::cluster_domain,
+  String[1] $registry                    = $k8s::server::resources::coredns_registry,
   String[1] $image                       = $k8s::server::resources::coredns_image,
   String[1] $image_tag                   = $k8s::server::resources::coredns_tag,
   Optional[Array] $image_pull_secrets    = $k8s::server::resources::image_pull_secrets,
@@ -215,7 +217,7 @@ class k8s::server::resources::coredns (
               containers         => [
                 {
                   name            => 'coredns',
-                  image           => "${image}:${image_tag}",
+                  image           => "${registry}/${image}:${image_tag}",
                   imagePullPolicy => 'IfNotPresent',
                   resources       => {
                     limits   => {

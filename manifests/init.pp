@@ -25,9 +25,8 @@ class k8s (
   String[1] $version                      = '1.26.1',
   String[1] $etcd_version                 = '3.5.1',
 
-  String[1] $container_registry              = 'gcr.io/google_containers',
-  String[1] $container_image                 = 'hyperkube',
-  Optional[String] $container_image_tag      = undef,
+  String[1] $container_registry              = 'registry.k8s.io',
+  Optional[String[1]] $container_image_tag   = undef,
 
   K8s::Container_runtimes $container_manager = 'crio',
   String[1] $container_runtime_service       = "${container_manager}.service",

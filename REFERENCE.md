@@ -99,7 +99,6 @@ The following parameters are available in the `k8s` class:
 * [`version`](#-k8s--version)
 * [`etcd_version`](#-k8s--etcd_version)
 * [`container_registry`](#-k8s--container_registry)
-* [`container_image`](#-k8s--container_image)
 * [`container_image_tag`](#-k8s--container_image_tag)
 * [`container_manager`](#-k8s--container_manager)
 * [`container_runtime_service`](#-k8s--container_runtime_service)
@@ -243,19 +242,11 @@ Data type: `String[1]`
 
 
 
-Default value: `'gcr.io/google_containers'`
-
-##### <a name="-k8s--container_image"></a>`container_image`
-
-Data type: `String[1]`
-
-
-
-Default value: `'hyperkube'`
+Default value: `'registry.k8s.io'`
 
 ##### <a name="-k8s--container_image_tag"></a>`container_image_tag`
 
-Data type: `Optional[String]`
+Data type: `Optional[String[1]]`
 
 
 
@@ -1562,6 +1553,9 @@ The following parameters are available in the `k8s::server::apiserver` class:
 * [`service_cluster_cidr`](#-k8s--server--apiserver--service_cluster_cidr)
 * [`serviceaccount_private`](#-k8s--server--apiserver--serviceaccount_private)
 * [`serviceaccount_public`](#-k8s--server--apiserver--serviceaccount_public)
+* [`container_registry`](#-k8s--server--apiserver--container_registry)
+* [`container_image`](#-k8s--server--apiserver--container_image)
+* [`container_image_tag`](#-k8s--server--apiserver--container_image_tag)
 
 ##### <a name="-k8s--server--apiserver--advertise_address"></a>`advertise_address`
 
@@ -1755,6 +1749,30 @@ Data type: `Stdlib::Unixpath`
 
 Default value: `"${cert_path}/service-account.pub"`
 
+##### <a name="-k8s--server--apiserver--container_registry"></a>`container_registry`
+
+Data type: `String[1]`
+
+
+
+Default value: `$k8s::container_registry`
+
+##### <a name="-k8s--server--apiserver--container_image"></a>`container_image`
+
+Data type: `String[1]`
+
+
+
+Default value: `'kube-apiserver'`
+
+##### <a name="-k8s--server--apiserver--container_image_tag"></a>`container_image_tag`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `$k8s::container_image_tag`
+
 ### <a name="k8s--server--controller_manager"></a>`k8s::server::controller_manager`
 
 Installs and configures a Kubernetes controller manager
@@ -1773,6 +1791,9 @@ The following parameters are available in the `k8s::server::controller_manager` 
 * [`ca_key`](#-k8s--server--controller_manager--ca_key)
 * [`cert`](#-k8s--server--controller_manager--cert)
 * [`key`](#-k8s--server--controller_manager--key)
+* [`container_registry`](#-k8s--server--controller_manager--container_registry)
+* [`container_image`](#-k8s--server--controller_manager--container_image)
+* [`container_image_tag`](#-k8s--server--controller_manager--container_image_tag)
 
 ##### <a name="-k8s--server--controller_manager--ensure"></a>`ensure`
 
@@ -1853,6 +1874,30 @@ Data type: `Stdlib::Unixpath`
 
 
 Default value: `"${cert_path}/kube-controller-manager.key"`
+
+##### <a name="-k8s--server--controller_manager--container_registry"></a>`container_registry`
+
+Data type: `String[1]`
+
+
+
+Default value: `$k8s::container_registry`
+
+##### <a name="-k8s--server--controller_manager--container_image"></a>`container_image`
+
+Data type: `String[1]`
+
+
+
+Default value: `'kube-controller-manager'`
+
+##### <a name="-k8s--server--controller_manager--container_image_tag"></a>`container_image_tag`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `$k8s::container_image_tag`
 
 ### <a name="k8s--server--etcd"></a>`k8s::server::etcd`
 
@@ -2359,15 +2404,19 @@ The following parameters are available in the `k8s::server::resources` class:
 * [`manage_coredns`](#-k8s--server--resources--manage_coredns)
 * [`manage_flannel`](#-k8s--server--resources--manage_flannel)
 * [`manage_kube_proxy`](#-k8s--server--resources--manage_kube_proxy)
+* [`kube_proxy_registry`](#-k8s--server--resources--kube_proxy_registry)
 * [`kube_proxy_image`](#-k8s--server--resources--kube_proxy_image)
 * [`kube_proxy_tag`](#-k8s--server--resources--kube_proxy_tag)
 * [`kube_proxy_daemonset_config`](#-k8s--server--resources--kube_proxy_daemonset_config)
 * [`extra_kube_proxy_args`](#-k8s--server--resources--extra_kube_proxy_args)
+* [`coredns_registry`](#-k8s--server--resources--coredns_registry)
 * [`coredns_image`](#-k8s--server--resources--coredns_image)
 * [`coredns_tag`](#-k8s--server--resources--coredns_tag)
 * [`coredns_deployment_config`](#-k8s--server--resources--coredns_deployment_config)
+* [`flannel_cni_registry`](#-k8s--server--resources--flannel_cni_registry)
 * [`flannel_cni_image`](#-k8s--server--resources--flannel_cni_image)
 * [`flannel_cni_tag`](#-k8s--server--resources--flannel_cni_tag)
+* [`flannel_registry`](#-k8s--server--resources--flannel_registry)
 * [`flannel_image`](#-k8s--server--resources--flannel_image)
 * [`flannel_tag`](#-k8s--server--resources--flannel_tag)
 * [`flannel_daemonset_config`](#-k8s--server--resources--flannel_daemonset_config)
@@ -2460,13 +2509,21 @@ Data type: `K8s::Proxy_method`
 
 Default value: `$k8s::manage_kube_proxy`
 
+##### <a name="-k8s--server--resources--kube_proxy_registry"></a>`kube_proxy_registry`
+
+Data type: `String[1]`
+
+
+
+Default value: `$k8s::container_registry`
+
 ##### <a name="-k8s--server--resources--kube_proxy_image"></a>`kube_proxy_image`
 
 Data type: `String[1]`
 
 
 
-Default value: `'k8s.gcr.io/kube-proxy'`
+Default value: `'kube-proxy'`
 
 ##### <a name="-k8s--server--resources--kube_proxy_tag"></a>`kube_proxy_tag`
 
@@ -2492,6 +2549,14 @@ Data type: `Hash[String,Data]`
 
 Default value: `{}`
 
+##### <a name="-k8s--server--resources--coredns_registry"></a>`coredns_registry`
+
+Data type: `String[1]`
+
+
+
+Default value: `'docker.io'`
+
 ##### <a name="-k8s--server--resources--coredns_image"></a>`coredns_image`
 
 Data type: `String[1]`
@@ -2516,6 +2581,14 @@ Data type: `Hash[String,Data]`
 
 Default value: `{}`
 
+##### <a name="-k8s--server--resources--flannel_cni_registry"></a>`flannel_cni_registry`
+
+Data type: `String[1]`
+
+
+
+Default value: `'docker.io'`
+
 ##### <a name="-k8s--server--resources--flannel_cni_image"></a>`flannel_cni_image`
 
 Data type: `String[1]`
@@ -2531,6 +2604,14 @@ Data type: `String[1]`
 
 
 Default value: `'v1.0.0'`
+
+##### <a name="-k8s--server--resources--flannel_registry"></a>`flannel_registry`
+
+Data type: `String[1]`
+
+
+
+Default value: `'docker.io'`
 
 ##### <a name="-k8s--server--resources--flannel_image"></a>`flannel_image`
 
@@ -2611,6 +2692,7 @@ Generates and deploys the default CoreDNS DNS provider for Kubernetes
 The following parameters are available in the `k8s::server::resources::coredns` class:
 
 * [`dns_service_address`](#-k8s--server--resources--coredns--dns_service_address)
+* [`registry`](#-k8s--server--resources--coredns--registry)
 * [`image`](#-k8s--server--resources--coredns--image)
 * [`image_tag`](#-k8s--server--resources--coredns--image_tag)
 * [`deployment_config`](#-k8s--server--resources--coredns--deployment_config)
@@ -2627,6 +2709,14 @@ Data type: `K8s::IP_addresses`
 The address for the DNS service
 
 Default value: `$k8s::server::resources::dns_service_address`
+
+##### <a name="-k8s--server--resources--coredns--registry"></a>`registry`
+
+Data type: `String[1]`
+
+The CoreDNS image registry to use
+
+Default value: `$k8s::server::resources::coredns_registry`
 
 ##### <a name="-k8s--server--resources--coredns--image"></a>`image`
 
@@ -2701,8 +2791,10 @@ Generates and deploys the default CoreDNS DNS provider for Kubernetes
 The following parameters are available in the `k8s::server::resources::flannel` class:
 
 * [`cluster_cidr`](#-k8s--server--resources--flannel--cluster_cidr)
+* [`cni_registry`](#-k8s--server--resources--flannel--cni_registry)
 * [`cni_image`](#-k8s--server--resources--flannel--cni_image)
 * [`cni_image_tag`](#-k8s--server--resources--flannel--cni_image_tag)
+* [`registry`](#-k8s--server--resources--flannel--registry)
 * [`image`](#-k8s--server--resources--flannel--image)
 * [`image_tag`](#-k8s--server--resources--flannel--image_tag)
 * [`daemonset_config`](#-k8s--server--resources--flannel--daemonset_config)
@@ -2719,6 +2811,14 @@ The internal cluster CIDR to proxy for
 
 Default value: `$k8s::server::resources::cluster_cidr`
 
+##### <a name="-k8s--server--resources--flannel--cni_registry"></a>`cni_registry`
+
+Data type: `String[1]`
+
+The Flannel CNI plugin image registry to use
+
+Default value: `$k8s::server::resources::flannel_cni_registry`
+
 ##### <a name="-k8s--server--resources--flannel--cni_image"></a>`cni_image`
 
 Data type: `String[1]`
@@ -2734,6 +2834,14 @@ Data type: `String[1]`
 The Flannel CNI plugin image tag to use
 
 Default value: `$k8s::server::resources::flannel_cni_tag`
+
+##### <a name="-k8s--server--resources--flannel--registry"></a>`registry`
+
+Data type: `String[1]`
+
+The Flannel image registry to use
+
+Default value: `$k8s::server::resources::flannel_registry`
 
 ##### <a name="-k8s--server--resources--flannel--image"></a>`image`
 
@@ -2800,6 +2908,7 @@ Generates and deploys the default kube-proxy service for Kubernetes
 The following parameters are available in the `k8s::server::resources::kube_proxy` class:
 
 * [`cluster_cidr`](#-k8s--server--resources--kube_proxy--cluster_cidr)
+* [`registry`](#-k8s--server--resources--kube_proxy--registry)
 * [`image`](#-k8s--server--resources--kube_proxy--image)
 * [`image_tag`](#-k8s--server--resources--kube_proxy--image_tag)
 * [`daemonset_config`](#-k8s--server--resources--kube_proxy--daemonset_config)
@@ -2816,6 +2925,14 @@ Data type: `K8s::CIDR`
 The internal cluster CIDR to proxy for
 
 Default value: `$k8s::server::resources::cluster_cidr`
+
+##### <a name="-k8s--server--resources--kube_proxy--registry"></a>`registry`
+
+Data type: `String[1]`
+
+The kube-proxy image registry to use
+
+Default value: `$k8s::server::resources::kube_proxy_registry`
 
 ##### <a name="-k8s--server--resources--kube_proxy--image"></a>`image`
 
@@ -2896,6 +3013,9 @@ The following parameters are available in the `k8s::server::scheduler` class:
 * [`ca_cert`](#-k8s--server--scheduler--ca_cert)
 * [`cert`](#-k8s--server--scheduler--cert)
 * [`key`](#-k8s--server--scheduler--key)
+* [`container_registry`](#-k8s--server--scheduler--container_registry)
+* [`container_image`](#-k8s--server--scheduler--container_image)
+* [`container_image_tag`](#-k8s--server--scheduler--container_image_tag)
 
 ##### <a name="-k8s--server--scheduler--ensure"></a>`ensure`
 
@@ -2952,6 +3072,30 @@ Data type: `Stdlib::Unixpath`
 
 
 Default value: `"${cert_path}/kube-scheduler.key"`
+
+##### <a name="-k8s--server--scheduler--container_registry"></a>`container_registry`
+
+Data type: `String[1]`
+
+
+
+Default value: `$k8s::container_registry`
+
+##### <a name="-k8s--server--scheduler--container_image"></a>`container_image`
+
+Data type: `String[1]`
+
+
+
+Default value: `'kube-scheduler'`
+
+##### <a name="-k8s--server--scheduler--container_image_tag"></a>`container_image_tag`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `$k8s::container_image_tag`
 
 ### <a name="k8s--server--tls"></a>`k8s::server::tls`
 
