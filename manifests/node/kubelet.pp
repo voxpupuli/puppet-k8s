@@ -20,6 +20,7 @@
 # @param runtime_service name of the service of the container runtime
 # @param support_dualstack
 # @param token k8s token to join a cluster
+# @param pause_image registry and name of the internal pause image, defaults to registry.k8s.io/pause
 #
 class k8s::node::kubelet (
   K8s::Ensure $ensure = $k8s::node::ensure,
@@ -51,6 +52,8 @@ class k8s::node::kubelet (
   Optional[Sensitive[String]] $token  = $k8s::node::node_token,
 
   Optional[K8s::Firewall] $firewall_type = $k8s::node::firewall_type,
+
+  Optional[String] $pause_image = undef,
 ) {
   k8s::binary { 'kubelet':
     ensure => $ensure,
@@ -223,16 +226,19 @@ class k8s::node::kubelet (
     $_node_ip = undef
   }
 
-  $_args = k8s::format_arguments({
-      config                     => '/etc/kubernetes/kubelet.conf',
-      kubeconfig                 => $kubeconfig,
-      bootstrap_kubeconfig       => $_bootstrap_kubeconfig,
-      cert_dir                   => $cert_path,
-      container_runtime          => $_runtime,
-      container_runtime_endpoint => $_runtime_endpoint,
-      hostname_override          => fact('networking.fqdn'),
-      node_ip                    => $_node_ip,
-  } + $arguments)
+  $_args = k8s::format_arguments(
+    delete_undef_values({
+        config                     => '/etc/kubernetes/kubelet.conf',
+        kubeconfig                 => $kubeconfig,
+        bootstrap_kubeconfig       => $_bootstrap_kubeconfig,
+        cert_dir                   => $cert_path,
+        container_runtime          => $_runtime,
+        container_runtime_endpoint => $_runtime_endpoint,
+        hostname_override          => fact('networking.fqdn'),
+        node_ip                    => $_node_ip,
+        pod_infra_container_image  => $pause_image,
+    } + $arguments)
+  )
 
   $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
   file { "${_sysconfig_path}/kubelet":

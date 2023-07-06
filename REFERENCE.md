@@ -1063,6 +1063,7 @@ The following parameters are available in the `k8s::node::kubelet` class:
 * [`runtime_service`](#-k8s--node--kubelet--runtime_service)
 * [`support_dualstack`](#-k8s--node--kubelet--support_dualstack)
 * [`token`](#-k8s--node--kubelet--token)
+* [`pause_image`](#-k8s--node--kubelet--pause_image)
 
 ##### <a name="-k8s--node--kubelet--arguments"></a>`arguments`
 
@@ -1223,6 +1224,14 @@ Data type: `Optional[Sensitive[String]]`
 k8s token to join a cluster
 
 Default value: `$k8s::node::node_token`
+
+##### <a name="-k8s--node--kubelet--pause_image"></a>`pause_image`
+
+Data type: `Optional[String]`
+
+registry and name of the internal pause image, defaults to registry.k8s.io/pause
+
+Default value: `undef`
 
 ### <a name="k8s--node--simple_cni"></a>`k8s::node::simple_cni`
 
