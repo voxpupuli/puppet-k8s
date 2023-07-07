@@ -51,7 +51,6 @@ class k8s::node::kubelet (
   Optional[Sensitive[String]] $token  = $k8s::node::node_token,
 
   Optional[K8s::Firewall] $firewall_type = $k8s::node::firewall_type,
-  String[1] $k8s_version                 = $k8s::version,
 ) {
   k8s::binary { 'kubelet':
     ensure => $ensure,

@@ -1063,7 +1063,6 @@ The following parameters are available in the `k8s::node::kubelet` class:
 * [`runtime_service`](#-k8s--node--kubelet--runtime_service)
 * [`support_dualstack`](#-k8s--node--kubelet--support_dualstack)
 * [`token`](#-k8s--node--kubelet--token)
-* [`k8s_version`](#-k8s--node--kubelet--k8s_version)
 
 ##### <a name="-k8s--node--kubelet--arguments"></a>`arguments`
 
@@ -1224,14 +1223,6 @@ Data type: `Optional[Sensitive[String]]`
 k8s token to join a cluster
 
 Default value: `$k8s::node::node_token`
-
-##### <a name="-k8s--node--kubelet--k8s_version"></a>`k8s_version`
-
-Data type: `String[1]`
-
-
-
-Default value: `$k8s::version`
 
 ### <a name="k8s--node--simple_cni"></a>`k8s::node::simple_cni`
 
