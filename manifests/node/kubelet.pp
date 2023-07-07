@@ -212,14 +212,8 @@ class k8s::node::kubelet (
 
   if $runtime in ['crio', 'containerd'] {
     $_runtime_endpoint = "unix:///var/run/${runtime}/${runtime}.sock"
-    if versioncmp($k8s_version, '1.27.0') < 0 {
-      $_runtime = 'remote'
-    } else {
-      $_runtime = undef
-    }
   } else {
     $_runtime_endpoint = undef
-    $_runtime = undef
   }
 
   if $support_dualstack and fact('networking.ip') and fact('networking.ip6') {
@@ -233,7 +227,6 @@ class k8s::node::kubelet (
       kubeconfig                 => $kubeconfig,
       bootstrap_kubeconfig       => $_bootstrap_kubeconfig,
       cert_dir                   => $cert_path,
-      container_runtime          => $_runtime,
       container_runtime_endpoint => $_runtime_endpoint,
       hostname_override          => fact('networking.fqdn'),
       node_ip                    => $_node_ip,
