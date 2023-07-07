@@ -51,6 +51,7 @@ class k8s::node::kubelet (
   Optional[Sensitive[String]] $token  = $k8s::node::node_token,
 
   Optional[K8s::Firewall] $firewall_type = $k8s::node::firewall_type,
+  String[1] $k8s_version                 = $k8s::version,
 ) {
   k8s::binary { 'kubelet':
     ensure => $ensure,
@@ -211,7 +212,11 @@ class k8s::node::kubelet (
 
   if $runtime in ['crio', 'containerd'] {
     $_runtime_endpoint = "unix:///var/run/${runtime}/${runtime}.sock"
-    $_runtime = 'remote'
+    if versioncmp($k8s_version, '1.27.0') < 0 {
+      $_runtime = 'remote'
+    } else {
+      $_runtime = undef
+    }
   } else {
     $_runtime_endpoint = undef
     $_runtime = undef
