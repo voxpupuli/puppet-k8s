@@ -19,11 +19,13 @@
 # @param etcd_cluster_name name of the etcd cluster for searching its nodes in the puppetdb
 #
 class k8s (
+  # Stored in Hiera data
+  String[1] $version,
+  String[1] $etcd_version,
+
   K8s::Ensure $ensure                     = 'present',
   Enum['container', 'native'] $packaging  = 'native',
   K8s::Native_packaging $native_packaging = 'loose',
-  String[1] $version                      = '1.26.1',
-  String[1] $etcd_version                 = '3.5.1',
 
   String[1] $container_registry              = 'registry.k8s.io',
   Optional[String[1]] $container_image_tag   = undef,
@@ -164,7 +166,9 @@ class k8s (
     ensure_packages([$_conntrack,])
   }
 
-  include k8s::install::cni_plugins
+  if $role != 'none' {
+    include k8s::install::cni_plugins
+  }
 
   if $role == 'server' {
     include k8s::server

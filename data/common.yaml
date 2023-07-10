@@ -1,1 +1,3 @@
 ---
+k8s::version: 1.26.1
+k8s::etcd_version: 3.5.1

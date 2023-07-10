@@ -95,9 +95,9 @@ The following parameters are available in the `k8s` class:
 * [`uid`](#-k8s--uid)
 * [`gid`](#-k8s--gid)
 * [`etcd_cluster_name`](#-k8s--etcd_cluster_name)
-* [`native_packaging`](#-k8s--native_packaging)
 * [`version`](#-k8s--version)
 * [`etcd_version`](#-k8s--etcd_version)
+* [`native_packaging`](#-k8s--native_packaging)
 * [`container_registry`](#-k8s--container_registry)
 * [`container_image_tag`](#-k8s--container_image_tag)
 * [`container_manager`](#-k8s--container_manager)
@@ -212,21 +212,11 @@ name of the etcd cluster for searching its nodes in the puppetdb
 
 Default value: `'default'`
 
-##### <a name="-k8s--native_packaging"></a>`native_packaging`
-
-Data type: `K8s::Native_packaging`
-
-
-
-Default value: `'loose'`
-
 ##### <a name="-k8s--version"></a>`version`
 
 Data type: `String[1]`
 
 
-
-Default value: `'1.26.1'`
 
 ##### <a name="-k8s--etcd_version"></a>`etcd_version`
 
@@ -234,7 +224,13 @@ Data type: `String[1]`
 
 
 
-Default value: `'3.5.1'`
+##### <a name="-k8s--native_packaging"></a>`native_packaging`
+
+Data type: `K8s::Native_packaging`
+
+
+
+Default value: `'loose'`
 
 ##### <a name="-k8s--container_registry"></a>`container_registry`
 
@@ -1961,11 +1957,11 @@ Default value: `"${cert_path}/client-ca.key"`
 
 ##### <a name="-k8s--server--etcd--cluster_name"></a>`cluster_name`
 
-Data type: `String[1]`
+Data type: `Optional[String[1]]`
 
-name of the etcd cluster for searching its nodes in the puppetdb
+name of the etcd cluster for searching its nodes in the puppetdb, will use k8s::etcd_cluster_name unless otherwise specified
 
-Default value: `pick($k8s::server::etcd_cluster_name, 'default')`
+Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--ensure"></a>`ensure`
 
@@ -1981,7 +1977,7 @@ Data type: `Optional[K8s::Firewall]`
 
 define the type of firewall to use
 
-Default value: `$k8s::server::firewall_type`
+Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--generate_ca"></a>`generate_ca`
 
@@ -2041,11 +2037,11 @@ Default value: `"${cert_path}/peer-ca.key"`
 
 ##### <a name="-k8s--server--etcd--puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
 
-Data type: `String[1]`
+Data type: `Optional[String[1]]`
 
 enable puppetdb resource searching
 
-Default value: `pick($k8s::server::puppetdb_discovery_tag, $cluster_name)`
+Default value: `$cluster_name`
 
 ##### <a name="-k8s--server--etcd--self_signed_tls"></a>`self_signed_tls`
 
@@ -2057,11 +2053,11 @@ Default value: `false`
 
 ##### <a name="-k8s--server--etcd--version"></a>`version`
 
-Data type: `String[1]`
+Data type: `Optional[String[1]]`
 
-version of ectd to install
+version of ectd to install, will use k8s::etcd_version unless otherwise specified
 
-Default value: `pick($k8s::etcd_version, '3.5.1')`
+Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--user"></a>`user`
 
@@ -2147,11 +2143,11 @@ Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--auto_tls"></a>`auto_tls`
 
-Data type: `Boolean`
+Data type: `Optional[Boolean]`
 
 
 
-Default value: `$k8s::server::etcd::self_signed_tls`
+Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--binary_path"></a>`binary_path`
 
@@ -2187,11 +2183,11 @@ Default value: `"${etcd_name}.etcd"`
 
 ##### <a name="-k8s--server--etcd--setup--ensure"></a>`ensure`
 
-Data type: `K8s::Ensure`
+Data type: `Optional[K8s::Ensure]`
 
 set ensure for installation or deinstallation
 
-Default value: `$k8s::server::etcd::ensure`
+Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--etcd_name"></a>`etcd_name`
 
@@ -2219,11 +2215,11 @@ Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--group"></a>`group`
 
-Data type: `String[1]`
+Data type: `Optional[String[1]]`
 
 etcd system user group
 
-Default value: `$k8s::server::etcd::group`
+Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--initial_advertise_peer_urls"></a>`initial_advertise_peer_urls`
 
@@ -2299,11 +2295,11 @@ Default value: `'etcd'`
 
 ##### <a name="-k8s--server--etcd--setup--peer_auto_tls"></a>`peer_auto_tls`
 
-Data type: `Boolean`
+Data type: `Optional[Boolean]`
 
 
 
-Default value: `$k8s::server::etcd::self_signed_tls`
+Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--peer_cert_file"></a>`peer_cert_file`
 
@@ -2371,19 +2367,19 @@ Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--user"></a>`user`
 
-Data type: `String[1]`
+Data type: `Optional[String[1]]`
 
 etcd system user
 
-Default value: `$k8s::server::etcd::user`
+Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--version"></a>`version`
 
-Data type: `String[1]`
+Data type: `Optional[String[1]]`
 
 The ectd version to install
 
-Default value: `$k8s::server::etcd::version`
+Default value: `undef`
 
 ### <a name="k8s--server--resources"></a>`k8s::server::resources`
 
