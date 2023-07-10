@@ -4,7 +4,7 @@
 # @param cert_path path to cert files
 # @param client_ca_cert path to the client ca cert
 # @param client_ca_key path to the client ca key
-# @param cluster_name name of the etcd cluster for searching its nodes in the puppetdb
+# @param cluster_name name of the etcd cluster for searching its nodes in the puppetdb, will use k8s::etcd_cluster_name unless otherwise specified
 # @param ensure set ensure for installation or deinstallation
 # @param firewall_type define the type of firewall to use
 # @param generate_ca whether to generate a own ca or not
@@ -18,17 +18,17 @@
 # @param puppetdb_discovery_tag enable puppetdb resource searching
 # @param self_signed_tls whether to use self signed tls or not
 # @param user user to run etcd as
-# @param version version of ectd to install
+# @param version version of ectd to install, will use k8s::etcd_version unless otherwise specified
 #
 class k8s::server::etcd (
-  K8s::Ensure $ensure = 'present',
-  String[1] $version  = pick($k8s::etcd_version, '3.5.1'),
+  K8s::Ensure $ensure          = 'present',
+  Optional[String[1]] $version = undef,
 
-  Boolean $manage_setup             = true,
-  Boolean $manage_firewall          = false,
-  Boolean $manage_members           = false,
-  String[1] $cluster_name           = pick($k8s::server::etcd_cluster_name, 'default'),
-  String[1] $puppetdb_discovery_tag = pick($k8s::server::puppetdb_discovery_tag, $cluster_name),
+  Boolean $manage_setup                       = true,
+  Boolean $manage_firewall                    = false,
+  Boolean $manage_members                     = false,
+  Optional[String[1]] $cluster_name           = undef,
+  Optional[String[1]] $puppetdb_discovery_tag = $cluster_name,
 
   Boolean $self_signed_tls = false,
   Boolean $manage_certs    = true,
@@ -42,7 +42,8 @@ class k8s::server::etcd (
   Stdlib::Unixpath $client_ca_key  = "${cert_path}/client-ca.key",
   Stdlib::Unixpath $client_ca_cert = "${cert_path}/client-ca.pem",
 
-  Optional[K8s::Firewall] $firewall_type = $k8s::server::firewall_type,
+  Optional[K8s::Firewall] $firewall_type = undef,
+
   String[1] $user  = 'etcd',
   String[1] $group = 'etcd',
 ) {
@@ -122,6 +123,17 @@ class k8s::server::etcd (
   }
 
   if $ensure == 'present' and $manage_members {
+    if defined(Class['k8s']) {
+      $_k8s_cluster_name = $k8s::etcd_cluster_name
+      $_k8s_puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag
+    } else {
+      $_k8s_cluster_name = lookup('k8s::cluster_name', undef, undef, undef)
+      $_k8s_puppetdb_discovery_tag = lookup('k8s::puppetdb_discovery_tag', undef, undef, undef)
+    }
+
+    $_cluster_name = pick($cluster_name, $_k8s_cluster_name, 'default')
+    $_puppetdb_discovery_tag = pick($puppetdb_discovery_tag, $cluster_name, $_k8s_puppetdb_discovery_tag, 'default')
+
     # Needs the PuppetDB terminus installed
     $pql_query = [
       'resources[certname,parameters] {',
@@ -131,8 +143,8 @@ class k8s::server::etcd (
       '    resources {',
       '      type = \'Class\' and',
       '      title = \'K8s::Server::Etcd\' and',
-      "      parameters.cluster_name = '${cluster_name}' and",
-      "      parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}' and",
+      "      parameters.cluster_name = '${_cluster_name}' and",
+      "      parameters.puppetdb_discovery_tag = '${_puppetdb_discovery_tag}' and",
       "      certname != '${trusted[certname]}'",
       '    }',
       '  }',
@@ -164,10 +176,15 @@ class k8s::server::etcd (
   }
 
   if $manage_firewall {
-    if $facts['firewalld_version'] {
-      $_firewall_type = pick($firewall_type, 'firewalld')
+    if defined(Class['k8s']) {
+      $_k8s_firewall_type = $k8s::firewall_type
     } else {
-      $_firewall_type = pick($firewall_type, 'iptables')
+      $_k8s_firewall_type = lookup('k8s::firewall_type', undef, undef, undef)
+    }
+    if $facts['firewalld_version'] {
+      $_firewall_type = pick($firewall_type, $_k8s_firewall_type, 'firewalld')
+    } else {
+      $_firewall_type = pick($firewall_type, $_k8s_firewall_type, 'iptables')
     }
 
     case $_firewall_type {

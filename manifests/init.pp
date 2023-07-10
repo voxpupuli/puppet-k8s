@@ -192,7 +192,9 @@ class k8s (
     ensure_packages([$_conntrack,])
   }
 
-  include k8s::install::cni_plugins
+  if $role != 'none' {
+    include k8s::install::cni_plugins
+  }
 
   if $role == 'server' {
     include k8s::server
