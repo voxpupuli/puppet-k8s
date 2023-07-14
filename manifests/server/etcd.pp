@@ -21,8 +21,8 @@
 # @param version version of ectd to install, will use k8s::etcd_version unless otherwise specified
 #
 class k8s::server::etcd (
-  K8s::Ensure $ensure          = 'present',
-  Optional[String[1]] $version = undef,
+  K8s::Ensure $ensure = 'present',
+  String[1] $version  = $k8s::etcd_version,
 
   Boolean $manage_setup                       = true,
   Boolean $manage_firewall                    = false,
@@ -118,21 +118,9 @@ class k8s::server::etcd (
     }
   }
 
-  if $manage_setup and !$manage_members {
-    include k8s::server::etcd::setup
-  }
-
   if $ensure == 'present' and $manage_members {
-    if defined(Class['k8s']) {
-      $_k8s_cluster_name = $k8s::etcd_cluster_name
-      $_k8s_puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag
-    } else {
-      $_k8s_cluster_name = lookup('k8s::cluster_name', undef, undef, undef)
-      $_k8s_puppetdb_discovery_tag = lookup('k8s::puppetdb_discovery_tag', undef, undef, undef)
-    }
-
-    $_cluster_name = pick($cluster_name, $_k8s_cluster_name, 'default')
-    $_puppetdb_discovery_tag = pick($puppetdb_discovery_tag, $cluster_name, $_k8s_puppetdb_discovery_tag, 'default')
+    $_cluster_name = pick($cluster_name, $k8s::etcd_cluster_name, 'default')
+    $_puppetdb_discovery_tag = pick($puppetdb_discovery_tag, $cluster_name, $k8s::puppetdb_discovery_tag, 'default')
 
     # Needs the PuppetDB terminus installed
     $pql_query = [
@@ -152,16 +140,14 @@ class k8s::server::etcd (
     ].join(' ')
 
     $cluster_nodes = puppetdb_query($pql_query)
-    if $manage_setup {
-      class { 'k8s::server::etcd::setup':
-        initial_cluster       => $cluster_nodes.map |$node| {
-          "${node['parameters']['etcd_name']}=${node['parameters']['initial_advertise_peer_urls'][0]}"
-        },
-        initial_cluster_state => ($cluster_nodes.size() ? {
-            0       => 'new',
-            default => 'existing',
-        }),
-      }
+    $_setup_splat = {
+      initial_cluster       => $cluster_nodes.map |$node| {
+        "${node['parameters']['etcd_name']}=${node['parameters']['initial_advertise_peer_urls'][0]}"
+      },
+      initial_cluster_state => ($cluster_nodes.size() ? {
+          0       => 'new',
+          default => 'existing',
+      }),
     }
 
     $cluster_nodes.each |$node| {
@@ -173,22 +159,31 @@ class k8s::server::etcd (
         cluster_key  => "${cert_path}/etcd-client.key",
       }
     }
+  } else {
+    $_setup_splat = {}
+  }
+
+  if $manage_setup {
+    class { 'k8s::server::etcd::setup':
+      ensure  => $ensure,
+      version => $version,
+      user    => $user,
+      group   => $group,
+      *       => $_setup_splat,
+    }
   }
 
   if $manage_firewall {
-    if defined(Class['k8s']) {
-      $_k8s_firewall_type = $k8s::firewall_type
-    } else {
-      $_k8s_firewall_type = lookup('k8s::firewall_type', undef, undef, undef)
-    }
     if $facts['firewalld_version'] {
-      $_firewall_type = pick($firewall_type, $_k8s_firewall_type, 'firewalld')
+      $_firewall_type = pick($firewall_type, $k8s::firewall_type, 'firewalld')
     } else {
-      $_firewall_type = pick($firewall_type, $_k8s_firewall_type, 'iptables')
+      $_firewall_type = pick($firewall_type, $k8s::firewall_type, 'iptables')
     }
 
     case $_firewall_type {
       'firewalld' : {
+        include firewalld
+
         firewalld_service {
           default:
             ensure => $ensure,

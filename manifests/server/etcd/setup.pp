@@ -35,10 +35,10 @@
 # @param version The ectd version to install
 #
 class k8s::server::etcd::setup (
-  Optional[K8s::Ensure] $ensure      = undef,
+  K8s::Ensure $ensure                = 'present',
   Enum['archive','package'] $install = 'archive',
   String[1] $package                 = 'etcd',
-  Optional[String[1]] $version       = undef,
+  String[1] $version                 = $k8s::etcd_version,
   String[1] $etcd_name               = $facts['networking']['hostname'],
   String[1] $fqdn                    = $facts['networking']['fqdn'],
 
@@ -72,44 +72,27 @@ class k8s::server::etcd::setup (
 
   Optional[Stdlib::Unixpath] $binary_path = undef,
   Stdlib::Unixpath $storage_path          = '/var/lib/etcd',
-  Optional[String[1]] $user               = undef,
-  Optional[String[1]] $group              = undef,
+  String[1] $user                         = 'etcd',
+  String[1] $group                        = 'etcd',
   Optional[Integer[0, 65535]] $uid        = undef,
   Optional[Integer[0, 65535]] $gid        = undef,
 ) {
-  if defined(Class['k8s']) {
-    $_k8s_etcd_version = $k8s::etcd_version
-  } else {
-    $_k8s_etcd_version = lookup('k8s::etcd_version')
-  }
   if defined(Class['k8s::server::etcd']) {
-    $_k8s_server_etcd_ensure = $k8s::server::etcd::ensure
-    $_k8s_server_etcd_version = $k8s::server::etcd::version
     $_k8s_server_etcd_self_signed_tls = $k8s::server::etcd::self_signed_tls
     $_k8s_server_etcd_manage_certs = $k8s::server::etcd::manage_certs
-    $_k8s_server_etcd_user = $k8s::server::etcd::user
-    $_k8s_server_etcd_group = $k8s::server::etcd::group
   } else {
-    $_k8s_server_etcd_ensure = lookup('k8s::server::etcd::ensure', undef, undef, undef)
-    $_k8s_server_etcd_version = lookup('k8s::server::etcd::version', undef, undef, undef)
-    $_k8s_server_etcd_self_signed_tls = lookup('k8s::server::etcd::self_signed_tls', undef, undef, undef)
-    $_k8s_server_etcd_manage_certs = lookup('k8s::server::etcd::manage_certs', undef, undef, undef)
-    $_k8s_server_etcd_user = lookup('k8s::server::etcd::user', undef, undef, undef)
-    $_k8s_server_etcd_group = lookup('k8s::server::etcd::group', undef, undef, undef)
+    $_k8s_server_etcd_self_signed_tls = lookup('k8s::server::etcd::self_signed_tls', default_value => undef)
+    $_k8s_server_etcd_manage_certs = lookup('k8s::server::etcd::manage_certs', default_value => undef)
   }
-  $_ensure = pick($ensure, $_k8s_server_etcd_ensure, 'present')
   $_peer_auto_tls = pick($peer_auto_tls, $_k8s_server_etcd_self_signed_tls, false)
   $_auto_tls = pick($auto_tls, $_k8s_server_etcd_self_signed_tls, false)
-  $_version = pick($version, $_k8s_server_etcd_version, $_k8s_etcd_version)
-  $_user = pick($user, $_k8s_server_etcd_user, 'etcd')
-  $_group = pick($group, $_k8s_server_etcd_group, 'etcd')
 
   if $install == 'archive' {
     $_url  = k8s::format_url($archive_template, { version => $version, })
     $_file = basename($_url)
 
     archive { "/var/tmp/${_file}":
-      ensure          => $_ensure,
+      ensure          => $ensure,
       source          => $_url,
       extract         => true,
       extract_command => 'tar xfz %s --strip-components=1',
@@ -119,20 +102,20 @@ class k8s::server::etcd::setup (
       notify          => Service['etcd'],
     }
 
-    if $_ensure == 'absent' {
+    if $ensure == 'absent' {
       file { ['/usr/local/bin/etcd', '/usr/local/bin/etcdctl']:
         ensure => 'absent',
       }
     }
 
-    group { $_group:
-      ensure => $_ensure,
+    group { $group:
+      ensure => $ensure,
       system => true,
       gid    => $gid,
     }
 
-    user { $_user:
-      ensure     => $_ensure,
+    user { $user:
+      ensure     => $ensure,
       comment    => 'etcd user',
       gid        => $gid,
       home       => $storage_path,
@@ -146,13 +129,13 @@ class k8s::server::etcd::setup (
     }
   } else {
     package { $package:
-      ensure => stdlib::ensure($_ensure, 'package'),
+      ensure => stdlib::ensure($ensure, 'package'),
     }
   }
 
   file {
     default:
-      ensure => stdlib::ensure($_ensure, 'directory');
+      ensure => stdlib::ensure($ensure, 'directory');
 
     '/etc/etcd': ;
     $storage_path:
@@ -188,7 +171,7 @@ class k8s::server::etcd::setup (
 
   file {
     default:
-      ensure => stdlib::ensure($_ensure, 'file'),
+      ensure => stdlib::ensure($ensure, 'file'),
       owner  => 'root',
       group  => 'root';
 
@@ -231,21 +214,21 @@ class k8s::server::etcd::setup (
     $service_require = Package[$package]
   } else {
     $_binary_path    = pick($binary_path, '/usr/local/bin/etcd')
-    $service_require = User[$_user]
+    $service_require = User[$user]
   }
 
   systemd::unit_file { 'etcd.service':
-    ensure  => $_ensure,
+    ensure  => $ensure,
     content => epp('k8s/etcd.service.epp', {
         binary_path  => $_binary_path,
         workdir_path => $storage_path,
-        user         => $_user,
+        user         => $user,
     }),
     notify  => Service['etcd'],
   }
 
   service { 'etcd':
-    ensure    => stdlib::ensure($_ensure, 'service'),
+    ensure    => stdlib::ensure($ensure, 'service'),
     enable    => true,
     require   => $service_require,
     subscribe => File['/etc/etcd/etcd.conf'],

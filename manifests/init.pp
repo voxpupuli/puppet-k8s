@@ -95,7 +95,7 @@ class k8s (
   Stdlib::Fqdn $cluster_domain                       = 'cluster.local',
   String[1] $etcd_cluster_name                       = 'default',
 
-  Enum['node','server','none']  $role    = 'none',
+  Enum['node','server','etcd-replica','none']  $role = 'none',
   Optional[K8s::Firewall] $firewall_type = undef,
 
   String[1] $user        = 'kube',
@@ -103,102 +103,11 @@ class k8s (
   Integer[0, 65535] $uid = 888,
   Integer[0, 65535] $gid = 888,
 ) {
-  if $manage_container_manager {
-    include k8s::install::container_runtime
-  }
-
-  group { $group:
-    ensure => present,
-    system => true,
-    gid    => $gid,
-  }
-
-  user { $user:
-    ensure     => present,
-    comment    => 'Kubernetes user',
-    gid        => $group,
-    home       => '/srv/kubernetes',
-    managehome => false,
-    shell      => (fact('os.family') ? {
-        'Debian' => '/usr/sbin/nologin',
-        default  => '/sbin/nologin',
-    }),
-    system     => true,
-    uid        => $uid,
-  }
-
-  file {
-    default:
-      ensure  => directory,
-      force   => true,
-      purge   => true,
-      recurse => true;
-
-    '/opt/k8s': ;
-    '/opt/k8s/bin': ;
-  }
-
-  file { '/var/run/kubernetes':
-    ensure => directory,
-    owner  => $user,
-    group  => $group,
-  }
-
-  $_sysconfig_path = pick($sysconfig_path, '/etc/sysconfig')
-  file { "${_sysconfig_path}/kube-common":
-    ensure  => file,
-    content => epp('k8s/sysconfig.epp', {
-        comment               => 'General Kubernetes Configuration',
-        environment_variables => {
-          'KUBE_LOG_LEVEL'   => '',
-        },
-    }),
-  }
-
-  file {
-    default:
-      ensure => directory;
-
-    '/etc/kubernetes': ;
-    '/etc/kubernetes/certs': ;
-    '/etc/kubernetes/manifests':
-      purge   => $purge_manifests,
-      recurse => true;
-    '/root/.kube': ;
-    '/srv/kubernetes':
-      owner => $user,
-      group => $group;
-    '/usr/libexec/kubernetes': ;
-    '/var/lib/kubelet': ;
-    '/var/lib/kubelet/pki': ;
-
-    '/usr/share/containers/': ;
-    '/usr/share/containers/oci/': ;
-    '/usr/share/containers/oci/hooks.d': ;
-  }
-
-  if $manage_repo {
-    include k8s::repo
-  }
-
-  if $manage_packages {
-    # Ensure conntrack is installed to properly handle networking cleanup
-    if fact('os.family') == 'Debian' {
-      $_conntrack = 'conntrack'
-    } else {
-      $_conntrack = 'conntrack-tools'
-    }
-
-    ensure_packages([$_conntrack,])
-  }
-
-  if $role != 'none' {
-    include k8s::install::cni_plugins
-  }
-
   if $role == 'server' {
     include k8s::server
   } elsif $role == 'node' {
     include k8s::node
+  } elsif $role == 'etcd-replica' {
+    include k8s::server::etcd
   }
 }
