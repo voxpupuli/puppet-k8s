@@ -7,6 +7,7 @@
 ### Classes
 
 * [`k8s`](#k8s): Sets up a Kubernetes instance - either as a node or as a server
+* [`k8s::common`](#k8s--common): Sets up common Kubernetes components - users/groups/folders/etc
 * [`k8s::install::cni_plugins`](#k8s--install--cni_plugins): manages the installation of the cni plugins
 * [`k8s::install::container_runtime`](#k8s--install--container_runtime): manages the installation of cri
 * [`k8s::install::crictl`](#k8s--install--crictl): installs the crictl debugging tool
@@ -218,11 +219,15 @@ Data type: `String[1]`
 
 
 
+Default value: `'1.26.1'`
+
 ##### <a name="-k8s--etcd_version"></a>`etcd_version`
 
 Data type: `String[1]`
 
 
+
+Default value: `'3.5.1'`
 
 ##### <a name="-k8s--native_packaging"></a>`native_packaging`
 
@@ -474,7 +479,7 @@ Default value: `'cluster.local'`
 
 ##### <a name="-k8s--role"></a>`role`
 
-Data type: `Enum['node','server','none']`
+Data type: `Enum['node','server','etcd-replica','none']`
 
 
 
@@ -487,6 +492,10 @@ Data type: `Optional[K8s::Firewall]`
 
 
 Default value: `undef`
+
+### <a name="k8s--common"></a>`k8s::common`
+
+Sets up common Kubernetes components - users/groups/folders/etc
 
 ### <a name="k8s--install--cni_plugins"></a>`k8s::install::cni_plugins`
 
@@ -2053,11 +2062,11 @@ Default value: `false`
 
 ##### <a name="-k8s--server--etcd--version"></a>`version`
 
-Data type: `Optional[String[1]]`
+Data type: `String[1]`
 
 version of ectd to install, will use k8s::etcd_version unless otherwise specified
 
-Default value: `undef`
+Default value: `$k8s::etcd_version`
 
 ##### <a name="-k8s--server--etcd--user"></a>`user`
 
@@ -2183,11 +2192,11 @@ Default value: `"${etcd_name}.etcd"`
 
 ##### <a name="-k8s--server--etcd--setup--ensure"></a>`ensure`
 
-Data type: `Optional[K8s::Ensure]`
+Data type: `K8s::Ensure`
 
 set ensure for installation or deinstallation
 
-Default value: `undef`
+Default value: `'present'`
 
 ##### <a name="-k8s--server--etcd--setup--etcd_name"></a>`etcd_name`
 
@@ -2215,11 +2224,11 @@ Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--group"></a>`group`
 
-Data type: `Optional[String[1]]`
+Data type: `String[1]`
 
 etcd system user group
 
-Default value: `undef`
+Default value: `'etcd'`
 
 ##### <a name="-k8s--server--etcd--setup--initial_advertise_peer_urls"></a>`initial_advertise_peer_urls`
 
@@ -2367,19 +2376,19 @@ Default value: `undef`
 
 ##### <a name="-k8s--server--etcd--setup--user"></a>`user`
 
-Data type: `Optional[String[1]]`
+Data type: `String[1]`
 
 etcd system user
 
-Default value: `undef`
+Default value: `'etcd'`
 
 ##### <a name="-k8s--server--etcd--setup--version"></a>`version`
 
-Data type: `Optional[String[1]]`
+Data type: `String[1]`
 
 The ectd version to install
 
-Default value: `undef`
+Default value: `$k8s::etcd_version`
 
 ### <a name="k8s--server--resources"></a>`k8s::server::resources`
 

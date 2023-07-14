@@ -11,7 +11,7 @@ describe 'k8s::server::etcd' do
     }
   end
 
-  context "with k8s included" do
+  context "with k8s included in server mode" do
     let(:pre_condition) do
       <<~PUPPET
         function puppetdb_query(String[1] $data) {
@@ -61,7 +61,7 @@ describe 'k8s::server::etcd' do
     end
   end
 
-  context "without k8s included" do
+  context "with k8s included" do
     let(:pre_condition) do
       <<~PUPPET
         function puppetdb_query(String[1] $data) {
@@ -75,6 +75,8 @@ describe 'k8s::server::etcd' do
             }
           ]
         }
+
+        include ::k8s
       PUPPET
     end
 

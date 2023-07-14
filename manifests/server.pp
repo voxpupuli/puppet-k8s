@@ -60,6 +60,8 @@ class k8s::server (
   String[1] $etcd_cluster_name                   = $k8s::etcd_cluster_name,
 
 ) {
+  include k8s::common
+
   if $manage_etcd {
     class { 'k8s::server::etcd':
       ensure          => $ensure,
