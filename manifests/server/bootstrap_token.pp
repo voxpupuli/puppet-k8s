@@ -2,8 +2,8 @@
 #
 # You generally only want this to be done on a single Kubernetes server
 define k8s::server::bootstrap_token (
-  K8s::Ensure $ensure = 'present',
   Stdlib::Unixpath $kubeconfig,
+  K8s::Ensure $ensure = 'present',
 
   Pattern[/^[a-z0-9]{6}$/] $id            = $name,
   Sensitive[K8s::Bootstrap_token] $secret = Sensitive(fqdn_rand_string(16).downcase()),
