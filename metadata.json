@@ -1,6 +1,6 @@
 {
   "name": "puppet-k8s",
-  "version": "1.0.0",
+  "version": "1.0.1-rc0",
   "author": "Vox Pupuli",
   "summary": "Install and manage plain Kubernetes installs",
   "license": "Apache-2.0",
