@@ -1,9 +1,9 @@
 # @summary Generates a TLS CA
 define k8s::server::tls::ca (
-  K8s::Ensure $ensure = present,
-
   Stdlib::Unixpath $key,
   Stdlib::Unixpath $cert,
+  K8s::Ensure $ensure = present,
+
   String[1] $subject = "/CN=${title}",
 
   String[1] $owner = 'root',

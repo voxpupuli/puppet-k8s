@@ -3309,8 +3309,8 @@ You generally only want this to be done on a single Kubernetes server
 
 The following parameters are available in the `k8s::server::bootstrap_token` defined type:
 
-* [`ensure`](#-k8s--server--bootstrap_token--ensure)
 * [`kubeconfig`](#-k8s--server--bootstrap_token--kubeconfig)
+* [`ensure`](#-k8s--server--bootstrap_token--ensure)
 * [`id`](#-k8s--server--bootstrap_token--id)
 * [`secret`](#-k8s--server--bootstrap_token--secret)
 * [`use_authentication`](#-k8s--server--bootstrap_token--use_authentication)
@@ -3321,6 +3321,12 @@ The following parameters are available in the `k8s::server::bootstrap_token` def
 * [`extra_groups`](#-k8s--server--bootstrap_token--extra_groups)
 * [`addn_data`](#-k8s--server--bootstrap_token--addn_data)
 
+##### <a name="-k8s--server--bootstrap_token--kubeconfig"></a>`kubeconfig`
+
+Data type: `Stdlib::Unixpath`
+
+
+
 ##### <a name="-k8s--server--bootstrap_token--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
@@ -3328,12 +3334,6 @@ Data type: `K8s::Ensure`
 
 
 Default value: `'present'`
-
-##### <a name="-k8s--server--bootstrap_token--kubeconfig"></a>`kubeconfig`
-
-Data type: `Stdlib::Unixpath`
-
-
 
 ##### <a name="-k8s--server--bootstrap_token--id"></a>`id`
 
@@ -3467,23 +3467,15 @@ Generates a TLS CA
 
 The following parameters are available in the `k8s::server::tls::ca` defined type:
 
-* [`ensure`](#-k8s--server--tls--ca--ensure)
 * [`key`](#-k8s--server--tls--ca--key)
 * [`cert`](#-k8s--server--tls--ca--cert)
+* [`ensure`](#-k8s--server--tls--ca--ensure)
 * [`subject`](#-k8s--server--tls--ca--subject)
 * [`owner`](#-k8s--server--tls--ca--owner)
 * [`group`](#-k8s--server--tls--ca--group)
 * [`key_bits`](#-k8s--server--tls--ca--key_bits)
 * [`valid_days`](#-k8s--server--tls--ca--valid_days)
 * [`generate`](#-k8s--server--tls--ca--generate)
-
-##### <a name="-k8s--server--tls--ca--ensure"></a>`ensure`
-
-Data type: `K8s::Ensure`
-
-
-
-Default value: `present`
 
 ##### <a name="-k8s--server--tls--ca--key"></a>`key`
 
@@ -3496,6 +3488,14 @@ Data type: `Stdlib::Unixpath`
 Data type: `Stdlib::Unixpath`
 
 
+
+##### <a name="-k8s--server--tls--ca--ensure"></a>`ensure`
+
+Data type: `K8s::Ensure`
+
+
+
+Default value: `present`
 
 ##### <a name="-k8s--server--tls--ca--subject"></a>`subject`
 
