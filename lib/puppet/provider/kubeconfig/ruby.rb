@@ -44,7 +44,7 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
 
   def chmod
     mode = resource[:mode]
-    raise Puppet::Error, "File mode is invalid" unless mode.is_a?(String) && mode =~ %r{^0[0-7]{3}$}
+    raise Puppet::Error, 'File mode is invalid' unless mode.is_a?(String) && mode =~ %r{^0[0-7]{3}$}
 
     FileUtils.chmod(mode.to_i(8), resource[:path])
   end

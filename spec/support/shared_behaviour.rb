@@ -49,8 +49,7 @@ RSpec.shared_examples 'a kubeconfig provider' do |provider_class|
           'users' => [
             {
               'name' => 'default',
-              'user' => {
-              },
+              'user' => {},
             },
           ],
           'current-context' => 'default',

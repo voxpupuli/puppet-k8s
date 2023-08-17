@@ -44,8 +44,7 @@ RSpec.describe ruby_provider do
         'users' => [
           {
             'name' => 'default',
-            'user' => {
-            },
+            'user' => {},
           },
         ],
         'current-context' => 'default',
