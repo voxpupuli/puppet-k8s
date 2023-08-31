@@ -262,6 +262,17 @@ class k8s::node::kubelet (
     enable => true,
   }
 
+  if fact('os.family') == 'Suse' {
+    # Remove pre-packaged kubeadmin-built kubelet configuration on SUSE
+    file {
+      default:
+        ensure  => absent;
+
+      '/usr/lib/systemd/system/kubelet.service':;
+      '/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf':;
+    }
+  }
+
   Class['k8s::install::container_runtime'] -> Service['kubelet']
   Package <| title == 'containernetworking-plugins' |> -> Service['kubelet']
 
