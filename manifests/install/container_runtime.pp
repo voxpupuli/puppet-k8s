@@ -42,6 +42,13 @@ class k8s::install::container_runtime (
           target  => '/usr/sbin/runc',
           replace => false,
         }
+      } elsif fact('os.family') == 'Suse' {
+        file { '/etc/crio/crio.conf':
+          ensure => file,
+        }
+        file { '/usr/libexec/crio':
+          ensure => directory,
+        }
       } else {
         $pkg = pick($crio_package, 'cri-o')
       }
