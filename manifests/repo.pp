@@ -54,8 +54,9 @@ class k8s::repo (
       }
     }
     'RedHat': {
-      $libcontainers_url = "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_${fact('os.release.major')}_Stream/"
-      $crio_url          = "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/${crio_version}/CentOS_${fact('os.release.major')}_Stream/"
+      $release_name = if fact('os.release.major') > 7 { "CentOS_${fact('os.release.major')}_Stream" } else { "CentOS_${fact('os.release.major')}" }
+      $libcontainers_url = "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${release_name}/"
+      $crio_url          = "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/${crio_version}/${release_name}/"
 
       yumrepo { 'libcontainers:stable':
         descr    => 'Stable releases of libcontainers',
