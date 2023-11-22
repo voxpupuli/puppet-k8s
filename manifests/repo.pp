@@ -54,7 +54,7 @@ class k8s::repo (
       }
     }
     'RedHat': {
-      $release_name = if fact('os.release.major') > 7 { "CentOS_${fact('os.release.major')}_Stream" } else { "CentOS_${fact('os.release.major')}" }
+      $release_name = if versioncmp(fact('os.release.major'), '7') == 1 { "CentOS_${fact('os.release.major')}_Stream" } else { "CentOS_${fact('os.release.major')}" }
       $libcontainers_url = "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/${release_name}/"
       $crio_url          = "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/${crio_version}/${release_name}/"
 
