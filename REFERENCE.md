@@ -551,6 +551,7 @@ The following parameters are available in the `k8s::install::container_runtime` 
 * [`containerd_package`](#-k8s--install--container_runtime--containerd_package)
 * [`k8s_version`](#-k8s--install--container_runtime--k8s_version)
 * [`runc_version`](#-k8s--install--container_runtime--runc_version)
+* [`package_ensure`](#-k8s--install--container_runtime--package_ensure)
 
 ##### <a name="-k8s--install--container_runtime--manage_repo"></a>`manage_repo`
 
@@ -599,6 +600,14 @@ Data type: `String[1]`
 the runc version
 
 Default value: `$k8s::runc_version`
+
+##### <a name="-k8s--install--container_runtime--package_ensure"></a>`package_ensure`
+
+Data type: `String[1]`
+
+the ensure value to set on the cri package
+
+Default value: `installed`
 
 ### <a name="k8s--install--crictl"></a>`k8s::install::crictl`
 
