@@ -8,6 +8,7 @@
 # @param containerd_package the containerd package anme
 # @param k8s_version the k8s version
 # @param runc_version the runc version
+# @param package_ensure the ensure value to set on the cri package
 #
 class k8s::install::container_runtime (
   Boolean $manage_repo                       = $k8s::manage_repo,
@@ -16,6 +17,7 @@ class k8s::install::container_runtime (
   Optional[String[1]] $containerd_package    = $k8s::containerd_package,
   String[1] $k8s_version                     = $k8s::version,
   String[1] $runc_version                    = $k8s::runc_version,
+  String[1] $package_ensure                  = installed,
 ) {
   case $container_manager {
     'crio': {
@@ -85,7 +87,8 @@ class k8s::install::container_runtime (
   }
 
   package { 'k8s container manager':
-    name => $pkg,
+    ensure => $package_ensure,
+    name   => $pkg,
   }
 
   if $manage_repo {
