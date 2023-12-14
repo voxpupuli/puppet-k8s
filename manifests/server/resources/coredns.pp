@@ -7,20 +7,19 @@
 # @param deployment_config Additional configuration to merge into the Kubernetes Deployment object
 # @param hosts Additional host-style entries for the CoreDNS deployment to serve
 # @param image_pull_secrets the secrets to pull from private registries
-# @param template_path The path to the template to use for the CoreDNS ConfigMap
+# @param corefile_data The data to use for the CoreDNS ConfigMap
 #
 class k8s::server::resources::coredns (
+  String[1] $corefile_data,
   K8s::Ensure $ensure                    = $k8s::ensure,
   Stdlib::Unixpath $kubeconfig           = $k8s::server::resources::kubeconfig,
   K8s::IP_addresses $dns_service_address = $k8s::server::resources::dns_service_address,
-  String[1] $cluster_domain              = $k8s::server::resources::cluster_domain,
   String[1] $registry                    = $k8s::server::resources::coredns_registry,
   String[1] $image                       = $k8s::server::resources::coredns_image,
   String[1] $image_tag                   = $k8s::server::resources::coredns_tag,
   Optional[Array] $image_pull_secrets    = $k8s::server::resources::image_pull_secrets,
   Hash[String,Data] $deployment_config   = $k8s::server::resources::coredns_deployment_config,
   Array[String[1]] $hosts                = [],
-  String[1] $template_path               = 'k8s/server/resources/coredns_configmap.epp',
 ) {
   assert_private()
 
@@ -119,7 +118,7 @@ class k8s::server::resources::coredns (
           },
         },
         data     => {
-          'Corefile'    => epp($template_path),
+          'Corefile'    => $corefile_data,
           'PuppetHosts' => $_hosts,
         },
       };

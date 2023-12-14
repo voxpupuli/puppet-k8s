@@ -1,1 +1,25 @@
 ---
+k8s::server::resources::coredns::corefile_data: |
+  .:53 {
+      errors
+      health {
+        lameduck 5s
+      }
+      ready
+      kubernetes %{lookup('k8s::cluster_domain', String[1], 'first', 'cluster.local')} in-addr.arpa ip6.arpa {
+        fallthrough in-addr.arpa ip6.arpa
+      }
+      prometheus :9153
+      hosts /etc/coredns/PuppetHosts {
+        ttl 60
+        reload 15s
+        fallthrough
+      }
+      forward . /etc/resolv.conf {
+        max_concurrent 1000
+      }
+      cache 30
+      loop
+      reload
+      loadbalance
+  }
