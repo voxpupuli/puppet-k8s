@@ -2707,6 +2707,7 @@ The following parameters are available in the `k8s::server::resources::coredns` 
 * [`deployment_config`](#-k8s--server--resources--coredns--deployment_config)
 * [`hosts`](#-k8s--server--resources--coredns--hosts)
 * [`image_pull_secrets`](#-k8s--server--resources--coredns--image_pull_secrets)
+* [`template_path`](#-k8s--server--resources--coredns--template_path)
 * [`ensure`](#-k8s--server--resources--coredns--ensure)
 * [`kubeconfig`](#-k8s--server--resources--coredns--kubeconfig)
 * [`cluster_domain`](#-k8s--server--resources--coredns--cluster_domain)
@@ -2766,6 +2767,14 @@ Data type: `Optional[Array]`
 the secrets to pull from private registries
 
 Default value: `$k8s::server::resources::image_pull_secrets`
+
+##### <a name="-k8s--server--resources--coredns--template_path"></a>`template_path`
+
+Data type: `String[1]`
+
+The path to the template to use for the CoreDNS ConfigMap
+
+Default value: `'k8s/server/resources/coredns_configmap.epp'`
 
 ##### <a name="-k8s--server--resources--coredns--ensure"></a>`ensure`
 
