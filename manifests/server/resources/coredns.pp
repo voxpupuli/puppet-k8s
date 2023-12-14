@@ -19,6 +19,7 @@ class k8s::server::resources::coredns (
   Optional[Array] $image_pull_secrets    = $k8s::server::resources::image_pull_secrets,
   Hash[String,Data] $deployment_config   = $k8s::server::resources::coredns_deployment_config,
   Array[String[1]] $hosts                = [],
+  Stdlib::Absolutepath $template_path    = 'k8s/server/resources/coredns_configmap.epp',
 ) {
   assert_private()
 
@@ -117,31 +118,7 @@ class k8s::server::resources::coredns (
           },
         },
         data     => {
-          'Corefile'    => [
-            '.:53 {',
-            '  errors',
-            '  health {',
-            '    lameduck 5s',
-            '  }',
-            '  ready',
-            "  kubernetes ${cluster_domain} in-addr.arpa ip6.arpa {",
-            '    fallthrough in-addr.arpa ip6.arpa',
-            '  }',
-            '  prometheus :9153',
-            '  hosts /etc/coredns/PuppetHosts {',
-            '    ttl 60',
-            '    reload 15s',
-            '    fallthrough',
-            '  }',
-            '  forward . /etc/resolv.conf {',
-            '    max_concurrent 1000',
-            '  }',
-            '  cache 30',
-            '  loop',
-            '  reload',
-            '  loadbalance',
-            '}',
-          ].join("\n"),
+          'Corefile'    => epp($template_path),
           'PuppetHosts' => $_hosts,
         },
       };
