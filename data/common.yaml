@@ -1,4 +1,5 @@
 ---
+k8s::cluster_domain: 'cluster.local'
 k8s::server::resources::coredns::corefile_data: |
   .:53 {
       errors
@@ -6,7 +7,7 @@ k8s::server::resources::coredns::corefile_data: |
         lameduck 5s
       }
       ready
-      kubernetes %{lookup('k8s::cluster_domain', String[1], 'first', 'cluster.local')} in-addr.arpa ip6.arpa {
+      kubernetes %{lookup('k8s::cluster_domain')} in-addr.arpa ip6.arpa {
         fallthrough in-addr.arpa ip6.arpa
       }
       prometheus :9153

@@ -19,6 +19,7 @@
 # @param etcd_cluster_name name of the etcd cluster for searching its nodes in the puppetdb
 #
 class k8s (
+  Stdlib::Fqdn $cluster_domain,
   K8s::Ensure $ensure                     = 'present',
   Enum['container', 'native'] $packaging  = 'native',
   K8s::Native_packaging $native_packaging = 'loose',
@@ -64,7 +65,6 @@ class k8s (
   K8s::CIDR $cluster_cidr                            = '10.0.0.0/16',
   Stdlib::IP::Address::Nosubnet $api_service_address = k8s::ip_in_cidr($service_cluster_cidr, 'first'),
   K8s::IP_addresses $dns_service_address             = k8s::ip_in_cidr($service_cluster_cidr, 'second'),
-  Stdlib::Fqdn $cluster_domain                       = 'cluster.local',
   String[1] $etcd_cluster_name                       = 'default',
 
   Enum['node','server','none']  $role    = 'none',
