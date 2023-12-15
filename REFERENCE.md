@@ -95,6 +95,7 @@ The following parameters are available in the `k8s` class:
 * [`uid`](#-k8s--uid)
 * [`gid`](#-k8s--gid)
 * [`etcd_cluster_name`](#-k8s--etcd_cluster_name)
+* [`cluster_domain`](#-k8s--cluster_domain)
 * [`native_packaging`](#-k8s--native_packaging)
 * [`version`](#-k8s--version)
 * [`etcd_version`](#-k8s--etcd_version)
@@ -127,7 +128,6 @@ The following parameters are available in the `k8s` class:
 * [`cluster_cidr`](#-k8s--cluster_cidr)
 * [`api_service_address`](#-k8s--api_service_address)
 * [`dns_service_address`](#-k8s--dns_service_address)
-* [`cluster_domain`](#-k8s--cluster_domain)
 * [`role`](#-k8s--role)
 * [`firewall_type`](#-k8s--firewall_type)
 
@@ -211,6 +211,12 @@ Data type: `String[1]`
 name of the etcd cluster for searching its nodes in the puppetdb
 
 Default value: `'default'`
+
+##### <a name="-k8s--cluster_domain"></a>`cluster_domain`
+
+Data type: `Stdlib::Fqdn`
+
+domain name for the cluster
 
 ##### <a name="-k8s--native_packaging"></a>`native_packaging`
 
@@ -467,14 +473,6 @@ Data type: `K8s::IP_addresses`
 
 
 Default value: `k8s::ip_in_cidr($service_cluster_cidr, 'second')`
-
-##### <a name="-k8s--cluster_domain"></a>`cluster_domain`
-
-Data type: `Stdlib::Fqdn`
-
-
-
-Default value: `'cluster.local'`
 
 ##### <a name="-k8s--role"></a>`role`
 
