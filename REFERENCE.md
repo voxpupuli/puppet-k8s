@@ -2712,6 +2712,7 @@ The following parameters are available in the `k8s::server::resources::coredns` 
 * [`kubeconfig`](#-k8s--server--resources--coredns--kubeconfig)
 * [`registry`](#-k8s--server--resources--coredns--registry)
 * [`template_path`](#-k8s--server--resources--coredns--template_path)
+* [`template_variables`](#-k8s--server--resources--coredns--template_variables)
 
 ##### <a name="-k8s--server--resources--coredns--cluster_domain"></a>`cluster_domain`
 
@@ -2808,6 +2809,14 @@ Data type: `String[1]`
 The path to the template to use for the CoreDNS ConfigMap
 
 Default value: `'k8s/server/resources/coredns_corefile.epp'`
+
+##### <a name="-k8s--server--resources--coredns--template_variables"></a>`template_variables`
+
+Data type: `Hash[String, Any]`
+
+The variables to use for the CoreDNS ConfigMap template
+
+Default value: `{ cluster_domain => $cluster_domain }`
 
 ### <a name="k8s--server--resources--flannel"></a>`k8s::server::resources::flannel`
 
