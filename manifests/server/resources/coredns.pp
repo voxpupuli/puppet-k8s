@@ -12,6 +12,7 @@
 # @param kubeconfig The path to the kubeconfig to use for kubectl commands
 # @param registry The CoreDNS image registry to use
 # @param template_path The path to the template to use for the CoreDNS ConfigMap
+# @param template_variables The variables to use for the CoreDNS ConfigMap template
 #
 class k8s::server::resources::coredns (
   K8s::Ensure $ensure                    = $k8s::ensure,
@@ -25,7 +26,8 @@ class k8s::server::resources::coredns (
   Hash[String,Data] $deployment_config   = $k8s::server::resources::coredns_deployment_config,
   Array[String[1]] $hosts                = [],
   String[1] $template_path               = 'k8s/server/resources/coredns_corefile.epp',
-  Optional[String[1]] $corefile_content  = undef
+  Optional[String[1]] $corefile_content  = undef,
+  Hash[String, Any] $template_variables  = { cluster_domain => $cluster_domain },
 ) {
   assert_private()
 
@@ -45,7 +47,7 @@ class k8s::server::resources::coredns (
   if $corefile_content {
     $_corefile_content = $corefile_content
   } else {
-    $_corefile_content = epp($template_path)
+    $_corefile_content = epp($template_path, $template_variables)
   }
 
   kubectl_apply {
