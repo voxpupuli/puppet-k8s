@@ -1,24 +1,33 @@
 # @summary Generates and deploys the default CoreDNS DNS provider for Kubernetes
 #
-# @param dns_service_address The address for the DNS service
-# @param registry The CoreDNS image registry to use
-# @param image The CoreDNS image name to use
-# @param image_tag The CoreDNS image tag to use
+# @param cluster_domain The cluster domain to use for the CoreDNS ConfigMap
+# @param corefile_content The content to use for the CoreDNS ConfigMap
 # @param deployment_config Additional configuration to merge into the Kubernetes Deployment object
+# @param dns_service_address The address for the DNS service
+# @param ensure Whether the resource should be present or absent on the target system
 # @param hosts Additional host-style entries for the CoreDNS deployment to serve
+# @param image The CoreDNS image name to use
 # @param image_pull_secrets the secrets to pull from private registries
+# @param image_tag The CoreDNS image tag to use
+# @param kubeconfig The path to the kubeconfig to use for kubectl commands
+# @param registry The CoreDNS image registry to use
+# @param template_path The path to the template to use for the CoreDNS ConfigMap
+# @param template_variables The variables to use for the CoreDNS ConfigMap template
 #
 class k8s::server::resources::coredns (
   K8s::Ensure $ensure                    = $k8s::ensure,
+  Stdlib::Fqdn $cluster_domain           = $k8s::server::resources::cluster_domain,
   Stdlib::Unixpath $kubeconfig           = $k8s::server::resources::kubeconfig,
   K8s::IP_addresses $dns_service_address = $k8s::server::resources::dns_service_address,
-  String[1] $cluster_domain              = $k8s::server::resources::cluster_domain,
   String[1] $registry                    = $k8s::server::resources::coredns_registry,
   String[1] $image                       = $k8s::server::resources::coredns_image,
   String[1] $image_tag                   = $k8s::server::resources::coredns_tag,
   Optional[Array] $image_pull_secrets    = $k8s::server::resources::image_pull_secrets,
   Hash[String,Data] $deployment_config   = $k8s::server::resources::coredns_deployment_config,
   Array[String[1]] $hosts                = [],
+  String[1] $template_path               = 'k8s/server/resources/coredns_corefile.epp',
+  Optional[String[1]] $corefile_content  = undef,
+  Hash[String, Any] $template_variables  = { cluster_domain => $cluster_domain },
 ) {
   assert_private()
 
@@ -34,6 +43,12 @@ class k8s::server::resources::coredns (
   }
 
   $_hosts = $hosts.join("\n")
+
+  if $corefile_content {
+    $_corefile_content = $corefile_content
+  } else {
+    $_corefile_content = epp($template_path, $template_variables)
+  }
 
   kubectl_apply {
     default:
@@ -117,31 +132,7 @@ class k8s::server::resources::coredns (
           },
         },
         data     => {
-          'Corefile'    => [
-            '.:53 {',
-            '  errors',
-            '  health {',
-            '    lameduck 5s',
-            '  }',
-            '  ready',
-            "  kubernetes ${cluster_domain} in-addr.arpa ip6.arpa {",
-            '    fallthrough in-addr.arpa ip6.arpa',
-            '  }',
-            '  prometheus :9153',
-            '  hosts /etc/coredns/PuppetHosts {',
-            '    ttl 60',
-            '    reload 15s',
-            '    fallthrough',
-            '  }',
-            '  forward . /etc/resolv.conf {',
-            '    max_concurrent 1000',
-            '  }',
-            '  cache 30',
-            '  loop',
-            '  reload',
-            '  loadbalance',
-            '}',
-          ].join("\n"),
+          'Corefile'    => $_corefile_content,
           'PuppetHosts' => $_hosts,
         },
       };

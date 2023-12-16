@@ -95,6 +95,7 @@ The following parameters are available in the `k8s` class:
 * [`uid`](#-k8s--uid)
 * [`gid`](#-k8s--gid)
 * [`etcd_cluster_name`](#-k8s--etcd_cluster_name)
+* [`cluster_domain`](#-k8s--cluster_domain)
 * [`native_packaging`](#-k8s--native_packaging)
 * [`version`](#-k8s--version)
 * [`etcd_version`](#-k8s--etcd_version)
@@ -127,7 +128,6 @@ The following parameters are available in the `k8s` class:
 * [`cluster_cidr`](#-k8s--cluster_cidr)
 * [`api_service_address`](#-k8s--api_service_address)
 * [`dns_service_address`](#-k8s--dns_service_address)
-* [`cluster_domain`](#-k8s--cluster_domain)
 * [`role`](#-k8s--role)
 * [`firewall_type`](#-k8s--firewall_type)
 
@@ -211,6 +211,14 @@ Data type: `String[1]`
 name of the etcd cluster for searching its nodes in the puppetdb
 
 Default value: `'default'`
+
+##### <a name="-k8s--cluster_domain"></a>`cluster_domain`
+
+Data type: `Stdlib::Fqdn`
+
+domain name for the cluster
+
+Default value: `'cluster.local'`
 
 ##### <a name="-k8s--native_packaging"></a>`native_packaging`
 
@@ -467,14 +475,6 @@ Data type: `K8s::IP_addresses`
 
 
 Default value: `k8s::ip_in_cidr($service_cluster_cidr, 'second')`
-
-##### <a name="-k8s--cluster_domain"></a>`cluster_domain`
-
-Data type: `Stdlib::Fqdn`
-
-
-
-Default value: `'cluster.local'`
 
 ##### <a name="-k8s--role"></a>`role`
 
@@ -2700,48 +2700,35 @@ Generates and deploys the default CoreDNS DNS provider for Kubernetes
 
 The following parameters are available in the `k8s::server::resources::coredns` class:
 
-* [`dns_service_address`](#-k8s--server--resources--coredns--dns_service_address)
-* [`registry`](#-k8s--server--resources--coredns--registry)
-* [`image`](#-k8s--server--resources--coredns--image)
-* [`image_tag`](#-k8s--server--resources--coredns--image_tag)
-* [`deployment_config`](#-k8s--server--resources--coredns--deployment_config)
-* [`hosts`](#-k8s--server--resources--coredns--hosts)
-* [`image_pull_secrets`](#-k8s--server--resources--coredns--image_pull_secrets)
-* [`ensure`](#-k8s--server--resources--coredns--ensure)
-* [`kubeconfig`](#-k8s--server--resources--coredns--kubeconfig)
 * [`cluster_domain`](#-k8s--server--resources--coredns--cluster_domain)
+* [`corefile_content`](#-k8s--server--resources--coredns--corefile_content)
+* [`deployment_config`](#-k8s--server--resources--coredns--deployment_config)
+* [`dns_service_address`](#-k8s--server--resources--coredns--dns_service_address)
+* [`ensure`](#-k8s--server--resources--coredns--ensure)
+* [`hosts`](#-k8s--server--resources--coredns--hosts)
+* [`image`](#-k8s--server--resources--coredns--image)
+* [`image_pull_secrets`](#-k8s--server--resources--coredns--image_pull_secrets)
+* [`image_tag`](#-k8s--server--resources--coredns--image_tag)
+* [`kubeconfig`](#-k8s--server--resources--coredns--kubeconfig)
+* [`registry`](#-k8s--server--resources--coredns--registry)
+* [`template_path`](#-k8s--server--resources--coredns--template_path)
+* [`template_variables`](#-k8s--server--resources--coredns--template_variables)
 
-##### <a name="-k8s--server--resources--coredns--dns_service_address"></a>`dns_service_address`
+##### <a name="-k8s--server--resources--coredns--cluster_domain"></a>`cluster_domain`
 
-Data type: `K8s::IP_addresses`
+Data type: `Stdlib::Fqdn`
 
-The address for the DNS service
+The cluster domain to use for the CoreDNS ConfigMap
 
-Default value: `$k8s::server::resources::dns_service_address`
+Default value: `$k8s::server::resources::cluster_domain`
 
-##### <a name="-k8s--server--resources--coredns--registry"></a>`registry`
+##### <a name="-k8s--server--resources--coredns--corefile_content"></a>`corefile_content`
 
-Data type: `String[1]`
+Data type: `Optional[String[1]]`
 
-The CoreDNS image registry to use
+The content to use for the CoreDNS ConfigMap
 
-Default value: `$k8s::server::resources::coredns_registry`
-
-##### <a name="-k8s--server--resources--coredns--image"></a>`image`
-
-Data type: `String[1]`
-
-The CoreDNS image name to use
-
-Default value: `$k8s::server::resources::coredns_image`
-
-##### <a name="-k8s--server--resources--coredns--image_tag"></a>`image_tag`
-
-Data type: `String[1]`
-
-The CoreDNS image tag to use
-
-Default value: `$k8s::server::resources::coredns_tag`
+Default value: `undef`
 
 ##### <a name="-k8s--server--resources--coredns--deployment_config"></a>`deployment_config`
 
@@ -2751,6 +2738,22 @@ Additional configuration to merge into the Kubernetes Deployment object
 
 Default value: `$k8s::server::resources::coredns_deployment_config`
 
+##### <a name="-k8s--server--resources--coredns--dns_service_address"></a>`dns_service_address`
+
+Data type: `K8s::IP_addresses`
+
+The address for the DNS service
+
+Default value: `$k8s::server::resources::dns_service_address`
+
+##### <a name="-k8s--server--resources--coredns--ensure"></a>`ensure`
+
+Data type: `K8s::Ensure`
+
+Whether the resource should be present or absent on the target system
+
+Default value: `$k8s::ensure`
+
 ##### <a name="-k8s--server--resources--coredns--hosts"></a>`hosts`
 
 Data type: `Array[String[1]]`
@@ -2758,6 +2761,14 @@ Data type: `Array[String[1]]`
 Additional host-style entries for the CoreDNS deployment to serve
 
 Default value: `[]`
+
+##### <a name="-k8s--server--resources--coredns--image"></a>`image`
+
+Data type: `String[1]`
+
+The CoreDNS image name to use
+
+Default value: `$k8s::server::resources::coredns_image`
 
 ##### <a name="-k8s--server--resources--coredns--image_pull_secrets"></a>`image_pull_secrets`
 
@@ -2767,29 +2778,45 @@ the secrets to pull from private registries
 
 Default value: `$k8s::server::resources::image_pull_secrets`
 
-##### <a name="-k8s--server--resources--coredns--ensure"></a>`ensure`
+##### <a name="-k8s--server--resources--coredns--image_tag"></a>`image_tag`
 
-Data type: `K8s::Ensure`
+Data type: `String[1]`
 
+The CoreDNS image tag to use
 
-
-Default value: `$k8s::ensure`
+Default value: `$k8s::server::resources::coredns_tag`
 
 ##### <a name="-k8s--server--resources--coredns--kubeconfig"></a>`kubeconfig`
 
 Data type: `Stdlib::Unixpath`
 
-
+The path to the kubeconfig to use for kubectl commands
 
 Default value: `$k8s::server::resources::kubeconfig`
 
-##### <a name="-k8s--server--resources--coredns--cluster_domain"></a>`cluster_domain`
+##### <a name="-k8s--server--resources--coredns--registry"></a>`registry`
 
 Data type: `String[1]`
 
+The CoreDNS image registry to use
 
+Default value: `$k8s::server::resources::coredns_registry`
 
-Default value: `$k8s::server::resources::cluster_domain`
+##### <a name="-k8s--server--resources--coredns--template_path"></a>`template_path`
+
+Data type: `String[1]`
+
+The path to the template to use for the CoreDNS ConfigMap
+
+Default value: `'k8s/server/resources/coredns_corefile.epp'`
+
+##### <a name="-k8s--server--resources--coredns--template_variables"></a>`template_variables`
+
+Data type: `Hash[String, Any]`
+
+The variables to use for the CoreDNS ConfigMap template
+
+Default value: `{ cluster_domain => $cluster_domain }`
 
 ### <a name="k8s--server--resources--flannel"></a>`k8s::server::resources::flannel`
 
