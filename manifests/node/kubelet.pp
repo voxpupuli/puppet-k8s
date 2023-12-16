@@ -1,11 +1,12 @@
 # @summary Installs and configures kubelet
 #
-# @param arguments
+# @param arguments additional arguments to pass to kubelet
 # @param auth type of node authentication
 # @param ca_cert path to the ca cert
 # @param cert path to node cert file
 # @param cert_path path to cert files
-# @param config
+# @param config additional config to pass to kubelet
+# @param control_plane_url cluster API connection
 # @param ensure set ensure for installation or deinstallation
 # @param firewall_type define the type of firewall to use
 # @param key path to node key file
@@ -13,12 +14,11 @@
 # @param manage_firewall whether to manage firewall or not
 # @param manage_kernel_modules whether to load kernel modules or not
 # @param manage_sysctl_settings whether to manage sysctl settings or not
-# @param control_plane_url cluster API connection
 # @param puppetdb_discovery_tag enable puppetdb resource searching
-# @param rotate_server_tls
+# @param rotate_server_tls whether to rotate server tls or not
 # @param runtime which container runtime to use
 # @param runtime_service name of the service of the container runtime
-# @param support_dualstack
+# @param support_dualstack whether to support dualstack or not
 # @param token k8s token to join a cluster
 #
 class k8s::node::kubelet (

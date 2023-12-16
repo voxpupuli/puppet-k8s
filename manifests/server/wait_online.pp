@@ -1,4 +1,5 @@
 # @summary Creates a dummy exec to allow deferring applies until the Kubernetes API server has started
+#
 class k8s::server::wait_online {
   # Wait up to 30 seconds for kube-apiserver to start
   exec { 'k8s apiserver wait online':

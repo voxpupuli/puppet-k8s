@@ -2,20 +2,22 @@
 #
 # @param addn_names additional names for certificates
 # @param cert_path path to cert files
-# @param client_ca_cert
-# @param client_ca_key
+# @param client_ca_cert path to the client ca cert
+# @param client_ca_key path to the client ca key
 # @param cluster_name name of the etcd cluster for searching its nodes in the puppetdb
 # @param ensure set ensure for installation or deinstallation
 # @param firewall_type define the type of firewall to use
 # @param generate_ca whether to generate a own ca or not
+# @param group group to run etcd as
 # @param manage_certs whether to manage certs or not
 # @param manage_firewall whether to manage firewall or not
 # @param manage_members whether to manage the ectd cluster member joining or not
 # @param manage_setup whether to manage the setup of etcd or not
-# @param peer_ca_cert
-# @param peer_ca_key
+# @param peer_ca_cert path to the peer ca cert
+# @param peer_ca_key path to the peer ca key
 # @param puppetdb_discovery_tag enable puppetdb resource searching
-# @param self_signed_tls
+# @param self_signed_tls whether to use self signed tls or not
+# @param user user to run etcd as
 # @param version version of ectd to install
 #
 class k8s::server::etcd (

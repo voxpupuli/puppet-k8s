@@ -2,13 +2,13 @@
 #
 # @summary manages the installation of cri
 #
-# @param manage_repo whether to manage the repo or not
 # @param container_manager set the cri to use
-# @param crio_package cri-o the package name
 # @param containerd_package the containerd package anme
+# @param crio_package cri-o the package name
 # @param k8s_version the k8s version
-# @param runc_version the runc version
+# @param manage_repo whether to manage the repo or not
 # @param package_ensure the ensure value to set on the cri package
+# @param runc_version the runc version
 #
 class k8s::install::container_runtime (
   Boolean $manage_repo                       = $k8s::manage_repo,

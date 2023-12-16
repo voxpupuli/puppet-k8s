@@ -1,4 +1,13 @@
 # @summary Deploys a Kubernetes binary
+#
+# @param ensure Whether the binary should be present or absent
+# @param version The version to deploy
+# @param packaging The packaging method to use
+# @param target The directory to deploy the binary to
+# @param tarball_target The directory to download tarballs to
+# @param active Whether the binary should be active
+# @param component The component to deploy
+#
 define k8s::binary (
   K8s::Ensure $ensure       = $k8s::ensure,
   String[1] $version        = $k8s::version,

@@ -1,4 +1,15 @@
 # @summary Generates a TLS CA
+#
+# @param key The path to the CA key
+# @param cert The path to the CA certificate
+# @param ensure Whether the CA should be present or absent
+# @param subject The subject of the CA certificate
+# @param owner The owner of the CA key and certificate
+# @param group The group of the CA key and certificate
+# @param key_bits The number of bits in the CA key
+# @param valid_days The number of days the CA certificate is valid
+# @param generate Whether to generate the CA key and certificate
+#
 define k8s::server::tls::ca (
   Stdlib::Unixpath $key,
   Stdlib::Unixpath $cert,

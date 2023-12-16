@@ -1,35 +1,35 @@
 # @summary Installs and configures an etcd instance
 #
-# @param advertise_client_urls
+# @param advertise_client_urls The client urls to advertise
 # @param archive_template The download url template for the etc archive
-# @param auto_compaction_retention
-# @param auto_tls
+# @param auto_compaction_retention The auto compaction retention
+# @param auto_tls Use auto tls
 # @param binary_path path to the etcd binary
-# @param cert_file
-# @param client_cert_auth
-# @param data_dir
+# @param cert_file path to the cert file
+# @param client_cert_auth Use client cert auth
+# @param data_dir path to the data dir
 # @param ensure set ensure for installation or deinstallation
 # @param etcd_name The etcd instance name
 # @param fqdn fully qualified domain name
 # @param gid The group system id
 # @param group etcd system user group
-# @param initial_advertise_peer_urls
-# @param initial_cluster
-# @param initial_cluster_state
-# @param initial_cluster_token
+# @param initial_advertise_peer_urls The peer urls to advertise
+# @param initial_cluster The initial cluster
+# @param initial_cluster_state The initial cluster state
+# @param initial_cluster_token The initial cluster token
 # @param install etcd installation method
-# @param key_file
-# @param listen_client_urls
-# @param listen_peer_urls
+# @param key_file path to the key file
+# @param listen_client_urls The client urls to listen on
+# @param listen_peer_urls The peer urls to listen on
 # @param package etcd package name
-# @param peer_auto_tls
-# @param peer_cert_file
-# @param peer_client_cert_auth
-# @param peer_key_file
-# @param peer_trusted_ca_file
-# @param proxy
+# @param peer_auto_tls Use peer auto tls
+# @param peer_cert_file path to the peer cert file
+# @param peer_client_cert_auth Use peer client cert auth
+# @param peer_key_file path to the peer key file
+# @param peer_trusted_ca_file path to the peer trusted ca file
+# @param proxy The proxy mode
 # @param storage_path path to the working dir of etcd
-# @param trusted_ca_file
+# @param trusted_ca_file path to the trusted ca file
 # @param uid The user system id
 # @param user etcd system user
 # @param version The ectd version to install

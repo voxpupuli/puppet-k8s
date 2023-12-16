@@ -1,23 +1,50 @@
 # @summary Sets up a Kubernetes instance - either as a node or as a server
 #
-# @param manage_kernel_modules
-#   A flag to manage required Kernel modules.
-#
-# @param manage_sysctl_settings
-#   A flag to manage required sysctl settings.
-#
-# @param manage_kube_proxy
-#   How/if the kube-proxy component should be managed, either as an in-cluster
-#   component (default), or as an on-node component for advanced use-cases.
-# @param ensure
-# @param packaging
-#
-# @param user username for kubernetes files and services
-# @param group groupname for kubernetes files and services
-# @param uid user id for kubernetes files and services
-# @param gid group id for kubernetes files and services
-# @param etcd_cluster_name name of the etcd cluster for searching its nodes in the puppetdb
+# @param api_service_address IP address for the API service
+# @param cluster_cidr CIDR for the pod network
 # @param cluster_domain domain name for the cluster
+# @param container_image_tag container image tag to use
+# @param container_manager container manager to use
+# @param container_registry container registry to use
+# @param container_runtime_service name of the container runtime service
+# @param containerd_package name of the containerd package
+# @param control_plane_url URL for the control plane
+# @param crictl_package name of the crictl package
+# @param crio_package name of the crio package
+# @param dns_service_address IP address for the DNS service
+# @param ensure whether kubernetes should be present or absent
+# @param etcd_cluster_name name of the etcd cluster for searching its nodes in the puppetdb
+# @param etcd_version version of etcd to install
+# @param firewall_type type of firewall to use
+# @param gid group id for kubernetes files and services
+# @param group groupname for kubernetes files and services
+# @param hyperkube_name name of the hyperkube binary
+# @param incluster_control_plane_url URL for the control plane from within the cluster
+# @param manage_container_manager whether to manage the container manager
+# @param manage_etcd whether to manage etcd
+# @param manage_firewall whether to manage the firewall
+# @param manage_image whether to manage the image
+# @param manage_kernel_modules A flag to manage required Kernel modules.
+# @param manage_kube_proxy How/if the kube-proxy component should be managed, either as an in-cluster component (default), or as an on-node component for advanced use-cases.
+# @param manage_packages whether to manage packages
+# @param manage_repo whether to manage the repo
+# @param manage_sysctl_settings A flag to manage required sysctl settings.
+# @param native_packaging type of native packaging to use
+# @param native_url_template template for native packaging
+# @param node_auth authentication method for nodes
+# @param package_template template for package names
+# @param packaging whether to use native or container packaging
+# @param puppetdb_discovery whether to use puppetdb for node discovery
+# @param puppetdb_discovery_tag tag to use for puppetdb node discovery
+# @param purge_manifests whether to purge manifests
+# @param role role of the node
+# @param runc_version version of runc to install
+# @param service_cluster_cidr CIDR for the service network
+# @param sysconfig_path path to the sysconfig directory
+# @param tarball_url_template template for tarball packaging
+# @param uid user id for kubernetes files and services
+# @param user username for kubernetes files and services
+# @param version version of kubernetes to install
 #
 class k8s (
   K8s::Ensure $ensure                     = 'present',

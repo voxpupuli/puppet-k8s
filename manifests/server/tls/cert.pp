@@ -1,4 +1,21 @@
 # @summary Generates and signs a TLS certificate
+#
+# @param addn_names The additional names for the certificate
+# @param ca_cert The path to the CA certificate
+# @param ca_key The path to the CA key
+# @param cert The path to the certificate file
+# @param cert_path The path to the directory where the certificate will be stored
+# @param config The path to the OpenSSL config file
+# @param csr The path to the CSR file
+# @param distinguished_name The distinguished name for the certificate
+# @param ensure Whether the certificate should be present or absent
+# @param extended_key_usage The extended key usage for the certificate
+# @param group The group of the certificate files
+# @param key The path to the key file
+# @param key_bits The number of bits in the key
+# @param owner The owner of the certificate files
+# @param valid_days The number of days the certificate should be valid
+#
 define k8s::server::tls::cert (
   Hash[String, String] $distinguished_name,
   Stdlib::Unixpath $cert_path,

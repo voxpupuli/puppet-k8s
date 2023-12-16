@@ -1,6 +1,13 @@
 # @summary Adds another member to a local etcd cluster
 #
 # TODO - Convert to native type
+#
+# @param cluster_ca The cluster CA for the new member
+# @param cluster_cert The cluster cert for the new member
+# @param cluster_key The cluster key for the new member
+# @param cluster_urls The cluster URLs for the new member
+# @param peer_urls The peer URLs for the new member
+#
 define k8s::server::etcd::member (
   Array[String, 1] $peer_urls,
 

@@ -1,14 +1,17 @@
 # @summary Installs and configures a Kubernetes apiserver
 #
 # @param advertise_address bind address of the apiserver
-# @param aggregator_ca_cert
+# @param aggregator_ca_cert path to the aggregator ca cert file
 # @param apiserver_cert path to the apiserver cert file
 # @param apiserver_client_cert path to the apiserver client cert file
 # @param apiserver_client_key path to the apiserver client key file
 # @param apiserver_key path to the apiserver cert file
-# @param arguments
+# @param arguments additional arguments for the apiserver
 # @param ca_cert path to the ca cert
 # @param cert_path path to cert files
+# @param container_image container image to use for the apiserver
+# @param container_image_tag container image tag to use for the apiserver
+# @param container_registry container registry to pull the image from
 # @param discover_etcd_servers enable puppetdb resource searching
 # @param ensure set ensure for installation or deinstallation
 # @param etcd_ca path to the etcd ca cert file
@@ -17,13 +20,13 @@
 # @param etcd_key path to the etcd key file
 # @param etcd_servers list etcd servers if no puppetdb is used
 # @param firewall_type define the type of firewall to use
-# @param front_proxy_cert
-# @param front_proxy_key
+# @param front_proxy_cert path to the front proxy cert file
+# @param front_proxy_key path to the front proxy key file
 # @param manage_firewall whether to manage firewall or not
 # @param puppetdb_discovery_tag enable puppetdb resource searching
-# @param service_cluster_cidr
-# @param serviceaccount_private
-# @param serviceaccount_public
+# @param service_cluster_cidr cidr of the service cluster
+# @param serviceaccount_private path to the service account private key file
+# @param serviceaccount_public path to the service account public key file
 #
 class k8s::server::apiserver (
   K8s::Ensure $ensure = $k8s::server::ensure,
