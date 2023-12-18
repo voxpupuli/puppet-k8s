@@ -1,4 +1,19 @@
 # @summary Installs and configures a Kubernetes controller manager
+#
+# @param arguments Additional arguments to pass to the controller manager.
+# @param ca_cert The path to the CA certificate.
+# @param ca_key The path to the CA key.
+# @param cert The path to the controller manager certificate.
+# @param cert_path The path to the TLS certificates.
+# @param cluster_cidr The CIDR of the cluster.
+# @param container_image The container image to use for the controller manager.
+# @param container_image_tag The container image tag to use for the controller manager.
+# @param container_registry The container registry to pull the controller manager image from.
+# @param control_plane_url The URL of the Kubernetes API server.
+# @param ensure Whether the controller manager should be configured.
+# @param key The path to the controller manager key.
+# @param service_cluster_cidr The CIDR of the service cluster.
+#
 class k8s::server::controller_manager (
   K8s::Ensure $ensure = $k8s::server::ensure,
 

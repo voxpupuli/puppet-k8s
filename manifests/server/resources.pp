@@ -1,5 +1,32 @@
 # @summary Generates and deploys standard Kubernetes in-cluster services
+#
+# @param ca_cert the path to the CA certificate to use for the cluster
+# @param cluster_cidr the CIDR to use for the cluster
+# @param cluster_domain the domain to use for the cluster
+# @param control_plane_url the URL to use for the control plane
+# @param coredns_deployment_config the configuration to use for the CoreDNS Deployment
+# @param coredns_image the image to use for the CoreDNS
+# @param coredns_registry the registry to use for the CoreDNS image
+# @param coredns_tag the tag to use for the CoreDNS image
+# @param dns_service_address the IP address to use for the DNS service
+# @param extra_kube_proxy_args the extra arguments to pass to the kube-proxy
+# @param flannel_cni_image the image to use for the Flannel CNI
+# @param flannel_cni_registry the registry to use for the Flannel CNI image
+# @param flannel_cni_tag the tag to use for the Flannel CNI image
+# @param flannel_daemonset_config the configuration to use for the Flannel DaemonSet
+# @param flannel_image the image to use for the Flannel
+# @param flannel_registry the registry to use for the Flannel image
+# @param flannel_tag the tag to use for the Flannel image
 # @param image_pull_secrets the secrets to pull from private registries
+# @param kube_proxy_daemonset_config the configuration to use for the kube-proxy DaemonSet
+# @param kube_proxy_image the image to use for the kube-proxy
+# @param kube_proxy_registry the registry to use for the kube-proxy image
+# @param kube_proxy_tag the tag to use for the kube-proxy image
+# @param kubeconfig the path to the kubeconfig file to use for kubectl
+# @param manage_bootstrap whether to manage the bootstrap resources
+# @param manage_coredns whether to manage the CoreDNS resources
+# @param manage_flannel whether to manage the Flannel resources
+# @param manage_kube_proxy whether to manage the kube-proxy resources
 #
 class k8s::server::resources (
   Stdlib::Unixpath $kubeconfig = '/root/.kube/config',

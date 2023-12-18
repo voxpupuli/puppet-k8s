@@ -1,6 +1,19 @@
 # @summary Sets up a on-node kube-proxy instance
 #
 # For most use-cases, running kube-proxy inside the cluster itself is recommended
+#
+# @param arguments A hash of additional arguments to pass to kube-proxy
+# @param auth The authentication method to use for the API server
+# @param ca_cert The path to the CA certificate to use for the API server
+# @param cert The path to the client certificate to use for the API server
+# @param cluster_cidr The CIDR range of the cluster
+# @param config A hash of additional configuration options to pass to kube-proxy
+# @param control_plane_url The URL of the Kubernetes API server
+# @param ensure Whether the kube-proxy service should be configured
+# @param key The path to the client key to use for the API server
+# @param puppetdb_discovery_tag The tag to use for PuppetDB service discovery
+# @param token The token to use for the API server
+#
 class k8s::node::kube_proxy (
   K8s::Ensure $ensure = $k8s::node::ensure,
 

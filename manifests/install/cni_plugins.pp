@@ -2,10 +2,10 @@
 #
 # @summary manages the installation of the cni plugins
 #
-# @param ensure set ensure for installation or deinstallation
-# @param version sets the version to use
 # @param arch sets the arch to use for binary download
+# @param ensure set ensure for installation or deinstallation
 # @param method installation method
+# @param version sets the version to use
 #
 class k8s::install::cni_plugins (
   K8s::Ensure $ensure = $k8s::ensure,

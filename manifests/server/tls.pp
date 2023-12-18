@@ -1,4 +1,19 @@
 # @summary Generates the necessary Kubernetes certificates for a server
+#
+# @param aggregator_ca_cert The path to the aggregator CA certificate
+# @param aggregator_ca_key The path to the aggregator CA key
+# @param api_addn_names Additional names to add to the API server certificate
+# @param api_service_address The API service address
+# @param ca_cert The path to the CA certificate
+# @param ca_key The path to the CA key
+# @param cert_path The path to the certificates
+# @param cluster_domain The cluster domain
+# @param ensure Whether to generate the certificates or not
+# @param generate_ca Whether to generate the CA or not
+# @param key_bits The number of bits to use for the key
+# @param manage_certs Whether to manage the certificates or not
+# @param valid_days The number of days the certificate is valid for
+#
 class k8s::server::tls (
   K8s::Ensure $ensure   = 'present',
   Boolean $generate_ca  = $k8s::server::generate_ca,

@@ -1,13 +1,15 @@
 # @summary Generates and deploys the default kube-proxy service for Kubernetes
 #
 # @param cluster_cidr The internal cluster CIDR to proxy for
-# @param registry The kube-proxy image registry to use
-# @param image The kube-proxy image name to use
-# @param image_tag The kube-proxy image tag to use
 # @param daemonset_config Additional configuration to merge into the DaemonSet object
+# @param ensure Whether the resource should be present or absent
 # @param extra_args Additional arguments to specify to the kube-proxy application
 # @param extra_config Additional configuration data to apply to the kube-proxy configuration file
+# @param image The kube-proxy image name to use
 # @param image_pull_secrets the secrets to pull from private registries
+# @param image_tag The kube-proxy image tag to use
+# @param kubeconfig The path to the kubeconfig file to use
+# @param registry The kube-proxy image registry to use
 #
 class k8s::server::resources::kube_proxy (
   K8s::Ensure $ensure                    = $k8s::ensure,

@@ -1,4 +1,16 @@
 # @summary Installs and configures a Kubernetes scheduler
+#
+# @param ensure Whether the scheduler should be configured.
+# @param control_plane_url The URL of the Kubernetes API server.
+# @param arguments Additional arguments to pass to the scheduler.
+# @param cert_path The path to the directory containing the TLS certificates.
+# @param ca_cert The path to the CA certificate.
+# @param cert The path to the scheduler certificate.
+# @param key The path to the scheduler key.
+# @param container_registry The container registry to pull images from.
+# @param container_image The container image to use for the scheduler.
+# @param container_image_tag The container image tag to use for the scheduler.
+#
 class k8s::server::scheduler (
   K8s::Ensure $ensure = $k8s::server::ensure,
 

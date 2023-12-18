@@ -1,15 +1,17 @@
 # @summary Generates and deploys the default CoreDNS DNS provider for Kubernetes
 #
 # @param cluster_cidr The internal cluster CIDR to proxy for
-# @param cni_registry The Flannel CNI plugin image registry to use
 # @param cni_image The Flannel CNI plugin image name to use
 # @param cni_image_tag The Flannel CNI plugin image tag to use
-# @param registry The Flannel image registry to use
-# @param image The Flannel image name to use
-# @param image_tag The Flannel image tag to use
+# @param cni_registry The Flannel CNI plugin image registry to use
 # @param daemonset_config Additional configuration to merge into the DaemonSet object
-# @param net_config Additional configuration to merge into net-conf.json for Flannel
+# @param ensure Whether the resource should be present or absent on the system
+# @param image The Flannel image name to use
 # @param image_pull_secrets the secrets to pull from private registries
+# @param image_tag The Flannel image tag to use
+# @param kubeconfig The path to the kubeconfig file to use
+# @param net_config Additional configuration to merge into net-conf.json for Flannel
+# @param registry The Flannel image registry to use
 #
 class k8s::server::resources::flannel (
   K8s::Ensure $ensure                 = $k8s::ensure,

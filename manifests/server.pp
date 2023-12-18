@@ -1,13 +1,14 @@
 # @summary Sets up a Kubernetes server instance
 #
-# @param aggregator_ca_cert
-# @param aggregator_ca_key
+# @param aggregator_ca_cert path to the aggregator ca cert
+# @param aggregator_ca_key path to the aggregator ca key
 # @param api_port Cluster API port
 # @param ca_cert path to the ca cert
 # @param ca_key path to the ca key
 # @param cert_path path to cert files
 # @param cluster_cidr cluster cidr
 # @param cluster_domain cluster domain name
+# @param control_plane_url cluster API connection
 # @param direct_control_plane_url direct clust API connection
 # @param dns_service_address cluster dns service address
 # @param ensure set ensure for installation or deinstallation
@@ -23,7 +24,6 @@
 # @param manage_kubeadm whether to install kubeadm or not
 # @param manage_resources whether to manage cluster internal resources or not
 # @param manage_signing whether to manage cert signing or not
-# @param control_plane_url cluster API connection
 # @param node_on_server whether to use controller also as nodes or not
 # @param puppetdb_discovery_tag enable puppetdb resource searching
 #
@@ -58,7 +58,6 @@ class k8s::server (
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
   Optional[K8s::Firewall] $firewall_type         = $k8s::firewall_type,
   String[1] $etcd_cluster_name                   = $k8s::etcd_cluster_name,
-
 ) {
   if $manage_etcd {
     class { 'k8s::server::etcd':

@@ -1,6 +1,19 @@
 # @summary Generates and stores a kubelet bootstrap token into the cluster
 #
 # You generally only want this to be done on a single Kubernetes server
+#
+# @param addn_data Additional data to add to the token
+# @param description A description of the token
+# @param ensure Whether the token should be present or absent
+# @param expiration The expiration time of the token
+# @param extra_groups An array of extra groups to add to the token
+# @param id The ID of the token to generate
+# @param kubeconfig The path to the kubeconfig file to use
+# @param secret The secret to use for the token
+# @param update Whether to update the token if it already exists
+# @param use_authentication Whether the token should be used for authentication
+# @param use_signing Whether the token should be used for signing
+#
 define k8s::server::bootstrap_token (
   Stdlib::Unixpath $kubeconfig,
   K8s::Ensure $ensure = 'present',
