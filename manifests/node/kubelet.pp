@@ -295,9 +295,9 @@ class k8s::node::kubelet (
         include firewall
 
         firewall { '100 allow kubelet access':
-          dport  => 10250,
-          proto  => 'tcp',
-          action => 'accept',
+          dport => 10250,
+          proto => 'tcp',
+          jump  => 'accept',
         }
       }
       default: {}

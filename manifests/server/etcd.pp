@@ -188,14 +188,14 @@ class k8s::server::etcd (
         include firewall
 
         firewall { '100 allow etcd server access':
-          dport  => 2379,
-          proto  => 'tcp',
-          action => 'accept',
+          dport => 2379,
+          proto => 'tcp',
+          jump  => 'accept',
         }
         firewall { '100 allow etcd client access':
-          dport  => 2380,
-          proto  => 'tcp',
-          action => 'accept',
+          dport => 2380,
+          proto => 'tcp',
+          jump  => 'accept',
         }
       }
       default: {}
