@@ -4105,7 +4105,7 @@ The index of the IP to retrieve
 
 A Kubernetes bootstrap token, must be 16-characters lowercase alphanumerical
 
-Alias of `Pattern[/^[a-z0-9]{16}\z/]`
+Alias of `Pattern[/\A[a-z0-9]{16}\z/]`
 
 ### <a name="K8s--CIDR"></a>`K8s::CIDR`
 
