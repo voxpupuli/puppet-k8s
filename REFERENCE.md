@@ -499,18 +499,10 @@ Class: k8s::install::cni_plugins
 
 The following parameters are available in the `k8s::install::cni_plugins` class:
 
-* [`arch`](#-k8s--install--cni_plugins--arch)
 * [`ensure`](#-k8s--install--cni_plugins--ensure)
 * [`method`](#-k8s--install--cni_plugins--method)
 * [`version`](#-k8s--install--cni_plugins--version)
-
-##### <a name="-k8s--install--cni_plugins--arch"></a>`arch`
-
-Data type: `String[1]`
-
-sets the arch to use for binary download
-
-Default value: `'amd64'`
+* [`download_url_template`](#-k8s--install--cni_plugins--download_url_template)
 
 ##### <a name="-k8s--install--cni_plugins--ensure"></a>`ensure`
 
@@ -535,6 +527,14 @@ Data type: `String[1]`
 sets the version to use
 
 Default value: `'v1.2.0'`
+
+##### <a name="-k8s--install--cni_plugins--download_url_template"></a>`download_url_template`
+
+Data type: `String[1]`
+
+template string for the cni_plugins download url
+
+Default value: `'https://github.com/containernetworking/plugins/releases/download/%{version}/cni-plugins-linux-%{arch}-%{version}.tgz'`
 
 ### <a name="k8s--install--container_runtime"></a>`k8s::install::container_runtime`
 
