@@ -2,16 +2,16 @@
 #
 # @summary manages the installation of the cni plugins
 #
-# @param arch sets the arch to use for binary download
 # @param ensure set ensure for installation or deinstallation
 # @param method installation method
 # @param version sets the version to use
+# @param download_url_template template string for the cni_plugins download url
 #
 class k8s::install::cni_plugins (
-  K8s::Ensure $ensure = $k8s::ensure,
-  String[1] $version  = 'v1.2.0',
-  String[1] $arch     = 'amd64',
-  String[1] $method   = $k8s::native_packaging,
+  K8s::Ensure $ensure              = $k8s::ensure,
+  String[1] $version               = 'v1.2.0',
+  String[1] $method                = $k8s::native_packaging,
+  String[1] $download_url_template = 'https://github.com/containernetworking/plugins/releases/download/%{version}/cni-plugins-linux-%{arch}-%{version}.tgz',
 ) {
   file {
     default:
@@ -24,14 +24,18 @@ class k8s::install::cni_plugins (
 
   case $method {
     'tarball', 'loose': {
+      $_url = k8s::format_url($download_url_template, {
+          version => $version,
+      })
+
       file { '/opt/cni/bin':
         ensure => directory,
       }
 
       archive { 'cni-plugins':
         ensure       => $ensure,
-        path         => "/tmp/cni-plugins-linux--${arch}-${version}.tgz",
-        source       => "https://github.com/containernetworking/plugins/releases/download/${version}/cni-plugins-linux-${arch}-${version}.tgz",
+        path         => "/tmp/cni-plugins-linux-${version}.tgz",
+        source       => $_url,
         extract      => true,
         extract_path => '/opt/cni/bin',
         creates      => '/opt/cni/bin/bridge',
