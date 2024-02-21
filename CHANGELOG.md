@@ -4,24 +4,65 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
-## [v1.0.0](https://github.com/voxpupuli/puppet-k8s/tree/v1.0.0) (2023-04-27)
+## [v2.0.0](https://github.com/voxpupuli/puppet-k8s/tree/v2.0.0) (2024-02-21)
 
-[Full Changelog](https://github.com/voxpupuli/puppet-k8s/compare/015d6134ae3d9b40ca539c9439a0de79374bc27a...v1.0.0)
+[Full Changelog](https://github.com/voxpupuli/puppet-k8s/compare/v1.0.0...v2.0.0)
+
+**Breaking changes:**
+
+- Use a template string for the crictl download URL [\#83](https://github.com/voxpupuli/puppet-k8s/pull/83) ([olavst-spk](https://github.com/olavst-spk))
+- Make cni\_plugins download url configurable with a template string [\#82](https://github.com/voxpupuli/puppet-k8s/pull/82) ([olavst-spk](https://github.com/olavst-spk))
 
 **Implemented enhancements:**
 
+- Make Coredns config configurable [\#74](https://github.com/voxpupuli/puppet-k8s/pull/74) ([rwaffen](https://github.com/rwaffen))
+- Expose ensure param for container runtime package [\#73](https://github.com/voxpupuli/puppet-k8s/pull/73) ([ananace](https://github.com/ananace))
+
+**Fixed bugs:**
+
+- Do not allow bootstrap tokens with a leading newline [\#80](https://github.com/voxpupuli/puppet-k8s/pull/80) ([olavst-spk](https://github.com/olavst-spk))
+- Do not allow bootstrap tokens with a trailing newline [\#79](https://github.com/voxpupuli/puppet-k8s/pull/79) ([olavst-spk](https://github.com/olavst-spk))
+- Fix RedHat urls [\#72](https://github.com/voxpupuli/puppet-k8s/pull/72) ([GMZwinge](https://github.com/GMZwinge))
+
+**Merged pull requests:**
+
+- update firewall resources to use jump instead of action; require puppetlabs/firewall 7.x [\#78](https://github.com/voxpupuli/puppet-k8s/pull/78) ([rwaffen](https://github.com/rwaffen))
+- Add parameter documentation to every class/define [\#76](https://github.com/voxpupuli/puppet-k8s/pull/76) ([rwaffen](https://github.com/rwaffen))
+
+## [v1.0.0](https://github.com/voxpupuli/puppet-k8s/tree/v1.0.0) (2023-08-07)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-k8s/compare/015d6134ae3d9b40ca539c9439a0de79374bc27a...v1.0.0)
+
+**Breaking changes:**
+
+- remove --container-runtime for k8s versions \> 1.26 [\#65](https://github.com/voxpupuli/puppet-k8s/pull/65) ([rwaffen](https://github.com/rwaffen))
+- do more precisely naming [\#59](https://github.com/voxpupuli/puppet-k8s/pull/59) ([rwaffen](https://github.com/rwaffen))
+- Drop Puppet 6 support [\#53](https://github.com/voxpupuli/puppet-k8s/pull/53) ([bastelfreak](https://github.com/bastelfreak))
+
+**Implemented enhancements:**
+
+- all K8s::Server::Resources/Kubectl\_apply fail on bootstrapping a new cluster [\#23](https://github.com/voxpupuli/puppet-k8s/issues/23)
 - Update ruby code to meet rubocops criterias [\#9](https://github.com/voxpupuli/puppet-k8s/issues/9)
 - \[improvement\] Use puppet-kmod module to handle Kernel modules [\#8](https://github.com/voxpupuli/puppet-k8s/issues/8)
 - \[improvement\] Use puppet-augeasproviders\_sysctl module to handle sysctl configuration [\#7](https://github.com/voxpupuli/puppet-k8s/issues/7)
+- add possibillity to use imagePullSecrets [\#62](https://github.com/voxpupuli/puppet-k8s/pull/62) ([rwaffen](https://github.com/rwaffen))
+- puppetlabs/stdlib: Allow 9.x [\#60](https://github.com/voxpupuli/puppet-k8s/pull/60) ([bastelfreak](https://github.com/bastelfreak))
+- remove duplicate CRB and move SA to kube-proxy class [\#58](https://github.com/voxpupuli/puppet-k8s/pull/58) ([rwaffen](https://github.com/rwaffen))
+- Update container references to active registry [\#57](https://github.com/voxpupuli/puppet-k8s/pull/57) ([ananace](https://github.com/ananace))
+- make crictl download url dynamic [\#54](https://github.com/voxpupuli/puppet-k8s/pull/54) ([rwaffen](https://github.com/rwaffen))
 - refactor repo.pp - cleanup code, add case instead of if-blocks, remove old debian, only install needed repos [\#49](https://github.com/voxpupuli/puppet-k8s/pull/49) ([rwaffen](https://github.com/rwaffen))
 - update etcd installation [\#48](https://github.com/voxpupuli/puppet-k8s/pull/48) ([rwaffen](https://github.com/rwaffen))
 - use etcd cluster name also in apiserver to collect only the matching etcd cluster [\#46](https://github.com/voxpupuli/puppet-k8s/pull/46) ([rwaffen](https://github.com/rwaffen))
+- Handle file mode for kubeconfig files [\#42](https://github.com/voxpupuli/puppet-k8s/pull/42) ([ananace](https://github.com/ananace))
 - Improve bootstrap token handling [\#35](https://github.com/voxpupuli/puppet-k8s/pull/35) ([ananace](https://github.com/ananace))
 - Add a wait online class to improve the first-run experience [\#34](https://github.com/voxpupuli/puppet-k8s/pull/34) ([ananace](https://github.com/ananace))
 
 **Fixed bugs:**
 
+- kubelet fails to start when updated to 1.27.x [\#64](https://github.com/voxpupuli/puppet-k8s/issues/64)
+- bootstrap token is sensitive, node\_token is not [\#51](https://github.com/voxpupuli/puppet-k8s/issues/51)
 - etcd ca gets recreated on each run [\#37](https://github.com/voxpupuli/puppet-k8s/issues/37)
+- Expand use of Sensitive to match node tokens [\#52](https://github.com/voxpupuli/puppet-k8s/pull/52) ([ananace](https://github.com/ananace))
 - Fix unintentional CA recreation if missing serial [\#40](https://github.com/voxpupuli/puppet-k8s/pull/40) ([ananace](https://github.com/ananace))
 - Fix generated kube-proxy configmap [\#27](https://github.com/voxpupuli/puppet-k8s/pull/27) ([ananace](https://github.com/ananace))
 - prevent undef value if ipv6 is turned off, fail if not etcd\_servers are defined [\#20](https://github.com/voxpupuli/puppet-k8s/pull/20) ([rwaffen](https://github.com/rwaffen))
@@ -33,6 +74,8 @@ These should not affect the functionality of the module.
 
 **Merged pull requests:**
 
+- puppet-lint: list optional parameters after mandatory parameters [\#69](https://github.com/voxpupuli/puppet-k8s/pull/69) ([bastelfreak](https://github.com/bastelfreak))
+- Allow latest module dependencies [\#68](https://github.com/voxpupuli/puppet-k8s/pull/68) ([bastelfreak](https://github.com/bastelfreak))
 - fix forgotten user and group values [\#41](https://github.com/voxpupuli/puppet-k8s/pull/41) ([rwaffen](https://github.com/rwaffen))
 - Revert "Include every IP address into a cert's SAN field" [\#39](https://github.com/voxpupuli/puppet-k8s/pull/39) ([ananace](https://github.com/ananace))
 - make user and group dynamic [\#38](https://github.com/voxpupuli/puppet-k8s/pull/38) ([rwaffen](https://github.com/rwaffen))
