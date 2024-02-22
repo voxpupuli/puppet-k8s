@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'puppet/parameter/boolean'
+
 Puppet::Type.newtype(:kubectl_apply) do
   desc <<-DOC
   Example:
