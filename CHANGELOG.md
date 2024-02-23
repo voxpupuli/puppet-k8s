@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v2.0.1](https://github.com/voxpupuli/puppet-k8s/tree/v2.0.1) (2024-02-23)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-k8s/compare/v2.0.0...v2.0.1)
+
+**Fixed bugs:**
+
+- kubectl\_apply: add missing require [\#85](https://github.com/voxpupuli/puppet-k8s/pull/85) ([h-haaks](https://github.com/h-haaks))
+
 ## [v2.0.0](https://github.com/voxpupuli/puppet-k8s/tree/v2.0.0) (2024-02-21)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-k8s/compare/v1.0.0...v2.0.0)
