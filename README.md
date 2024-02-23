@@ -1,13 +1,18 @@
-# k8s
+# Puppet module for deploying k8s/kubernetes
+
+[![CI](https://github.com/voxpupuli/puppet-k8s/actions/workflows/ci.yml/badge.svg)](https://github.com/voxpupuli/puppet-k8s/actions/workflows/ci.yml)
+[![Puppet Forge](https://img.shields.io/puppetforge/v/puppet/k8s.svg)](https://forge.puppet.com/puppet/k8s)
+[![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/puppet/k8s.svg)](https://forge.puppet.com/puppet/k8s)
+[![Puppet Forge - endorsement](https://img.shields.io/puppetforge/e/puppet/k8s.svg)](https://forge.puppet.com/puppet/k8s)
+[![Puppet Forge - scores](https://img.shields.io/puppetforge/f/puppet/k8s.svg)](https://forge.puppet.com/puppet/k8s)
+[![License](https://img.shields.io/github/license/voxpupuli/puppet-k8s.svg)](https://github.com/voxpupuli/puppet-k8s/blob/master/LICENSE)
 
 ## Table of Contents
 
 - [Description](#description)
-- [Setup](#setup)
 - [Usage](#usage)
-- [Development](#development)
-
----
+- [Examples](#examples)
+- [Reference](#reference)
 
 ## Description
 
