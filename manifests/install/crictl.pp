@@ -31,18 +31,43 @@ class k8s::install::crictl (
 
     $config_require = Package[$pkg]
   } else {
+    file { '/opt/cri-tools':
+      ensure  => stdlib::ensure($ensure, 'directory'),
+      purge   => true,
+      recurse => true,
+      force   => true,
+    }
+
     $_url = k8s::format_url($download_url_template, {
         version => $version,
     })
+    $_target = "/opt/cri-tools/${version}";
+    $_tarball_target = '/opt/cri-tools/archives';
+
+    file { $_target:
+      ensure  => stdlib::ensure($ensure, 'directory'),
+    }
+
+    file { $_tarball_target:
+      ensure  => stdlib::ensure($ensure, 'directory'),
+    }
 
     archive { 'crictl':
       ensure       => $ensure,
-      path         => "/tmp/crictl-${version}-linux.tar.gz",
+      path         => "${_tarball_target}/crictl-${version}-linux.tar.gz",
       source       => $_url,
       extract      => true,
-      extract_path => '/usr/local/bin',
-      creates      => '/usr/local/bin/crictl',
+      extract_path => $_target,
+      creates      => "${_target}/crictl",
       cleanup      => true,
+    }
+
+    file { '/usr/local/bin/crictl':
+      ensure  => stdlib::ensure($ensure, 'link'),
+      mode    => '0755',
+      replace => true,
+      target  => "${_target}/crictl",
+      require => Archive['crictl'],
     }
 
     $config_require = Archive['crictl']

@@ -31,15 +31,30 @@ describe 'k8s::server::etcd::setup' do
       it { is_expected.to compile }
 
       it do
-        is_expected.to contain_archive('/var/tmp/etcd-v3.6.0-linux-amd64.tar.gz').with(
+        is_expected.to contain_archive('etcd').with(
           ensure: 'present',
+          path: '/opt/etcd/archives/etcd-v3.6.0-linux-amd64.tar.gz',
           source: 'https://storage.googleapis.com/etcd/v3.6.0/etcd-v3.6.0-linux-amd64.tar.gz',
           extract: true,
           extract_command: 'tar xfz %s --strip-components=1',
-          extract_path: '/usr/local/bin',
+          extract_path: '/opt/etcd/3.6.0',
           cleanup: true,
-          creates: ['/usr/local/bin/etcd', '/usr/local/bin/etcdctl']
+          creates: ['/opt/etcd/3.6.0/etcd', '/opt/etcd/3.6.0/etcdctl']
+        )
+
+        is_expected.to contain_file('/usr/local/bin/etcd').with(
+          ensure: 'link',
+          mode: '0755',
+          replace: true,
+          target: '/opt/etcd/3.6.0/etcd'
         ).that_notifies('Service[etcd]')
+
+        is_expected.to contain_file('/usr/local/bin/etcdctl').with(
+          ensure: 'link',
+          mode: '0755',
+          replace: true,
+          target: '/opt/etcd/3.6.0/etcdctl'
+        )
       end
 
       it { is_expected.to contain_user('etcd') }
