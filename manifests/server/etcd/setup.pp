@@ -78,23 +78,12 @@ class k8s::server::etcd::setup (
   Optional[Integer[0, 65535]] $gid        = undef,
 ) {
   if $install == 'archive' {
-    file { '/opt/etcd':
-      ensure  => stdlib::ensure($ensure, 'directory'),
-      purge   => true,
-      recurse => true,
-      force   => true,
-    }
-
     $_url  = k8s::format_url($archive_template, { version => $version, })
     $_file = basename($_url)
-    $_target = "/opt/etcd/${version}";
-    $_tarball_target = '/opt/etcd/archives';
+    $_target = "/opt/k8s/etcd-${version}";
+    $_tarball_target = '/opt/k8s/archives';
 
     file { $_target:
-      ensure  => stdlib::ensure($ensure, 'directory'),
-    }
-
-    file { $_tarball_target:
       ensure  => stdlib::ensure($ensure, 'directory'),
     }
 

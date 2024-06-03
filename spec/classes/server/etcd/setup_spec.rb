@@ -33,27 +33,27 @@ describe 'k8s::server::etcd::setup' do
       it do
         is_expected.to contain_archive('etcd').with(
           ensure: 'present',
-          path: '/opt/etcd/archives/etcd-v3.6.0-linux-amd64.tar.gz',
+          path: '/opt/k8s/archives/etcd-v3.6.0-linux-amd64.tar.gz',
           source: 'https://storage.googleapis.com/etcd/v3.6.0/etcd-v3.6.0-linux-amd64.tar.gz',
           extract: true,
           extract_command: 'tar xfz %s --strip-components=1',
-          extract_path: '/opt/etcd/3.6.0',
+          extract_path: '/opt/k8s/etcd-3.6.0',
           cleanup: true,
-          creates: ['/opt/etcd/3.6.0/etcd', '/opt/etcd/3.6.0/etcdctl']
+          creates: ['/opt/k8s/etcd-3.6.0/etcd', '/opt/k8s/etcd-3.6.0/etcdctl']
         )
 
         is_expected.to contain_file('/usr/local/bin/etcd').with(
           ensure: 'link',
           mode: '0755',
           replace: true,
-          target: '/opt/etcd/3.6.0/etcd'
+          target: '/opt/k8s/etcd-3.6.0/etcd'
         ).that_notifies('Service[etcd]')
 
         is_expected.to contain_file('/usr/local/bin/etcdctl').with(
           ensure: 'link',
           mode: '0755',
           replace: true,
-          target: '/opt/etcd/3.6.0/etcdctl'
+          target: '/opt/k8s/etcd-3.6.0/etcdctl'
         )
       end
 

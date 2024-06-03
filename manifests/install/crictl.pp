@@ -31,24 +31,13 @@ class k8s::install::crictl (
 
     $config_require = Package[$pkg]
   } else {
-    file { '/opt/cri-tools':
-      ensure  => stdlib::ensure($ensure, 'directory'),
-      purge   => true,
-      recurse => true,
-      force   => true,
-    }
-
     $_url = k8s::format_url($download_url_template, {
         version => $version,
     })
-    $_target = "/opt/cri-tools/${version}";
-    $_tarball_target = '/opt/cri-tools/archives';
+    $_target = "/opt/k8s/crictl-${version}";
+    $_tarball_target = '/opt/k8s/archives';
 
     file { $_target:
-      ensure  => stdlib::ensure($ensure, 'directory'),
-    }
-
-    file { $_tarball_target:
       ensure  => stdlib::ensure($ensure, 'directory'),
     }
 
