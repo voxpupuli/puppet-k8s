@@ -25,20 +25,20 @@ describe 'k8s::server::etcd::member' do
           path: ['/bin', '/usr/bin', '/usr/local/bin']
         )
       end
-    end
-  end
 
-  context 'with etcd installed' do
-    let(:pre_condition) do
-      <<~PUPPET
-        service { 'etcd':
-          ensure => running,
-        }
-      PUPPET
-    end
+      context 'with etcd installed' do
+        let(:pre_condition) do
+          <<~PUPPET
+            service { 'etcd':
+              ensure => running,
+            }
+          PUPPET
+        end
 
-    it do
-      is_expected.to contain_exec('Add namevar as member').that_requires('Service[etcd]')
+        it do
+          is_expected.to contain_exec('Add namevar as member').that_requires('Service[etcd]')
+        end
+      end
     end
   end
 end
