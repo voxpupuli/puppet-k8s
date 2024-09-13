@@ -2,6 +2,7 @@
 spec/spec_helper.rb:
   spec_overrides:
     - "Dir['./spec/support/**/*.rb'].sort.each { |f| require f }"
+  facterdb_string_keys: true
 
 .github/workflows/ci.yml:
   with:
