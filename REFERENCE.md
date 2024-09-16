@@ -249,7 +249,7 @@ Data type: `String[1]`
 
 version of etcd to install
 
-Default value: `'3.5.1'`
+Default value: `'3.5.16'`
 
 ##### <a name="-k8s--firewall_type"></a>`firewall_type`
 
@@ -377,7 +377,7 @@ Data type: `String[1]`
 
 template for native packaging
 
-Default value: `'https://storage.googleapis.com/kubernetes-release/release/v%{version}/bin/%{kernel}/%{arch}/%{binary}'`
+Default value: `'https://dl.k8s.io/release/v%{version}/bin/%{kernel}/%{arch}/%{binary}'`
 
 ##### <a name="-k8s--node_auth"></a>`node_auth`
 
@@ -465,7 +465,7 @@ Data type: `String[1]`
 
 template for tarball packaging
 
-Default value: `'https://dl.k8s.io/v%{version}/kubernetes-%{component}-%{kernel}-%{arch}.tar.gz'`
+Default value: `'https://dl.k8s.io/release/v%{version}/kubernetes-%{component}-%{kernel}-%{arch}.tar.gz'`
 
 ##### <a name="-k8s--uid"></a>`uid`
 
@@ -489,7 +489,7 @@ Data type: `String[1]`
 
 version of kubernetes to install
 
-Default value: `'1.26.1'`
+Default value: `'1.28.14'`
 
 ### <a name="k8s--install--cni_plugins"></a>`k8s::install::cni_plugins`
 
