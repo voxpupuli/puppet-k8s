@@ -59,6 +59,12 @@
         "20.10",
         "22.04"
       ]
+    },
+    {
+      "operatingsystem": "openSUSE",
+      "operatingsystemrelease": [
+        "15"
+      ]
     }
   ],
   "requirements": [
