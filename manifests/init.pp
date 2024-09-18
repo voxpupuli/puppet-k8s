@@ -50,8 +50,8 @@ class k8s (
   K8s::Ensure $ensure                     = 'present',
   Enum['container', 'native'] $packaging  = 'native',
   K8s::Native_packaging $native_packaging = 'loose',
-  String[1] $version                      = '1.26.1',
-  String[1] $etcd_version                 = '3.5.1',
+  String[1] $version                      = '1.28.14',
+  String[1] $etcd_version                 = '3.5.16',
 
   String[1] $container_registry              = 'registry.k8s.io',
   Optional[String[1]] $container_image_tag   = undef,
@@ -78,8 +78,8 @@ class k8s (
 
   Boolean $purge_manifests = true,
 
-  String[1] $native_url_template             = 'https://storage.googleapis.com/kubernetes-release/release/v%{version}/bin/%{kernel}/%{arch}/%{binary}',
-  String[1] $tarball_url_template            = 'https://dl.k8s.io/v%{version}/kubernetes-%{component}-%{kernel}-%{arch}.tar.gz',
+  String[1] $native_url_template             = 'https://dl.k8s.io/release/v%{version}/bin/%{kernel}/%{arch}/%{binary}',
+  String[1] $tarball_url_template            = 'https://dl.k8s.io/release/v%{version}/kubernetes-%{component}-%{kernel}-%{arch}.tar.gz',
   String[1] $package_template                = 'kubernetes-%{component}',
   String[1] $hyperkube_name                  = 'hyperkube',
   Optional[Stdlib::Unixpath] $sysconfig_path = undef,
