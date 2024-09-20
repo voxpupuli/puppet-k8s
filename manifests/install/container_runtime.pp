@@ -52,13 +52,13 @@ class k8s::install::container_runtime (
         require => Package['k8s container manager'],
       }
 
-      file { [ '/etc/crio', '/etc/crio/crio.conf.d']:
+      file { ['/etc/crio', '/etc/crio/crio.conf.d']:
         ensure => directory;
       }
       file { 'K8s crio cgroup manager':
-        path     => '/etc/crio/crio.conf.d/10-systemd.conf',
-        content  => "[crio.runtime]\ncgroup_manager = \"systemd\"",
-        # TODO
+        path    => '/etc/crio/crio.conf.d/10-systemd.conf',
+        content => "[crio.runtime]\ncgroup_manager = \"systemd\"",
+        # TODO - Necessary/wanted to force it?
         # notify => Service[crio],
       }
     }
