@@ -22,19 +22,12 @@ class k8s::install::container_runtime (
   case $container_manager {
     'crio': {
       if fact('os.family') == 'Debian' {
-        $_crio_version = $k8s_version.split('\.')[0, 2].join('.')
-        if versioncmp($_crio_version, '1.17') < 0 {
-          $pkg = pick($crio_package, "cri-o-${_crio_version}")
-        } else {
-          $pkg = pick($crio_package, 'cri-o')
-        }
-
-        # This is needed by cri-o, but it is not a dependency of the package
+        # This is required for cri-o, but it is not guaranteed to be a dependency of the package
         package { 'runc':
           ensure => $runc_version,
         }
 
-        # Avoid a potential issue with some CRI-o versions
+        # Avoid a potential packaging issue
         file { ['/usr/lib/cri-o-runc/sbin', '/usr/lib/cri-o-runc']:
           ensure => directory,
         }
@@ -44,9 +37,8 @@ class k8s::install::container_runtime (
           target  => '/usr/sbin/runc',
           replace => false,
         }
-      } else {
-        $pkg = pick($crio_package, 'cri-o')
       }
+      $pkg = pick($crio_package, 'cri-o')
 
       file { '/usr/libexec/crio/conmon':
         ensure  => link,
@@ -60,11 +52,14 @@ class k8s::install::container_runtime (
         require => Package['k8s container manager'],
       }
 
-      file_line { 'K8s crio cgroup manager':
-        path    => '/etc/crio/crio.conf',
-        line    => 'cgroup_manager = "systemd"',
-        match   => '^cgroup_manager',
-        require => Package['k8s container manager'],
+      file { [ '/etc/crio', '/etc/crio/crio.conf.d']:
+        ensure => directory;
+      }
+      file { 'K8s crio cgroup manager':
+        path     => '/etc/crio/crio.conf.d/10-systemd.conf',
+        content  => "[crio.runtime]\ncgroup_manager = \"systemd\"",
+        # TODO
+        # notify => Service[crio],
       }
     }
     'containerd': {
