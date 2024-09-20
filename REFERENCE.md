@@ -503,6 +503,7 @@ The following parameters are available in the `k8s::install::cni_plugins` class:
 * [`method`](#-k8s--install--cni_plugins--method)
 * [`version`](#-k8s--install--cni_plugins--version)
 * [`download_url_template`](#-k8s--install--cni_plugins--download_url_template)
+* [`package_name`](#-k8s--install--cni_plugins--package_name)
 
 ##### <a name="-k8s--install--cni_plugins--ensure"></a>`ensure`
 
@@ -535,6 +536,14 @@ Data type: `String[1]`
 template string for the cni_plugins download url
 
 Default value: `'https://github.com/containernetworking/plugins/releases/download/%{version}/cni-plugins-linux-%{arch}-%{version}.tgz'`
+
+##### <a name="-k8s--install--cni_plugins--package_name"></a>`package_name`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `undef`
 
 ### <a name="k8s--install--container_runtime"></a>`k8s::install::container_runtime`
 
@@ -1252,6 +1261,7 @@ The following parameters are available in the `k8s::repo` class:
 * [`container_manager`](#-k8s--repo--container_manager)
 * [`crio_version`](#-k8s--repo--crio_version)
 * [`manage_container_manager`](#-k8s--repo--manage_container_manager)
+* [`major_version`](#-k8s--repo--major_version)
 
 ##### <a name="-k8s--repo--container_manager"></a>`container_manager`
 
@@ -1263,11 +1273,7 @@ Default value: `$k8s::container_manager`
 
 ##### <a name="-k8s--repo--crio_version"></a>`crio_version`
 
-Data type: `String[1]`
-
 version o cri-o
-
-Default value: `$k8s::version.split('\.')[0, 2].join('.')`
 
 ##### <a name="-k8s--repo--manage_container_manager"></a>`manage_container_manager`
 
@@ -1276,6 +1282,14 @@ Data type: `Boolean`
 whether to add cri-o repository or not
 
 Default value: `$k8s::manage_container_manager`
+
+##### <a name="-k8s--repo--major_version"></a>`major_version`
+
+Data type: `String[1]`
+
+
+
+Default value: `$k8s::version.split('\.')[0, 2].join('.')`
 
 ### <a name="k8s--server"></a>`k8s::server`
 
