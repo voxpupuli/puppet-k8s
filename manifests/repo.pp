@@ -14,6 +14,9 @@ class k8s::repo (
       $core_url = "https://pkgs.k8s.io/core:/stable:/v${major_version}/deb"
       $crio_url = "https://pkgs.k8s.io/addons:/cri-o:/stable:/v${major_version}/deb"
 
+      apt::source { 'libcontainers:stable':
+        ensure => absent,
+      }
       apt::source { 'k8s-core':
         location => $core_url,
         repos    => '/',
@@ -25,6 +28,9 @@ class k8s::repo (
       }
 
       if $manage_container_manager and $container_manager == 'crio' {
+        apt::source { 'libcontainers:stable:cri-o':
+          ensure => absent,
+        }
         apt::source { 'k8s-crio':
           location => $crio_url,
           repos    => '/',
@@ -46,6 +52,9 @@ class k8s::repo (
       $core_url = "https://pkgs.k8s.io/core:/stable:/v${major_version}/rpm"
       $crio_url = "https://pkgs.k8s.io/addons:/cri-o:/stable:/v${major_version}/rpm"
 
+      yumrepo { 'libcontainers:stable':
+        ensure => absent,
+      }
       yumrepo { 'k8s-core':
         descr    => 'Stable releases of Kubernetes',
         baseurl  => $core_url,
@@ -56,6 +65,9 @@ class k8s::repo (
       if $manage_container_manager {
         case $container_manager {
           'crio': {
+            yumrepo { 'libcontainers:stable:cri-o':
+              ensure => absent,
+            }
             yumrepo { 'k8s-crio':
               descr    => 'Stable releases of CRI-o',
               baseurl  => $crio_url,
