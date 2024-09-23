@@ -45,18 +45,28 @@ class k8s::install::cni_plugins (
       }
     }
     'package': {
-      if $k8s::manage_repo {
+      if $k8s::manage_repo or $package_name == 'kubernetes-cni' {
         $_package_name = pick($package_name, 'kubernetes-cni')
       } else {
-        $_package_name = pick($package_name, 'containernetworking-plugins')
+        if fact('os.family') == 'suse' {
+          $_package_name = pick($package_name, 'cni-plugins')
+        } else {
+          $_package_name = pick($package_name, 'containernetworking-plugins')
+        }
+
+        if fact('os.family') == 'RedHat' {
+          $_target = '/usr/libexec/cni'
+        } else {
+          $_target = '/usr/lib/cni'
+        }
+
+        file { '/opt/cni/bin':
+          ensure  => link,
+          target  => $_target,
+          require => Package[$_package_name],
+        }
       }
       ensure_packages([$_package_name,])
-
-      file { '/opt/cni/bin':
-        ensure  => link,
-        target  => '/usr/lib/cni',
-        require => Package[$_package_name],
-      }
 
       if $k8s::manage_repo {
         Class['k8s::repo'] -> Package[$_package_name]
