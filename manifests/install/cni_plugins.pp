@@ -1,11 +1,10 @@
-# Class: k8s::install::cni_plugins
+# @summary Manages the installation of CNI plugins
 #
-# @summary manages the installation of the cni plugins
-#
-# @param ensure set ensure for installation or deinstallation
-# @param method installation method
-# @param version sets the version to use
-# @param download_url_template template string for the cni_plugins download url
+# @param ensure Set ensure for installation or deinstallation
+# @param method The installation method to use
+# @param version The version of CNI plugins to install - if applicable
+# @param download_url_template Template string for the cni_plugins download url
+# @param package_name Package name for the CNI plugins, will use OS default if omitted
 #
 class k8s::install::cni_plugins (
   K8s::Ensure $ensure               = $k8s::ensure,

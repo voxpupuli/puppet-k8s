@@ -1,8 +1,8 @@
 # @summary Handles repositories for the container runtime
 #
+# @param manage_container_manager Whether to add the CRI-o repository or not
 # @param container_manager The name of the container manager
-# @param crio_version version o cri-o
-# @param manage_container_manager whether to add cri-o repository or not
+# @param major_version The major version of Kubernetes to deploy repos for
 #
 class k8s::repo (
   Boolean $manage_container_manager          = $k8s::manage_container_manager,
