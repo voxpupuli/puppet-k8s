@@ -7,8 +7,8 @@
 ### Classes
 
 * [`k8s`](#k8s): Sets up a Kubernetes instance - either as a node or as a server
-* [`k8s::install::cni_plugins`](#k8s--install--cni_plugins): manages the installation of the cni plugins
-* [`k8s::install::container_runtime`](#k8s--install--container_runtime): manages the installation of cri
+* [`k8s::install::cni_plugins`](#k8s--install--cni_plugins): Manages the installation of CNI plugins
+* [`k8s::install::container_runtime`](#k8s--install--container_runtime): Manages the installation of a container runtime / CRI
 * [`k8s::install::crictl`](#k8s--install--crictl): installs the crictl debugging tool
 * [`k8s::install::kubeadm`](#k8s--install--kubeadm): Installs the kubeadm binary
 * [`k8s::install::kubectl`](#k8s--install--kubectl): Installs the kubectl binary
@@ -493,7 +493,7 @@ Default value: `'1.28.14'`
 
 ### <a name="k8s--install--cni_plugins"></a>`k8s::install::cni_plugins`
 
-Class: k8s::install::cni_plugins
+Manages the installation of CNI plugins
 
 #### Parameters
 
@@ -503,12 +503,13 @@ The following parameters are available in the `k8s::install::cni_plugins` class:
 * [`method`](#-k8s--install--cni_plugins--method)
 * [`version`](#-k8s--install--cni_plugins--version)
 * [`download_url_template`](#-k8s--install--cni_plugins--download_url_template)
+* [`package_name`](#-k8s--install--cni_plugins--package_name)
 
 ##### <a name="-k8s--install--cni_plugins--ensure"></a>`ensure`
 
 Data type: `K8s::Ensure`
 
-set ensure for installation or deinstallation
+Set ensure for installation or deinstallation
 
 Default value: `$k8s::ensure`
 
@@ -516,7 +517,7 @@ Default value: `$k8s::ensure`
 
 Data type: `String[1]`
 
-installation method
+The installation method to use
 
 Default value: `$k8s::native_packaging`
 
@@ -524,7 +525,7 @@ Default value: `$k8s::native_packaging`
 
 Data type: `String[1]`
 
-sets the version to use
+The version of CNI plugins to install - if applicable
 
 Default value: `'v1.2.0'`
 
@@ -532,81 +533,80 @@ Default value: `'v1.2.0'`
 
 Data type: `String[1]`
 
-template string for the cni_plugins download url
+Template string for the cni_plugins download url
 
 Default value: `'https://github.com/containernetworking/plugins/releases/download/%{version}/cni-plugins-linux-%{arch}-%{version}.tgz'`
 
+##### <a name="-k8s--install--cni_plugins--package_name"></a>`package_name`
+
+Data type: `Optional[String[1]]`
+
+Package name for the CNI plugins, will use OS default if omitted
+
+Default value: `undef`
+
 ### <a name="k8s--install--container_runtime"></a>`k8s::install::container_runtime`
 
-Class: k8s::install::container_runtime
+Manages the installation of a container runtime / CRI
 
 #### Parameters
 
 The following parameters are available in the `k8s::install::container_runtime` class:
 
-* [`container_manager`](#-k8s--install--container_runtime--container_manager)
-* [`containerd_package`](#-k8s--install--container_runtime--containerd_package)
-* [`crio_package`](#-k8s--install--container_runtime--crio_package)
-* [`k8s_version`](#-k8s--install--container_runtime--k8s_version)
 * [`manage_repo`](#-k8s--install--container_runtime--manage_repo)
-* [`package_ensure`](#-k8s--install--container_runtime--package_ensure)
+* [`container_manager`](#-k8s--install--container_runtime--container_manager)
+* [`crio_package`](#-k8s--install--container_runtime--crio_package)
+* [`containerd_package`](#-k8s--install--container_runtime--containerd_package)
 * [`runc_version`](#-k8s--install--container_runtime--runc_version)
-
-##### <a name="-k8s--install--container_runtime--container_manager"></a>`container_manager`
-
-Data type: `K8s::Container_runtimes`
-
-set the cri to use
-
-Default value: `$k8s::container_manager`
-
-##### <a name="-k8s--install--container_runtime--containerd_package"></a>`containerd_package`
-
-Data type: `Optional[String[1]]`
-
-the containerd package anme
-
-Default value: `$k8s::containerd_package`
-
-##### <a name="-k8s--install--container_runtime--crio_package"></a>`crio_package`
-
-Data type: `Optional[String[1]]`
-
-cri-o the package name
-
-Default value: `$k8s::crio_package`
-
-##### <a name="-k8s--install--container_runtime--k8s_version"></a>`k8s_version`
-
-Data type: `String[1]`
-
-the k8s version
-
-Default value: `$k8s::version`
+* [`package_ensure`](#-k8s--install--container_runtime--package_ensure)
 
 ##### <a name="-k8s--install--container_runtime--manage_repo"></a>`manage_repo`
 
 Data type: `Boolean`
 
-whether to manage the repo or not
+Whether to manage the repo or not
 
 Default value: `$k8s::manage_repo`
 
-##### <a name="-k8s--install--container_runtime--package_ensure"></a>`package_ensure`
+##### <a name="-k8s--install--container_runtime--container_manager"></a>`container_manager`
 
-Data type: `String[1]`
+Data type: `K8s::Container_runtimes`
 
-the ensure value to set on the cri package
+The CRI implementation to install
 
-Default value: `installed`
+Default value: `$k8s::container_manager`
+
+##### <a name="-k8s--install--container_runtime--crio_package"></a>`crio_package`
+
+Data type: `Optional[String[1]]`
+
+The CRI-o package name
+
+Default value: `$k8s::crio_package`
+
+##### <a name="-k8s--install--container_runtime--containerd_package"></a>`containerd_package`
+
+Data type: `Optional[String[1]]`
+
+The containerd package name
+
+Default value: `$k8s::containerd_package`
 
 ##### <a name="-k8s--install--container_runtime--runc_version"></a>`runc_version`
 
 Data type: `String[1]`
 
-the runc version
+The runc version
 
 Default value: `$k8s::runc_version`
+
+##### <a name="-k8s--install--container_runtime--package_ensure"></a>`package_ensure`
+
+Data type: `String[1]`
+
+The ensure value to set on the cri package
+
+Default value: `installed`
 
 ### <a name="k8s--install--crictl"></a>`k8s::install::crictl`
 
@@ -1249,9 +1249,17 @@ Handles repositories for the container runtime
 
 The following parameters are available in the `k8s::repo` class:
 
-* [`container_manager`](#-k8s--repo--container_manager)
-* [`crio_version`](#-k8s--repo--crio_version)
 * [`manage_container_manager`](#-k8s--repo--manage_container_manager)
+* [`container_manager`](#-k8s--repo--container_manager)
+* [`major_version`](#-k8s--repo--major_version)
+
+##### <a name="-k8s--repo--manage_container_manager"></a>`manage_container_manager`
+
+Data type: `Boolean`
+
+Whether to add the CRI-o repository or not
+
+Default value: `$k8s::manage_container_manager`
 
 ##### <a name="-k8s--repo--container_manager"></a>`container_manager`
 
@@ -1261,21 +1269,13 @@ The name of the container manager
 
 Default value: `$k8s::container_manager`
 
-##### <a name="-k8s--repo--crio_version"></a>`crio_version`
+##### <a name="-k8s--repo--major_version"></a>`major_version`
 
 Data type: `String[1]`
 
-version o cri-o
+The major version of Kubernetes to deploy repos for
 
 Default value: `$k8s::version.split('\.')[0, 2].join('.')`
-
-##### <a name="-k8s--repo--manage_container_manager"></a>`manage_container_manager`
-
-Data type: `Boolean`
-
-whether to add cri-o repository or not
-
-Default value: `$k8s::manage_container_manager`
 
 ### <a name="k8s--server"></a>`k8s::server`
 

@@ -1,17 +1,17 @@
-# Class: k8s::install::cni_plugins
+# @summary Manages the installation of CNI plugins
 #
-# @summary manages the installation of the cni plugins
-#
-# @param ensure set ensure for installation or deinstallation
-# @param method installation method
-# @param version sets the version to use
-# @param download_url_template template string for the cni_plugins download url
+# @param ensure Set ensure for installation or deinstallation
+# @param method The installation method to use
+# @param version The version of CNI plugins to install - if applicable
+# @param download_url_template Template string for the cni_plugins download url
+# @param package_name Package name for the CNI plugins, will use OS default if omitted
 #
 class k8s::install::cni_plugins (
-  K8s::Ensure $ensure              = $k8s::ensure,
-  String[1] $version               = 'v1.2.0',
-  String[1] $method                = $k8s::native_packaging,
-  String[1] $download_url_template = 'https://github.com/containernetworking/plugins/releases/download/%{version}/cni-plugins-linux-%{arch}-%{version}.tgz',
+  K8s::Ensure $ensure               = $k8s::ensure,
+  String[1] $version                = 'v1.2.0',
+  String[1] $method                 = $k8s::native_packaging,
+  String[1] $download_url_template  = 'https://github.com/containernetworking/plugins/releases/download/%{version}/cni-plugins-linux-%{arch}-%{version}.tgz',
+  Optional[String[1]] $package_name = undef,
 ) {
   file {
     default:
@@ -43,17 +43,32 @@ class k8s::install::cni_plugins (
         require      => File['/opt/cni/bin'],
       }
     }
-    'package':{
-      ensure_packages(['containernetworking-plugins',])
+    'package': {
+      if $k8s::manage_repo or $package_name == 'kubernetes-cni' {
+        $_package_name = pick($package_name, 'kubernetes-cni')
+      } else {
+        if fact('os.family') == 'suse' {
+          $_package_name = pick($package_name, 'cni-plugins')
+        } else {
+          $_package_name = pick($package_name, 'containernetworking-plugins')
+        }
 
-      file { '/opt/cni/bin':
-        ensure  => link,
-        target  => '/usr/lib/cni',
-        require => Package['containernetworking-plugins'],
+        if fact('os.family') == 'RedHat' {
+          $_target = '/usr/libexec/cni'
+        } else {
+          $_target = '/usr/lib/cni'
+        }
+
+        file { '/opt/cni/bin':
+          ensure  => link,
+          target  => $_target,
+          require => Package[$_package_name],
+        }
       }
+      ensure_packages([$_package_name,])
 
       if $k8s::manage_repo {
-        Class['k8s::repo'] -> Package['containernetworking-plugins']
+        Class['k8s::repo'] -> Package[$_package_name]
       }
     }
     default: {
