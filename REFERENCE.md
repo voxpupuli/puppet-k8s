@@ -67,6 +67,7 @@ Uses the cni-plugins bridge binary to create a bridge interface to connect the c
 * [`K8s::IP_addresses`](#K8s--IP_addresses): a type to describe multiple IP addresses without subnet sizes
 * [`K8s::Native_packaging`](#K8s--Native_packaging): a type to describe Kubernetes native packaging methods
 * [`K8s::Node_auth`](#K8s--Node_auth): a type to describe node/kubelet authentication methods
+* [`K8s::Node_role`](#K8s--Node_role): a type to describe a type of Kubernetes node
 * [`K8s::PortRange`](#K8s--PortRange): This regexp matches port range values
 * [`K8s::Proxy_auth`](#K8s--Proxy_auth): a type to describe kube-proxy authentication methods
 * [`K8s::Proxy_method`](#K8s--Proxy_method): a type to describe how kube-proxy should be deployed
@@ -430,11 +431,11 @@ Default value: `true`
 
 ##### <a name="-k8s--role"></a>`role`
 
-Data type: `Enum['node','server','etcd-replica','none']`
+Data type: `Optional[K8s::Node_role]`
 
-role of the node
+the role of the node
 
-Default value: `'none'`
+Default value: `undef`
 
 ##### <a name="-k8s--runc_version"></a>`runc_version`
 
@@ -4182,6 +4183,14 @@ Alias of `Enum['package', 'tarball', 'loose', 'hyperkube', 'manual']`
 a type to describe node/kubelet authentication methods
 
 Alias of `Enum['cert', 'token', 'bootstrap']`
+
+### <a name="K8s--Node_role"></a>`K8s::Node_role`
+
+a type to describe a type of Kubernetes node
+
+* **Note** server/control-plane are identical, one using the Puppet term, the other the Kubernetes term
+
+Alias of `Enum['node', 'server', 'control-plane', 'etcd-replica', 'none']`
 
 ### <a name="K8s--PortRange"></a>`K8s::PortRange`
 

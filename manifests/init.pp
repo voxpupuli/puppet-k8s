@@ -37,7 +37,7 @@
 # @param puppetdb_discovery whether to use puppetdb for node discovery
 # @param puppetdb_discovery_tag tag to use for puppetdb node discovery
 # @param purge_manifests whether to purge manifests
-# @param role role of the node
+# @param role the role of the node
 # @param runc_version version of runc to install
 # @param service_cluster_cidr CIDR for the service network
 # @param sysconfig_path path to the sysconfig directory
@@ -95,7 +95,7 @@ class k8s (
   Stdlib::Fqdn $cluster_domain                       = 'cluster.local',
   String[1] $etcd_cluster_name                       = 'default',
 
-  Enum['node','server','etcd-replica','none']  $role = 'none',
+  Optional[K8s::Node_role] $role = undef,
   Optional[K8s::Firewall] $firewall_type = undef,
 
   String[1] $user        = 'kube',
@@ -103,7 +103,7 @@ class k8s (
   Integer[0, 65535] $uid = 888,
   Integer[0, 65535] $gid = 888,
 ) {
-  if $role == 'server' {
+  if $role == 'server' or $role == 'control-plane' {
     include k8s::server
   } elsif $role == 'node' {
     include k8s::node
