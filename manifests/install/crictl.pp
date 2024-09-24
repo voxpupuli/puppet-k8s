@@ -34,15 +34,29 @@ class k8s::install::crictl (
     $_url = k8s::format_url($download_url_template, {
         version => $version,
     })
+    $_target = "/opt/k8s/crictl-${version}";
+    $_tarball_target = '/opt/k8s/archives';
+
+    file { $_target:
+      ensure  => stdlib::ensure($ensure, 'directory'),
+    }
 
     archive { 'crictl':
       ensure       => $ensure,
-      path         => "/tmp/crictl-${version}-linux.tar.gz",
+      path         => "${_tarball_target}/crictl-${version}-linux.tar.gz",
       source       => $_url,
       extract      => true,
-      extract_path => '/usr/local/bin',
-      creates      => '/usr/local/bin/crictl',
+      extract_path => $_target,
+      creates      => "${_target}/crictl",
       cleanup      => true,
+    }
+
+    file { '/usr/local/bin/crictl':
+      ensure  => stdlib::ensure($ensure, 'link'),
+      mode    => '0755',
+      replace => true,
+      target  => "${_target}/crictl",
+      require => Archive['crictl'],
     }
 
     $config_require = Archive['crictl']

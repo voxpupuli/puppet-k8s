@@ -27,20 +27,30 @@ class k8s::install::cni_plugins (
       $_url = k8s::format_url($download_url_template, {
           version => $version,
       })
+      $_target = "/opt/k8s/cni-${version}";
+      $_tarball_target = '/opt/k8s/archives';
 
-      file { '/opt/cni/bin':
-        ensure => directory,
+      file { $_target:
+        ensure  => stdlib::ensure($ensure, 'directory'),
       }
 
       archive { 'cni-plugins':
         ensure       => $ensure,
-        path         => "/tmp/cni-plugins-linux-${version}.tgz",
+        path         => "${_tarball_target}/cni-plugins-linux-${version}.tgz",
         source       => $_url,
         extract      => true,
-        extract_path => '/opt/cni/bin',
-        creates      => '/opt/cni/bin/bridge',
+        extract_path => $_target,
+        creates      => "${_target}/bridge",
         cleanup      => true,
-        require      => File['/opt/cni/bin'],
+      }
+
+      file { '/opt/cni/bin':
+        ensure  => stdlib::ensure($ensure, 'link'),
+        mode    => '0755',
+        replace => true,
+        force   => true,
+        target  => $_target,
+        require => Archive['cni-plugins'],
       }
     }
     'package': {
