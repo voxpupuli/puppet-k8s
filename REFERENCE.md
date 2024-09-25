@@ -455,11 +455,11 @@ Default value: `'10.1.0.0/24'`
 
 ##### <a name="-k8s--sysconfig_path"></a>`sysconfig_path`
 
-Data type: `Optional[Stdlib::Unixpath]`
+Data type: `Stdlib::Unixpath`
 
-path to the sysconfig directory
+path to the sysconfig directory, per-OS values are configured in hiera
 
-Default value: `undef`
+Default value: `'/etc/sysconfig'`
 
 ##### <a name="-k8s--tarball_url_template"></a>`tarball_url_template`
 
