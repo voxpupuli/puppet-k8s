@@ -1,2 +1,1 @@
----
-k8s::sysconfig_path: '/etc/sysconfig'
+--- {}

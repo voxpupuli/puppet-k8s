@@ -100,8 +100,7 @@ class k8s::node::kube_proxy (
 
   if $k8s::packaging == 'container' {
   } else {
-    $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
-    file { "${_sysconfig_path}/kube-proxy":
+    file { "${k8s::sysconfig_path}/kube-proxy":
       ensure  => $_ensure,
       content => epp('k8s/sysconfig.epp', {
           comment               => 'Kubernetes kube-proxy configuration',
@@ -122,7 +121,7 @@ class k8s::node::kube_proxy (
           bin  => 'kube-proxy',
       }),
       require => [
-        File["${_sysconfig_path}/kube-proxy"],
+        File["${k8s::sysconfig_path}/kube-proxy"],
         User[$k8s::user],
       ],
       notify  => Service['kube-proxy'],

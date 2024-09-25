@@ -90,8 +90,7 @@ class k8s::server::controller_manager (
       client_key      => $key,
     }
 
-    $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
-    file { "${_sysconfig_path}/kube-controller-manager":
+    file { "${k8s::sysconfig_path}/kube-controller-manager":
       content => epp('k8s/sysconfig.epp', {
           comment               => 'Kubernetes Controller Manager configuration',
           environment_variables => {
@@ -115,7 +114,7 @@ class k8s::server::controller_manager (
           group => $k8s::group,
       }),
       require => [
-        File["${_sysconfig_path}/kube-controller-manager"],
+        File["${k8s::sysconfig_path}/kube-controller-manager"],
         User[$k8s::user],
       ],
       notify  => Service['kube-controller-manager'],

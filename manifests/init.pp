@@ -40,7 +40,7 @@
 # @param role the role of the node
 # @param runc_version version of runc to install
 # @param service_cluster_cidr CIDR for the service network
-# @param sysconfig_path path to the sysconfig directory
+# @param sysconfig_path path to the sysconfig directory, per-OS values are configured in hiera
 # @param tarball_url_template template for tarball packaging
 # @param uid user id for kubernetes files and services
 # @param user username for kubernetes files and services
@@ -82,7 +82,7 @@ class k8s (
   String[1] $tarball_url_template            = 'https://dl.k8s.io/release/v%{version}/kubernetes-%{component}-%{kernel}-%{arch}.tar.gz',
   String[1] $package_template                = 'kubernetes-%{component}',
   String[1] $hyperkube_name                  = 'hyperkube',
-  Optional[Stdlib::Unixpath] $sysconfig_path = undef,
+  Stdlib::Unixpath $sysconfig_path           = '/etc/sysconfig',
 
   K8s::Node_auth $node_auth = 'bootstrap',
 
