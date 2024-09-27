@@ -1,5 +1,8 @@
 # @summary Sets up common Kubernetes components - users/groups/folders/etc
+# @api private
 class k8s::common {
+  assert_private()
+
   group { $k8s::group:
     ensure => present,
     system => true,

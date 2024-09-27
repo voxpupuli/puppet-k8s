@@ -1,4 +1,5 @@
 # @summary Installs and configures kubelet
+# @api private
 #
 # @param arguments additional arguments to pass to kubelet
 # @param auth type of node authentication
@@ -52,6 +53,8 @@ class k8s::node::kubelet (
 
   Optional[K8s::Firewall] $firewall_type = $k8s::node::firewall_type,
 ) {
+  assert_private()
+
   k8s::binary { 'kubelet':
     ensure => $ensure,
     notify => Service['kubelet'],

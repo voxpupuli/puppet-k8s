@@ -1,4 +1,5 @@
 # @summary Installs and configures a Kubernetes controller manager
+# @api private
 #
 # @param arguments Additional arguments to pass to the controller manager.
 # @param ca_cert The path to the CA certificate.

@@ -1,4 +1,5 @@
 # @summary Generates and deploys the default Puppet boostrap configuration into the cluster
+# @api private
 #
 # @param control_plane_url The main API URL to encode in the bootstrap configuration
 # @param ensure Whether the resources should be present or absent

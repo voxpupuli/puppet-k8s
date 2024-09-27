@@ -1,4 +1,5 @@
 # @summary Installs and configures a Kubernetes scheduler
+# @api private
 #
 # @param ensure Whether the scheduler should be configured.
 # @param control_plane_url The URL of the Kubernetes API server.

@@ -1,4 +1,5 @@
 # @summary Installs and configures a Kubernetes apiserver
+# @api private
 #
 # @param advertise_address bind address of the apiserver
 # @param aggregator_ca_cert path to the aggregator ca cert file

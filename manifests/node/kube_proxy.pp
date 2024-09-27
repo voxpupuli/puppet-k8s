@@ -1,4 +1,5 @@
 # @summary Sets up a on-node kube-proxy instance
+# @api private
 #
 # For most use-cases, running kube-proxy inside the cluster itself is recommended
 #
