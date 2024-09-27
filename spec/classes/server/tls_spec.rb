@@ -11,6 +11,8 @@ describe 'k8s::server::tls' do
   end
   let(:pre_condition) do
     <<~PUPPET
+      function assert_private() {}
+
       include ::k8s
       class { '::k8s::server':
         manage_etcd => false,

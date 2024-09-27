@@ -1,4 +1,5 @@
 # @summary Generates the necessary Kubernetes certificates for a server
+# @api private
 #
 # @param aggregator_ca_cert The path to the aggregator CA certificate
 # @param aggregator_ca_key The path to the aggregator CA key
@@ -32,6 +33,7 @@ class k8s::server::tls (
   Stdlib::Unixpath $aggregator_ca_key  = $k8s::server::aggregator_ca_key,
   Stdlib::Unixpath $aggregator_ca_cert = $k8s::server::aggregator_ca_cert,
 ) {
+  assert_private()
   if $manage_certs or $ensure == 'absent' {
     if !defined(File[$cert_path]) {
       file { $cert_path:

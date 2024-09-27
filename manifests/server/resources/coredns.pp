@@ -1,4 +1,5 @@
 # @summary Generates and deploys the default CoreDNS DNS provider for Kubernetes
+# @api private
 #
 # @param cluster_domain The cluster domain to use for the CoreDNS ConfigMap
 # @param corefile_content The content to use for the CoreDNS ConfigMap

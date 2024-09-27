@@ -21,8 +21,9 @@ class k8s::install::crictl (
   Stdlib::HTTPUrl $download_url_template = 'https://github.com/kubernetes-sigs/cri-tools/releases/download/%{version}/crictl-%{version}-linux-%{arch}.tar.gz',
 ) {
   if $manage_repo {
-    $pkg = pick($crictl_package, 'cri-tools')
+    include k8s::repo
 
+    $pkg = pick($crictl_package, 'cri-tools')
     package { $pkg:
       ensure => stdlib::ensure($ensure, 'package'),
     }

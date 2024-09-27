@@ -14,6 +14,12 @@ describe 'k8s::node' do
       let(:facts) { os_facts }
 
       it { is_expected.to compile }
+
+      if os_facts.dig('os', 'family') == 'Debian'
+        it { is_expected.to contain_package 'conntrack' }
+      else
+        it { is_expected.to contain_package 'conntrack-tools' }
+      end
     end
   end
 end

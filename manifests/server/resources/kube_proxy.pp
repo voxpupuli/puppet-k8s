@@ -1,4 +1,5 @@
 # @summary Generates and deploys the default kube-proxy service for Kubernetes
+# @api private
 #
 # @param cluster_cidr The internal cluster CIDR to proxy for
 # @param daemonset_config Additional configuration to merge into the DaemonSet object

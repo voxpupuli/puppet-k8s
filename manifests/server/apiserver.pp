@@ -1,4 +1,5 @@
 # @summary Installs and configures a Kubernetes apiserver
+# @api private
 #
 # @param advertise_address bind address of the apiserver
 # @param aggregator_ca_cert path to the aggregator ca cert file
@@ -263,8 +264,7 @@ class k8s::server::apiserver (
     }
     # TODO: Create a dummy kube-apiserver service that just requires kubelet
   } else {
-    $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
-    file { "${_sysconfig_path}/kube-apiserver":
+    file { "${k8s::sysconfig_path}/kube-apiserver":
       content => epp('k8s/sysconfig.epp', {
           comment               => 'Kubernetes API Server configuration',
           environment_variables => {
@@ -287,7 +287,7 @@ class k8s::server::apiserver (
           group => $k8s::group,
       }),
       require => [
-        File["${_sysconfig_path}/kube-apiserver"],
+        File["${k8s::sysconfig_path}/kube-apiserver"],
         User[$k8s::user],
       ],
       notify  => Service['kube-apiserver'],
