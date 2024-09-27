@@ -65,12 +65,10 @@ class k8s::node (
   }
   if $k8s::manage_packages {
     # Ensure conntrack is installed to properly handle networking cleanup
-    if fact('os.family') == 'Debian' {
-      $_conntrack = 'conntrack'
-    } else {
-      $_conntrack = 'conntrack-tools'
+    $_conntrack = fact('os.family') ? {
+      'Debian' => 'conntrack',
+      default  => 'conntrack-tools',
     }
-
     ensure_packages([$_conntrack,])
   }
 
