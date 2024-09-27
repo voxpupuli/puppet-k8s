@@ -104,10 +104,10 @@ class k8s (
   Integer[0, 65535] $gid = 888,
 ) {
   if $role == 'server' or $role == 'control-plane' {
-    include k8s::server
+    contain k8s::server
   } elsif $role == 'node' {
-    include k8s::node
+    contain k8s::node
   } elsif $role == 'etcd-replica' {
-    include k8s::server::etcd
+    contain k8s::server::etcd
   }
 }
