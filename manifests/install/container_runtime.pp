@@ -87,7 +87,6 @@ class k8s::install::container_runtime (
   }
 
   if $manage_repo {
-    include k8s::repo
-    Class['k8s::repo'] -> Package['k8s container manager']
+    require k8s::repo
   }
 }
