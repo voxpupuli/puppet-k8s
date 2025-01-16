@@ -1292,11 +1292,11 @@ Default value: `"${cert_path}/client-ca.key"`
 
 ##### <a name="-k8s--server--etcd--cluster_name"></a>`cluster_name`
 
-Data type: `Optional[String[1]]`
+Data type: `String[1]`
 
 name of the etcd cluster for searching its nodes in the puppetdb, will use k8s::etcd_cluster_name unless otherwise specified
 
-Default value: `undef`
+Default value: `'default'`
 
 ##### <a name="-k8s--server--etcd--ensure"></a>`ensure`
 
@@ -1380,7 +1380,7 @@ Default value: `"${cert_path}/peer-ca.key"`
 
 ##### <a name="-k8s--server--etcd--puppetdb_discovery_tag"></a>`puppetdb_discovery_tag`
 
-Data type: `Optional[String[1]]`
+Data type: `String[1]`
 
 enable puppetdb resource searching
 
