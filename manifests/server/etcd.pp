@@ -27,8 +27,8 @@ class k8s::server::etcd (
   Boolean $manage_setup                       = true,
   Boolean $manage_firewall                    = false,
   Boolean $manage_members                     = false,
-  Optional[String[1]] $cluster_name           = undef,
-  Optional[String[1]] $puppetdb_discovery_tag = $cluster_name,
+  String[1] $cluster_name                     = 'default',
+  String[1] $puppetdb_discovery_tag           = $cluster_name,
 
   Boolean $self_signed_tls = false,
   Boolean $manage_certs    = true,
@@ -119,9 +119,6 @@ class k8s::server::etcd (
   }
 
   if $ensure == 'present' and $manage_members {
-    $_cluster_name = pick($cluster_name, $k8s::etcd_cluster_name, 'default')
-    $_puppetdb_discovery_tag = pick($puppetdb_discovery_tag, $cluster_name, $k8s::puppetdb_discovery_tag, 'default')
-
     # Needs the PuppetDB terminus installed
     $pql_query = [
       'resources[certname,parameters] {',
@@ -131,8 +128,8 @@ class k8s::server::etcd (
       '    resources {',
       '      type = \'Class\' and',
       '      title = \'K8s::Server::Etcd\' and',
-      "      parameters.cluster_name = '${_cluster_name}' and",
-      "      parameters.puppetdb_discovery_tag = '${_puppetdb_discovery_tag}' and",
+      "      parameters.cluster_name = '${cluster_name}' and",
+      "      parameters.puppetdb_discovery_tag = '${puppetdb_discovery_tag}' and",
       "      certname != '${trusted[certname]}'",
       '    }',
       '  }',
