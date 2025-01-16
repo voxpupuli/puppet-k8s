@@ -80,22 +80,39 @@ class k8s::server::etcd::setup (
   if $install == 'archive' {
     $_url  = k8s::format_url($archive_template, { version => $version, })
     $_file = basename($_url)
+    $_target = "/opt/k8s/etcd-${version}";
+    $_tarball_target = '/opt/k8s/archives';
 
-    archive { "/var/tmp/${_file}":
+    file { $_target:
+      ensure  => stdlib::ensure($ensure, 'directory'),
+    }
+
+    archive { 'etcd':
       ensure          => $ensure,
+      path            => "${_tarball_target}/${_file}",
       source          => $_url,
       extract         => true,
       extract_command => 'tar xfz %s --strip-components=1',
-      extract_path    => '/usr/local/bin',
+      extract_path    => $_target,
       cleanup         => true,
-      creates         => ['/usr/local/bin/etcd', '/usr/local/bin/etcdctl'],
-      notify          => Service['etcd'],
+      creates         => ["${_target}/etcd", "${_target}/etcdctl"],
     }
 
-    if $ensure == 'absent' {
-      file { ['/usr/local/bin/etcd', '/usr/local/bin/etcdctl']:
-        ensure => 'absent',
-      }
+    file { '/usr/local/bin/etcd':
+      ensure  => stdlib::ensure($ensure, 'link'),
+      mode    => '0755',
+      replace => true,
+      target  => "${_target}/etcd",
+      require => Archive['etcd'],
+      notify  => Service['etcd'],
+    }
+
+    file { '/usr/local/bin/etcdctl':
+      ensure  => stdlib::ensure($ensure, 'link'),
+      mode    => '0755',
+      replace => true,
+      target  => "${_target}/etcdctl",
+      require => Archive['etcd'],
     }
 
     group { $group:
