@@ -10,7 +10,7 @@ describe 'k8s' do
 
       it { is_expected.to compile }
 
-      %w[node server].each do |role|
+      %w[node server etcd-replica].each do |role|
         context "with role #{role}" do
           let(:params) do
             {

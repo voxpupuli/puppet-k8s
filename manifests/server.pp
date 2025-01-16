@@ -59,6 +59,8 @@ class k8s::server (
   Optional[K8s::Firewall] $firewall_type         = $k8s::firewall_type,
   String[1] $etcd_cluster_name                   = $k8s::etcd_cluster_name,
 ) {
+  include k8s::common
+
   if $manage_etcd {
     class { 'k8s::server::etcd':
       ensure          => $ensure,

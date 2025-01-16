@@ -1,4 +1,5 @@
 # @summary Installs and configures a Kubernetes scheduler
+# @api private
 #
 # @param ensure Whether the scheduler should be configured.
 # @param control_plane_url The URL of the Kubernetes API server.
@@ -68,8 +69,7 @@ class k8s::server::scheduler (
       client_cert     => $cert,
       client_key      => $key,
     }
-    $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
-    file { "${_sysconfig_path}/kube-scheduler":
+    file { "${k8s::sysconfig_path}/kube-scheduler":
       content => epp('k8s/sysconfig.epp', {
           comment               => 'Kubernetes Scheduler configuration',
           environment_variables => {
@@ -93,7 +93,7 @@ class k8s::server::scheduler (
           group => $k8s::group,
       }),
       require => [
-        File["${_sysconfig_path}/kube-scheduler"],
+        File["${k8s::sysconfig_path}/kube-scheduler"],
         User[$k8s::user],
       ],
       notify  => Service['kube-scheduler'],

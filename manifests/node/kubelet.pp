@@ -1,4 +1,5 @@
 # @summary Installs and configures kubelet
+# @api private
 #
 # @param arguments additional arguments to pass to kubelet
 # @param auth type of node authentication
@@ -52,6 +53,8 @@ class k8s::node::kubelet (
 
   Optional[K8s::Firewall] $firewall_type = $k8s::node::firewall_type,
 ) {
+  assert_private()
+
   k8s::binary { 'kubelet':
     ensure => $ensure,
     notify => Service['kubelet'],
@@ -231,8 +234,7 @@ class k8s::node::kubelet (
       node_ip                    => $_node_ip,
   } + $arguments)
 
-  $_sysconfig_path = pick($k8s::sysconfig_path, '/etc/sysconfig')
-  file { "${_sysconfig_path}/kubelet":
+  file { "${k8s::sysconfig_path}/kubelet":
     content => epp('k8s/sysconfig.epp', {
         comment               => 'Kubernetes Kubelet configuration',
         environment_variables => {
@@ -252,7 +254,7 @@ class k8s::node::kubelet (
         bin   => 'kubelet',
     }),
     require => [
-      File["${_sysconfig_path}/kubelet", '/etc/kubernetes/kubelet.conf'],
+      File["${k8s::sysconfig_path}/kubelet", '/etc/kubernetes/kubelet.conf'],
       User[$k8s::user],
     ],
     notify  => Service['kubelet'],

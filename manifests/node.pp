@@ -54,6 +54,24 @@ class k8s::node (
 
   Optional[K8s::Firewall] $firewall_type = $k8s::firewall_type,
 ) {
+  include k8s::common
+  include k8s::install::cni_plugins
+
+  if $k8s::manage_container_manager {
+    include k8s::install::container_runtime
+  }
+  if $k8s::manage_repo {
+    include k8s::repo
+  }
+  if $k8s::manage_packages {
+    # Ensure conntrack is installed to properly handle networking cleanup
+    $_conntrack = fact('os.family') ? {
+      'Debian' => 'conntrack',
+      default  => 'conntrack-tools',
+    }
+    ensure_packages([$_conntrack,])
+  }
+
   if $manage_crictl {
     include k8s::install::crictl
   }

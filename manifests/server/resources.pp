@@ -1,4 +1,5 @@
 # @summary Generates and deploys standard Kubernetes in-cluster services
+# @api private
 #
 # @param ca_cert the path to the CA certificate to use for the cluster
 # @param cluster_cidr the CIDR to use for the cluster

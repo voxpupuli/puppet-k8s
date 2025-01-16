@@ -35,10 +35,10 @@
 # @param version The ectd version to install
 #
 class k8s::server::etcd::setup (
-  K8s::Ensure $ensure                = $k8s::server::etcd::ensure,
+  K8s::Ensure $ensure                = 'present',
   Enum['archive','package'] $install = 'archive',
   String[1] $package                 = 'etcd',
-  String[1] $version                 = $k8s::server::etcd::version,
+  String[1] $version                 = $k8s::etcd_version,
   String[1] $etcd_name               = $facts['networking']['hostname'],
   String[1] $fqdn                    = $facts['networking']['fqdn'],
 
@@ -56,14 +56,14 @@ class k8s::server::etcd::setup (
   Optional[Stdlib::Unixpath] $peer_cert_file       = undef,
   Optional[Stdlib::Unixpath] $peer_key_file        = undef,
   Optional[Stdlib::Unixpath] $peer_trusted_ca_file = undef,
+  Optional[Boolean] $peer_auto_tls                 = undef,
   Boolean $peer_client_cert_auth                   = false,
-  Boolean $peer_auto_tls                           = $k8s::server::etcd::self_signed_tls,
 
   Optional[Stdlib::Unixpath] $cert_file       = undef,
   Optional[Stdlib::Unixpath] $key_file        = undef,
   Optional[Stdlib::Unixpath] $trusted_ca_file = undef,
+  Optional[Boolean] $auto_tls                 = undef,
   Boolean $client_cert_auth                   = false,
-  Boolean $auto_tls                           = $k8s::server::etcd::self_signed_tls,
 
   Optional[Integer] $auto_compaction_retention             = undef,
   Optional[Enum['existing', 'new']] $initial_cluster_state = undef,
@@ -72,11 +72,21 @@ class k8s::server::etcd::setup (
 
   Optional[Stdlib::Unixpath] $binary_path = undef,
   Stdlib::Unixpath $storage_path          = '/var/lib/etcd',
-  String[1] $user                         = $k8s::server::etcd::user,
-  String[1] $group                        = $k8s::server::etcd::group,
+  String[1] $user                         = 'etcd',
+  String[1] $group                        = 'etcd',
   Optional[Integer[0, 65535]] $uid        = undef,
   Optional[Integer[0, 65535]] $gid        = undef,
 ) {
+  if defined(Class['k8s::server::etcd']) {
+    $_k8s_server_etcd_self_signed_tls = $k8s::server::etcd::self_signed_tls
+    $_k8s_server_etcd_manage_certs = $k8s::server::etcd::manage_certs
+  } else {
+    $_k8s_server_etcd_self_signed_tls = lookup('k8s::server::etcd::self_signed_tls', default_value => undef)
+    $_k8s_server_etcd_manage_certs = lookup('k8s::server::etcd::manage_certs', default_value => undef)
+  }
+  $_peer_auto_tls = pick($peer_auto_tls, $_k8s_server_etcd_self_signed_tls, false)
+  $_auto_tls = pick($auto_tls, $_k8s_server_etcd_self_signed_tls, false)
+
   if $install == 'archive' {
     $_url  = k8s::format_url($archive_template, { version => $version, })
     $_file = basename($_url)
@@ -151,7 +161,7 @@ class k8s::server::etcd::setup (
   }
 
   # Use generated certs by default
-  if !$k8s::server::etcd::self_signed_tls and $k8s::server::etcd::manage_certs {
+  if !$_k8s_server_etcd_self_signed_tls and $_k8s_server_etcd_manage_certs {
     $_dir                   = "${storage_path}/certs"
     $_cert_file             = pick($cert_file, "${_dir}/etcd-server.pem")
     $_key_file              = pick($key_file, "${_dir}/etcd-server.key")
@@ -195,10 +205,12 @@ class k8s::server::etcd::setup (
           key_file                    => $_key_file,
           trusted_ca_file             => $_trusted_ca_file,
           client_cert_auth            => $_client_cert_auth,
+          auto_tls                    => $_auto_tls,
           peer_cert_file              => $_peer_cert_file,
           peer_key_file               => $_peer_key_file,
           peer_trusted_ca_file        => $_peer_trusted_ca_file,
           peer_client_cert_auth       => $_peer_client_cert_auth,
+          peer_auto_tls               => $_peer_auto_tls,
           auto_compaction_retention   => $auto_compaction_retention,
           initial_cluster_state       => $initial_cluster_state,
           initial_cluster_token       => $initial_cluster_token,

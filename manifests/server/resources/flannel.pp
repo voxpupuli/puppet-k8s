@@ -1,4 +1,5 @@
 # @summary Generates and deploys the default CoreDNS DNS provider for Kubernetes
+# @api private
 #
 # @param cluster_cidr The internal cluster CIDR to proxy for
 # @param cni_image The Flannel CNI plugin image name to use
