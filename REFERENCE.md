@@ -1734,7 +1734,7 @@ Data type: `Integer`
 
 Number of retries
 
-Default value: `2`
+Default value: `15`
 
 ##### <a name="-k8s--server--wait_online--try_sleep"></a>`try_sleep`
 
