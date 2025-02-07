@@ -1720,6 +1720,38 @@ Default value: `$k8s::etcd_version`
 
 Creates a dummy exec to allow deferring applies until the Kubernetes API server has started
 
+#### Parameters
+
+The following parameters are available in the `k8s::server::wait_online` class:
+
+* [`tries`](#-k8s--server--wait_online--tries)
+* [`try_sleep`](#-k8s--server--wait_online--try_sleep)
+* [`timeout`](#-k8s--server--wait_online--timeout)
+
+##### <a name="-k8s--server--wait_online--tries"></a>`tries`
+
+Data type: `Integer`
+
+Number of retries
+
+Default value: `2`
+
+##### <a name="-k8s--server--wait_online--try_sleep"></a>`try_sleep`
+
+Data type: `Integer`
+
+Sleep time in seconds
+
+Default value: `2`
+
+##### <a name="-k8s--server--wait_online--timeout"></a>`timeout`
+
+Data type: `Integer`
+
+Execution timeout in seconds (0 to disable)
+
+Default value: `5`
+
 ## Defined types
 
 ### <a name="k8s--binary"></a>`k8s::binary`
