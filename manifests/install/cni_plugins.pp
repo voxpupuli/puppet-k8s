@@ -33,6 +33,27 @@ class k8s::install::cni_plugins (
       file { $_target:
         ensure  => stdlib::ensure($ensure, 'directory'),
       }
+      if $ensure == present {
+        # Store the cni plugin version in a static fact, to retain the plugin directory for copying from on upgrades
+        file { '/etc/facter/facts.d/cni_plugins_version.txt':
+          ensure  => file,
+          content => "cni_plugins_version=${version}",
+          require => File['/opt/cni/bin'],
+        }
+        if fact('cni_plugins_version') and fact('cni_plugins_version') != $version {
+          $_old_target = "/opt/k8s/cni-${fact('cni_plugins_version')}"
+          file { $_old_target:
+            ensure => directory,
+          }
+
+          exec { 'Retain custom CNI binaries':
+            command     => "cp --no-clobber '${_old_target}'/* '${_target}'",
+            path        => fact('path'),
+            refreshonly => true,
+            subscribe   => File['/opt/cni/bin'],
+          }
+        }
+      }
 
       archive { 'cni-plugins':
         ensure       => $ensure,
