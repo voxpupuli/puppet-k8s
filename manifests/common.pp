@@ -33,6 +33,9 @@ class k8s::common {
     '/opt/k8s': ;
     '/opt/k8s/bin': ;
   }
+  ['/etc/facter','/etc/facter/facts.d'].each |$path| {
+    ensure_resource('file', $path, { ensure => directory })
+  }
 
   file { '/var/run/kubernetes':
     ensure => directory,
