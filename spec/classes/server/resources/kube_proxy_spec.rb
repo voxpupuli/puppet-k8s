@@ -8,7 +8,7 @@ describe 'k8s::server::resources::kube_proxy' do
       function assert_private() {}
 
       class { '::k8s':
-        version => '1.26.1',
+        version => '1.23.4',
       }
       class { '::k8s::server':
         manage_etcd => true,
@@ -34,29 +34,6 @@ describe 'k8s::server::resources::kube_proxy' do
       it { is_expected.to contain_kubectl_apply('kube-proxy ConfigMap') }
 
       it { is_expected.to contain_kubectl_apply('kube-proxy DaemonSet').with_content(content) }
-
-      describe 'with k8s < 1.23.0' do
-        let(:pre_condition) do
-          <<~PUPPET
-            function assert_private() {}
-
-            class { '::k8s':
-              version => '1.22.10',
-            }
-            class { '::k8s::server':
-              manage_etcd => true,
-              manage_certs => true,
-              manage_components => false,
-              manage_resources => false,
-              node_on_server => false,
-            }
-            include ::k8s::server::resources
-          PUPPET
-        end
-        let(:content) { Psych.load(File.read('spec/fixtures/files/resources/kube-proxy-older.yaml')) }
-
-        it { is_expected.to contain_kubectl_apply('kube-proxy DaemonSet').with_content(content) }
-      end
     end
   end
 end
