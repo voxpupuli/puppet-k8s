@@ -26,20 +26,6 @@ class k8s::server::resources::kube_proxy (
 ) {
   assert_private()
 
-  if versioncmp($k8s::version, '1.23.0') >= 0 {
-    $_container_command = '/go-runner'
-    $_container_preargs = k8s::format_arguments({
-        log_file    => '/var/log/kube-proxy.log',
-        also_stdout => true,
-    }) + ['--', '/usr/local/bin/kube-proxy']
-  } else {
-    $_container_command = '/usr/local/bin/kube-proxy'
-    $_container_preargs = k8s::format_arguments({
-        alsologtostderr => true,
-        log_file        => '/var/log/kube-proxy.log',
-    })
-  }
-
   $_cluster_cidr = flatten($cluster_cidr).join(',')
 
   kubectl_apply {
@@ -62,9 +48,10 @@ class k8s::server::resources::kube_proxy (
       };
 
     'kube-proxy ClusterRoleBinding':
-      api_version => 'rbac.authorization.k8s.io/v1',
-      kind        => 'ClusterRoleBinding',
-      content     => {
+      api_version   => 'rbac.authorization.k8s.io/v1',
+      kind          => 'ClusterRoleBinding',
+      resource_name => 'system:kube-proxy',
+      content       => {
         metadata => {
           labels => {
             'kubernetes.io/managed-by' => 'puppet',
@@ -157,10 +144,10 @@ class k8s::server::resources::kube_proxy (
     'kube-proxy DaemonSet':
       api_version => 'apps/v1',
       kind        => 'DaemonSet',
+      recreate    => true,
       content     => {
         metadata => {
           labels => {
-            tier                       => 'node',
             'k8s-app'                  => 'kube-proxy',
             'kubernetes.io/managed-by' => 'puppet',
           },
@@ -168,52 +155,41 @@ class k8s::server::resources::kube_proxy (
         spec     => {
           selector       => {
             matchLabels => {
-              tier                       => 'node',
               'k8s-app'                  => 'kube-proxy',
-              'kubernetes.io/managed-by' => 'puppet',
             },
+          },
+          updateStrategy => {
+            type => 'RollingUpdate',
           },
           template       => {
             metadata => {
               labels => {
-                tier                       => 'node',
                 'k8s-app'                  => 'kube-proxy',
                 'kubernetes.io/managed-by' => 'puppet',
               },
             },
             spec     => {
+              priorityClassName  => 'system-node-critical',
               containers         => [
                 {
                   name            => 'kube-proxy',
                   image           => "${registry}/${image}:${image_tag}",
                   imagePullPolicy => 'IfNotPresent',
                   command         => [
-                    $_container_command,
-                  ],
-                  args            => delete_undef_values(
-                    $_container_preargs +
+                    '/go-runner',
+                    k8s::format_arguments({
+                        log_file    => '/var/log/kube-proxy.log',
+                        also_stdout => true,
+                    }),
+                    '--',
+                    '/usr/local/bin/kube-proxy',
                     k8s::format_arguments(
                       {
                         hostname_override => '$(NODE_NAME)',
                         config            => '/var/lib/kube-proxy/kube-proxy.conf',
                       } + $extra_args
-                    )
-                  ),
-                  env             => [
-                    {
-                      name      => 'NODE_NAME',
-                      valueFrom => {
-                        fieldRef => {
-                          fieldPath => 'spec.nodeName',
-                        },
-                      },
-                    },
-                  ],
-                  resources       => {
-                    requests => {
-                      cpu => '100m',
-                    },
-                  },
+                    ),
+                  ].flatten,
                   securityContext => {
                     privileged => true,
                   },
@@ -231,40 +207,31 @@ class k8s::server::resources::kube_proxy (
                       readOnly  => true,
                     },
                     {
+                      mountPath => '/run/xtables.lock',
+                      name      => 'iptables-lock',
+                      readOnly  => false,
+                    },
+                    {
                       mountPath => '/lib/modules',
                       name      => 'lib-modules',
                       readOnly  => true,
                     },
-                    # {
-                    #   mountPath => '/etc/ssl/certs',
-                    #   name      => 'ca-certs-host',
-                    #   readOnly  => true,
-                    # },
+                  ],
+                  env             => [
                     {
-                      mountPath => '/run/xtables.lock',
-                      name      => 'iptables-lock',
+                      name      => 'NODE_NAME',
+                      valueFrom => {
+                        fieldRef => {
+                          fieldPath => 'spec.nodeName',
+                        },
+                      },
                     },
                   ],
-                }
+                },
               ],
               imagePullSecrets   => $image_pull_secrets,
               hostNetwork        => true,
-              priorityClassName  => 'system-node-critical',
               serviceAccountName => 'kube-proxy',
-              tolerations        => [
-                {
-                  key      => 'CriticalAddonsOnly',
-                  operator => 'Exists',
-                },
-                {
-                  effect   => 'NoSchedule',
-                  operator => 'Exists',
-                },
-                {
-                  effect   => 'NoExecute',
-                  operator => 'Exists',
-                },
-              ],
               volumes            => [
                 {
                   name     => 'logfile',
@@ -287,13 +254,6 @@ class k8s::server::resources::kube_proxy (
                     type => 'FileOrCreate',
                   },
                 },
-                # {
-                #   name     => 'ca-certs-host',
-                #   hostPath => {
-                #     path => '/usr/share/ca-certificates',
-                #     type => 'Directory',
-                #   },
-                # },
                 {
                   name      => 'kube-proxy',
                   configMap => {
@@ -307,13 +267,15 @@ class k8s::server::resources::kube_proxy (
                   },
                 },
               ],
+              tolerations        => [
+                {
+                  operator => 'Exists',
+                },
+              ],
+              nodeSelector       => {
+                'kubernetes.io/os' => 'linux',
+              },
             },
-          },
-          updateStrategy => {
-            rollingUpdate => {
-              maxUnavailable => 1,
-            },
-            type          => 'RollingUpdate',
           },
         },
       } + $daemonset_config;

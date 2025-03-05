@@ -8,7 +8,7 @@
 #
 class k8s::install::cni_plugins (
   K8s::Ensure $ensure               = $k8s::ensure,
-  String[1] $version                = 'v1.2.0',
+  String[1] $version                = 'v1.6.2',
   String[1] $method                 = $k8s::native_packaging,
   String[1] $download_url_template  = 'https://github.com/containernetworking/plugins/releases/download/%{version}/cni-plugins-linux-%{arch}-%{version}.tgz',
   Optional[String[1]] $package_name = undef,

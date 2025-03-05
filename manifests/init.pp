@@ -50,8 +50,8 @@ class k8s (
   K8s::Ensure $ensure                     = 'present',
   Enum['container', 'native'] $packaging  = 'native',
   K8s::Native_packaging $native_packaging = 'loose',
-  String[1] $version                      = '1.28.14',
-  String[1] $etcd_version                 = '3.5.16',
+  String[1] $version                      = '1.31.6',
+  String[1] $etcd_version                 = '3.5.18',
 
   String[1] $container_registry              = 'registry.k8s.io',
   Optional[String[1]] $container_image_tag   = undef,
