@@ -1,13 +1,21 @@
 # @summary Creates a dummy exec to allow deferring applies until the Kubernetes API server has started
 #
-class k8s::server::wait_online {
-  # Wait up to 30 seconds for kube-apiserver to start
+# @param tries Number of retries
+# @param try_sleep Sleep time in seconds
+# @param timeout Execution timeout in seconds (0 to disable)
+class k8s::server::wait_online (
+  Integer $tries = 15,
+  Integer $timeout = 5,
+  Integer $try_sleep = 2,
+) {
+  # Wait up to $tries * ( $timeout + $try_sleep) seconds for kube-apiserver to start
   exec { 'k8s apiserver wait online':
     command     => 'kubectl --kubeconfig /root/.kube/config version',
     path        => $facts['path'],
     refreshonly => true,
-    tries       => 15,
-    try_sleep   => 2,
+    tries       => $tries,
+    try_sleep   => $try_sleep,
+    timeout     => $timeout,
   }
 
   # Require possibly managed components before checking online state
