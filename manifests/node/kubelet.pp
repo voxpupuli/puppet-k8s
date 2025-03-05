@@ -69,7 +69,7 @@ class k8s::node::kubelet (
   case $auth {
     'bootstrap': {
       $_ca_cert = pick($ca_cert, '/var/lib/kubelet/pki/ca.pem')
-      ensure_packages(['jq'])
+      stdlib::ensure_packages(['jq'])
       if !defined(K8s::Binary['kubectl']) {
         k8s::binary { 'kubectl':
           ensure => $ensure,
