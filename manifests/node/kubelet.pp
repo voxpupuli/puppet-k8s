@@ -6,7 +6,7 @@
 # @param ca_cert path to the ca cert
 # @param cert path to node cert file
 # @param cert_path path to cert files
-# @param labels lables to be setted on the node
+# @param labels node labels to be set on initial node registration
 # @param config additional config to pass to kubelet
 # @param control_plane_url cluster API connection
 # @param ensure set ensure for installation or deinstallation
