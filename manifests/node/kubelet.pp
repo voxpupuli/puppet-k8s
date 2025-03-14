@@ -6,6 +6,7 @@
 # @param ca_cert path to the ca cert
 # @param cert path to node cert file
 # @param cert_path path to cert files
+# @param labels lables to be setted on the node
 # @param config additional config to pass to kubelet
 # @param control_plane_url cluster API connection
 # @param ensure set ensure for installation or deinstallation
@@ -29,6 +30,7 @@ class k8s::node::kubelet (
 
   Hash[String, Data] $config        = {},
   Hash[String, Data] $arguments     = {},
+  Hash[String, String] $labels      = {},
   String $runtime                   = $k8s::container_manager,
   String $runtime_service           = $k8s::container_runtime_service,
   String[1] $puppetdb_discovery_tag = $k8s::node::puppetdb_discovery_tag,
@@ -224,6 +226,8 @@ class k8s::node::kubelet (
     $_node_ip = undef
   }
 
+  $_labels = $labels.map |$k, $v| { "${k}=${v}" }.join(',')
+
   $_args = k8s::format_arguments({
       config                     => '/etc/kubernetes/kubelet.conf',
       kubeconfig                 => $kubeconfig,
@@ -232,6 +236,7 @@ class k8s::node::kubelet (
       container_runtime_endpoint => $_runtime_endpoint,
       hostname_override          => fact('networking.fqdn'),
       node_ip                    => $_node_ip,
+      node_labels                => $_labels,
   } + $arguments)
 
   file { "${k8s::sysconfig_path}/kubelet":
