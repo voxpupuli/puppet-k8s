@@ -31,7 +31,7 @@ class k8s::install::cni_plugins (
       $_tarball_target = '/opt/k8s/archives';
 
       file { $_target:
-        ensure  => stdlib::ensure($ensure, 'directory'),
+        ensure => stdlib::ensure($ensure, 'directory'),
       }
       if $ensure == present {
         # Store the cni plugin version in a static fact, to retain the plugin directory for copying from on upgrades

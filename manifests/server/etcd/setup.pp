@@ -94,7 +94,7 @@ class k8s::server::etcd::setup (
     $_tarball_target = '/opt/k8s/archives';
 
     file { $_target:
-      ensure  => stdlib::ensure($ensure, 'directory'),
+      ensure => stdlib::ensure($ensure, 'directory'),
     }
 
     archive { 'etcd':

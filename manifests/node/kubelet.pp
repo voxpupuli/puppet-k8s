@@ -268,7 +268,7 @@ class k8s::node::kubelet (
     # Remove pre-packaged kubeadmin-built kubelet configuration on SUSE
     file {
       default:
-        ensure  => absent;
+        ensure => absent;
 
       '/usr/lib/systemd/system/kubelet.service':;
       '/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf':;
