@@ -86,6 +86,15 @@ class k8s::install::container_runtime (
     name   => $pkg,
   }
 
+  file {
+    default:
+      ensure => directory;
+
+    '/usr/share/containers/': ;
+    '/usr/share/containers/oci/': ;
+    '/usr/share/containers/oci/hooks.d': ;
+  }
+
   if $manage_repo {
     require k8s::repo
   }

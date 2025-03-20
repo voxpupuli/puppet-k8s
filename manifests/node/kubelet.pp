@@ -69,7 +69,6 @@ class k8s::node::kubelet (
   case $auth {
     'bootstrap': {
       $_ca_cert = pick($ca_cert, '/var/lib/kubelet/pki/ca.pem')
-      ensure_packages(['jq'])
       if !defined(K8s::Binary['kubectl']) {
         k8s::binary { 'kubectl':
           ensure => $ensure,
@@ -83,12 +82,9 @@ class k8s::node::kubelet (
       ~> exec { 'Retrieve K8s CA':
         path    => ['/usr/local/bin','/usr/bin','/bin'],
         command => "kubectl --server='${control_plane_url}' --username=anonymous --insecure-skip-tls-verify=true \
-          get --raw /api/v1/namespaces/kube-system/configmaps/cluster-info | jq .data.ca -r > '${_ca_cert}'",
+          get --namespace=kube-system configmap cluster-info --output=jsonpath={.data.ca} > '${_ca_cert}'",
         creates => $_ca_cert,
-        require => [
-          K8s::Binary['kubectl'],
-          Package['jq'],
-        ],
+        require => K8s::Binary['kubectl'],
       }
       -> kubeconfig { $_bootstrap_kubeconfig:
         ensure          => $ensure,
@@ -275,7 +271,9 @@ class k8s::node::kubelet (
     }
   }
 
-  Class['k8s::install::container_runtime'] -> Service['kubelet']
+  if defined(Class['k8s::install::container_runtime']) {
+    Class['k8s::install::container_runtime'] -> Service['kubelet']
+  }
   Package <| title == 'containernetworking-plugins' |> -> Service['kubelet']
 
   if $manage_firewall {
