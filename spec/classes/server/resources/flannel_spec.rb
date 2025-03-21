@@ -57,6 +57,7 @@ describe 'k8s::server::resources::flannel' do
           }
         }.to_json
       end
+      let(:daemonset) { subject.call.resource('kubectl_apply', 'flannel DaemonSet') }
 
       let(:content) do
         {
@@ -68,8 +69,8 @@ describe 'k8s::server::resources::flannel' do
             }
           },
           'data' => {
-            'cni-conf.json' => '{"name":"cbr0","cniVersion":"0.3.1","plugins":[{"type":"flannel","delegate":{"hairpinMode":true,"isDefaultGateway":true}},{"type":"portmap","capabilities":{"portMappings":true}}]}',
-            'net-conf.json' => net_conf
+            'cni-conf.json' => cni_conf,
+            'net-conf.json' => net_conf,
           }
         }
       end
@@ -127,6 +128,22 @@ describe 'k8s::server::resources::flannel' do
           is_expected.to contain_kubectl_apply('flannel ConfigMap').
             with_ensure(:present).
             with_content(content)
+        end
+      end
+
+      describe 'without network policy support' do
+        let(:params) { { netpol: false } }
+
+        it 'does not contain kube-network-policies container' do
+          expect(daemonset[:content].dig('spec', 'template', 'spec', 'containers').last['name']).not_to eq('kube-network-policies')
+        end
+      end
+
+      describe 'with network policy support' do
+        let(:params) { { netpol: true } }
+
+        it 'contains kube-network-policies container' do
+          expect(daemonset[:content].dig('spec', 'template', 'spec', 'containers').last['name']).to eq('kube-network-policies')
         end
       end
     end

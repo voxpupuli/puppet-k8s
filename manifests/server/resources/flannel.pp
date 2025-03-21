@@ -21,9 +21,13 @@ class k8s::server::resources::flannel (
   String[1] $cni_registry             = $k8s::server::resources::flannel_cni_registry,
   String[1] $cni_image                = $k8s::server::resources::flannel_cni_image,
   String[1] $cni_image_tag            = $k8s::server::resources::flannel_cni_tag,
+  String[1] $netpol_registry          = $k8s::server::resources::flannel_netpol_registry,
+  String[1] $netpol_image             = $k8s::server::resources::flannel_netpol_image,
+  String[1] $netpol_image_tag         = $k8s::server::resources::flannel_netpol_tag,
   String[1] $registry                 = $k8s::server::resources::flannel_registry,
   String[1] $image                    = $k8s::server::resources::flannel_image,
   String[1] $image_tag                = $k8s::server::resources::flannel_tag,
+  Boolean $netpol                     = $k8s::server::resources::flannel_netpol,
   Hash[String,Data] $daemonset_config = $k8s::server::resources::flannel_daemonset_config,
   Optional[Array] $image_pull_secrets = $k8s::server::resources::image_pull_secrets,
   Hash[String,Data] $net_config       = {},
@@ -33,6 +37,25 @@ class k8s::server::resources::flannel (
   $_cluster_cidr_v4 = flatten($cluster_cidr).filter |$cidr| { $cidr =~ Stdlib::IP::Address::V4::CIDR }
   $_cluster_cidr_v6 = flatten($cluster_cidr).filter |$cidr| { $cidr =~ Stdlib::IP::Address::V6::CIDR }
 
+  $_cni_conf = {
+    name       => 'cbr0',
+    cniVersion => '0.3.1',
+    plugins    => [
+      {
+        type     => 'flannel',
+        delegate => {
+          hairpinMode      => true,
+          isDefaultGateway => true,
+        },
+      },
+      {
+        type         => 'portmap',
+        capabilities => {
+          portMappings => true,
+        },
+      },
+    ],
+  }
   $_net_conf = delete_undef_values(
     {
       'Network'     => $_cluster_cidr_v4[0],
@@ -44,6 +67,72 @@ class k8s::server::resources::flannel (
       },
     } + $net_config
   )
+  if $netpol {
+    $_netpol_rules = [
+      {
+        apiGroups => ['networking.k8s.io'],
+        resources => ['networkpolicies'],
+        verbs     => ['list', 'watch'],
+      },
+      {
+        apiGroups => ['pollicy.networking.k8s.io'],
+        resources => ['adminnetworkpolicies', 'baselineadminnetworkpolicies'],
+        verbs     => ['list', 'watch'],
+      },
+    ]
+    $_netpol_containers = [
+      {
+        name            => 'kube-network-policies',
+        image           => "${cni_registry}/${cni_image}:${cni_image_tag}",
+        command         => ['/bin/netpol', '--hostname-override=$(MY_NODE_NAME)', '--v=2'],
+        env             => [
+          {
+            name      => 'MY_NODE_NAME',
+            valueFrom => {
+              fieldRef => {
+                fieldPath => 'spec.nodeName',
+              },
+            },
+          },
+        ],
+        volumeMounts    => [
+          {
+            name      => 'lib-modules',
+            mountPath => '/lib/modules',
+            readOnly  => true,
+          },
+        ],
+        resources       => {
+          requests => {
+            cpu    => '100m',
+            memory => '50Mi',
+          },
+          limits => {
+            cpu    => '100m',
+            memory => '50Mi',
+          },
+        },
+        securityContext => {
+          privileged   => true,
+          capabilities => {
+            add => ['NET_ADMIN'],
+          },
+        },
+      },
+    ]
+    $_netpol_volumes = [
+      {
+        name     => 'lib-modules',
+        hostPath => {
+          path => '/lib/modules',
+        },
+      },
+    ]
+  } else {
+    $_netpol_rules = []
+    $_netpol_containers = []
+    $_netpol_volumes = []
+  }
 
   kubectl_apply {
     default:
@@ -64,19 +153,8 @@ class k8s::server::resources::flannel (
         },
         rules    => [
           {
-            apiGroups     => ['extensions'],
-            resources     => ['podsecuritypolicies'],
-            verbs         => ['use'],
-            resourceNames => ['psp.flannel.unprivileged'],
-          },
-          {
             apiGroups => [''],
-            resources => ['pods'],
-            verbs     => ['get'],
-          },
-          {
-            apiGroups => [''],
-            resources => ['nodes'],
+            resources => ['pods','nodes','namespaces'],
             verbs     => ['list','watch'],
           },
           {
@@ -84,7 +162,13 @@ class k8s::server::resources::flannel (
             resources => ['nodes/status'],
             verbs     => ['patch'],
           },
-        ],
+          {
+            apiGroups     => ['extensions'],
+            resources     => ['podsecuritypolicies'],
+            verbs         => ['use'],
+            resourceNames => ['psp.flannel.unprivileged'],
+          },
+        ] + $_netpol_rules,
       };
 
     'flannel ClusterRoleBinding':
@@ -133,25 +217,7 @@ class k8s::server::resources::flannel (
           },
         },
         data     => {
-          'cni-conf.json' => to_json({
-              name       => 'cbr0',
-              cniVersion => '0.3.1',
-              plugins    => [
-                {
-                  type     => 'flannel',
-                  delegate => {
-                    hairpinMode      => true,
-                    isDefaultGateway => true,
-                  },
-                },
-                {
-                  type         => 'portmap',
-                  capabilities => {
-                    portMappings => true,
-                  },
-                },
-              ],
-          }),
+          'cni-conf.json' => $_cni_conf.to_json(),
           'net-conf.json' => $_net_conf.to_json(),
         },
       };
@@ -171,9 +237,7 @@ class k8s::server::resources::flannel (
         spec     => {
           selector       => {
             matchLabels => {
-              'tier'                     => 'node',
-              'k8s-app'                  => 'flannel',
-              'kubernetes.io/managed-by' => 'puppet',
+              'k8s-app' => 'flannel',
             },
           },
           template       => {
@@ -185,9 +249,25 @@ class k8s::server::resources::flannel (
               },
             },
             spec     => {
+              affinity           => {
+                nodeAffinity => {
+                  requiredDuringSchedulingIgnoredDuringExecution => {
+                    nodeSelectorTerms => [
+                      {
+                        matchExpressions => [
+                          {
+                            key      => 'kubernetes.io/os',
+                            operator => 'In',
+                            values   => ['linux'],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
               hostNetwork        => true,
               priorityClassName  => 'system-node-critical',
-              serviceAccountName => 'flannel',
               tolerations        => [
                 {
                   effect   => 'NoSchedule',
@@ -198,12 +278,48 @@ class k8s::server::resources::flannel (
                   operator => 'Exists',
                 },
               ],
-              nodeSelector       => {
-                'kubernetes.io/os' => 'linux',
-              },
+              serviceAccountName => 'flannel',
+              initContainers     => [
+                {
+                  name         => 'install-cni-plugin',
+                  image        => "${cni_registry}/${cni_image}:${cni_image_tag}",
+                  command      => ['cp'],
+                  args         => [
+                    '-f',
+                    '/flannel',
+                    '/opt/cni/bin/flannel',
+                  ],
+                  volumeMounts => [
+                    {
+                      name      => 'cni-plugin',
+                      mountPath => '/opt/cni/bin',
+                    },
+                  ],
+                },
+                {
+                  name         => 'install-cni',
+                  image        => "${cni_registry}/${cni_image}:${cni_image_tag}",
+                  command      => ['cp'],
+                  args         => [
+                    '-f',
+                    '/etc/kube-flannel/cni-conf.json',
+                    '/etc/cni/net.d/10-flannel.conflist',
+                  ],
+                  volumeMounts => [
+                    {
+                      name      => 'cni',
+                      mountPath => '/etc/cni/net.d',
+                    },
+                    {
+                      name      => 'flannel-cfg',
+                      mountPath => '/etc/kube-flannel',
+                    },
+                  ],
+                },
+              ],
               containers         => [
                 {
-                  name            => 'flannel',
+                  name            => 'kube-flannel',
                   image           => "${registry}/${image}:${image_tag}",
                   command         => ['/opt/bin/flanneld'],
                   args            => ['--ip-masq', '--kube-subnet-mgr'],
@@ -240,6 +356,10 @@ class k8s::server::resources::flannel (
                         },
                       },
                     },
+                    {
+                      name  => 'EVENT_QUEUE_DEPTH',
+                      value => '5000',
+                    },
                   ],
                   volumeMounts    => [
                     {
@@ -250,54 +370,26 @@ class k8s::server::resources::flannel (
                       name      => 'flannel-cfg',
                       mountPath => '/etc/kube-flannel/',
                     },
+                    {
+                      name      => 'xtables-lock',
+                      mountPath => '/run/xtables.lock',
+                    },
                   ],
                 },
-              ],
+              ] + $_netpol_containers,
               imagePullSecrets   => $image_pull_secrets,
-              initContainers     => [
-                {
-                  name         => 'install-cni-plugin',
-                  image        => "${cni_registry}/${cni_image}:${cni_image_tag}",
-                  command      => ['cp'],
-                  args         => [
-                    '-f',
-                    '/flannel',
-                    '/opt/cni/bin/flannel',
-                  ],
-                  volumeMounts => [
-                    {
-                      name      => 'host-cni-bin',
-                      mountPath => '/opt/cni/bin',
-                    },
-                  ],
-                },
-                {
-                  name         => 'install-cni',
-                  image        => "${cni_registry}/${cni_image}:${cni_image_tag}",
-                  command      => ['cp'],
-                  args         => [
-                    '-f',
-                    '/etc/kube-flannel/cni-conf.json',
-                    '/etc/cni/net.d/10-flannel.conflist',
-                  ],
-                  volumeMounts => [
-                    {
-                      name      => 'cni',
-                      mountPath => '/etc/cni/net.d',
-                    },
-                    {
-                      name      => 'flannel-cfg',
-                      mountPath => '/etc/kube-flannel',
-                    },
-                  ],
-                },
-              ],
               volumes            => [
                 {
                   name     => 'run',
                   hostPath => {
                     path => '/run/flannel',
                     type => 'DirectoryOrCreate',
+                  },
+                },
+                {
+                  name     => 'cni-plugin',
+                  hostPath => {
+                    path => '/opt/cni/bin',
                   },
                 },
                 {
@@ -313,12 +405,13 @@ class k8s::server::resources::flannel (
                   },
                 },
                 {
-                  name     => 'host-cni-bin',
+                  name     => 'xtables-lock',
                   hostPath => {
-                    path => '/opt/cni/bin',
+                    path => '/run/xtables.lock',
+                    type => 'FileOrCreate',
                   },
                 },
-              ],
+              ] + $_netpol_volumes,
             },
           },
           updateStrategy => {
