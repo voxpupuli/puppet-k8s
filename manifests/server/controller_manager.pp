@@ -14,7 +14,7 @@
 # @param container_registry The container registry to pull the controller manager image from.
 # @param control_plane_url The URL of the Kubernetes API server.
 # @param ensure Whether the controller manager should be configured.
-# @param key The path to the controller manager key.
+# @param key The path to the controller manager key.# @param sa_key The path to the service account key.
 # @param service_cluster_cidr The CIDR of the service cluster.
 #
 class k8s::server::controller_manager (
@@ -34,6 +34,7 @@ class k8s::server::controller_manager (
   Stdlib::Unixpath $ca_key              = $k8s::server::tls::ca_key,
   Stdlib::Unixpath $cert                = "${cert_path}/kube-controller-manager.pem",
   Stdlib::Unixpath $key                 = "${cert_path}/kube-controller-manager.key",
+  Stdlib::Unixpath $sa_key              = "${cert_path}/service-account.key",
 
   String[1] $container_registry            = $k8s::container_registry,
   String[1] $container_image               = 'kube-controller-manager',
@@ -69,7 +70,7 @@ class k8s::server::controller_manager (
       cluster_signing_key_file         => $ca_sign_key,
       leader_elect                     => true,
       root_ca_file                     => $ca_cert,
-      service_account_private_key_file => "${cert_path}/service-account.key",
+      service_account_private_key_file => $sa_key,
   } + $_addn_args + $arguments)
 
   if $k8s::packaging == 'container' {
