@@ -14,6 +14,7 @@
 # @param key path to node key file
 # @param kubeconfig path to kubeconfig
 # @param manage_firewall whether to manage firewall or not
+# @param manage_packages whether to manage packages
 # @param manage_kernel_modules whether to load kernel modules or not
 # @param manage_sysctl_settings whether to manage sysctl settings or not
 # @param puppetdb_discovery_tag enable puppetdb resource searching
@@ -38,6 +39,7 @@ class k8s::node::kubelet (
   K8s::Node_auth $auth            = $k8s::node::node_auth,
   Boolean $rotate_server_tls      = $auth == 'bootstrap',
   Boolean $manage_firewall        = $k8s::node::manage_firewall,
+  Boolean $manage_packages        = $k8s::node::manage_packages,
   Boolean $manage_kernel_modules  = $k8s::node::manage_kernel_modules,
   Boolean $manage_sysctl_settings = $k8s::node::manage_sysctl_settings,
   Boolean $support_dualstack      = $k8s::cluster_cidr =~ Array[Data, 2],
@@ -71,7 +73,10 @@ class k8s::node::kubelet (
   case $auth {
     'bootstrap': {
       $_ca_cert = pick($ca_cert, '/var/lib/kubelet/pki/ca.pem')
-      ensure_packages(['jq'])
+      if $manage_packages {
+        ensure_packages(['jq'])
+        Package['jq'] -> Exec['Retrieve K8s CA']
+      }
       if !defined(K8s::Binary['kubectl']) {
         k8s::binary { 'kubectl':
           ensure => $ensure,
@@ -87,10 +92,7 @@ class k8s::node::kubelet (
         command => "kubectl --server='${control_plane_url}' --username=anonymous --insecure-skip-tls-verify=true \
           get --raw /api/v1/namespaces/kube-system/configmaps/cluster-info | jq .data.ca -r > '${_ca_cert}'",
         creates => $_ca_cert,
-        require => [
-          K8s::Binary['kubectl'],
-          Package['jq'],
-        ],
+        require => K8s::Binary['kubectl'],
       }
       -> kubeconfig { $_bootstrap_kubeconfig:
         ensure          => $ensure,
@@ -280,7 +282,9 @@ class k8s::node::kubelet (
     }
   }
 
-  Class['k8s::install::container_runtime'] -> Service['kubelet']
+  if defined(Class['k8s::install::container_runtime']) {
+    Class['k8s::install::container_runtime'] -> Service['kubelet']
+  }
   Package <| title == 'containernetworking-plugins' |> -> Service['kubelet']
 
   if $manage_firewall {

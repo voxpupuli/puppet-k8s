@@ -136,7 +136,7 @@ define k8s::binary (
     }
   }
 
-  if $active and $packaging != 'container' and !defined(File["/usr/bin/${name}"]) {
+  if $active and $packaging != 'container' and $_packaging != 'manual' and !defined(File["/usr/bin/${name}"]) {
     if $packaging == 'package' {
       file { "/usr/bin/${name}":
         ensure  => $ensure,

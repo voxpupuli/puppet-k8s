@@ -732,6 +732,7 @@ The following parameters are available in the `k8s::node` class:
 * [`firewall_type`](#-k8s--node--firewall_type)
 * [`manage_crictl`](#-k8s--node--manage_crictl)
 * [`manage_firewall`](#-k8s--node--manage_firewall)
+* [`manage_packages`](#-k8s--node--manage_packages)
 * [`manage_kernel_modules`](#-k8s--node--manage_kernel_modules)
 * [`manage_kubelet`](#-k8s--node--manage_kubelet)
 * [`manage_proxy`](#-k8s--node--manage_proxy)
@@ -802,6 +803,14 @@ Data type: `Boolean`
 whether to manage firewall or not
 
 Default value: `$k8s::manage_firewall`
+
+##### <a name="-k8s--node--manage_packages"></a>`manage_packages`
+
+Data type: `Boolean`
+
+whether to manage packages
+
+Default value: `$k8s::manage_packages`
 
 ##### <a name="-k8s--node--manage_kernel_modules"></a>`manage_kernel_modules`
 
