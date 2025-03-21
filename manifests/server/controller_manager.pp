@@ -25,11 +25,11 @@ class k8s::server::controller_manager (
   K8s::CIDR $service_cluster_cidr = $k8s::service_cluster_cidr,
   K8s::CIDR $cluster_cidr         = $k8s::cluster_cidr,
 
-  Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
-  Stdlib::Unixpath $ca_cert   = $k8s::server::tls::ca_cert,
-  Stdlib::Unixpath $ca_key    = $k8s::server::tls::ca_key,
-  Stdlib::Unixpath $cert      = "${cert_path}/kube-controller-manager.pem",
-  Stdlib::Unixpath $key       = "${cert_path}/kube-controller-manager.key",
+  Optional[Stdlib::Unixpath] $cert_path = $k8s::server::tls::cert_path,
+  Stdlib::Unixpath $ca_cert             = $k8s::server::tls::ca_cert,
+  Stdlib::Unixpath $ca_key              = $k8s::server::tls::ca_key,
+  Stdlib::Unixpath $cert                = "${cert_path}/kube-controller-manager.pem",
+  Stdlib::Unixpath $key                 = "${cert_path}/kube-controller-manager.key",
 
   String[1] $container_registry            = $k8s::container_registry,
   String[1] $container_image               = 'kube-controller-manager',
