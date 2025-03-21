@@ -135,18 +135,24 @@ class k8s::server (
   }
 
   if $node_on_server {
-    $_dir = $k8s::server::tls::cert_path
+    if $manage_certs {
+      $_dir = $k8s::server::tls::cert_path
 
-    class { 'k8s::node':
-      ensure            => $ensure,
-      control_plane_url => "https://localhost:${api_port}",
-      node_auth         => 'cert',
-      proxy_auth        => 'cert',
-      ca_cert           => $ca_cert,
-      node_cert         => "${_dir}/node.pem",
-      node_key          => "${_dir}/node.key",
-      proxy_cert        => "${_dir}/kube-proxy.pem",
-      proxy_key         => "${_dir}/kube-proxy.key",
+      class { 'k8s::node':
+        ensure            => $ensure,
+        control_plane_url => "https://localhost:${api_port}",
+        node_auth         => 'cert',
+        proxy_auth        => 'cert',
+        ca_cert           => $ca_cert,
+        node_cert         => "${_dir}/node.pem",
+        node_key          => "${_dir}/node.key",
+        proxy_cert        => "${_dir}/kube-proxy.pem",
+        proxy_key         => "${_dir}/kube-proxy.key",
+      }
+    } else {
+      class { 'k8s::node':
+        ensure => $ensure,
+      }
     }
   }
 }
