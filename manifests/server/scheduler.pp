@@ -19,10 +19,10 @@ class k8s::server::scheduler (
 
   Hash[String, Data] $arguments = {},
 
-  Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
-  Stdlib::Unixpath $ca_cert   = $k8s::server::tls::ca_cert,
-  Stdlib::Unixpath $cert      = "${cert_path}/kube-scheduler.pem",
-  Stdlib::Unixpath $key       = "${cert_path}/kube-scheduler.key",
+  Optional[Stdlib::Unixpath] $cert_path = $k8s::server::tls::cert_path,
+  Stdlib::Unixpath $ca_cert             = $k8s::server::tls::ca_cert,
+  Stdlib::Unixpath $cert                = "${cert_path}/kube-scheduler.pem",
+  Stdlib::Unixpath $key                 = "${cert_path}/kube-scheduler.key",
 
   String[1] $container_registry            = $k8s::container_registry,
   String[1] $container_image               = 'kube-scheduler',
