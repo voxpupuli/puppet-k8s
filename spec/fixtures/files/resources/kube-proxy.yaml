@@ -1,43 +1,33 @@
 ---
 metadata:
   labels:
-    tier: node
     k8s-app: kube-proxy
     kubernetes.io/managed-by: puppet
 spec:
   selector:
     matchLabels:
-      tier: node
       k8s-app: kube-proxy
-      kubernetes.io/managed-by: puppet
+  updateStrategy:
+    type: RollingUpdate
   template:
     metadata:
       labels:
-        tier: node
         k8s-app: kube-proxy
         kubernetes.io/managed-by: puppet
     spec:
+      priorityClassName: system-node-critical
       containers:
       - name: kube-proxy
-        image: registry.k8s.io/kube-proxy:v1.26.1
+        image: registry.k8s.io/kube-proxy:v1.23.4
         imagePullPolicy: IfNotPresent
         command:
         - "/go-runner"
-        args:
         - "--log-file=/var/log/kube-proxy.log"
         - "--also-stdout=true"
         - "--"
         - "/usr/local/bin/kube-proxy"
         - "--hostname-override=$(NODE_NAME)"
         - "--config=/var/lib/kube-proxy/kube-proxy.conf"
-        env:
-        - name: NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        resources:
-          requests:
-            cpu: 100m
         securityContext:
           privileged: true
         volumeMounts:
@@ -49,22 +39,20 @@ spec:
           name: kubeconfig
           subPath: kubeconfig
           readOnly: true
+        - mountPath: "/run/xtables.lock"
+          name: iptables-lock
+          readOnly: false
         - mountPath: "/lib/modules"
           name: lib-modules
           readOnly: true
-        - mountPath: "/run/xtables.lock"
-          name: iptables-lock
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
       imagePullSecrets: null
       hostNetwork: true
-      priorityClassName: system-node-critical
       serviceAccountName: kube-proxy
-      tolerations:
-      - key: CriticalAddonsOnly
-        operator: Exists
-      - effect: NoSchedule
-        operator: Exists
-      - effect: NoExecute
-        operator: Exists
       volumes:
       - name: logfile
         hostPath:
@@ -84,7 +72,7 @@ spec:
       - name: kubeconfig
         configMap:
           name: kubeconfig-in-cluster
-  updateStrategy:
-    rollingUpdate:
-      maxUnavailable: 1
-    type: RollingUpdate
+      tolerations:
+      - operator: Exists
+      nodeSelector:
+        kubernetes.io/os: linux
