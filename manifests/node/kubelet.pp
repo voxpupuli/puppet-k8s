@@ -21,6 +21,7 @@
 # @param runtime which container runtime to use
 # @param runtime_service name of the service of the container runtime
 # @param support_dualstack whether to support dualstack or not
+# @param main_dualstack_family which IP family to prioritize
 # @param token k8s token to join a cluster
 #
 class k8s::node::kubelet (
@@ -35,12 +36,13 @@ class k8s::node::kubelet (
   String $runtime_service           = $k8s::container_runtime_service,
   String[1] $puppetdb_discovery_tag = $k8s::node::puppetdb_discovery_tag,
 
-  K8s::Node_auth $auth            = $k8s::node::node_auth,
-  Boolean $rotate_server_tls      = $auth == 'bootstrap',
-  Boolean $manage_firewall        = $k8s::node::manage_firewall,
-  Boolean $manage_kernel_modules  = $k8s::node::manage_kernel_modules,
-  Boolean $manage_sysctl_settings = $k8s::node::manage_sysctl_settings,
-  Boolean $support_dualstack      = $k8s::cluster_cidr =~ Array[Data, 2],
+  K8s::Node_auth $auth                       = $k8s::node::node_auth,
+  Boolean $rotate_server_tls                 = $auth == 'bootstrap',
+  Boolean $manage_firewall                   = $k8s::node::manage_firewall,
+  Boolean $manage_kernel_modules             = $k8s::node::manage_kernel_modules,
+  Boolean $manage_sysctl_settings            = $k8s::node::manage_sysctl_settings,
+  Boolean $support_dualstack                 = $k8s::cluster_cidr =~ Array[Data, 2],
+  Enum['IPv4','IPv6'] $main_dualstack_family = 'IPv4',
 
   Stdlib::Unixpath $cert_path  = $k8s::node::cert_path,
   Stdlib::Unixpath $kubeconfig = '/srv/kubernetes/kubelet.kubeconf',
@@ -217,7 +219,11 @@ class k8s::node::kubelet (
   }
 
   if $support_dualstack and fact('networking.ip') and fact('networking.ip6') {
-    $_node_ip = [fact('networking.ip'), fact('networking.ip6')]
+    if $main_dualstack_family == 'IPv4' {
+      $_node_ip = [fact('networking.ip'), fact('networking.ip6')]
+    } else {
+      $_node_ip = [fact('networking.ip6'), fact('networking.ip')]
+    }
   } else {
     $_node_ip = undef
   }
