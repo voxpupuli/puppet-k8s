@@ -144,8 +144,9 @@ class k8s::server::resources::coredns (
       content     => {
         metadata => {
           labels => {
-            'k8s-app'                  => 'coredns',
+            'k8s-app'                  => 'kube-dns',
             'kubernetes.io/name'       => 'CoreDNS',
+            'app.kubernetes.io/name'   => 'coredns',
             'kubernetes.io/managed-by' => 'puppet',
           },
         },
@@ -158,35 +159,33 @@ class k8s::server::resources::coredns (
           },
           selector => {
             matchLabels => {
-              'k8s-app'                  => 'coredns',
-              'kubernetes.io/managed-by' => 'puppet',
+              'k8s-app'                => 'kube-dns',
+              'app.kubernetes.io/name' => 'coredns',
             },
           },
           template => {
             metadata => {
               labels      => {
-                'k8s-app'                  => 'coredns',
+                'k8s-app'                  => 'kube-dns',
+                'app.kubernetes.io/name'   => 'coredns',
                 'kubernetes.io/managed-by' => 'puppet',
               },
             },
             spec     => {
               affinity           => {
                 podAntiAffinity => {
-                  preferredDuringSchedulingIgnoredDuringExecution => [
+                  requiredDuringSchedulingIgnoredDuringExecution => [
                     {
-                      weight          => 100,
-                      podAffinityTerm => {
-                        labelSelector => {
-                          matchExpressions => [
-                            {
-                              key      => 'k8s-app',
-                              operator => 'In',
-                              values   => ['coredns'],
-                            },
-                          ],
-                        },
-                        topologyKey   => 'kubernetes.io/hostname',
+                      labelSelector => {
+                        matchExpressions => [
+                          {
+                            key      => 'k8s-app',
+                            operator => 'In',
+                            values   => ['kube-dns'],
+                          },
+                        ],
                       },
+                      topologyKey   => 'kubernetes.io/hostname',
                     },
                   ],
                 },
@@ -197,10 +196,6 @@ class k8s::server::resources::coredns (
                 {
                   key      => 'CriticalAddonsOnly',
                   operator => 'Exists',
-                },
-                {
-                  key    => 'node-role.kubernetes.io/control-plane',
-                  effect => 'NoSchedule',
                 },
               ],
               nodeSelector       => {
@@ -311,15 +306,17 @@ class k8s::server::resources::coredns (
             'prometheus.io/scrape' => 'true',
           },
           labels      => {
-            'k8s-app'                       => 'coredns',
+            'k8s-app'                       => 'kube-dns',
             'kubernetes.io/cluster-service' => 'true',
             'kubernetes.io/name'            => 'CoreDNS',
+            'app.kubernetes.io/name'        => 'coredns',
             'kubernetes.io/managed-by'      => 'puppet',
           },
         },
         spec     => $_addn_coredns_svc_hash + {
           selector => {
-            'k8s-app' => 'coredns',
+            'k8s-app'                => 'kube-dns',
+            'app.kubernetes.io/name' => 'coredns',
           },
           ports    => [
             {
@@ -330,6 +327,11 @@ class k8s::server::resources::coredns (
             {
               name     => 'dns-tcp',
               port     => 53,
+              protocol => 'TCP',
+            },
+            {
+              name     => 'metrics',
+              port     => 9153,
               protocol => 'TCP',
             },
           ],

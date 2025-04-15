@@ -18,6 +18,7 @@
 # @param flannel_image the image to use for the Flannel
 # @param flannel_registry the registry to use for the Flannel image
 # @param flannel_tag the tag to use for the Flannel image
+# @param flannel_netpol if flannel should act on network policies
 # @param image_pull_secrets the secrets to pull from private registries
 # @param kube_proxy_daemonset_config the configuration to use for the kube-proxy DaemonSet
 # @param kube_proxy_image the image to use for the kube-proxy
@@ -50,14 +51,18 @@ class k8s::server::resources (
   Hash[String,Data] $extra_kube_proxy_args       = {},
   String[1] $coredns_registry                    = 'docker.io',
   String[1] $coredns_image                       = 'coredns/coredns',
-  String[1] $coredns_tag                         = '1.8.7',
+  String[1] $coredns_tag                         = '1.12.0',
   Hash[String,Data] $coredns_deployment_config   = {},
-  String[1] $flannel_cni_registry                = 'docker.io',
-  String[1] $flannel_cni_image                   = 'rancher/mirrored-flannelcni-flannel-cni-plugin',
-  String[1] $flannel_cni_tag                     = 'v1.0.0',
-  String[1] $flannel_registry                    = 'docker.io',
-  String[1] $flannel_image                       = 'rancher/mirrored-flannelcni-flannel',
-  String[1] $flannel_tag                         = 'v0.16.1',
+  String[1] $flannel_cni_registry                = 'ghcr.io',
+  String[1] $flannel_cni_image                   = 'flannel-io/flannel-cni-plugin',
+  String[1] $flannel_cni_tag                     = 'v1.6.2-flannel1',
+  String[1] $flannel_netpol_registry             = 'registry.k8s.io',
+  String[1] $flannel_netpol_image                = 'networking/kube-network-policies',
+  String[1] $flannel_netpol_tag                  = 'v0.7.0',
+  String[1] $flannel_registry                    = 'ghcr.io',
+  String[1] $flannel_image                       = 'flannel-io/flannel',
+  String[1] $flannel_tag                         = 'v0.26.4',
+  Boolean $flannel_netpol                        = false,
   Hash[String,Data] $flannel_daemonset_config    = {},
   Optional[Array] $image_pull_secrets            = undef,
 ) {

@@ -256,7 +256,7 @@ Data type: `String[1]`
 
 version of etcd to install
 
-Default value: `'3.5.16'`
+Default value: `'3.5.18'`
 
 ##### <a name="-k8s--firewall_type"></a>`firewall_type`
 
@@ -496,7 +496,7 @@ Data type: `String[1]`
 
 version of kubernetes to install
 
-Default value: `'1.28.14'`
+Default value: `'1.31.6'`
 
 ### <a name="k8s--install--cni_plugins"></a>`k8s::install::cni_plugins`
 
@@ -534,7 +534,7 @@ Data type: `String[1]`
 
 The version of CNI plugins to install - if applicable
 
-Default value: `'v1.2.0'`
+Default value: `'v1.6.2'`
 
 ##### <a name="-k8s--install--cni_plugins--download_url_template"></a>`download_url_template`
 
