@@ -8,11 +8,13 @@ class k8s::repo (
   Boolean $manage_container_manager          = $k8s::manage_container_manager,
   K8s::Container_runtimes $container_manager = $k8s::container_manager,
   String[1] $major_version                   = $k8s::version.split('\.')[0, 2].join('.'),
+  String[1] $core_package_base               = 'https://pkgs.k8s.io/core:/stable',
+  String[1] $crio_package_base               = 'https://download.opensuse.org/repositories/isv:/cri-o:/stable',
 ) {
   case fact('os.family') {
     'Debian': {
-      $core_url = "https://pkgs.k8s.io/core:/stable:/v${major_version}/deb"
-      $crio_url = "https://pkgs.k8s.io/addons:/cri-o:/stable:/v${major_version}/deb"
+      $core_url = "${core_package_base}:/v${major_version}/deb"
+      $crio_url = "${crio_package_base}:/v${major_version}/deb"
 
       apt::source { 'libcontainers:stable':
         ensure => absent,
@@ -49,8 +51,8 @@ class k8s::repo (
       }
     }
     'RedHat': {
-      $core_url = "https://pkgs.k8s.io/core:/stable:/v${major_version}/rpm"
-      $crio_url = "https://pkgs.k8s.io/addons:/cri-o:/stable:/v${major_version}/rpm"
+      $core_url = "${core_package_base}:/v${major_version}/rpm"
+      $crio_url = "${crio_package_base}:/v${major_version}/rpm"
 
       yumrepo { 'libcontainers:stable':
         ensure => absent,
