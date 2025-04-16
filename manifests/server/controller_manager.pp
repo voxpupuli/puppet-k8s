@@ -14,7 +14,8 @@
 # @param container_registry The container registry to pull the controller manager image from.
 # @param control_plane_url The URL of the Kubernetes API server.
 # @param ensure Whether the controller manager should be configured.
-# @param key The path to the controller manager key.# @param sa_key The path to the service account key.
+# @param key The path to the controller manager key.
+# @param sa_key The path to the service account key.
 # @param service_cluster_cidr The CIDR of the service cluster.
 #
 class k8s::server::controller_manager (
