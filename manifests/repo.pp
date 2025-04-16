@@ -61,7 +61,7 @@ class k8s::repo (
         descr    => 'Stable releases of Kubernetes',
         baseurl  => $core_url,
         gpgcheck => 1,
-        gpgkey   => "${core_url}repodata/repomd.xml.key",
+        gpgkey   => "${core_url}/repodata/repomd.xml.key",
       }
 
       if $manage_container_manager {
@@ -74,7 +74,7 @@ class k8s::repo (
               descr    => 'Stable releases of CRI-o',
               baseurl  => $crio_url,
               gpgcheck => 1,
-              gpgkey   => "${crio_url}repodata/repomd.xml.key",
+              gpgkey   => "${crio_url}/repodata/repomd.xml.key",
             }
           }
           'containerd': {
