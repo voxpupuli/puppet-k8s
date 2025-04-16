@@ -971,6 +971,8 @@ The following parameters are available in the `k8s::repo` class:
 * [`manage_container_manager`](#-k8s--repo--manage_container_manager)
 * [`container_manager`](#-k8s--repo--container_manager)
 * [`major_version`](#-k8s--repo--major_version)
+* [`core_package_base`](#-k8s--repo--core_package_base)
+* [`crio_package_base`](#-k8s--repo--crio_package_base)
 
 ##### <a name="-k8s--repo--manage_container_manager"></a>`manage_container_manager`
 
@@ -995,6 +997,22 @@ Data type: `String[1]`
 The major version of Kubernetes to deploy repos for
 
 Default value: `$k8s::version.split('\.')[0, 2].join('.')`
+
+##### <a name="-k8s--repo--core_package_base"></a>`core_package_base`
+
+Data type: `String[1]`
+
+The url base of the k8s core packages
+
+Default value: `'https://pkgs.k8s.io/core:/stable'`
+
+##### <a name="-k8s--repo--crio_package_base"></a>`crio_package_base`
+
+Data type: `String[1]`
+
+The url base of the cri-o packages
+
+Default value: `'https://download.opensuse.org/repositories/isv:/cri-o:/stable'`
 
 ### <a name="k8s--server"></a>`k8s::server`
 
