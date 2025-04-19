@@ -256,7 +256,7 @@ Data type: `String[1]`
 
 version of etcd to install
 
-Default value: `'3.5.16'`
+Default value: `'3.5.18'`
 
 ##### <a name="-k8s--firewall_type"></a>`firewall_type`
 
@@ -496,7 +496,7 @@ Data type: `String[1]`
 
 version of kubernetes to install
 
-Default value: `'1.28.14'`
+Default value: `'1.31.6'`
 
 ### <a name="k8s--install--cni_plugins"></a>`k8s::install::cni_plugins`
 
@@ -534,7 +534,7 @@ Data type: `String[1]`
 
 The version of CNI plugins to install - if applicable
 
-Default value: `'v1.2.0'`
+Default value: `'v1.6.2'`
 
 ##### <a name="-k8s--install--cni_plugins--download_url_template"></a>`download_url_template`
 
@@ -732,6 +732,7 @@ The following parameters are available in the `k8s::node` class:
 * [`firewall_type`](#-k8s--node--firewall_type)
 * [`manage_crictl`](#-k8s--node--manage_crictl)
 * [`manage_firewall`](#-k8s--node--manage_firewall)
+* [`manage_packages`](#-k8s--node--manage_packages)
 * [`manage_kernel_modules`](#-k8s--node--manage_kernel_modules)
 * [`manage_kubelet`](#-k8s--node--manage_kubelet)
 * [`manage_proxy`](#-k8s--node--manage_proxy)
@@ -802,6 +803,14 @@ Data type: `Boolean`
 whether to manage firewall or not
 
 Default value: `$k8s::manage_firewall`
+
+##### <a name="-k8s--node--manage_packages"></a>`manage_packages`
+
+Data type: `Boolean`
+
+whether to manage packages
+
+Default value: `$k8s::manage_packages`
 
 ##### <a name="-k8s--node--manage_kernel_modules"></a>`manage_kernel_modules`
 
@@ -1719,6 +1728,38 @@ Default value: `$k8s::etcd_version`
 ### <a name="k8s--server--wait_online"></a>`k8s::server::wait_online`
 
 Creates a dummy exec to allow deferring applies until the Kubernetes API server has started
+
+#### Parameters
+
+The following parameters are available in the `k8s::server::wait_online` class:
+
+* [`tries`](#-k8s--server--wait_online--tries)
+* [`try_sleep`](#-k8s--server--wait_online--try_sleep)
+* [`timeout`](#-k8s--server--wait_online--timeout)
+
+##### <a name="-k8s--server--wait_online--tries"></a>`tries`
+
+Data type: `Integer`
+
+Number of retries
+
+Default value: `15`
+
+##### <a name="-k8s--server--wait_online--try_sleep"></a>`try_sleep`
+
+Data type: `Integer`
+
+Sleep time in seconds
+
+Default value: `2`
+
+##### <a name="-k8s--server--wait_online--timeout"></a>`timeout`
+
+Data type: `Integer`
+
+Execution timeout in seconds (0 to disable)
+
+Default value: `5`
 
 ## Defined types
 

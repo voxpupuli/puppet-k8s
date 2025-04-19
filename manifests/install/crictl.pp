@@ -39,7 +39,7 @@ class k8s::install::crictl (
     $_tarball_target = '/opt/k8s/archives';
 
     file { $_target:
-      ensure  => stdlib::ensure($ensure, 'directory'),
+      ensure => stdlib::ensure($ensure, 'directory'),
     }
 
     archive { 'crictl':

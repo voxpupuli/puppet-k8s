@@ -7,6 +7,7 @@
 # @param firewall_type define the type of firewall to use
 # @param manage_crictl toggle to install crictl
 # @param manage_firewall whether to manage firewall or not
+# @param manage_packages whether to manage packages
 # @param manage_kernel_modules whether to load kernel modules or not
 # @param manage_kubelet whether to manage kublet or not
 # @param manage_proxy whether to manage kube-proxy or not
@@ -33,6 +34,7 @@ class k8s::node (
   Boolean $manage_proxy             = $k8s::manage_kube_proxy == 'on-node',
   Boolean $manage_crictl            = false,
   Boolean $manage_firewall          = $k8s::manage_firewall,
+  Boolean $manage_packages          = $k8s::manage_packages,
   Boolean $manage_kernel_modules    = $k8s::manage_kernel_modules,
   Boolean $manage_sysctl_settings   = $k8s::manage_sysctl_settings,
   Boolean $manage_simple_cni        = false,

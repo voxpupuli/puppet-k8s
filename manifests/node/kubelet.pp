@@ -6,6 +6,7 @@
 # @param ca_cert path to the ca cert
 # @param cert path to node cert file
 # @param cert_path path to cert files
+# @param labels node labels to be set on initial node registration
 # @param config additional config to pass to kubelet
 # @param control_plane_url cluster API connection
 # @param ensure set ensure for installation or deinstallation
@@ -20,6 +21,7 @@
 # @param runtime which container runtime to use
 # @param runtime_service name of the service of the container runtime
 # @param support_dualstack whether to support dualstack or not
+# @param main_dualstack_family which IP family to prioritize
 # @param token k8s token to join a cluster
 #
 class k8s::node::kubelet (
@@ -29,16 +31,18 @@ class k8s::node::kubelet (
 
   Hash[String, Data] $config        = {},
   Hash[String, Data] $arguments     = {},
+  Hash[String, String] $labels      = {},
   String $runtime                   = $k8s::container_manager,
   String $runtime_service           = $k8s::container_runtime_service,
   String[1] $puppetdb_discovery_tag = $k8s::node::puppetdb_discovery_tag,
 
-  K8s::Node_auth $auth            = $k8s::node::node_auth,
-  Boolean $rotate_server_tls      = $auth == 'bootstrap',
-  Boolean $manage_firewall        = $k8s::node::manage_firewall,
-  Boolean $manage_kernel_modules  = $k8s::node::manage_kernel_modules,
-  Boolean $manage_sysctl_settings = $k8s::node::manage_sysctl_settings,
-  Boolean $support_dualstack      = $k8s::cluster_cidr =~ Array[Data, 2],
+  K8s::Node_auth $auth                       = $k8s::node::node_auth,
+  Boolean $rotate_server_tls                 = $auth == 'bootstrap',
+  Boolean $manage_firewall                   = $k8s::node::manage_firewall,
+  Boolean $manage_kernel_modules             = $k8s::node::manage_kernel_modules,
+  Boolean $manage_sysctl_settings            = $k8s::node::manage_sysctl_settings,
+  Boolean $support_dualstack                 = $k8s::cluster_cidr =~ Array[Data, 2],
+  Enum['IPv4','IPv6'] $main_dualstack_family = 'IPv4',
 
   Stdlib::Unixpath $cert_path  = $k8s::node::cert_path,
   Stdlib::Unixpath $kubeconfig = '/srv/kubernetes/kubelet.kubeconf',
@@ -83,12 +87,9 @@ class k8s::node::kubelet (
       ~> exec { 'Retrieve K8s CA':
         path    => ['/usr/local/bin','/usr/bin','/bin'],
         command => "kubectl --server='${control_plane_url}' --username=anonymous --insecure-skip-tls-verify=true \
-          get --raw /api/v1/namespaces/kube-system/configmaps/cluster-info | jq .data.ca -r > '${_ca_cert}'",
+          get --namespace=kube-system configmap cluster-info --output=jsonpath={.data.ca} > '${_ca_cert}'",
         creates => $_ca_cert,
-        require => [
-          K8s::Binary['kubectl'],
-          Package['jq'],
-        ],
+        require => K8s::Binary['kubectl'],
       }
       -> kubeconfig { $_bootstrap_kubeconfig:
         ensure          => $ensure,
@@ -219,10 +220,16 @@ class k8s::node::kubelet (
   }
 
   if $support_dualstack and fact('networking.ip') and fact('networking.ip6') {
-    $_node_ip = [fact('networking.ip'), fact('networking.ip6')]
+    if $main_dualstack_family == 'IPv4' {
+      $_node_ip = [fact('networking.ip'), fact('networking.ip6')]
+    } else {
+      $_node_ip = [fact('networking.ip6'), fact('networking.ip')]
+    }
   } else {
     $_node_ip = undef
   }
+
+  $_labels = $labels.map |$k, $v| { "${k}=${v}" }.join(',')
 
   $_args = k8s::format_arguments({
       config                     => '/etc/kubernetes/kubelet.conf',
@@ -232,6 +239,7 @@ class k8s::node::kubelet (
       container_runtime_endpoint => $_runtime_endpoint,
       hostname_override          => fact('networking.fqdn'),
       node_ip                    => $_node_ip,
+      node_labels                => $_labels,
   } + $arguments)
 
   file { "${k8s::sysconfig_path}/kubelet":
@@ -268,14 +276,16 @@ class k8s::node::kubelet (
     # Remove pre-packaged kubeadmin-built kubelet configuration on SUSE
     file {
       default:
-        ensure  => absent;
+        ensure => absent;
 
       '/usr/lib/systemd/system/kubelet.service':;
       '/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf':;
     }
   }
 
-  Class['k8s::install::container_runtime'] -> Service['kubelet']
+  if defined(Class['k8s::install::container_runtime']) {
+    Class['k8s::install::container_runtime'] -> Service['kubelet']
+  }
   Package <| title == 'containernetworking-plugins' |> -> Service['kubelet']
 
   if $manage_firewall {

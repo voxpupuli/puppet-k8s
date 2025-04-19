@@ -33,6 +33,9 @@ class k8s::common {
     '/opt/k8s': ;
     '/opt/k8s/bin': ;
   }
+  ['/etc/facter','/etc/facter/facts.d'].each |$path| {
+    ensure_resource('file', $path, { ensure => directory })
+  }
 
   file { '/var/run/kubernetes':
     ensure => directory,
@@ -66,9 +69,5 @@ class k8s::common {
     '/usr/libexec/kubernetes': ;
     '/var/lib/kubelet': ;
     '/var/lib/kubelet/pki': ;
-
-    '/usr/share/containers/': ;
-    '/usr/share/containers/oci/': ;
-    '/usr/share/containers/oci/hooks.d': ;
   }
 }

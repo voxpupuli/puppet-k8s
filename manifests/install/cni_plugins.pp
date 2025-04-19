@@ -8,7 +8,7 @@
 #
 class k8s::install::cni_plugins (
   K8s::Ensure $ensure               = $k8s::ensure,
-  String[1] $version                = 'v1.2.0',
+  String[1] $version                = 'v1.6.2',
   String[1] $method                 = $k8s::native_packaging,
   String[1] $download_url_template  = 'https://github.com/containernetworking/plugins/releases/download/%{version}/cni-plugins-linux-%{arch}-%{version}.tgz',
   Optional[String[1]] $package_name = undef,
@@ -31,7 +31,28 @@ class k8s::install::cni_plugins (
       $_tarball_target = '/opt/k8s/archives';
 
       file { $_target:
-        ensure  => stdlib::ensure($ensure, 'directory'),
+        ensure => stdlib::ensure($ensure, 'directory'),
+      }
+      if $ensure == present {
+        # Store the cni plugin version in a static fact, to retain the plugin directory for copying from on upgrades
+        file { '/etc/facter/facts.d/cni_plugins_version.txt':
+          ensure  => file,
+          content => "cni_plugins_version=${version}",
+          require => File['/opt/cni/bin'],
+        }
+        if fact('cni_plugins_version') and fact('cni_plugins_version') != $version {
+          $_old_target = "/opt/k8s/cni-${fact('cni_plugins_version')}"
+          file { $_old_target:
+            ensure => directory,
+          }
+
+          exec { 'Retain custom CNI binaries':
+            command     => "cp --no-clobber '${_old_target}'/* '${_target}'",
+            path        => fact('path'),
+            refreshonly => true,
+            subscribe   => File['/opt/cni/bin'],
+          }
+        }
       }
 
       archive { 'cni-plugins':
