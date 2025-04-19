@@ -155,7 +155,7 @@ class k8s::server::resources::flannel (
           {
             apiGroups => [''],
             resources => ['pods','nodes','namespaces'],
-            verbs     => ['list','watch'],
+            verbs     => ['get','list','watch'],
           },
           {
             apiGroups => [''],
