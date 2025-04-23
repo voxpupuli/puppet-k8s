@@ -3,16 +3,20 @@
 # @param manage_container_manager Whether to add the CRI-o repository or not
 # @param container_manager The name of the container manager
 # @param major_version The major version of Kubernetes to deploy repos for
+# @param core_package_base The url base of the k8s core packages
+# @param crio_package_base The url base of the cri-o packages
 #
 class k8s::repo (
   Boolean $manage_container_manager          = $k8s::manage_container_manager,
   K8s::Container_runtimes $container_manager = $k8s::container_manager,
   String[1] $major_version                   = $k8s::version.split('\.')[0, 2].join('.'),
+  String[1] $core_package_base               = 'https://pkgs.k8s.io/core:/stable',
+  String[1] $crio_package_base               = 'https://download.opensuse.org/repositories/isv:/cri-o:/stable',
 ) {
   case fact('os.family') {
     'Debian': {
-      $core_url = "https://pkgs.k8s.io/core:/stable:/v${major_version}/deb"
-      $crio_url = "https://pkgs.k8s.io/addons:/cri-o:/stable:/v${major_version}/deb"
+      $core_url = "${core_package_base}:/v${major_version}/deb"
+      $crio_url = "${crio_package_base}:/v${major_version}/deb"
 
       apt::source { 'libcontainers:stable':
         ensure => absent,
@@ -49,8 +53,8 @@ class k8s::repo (
       }
     }
     'RedHat': {
-      $core_url = "https://pkgs.k8s.io/core:/stable:/v${major_version}/rpm"
-      $crio_url = "https://pkgs.k8s.io/addons:/cri-o:/stable:/v${major_version}/rpm"
+      $core_url = "${core_package_base}:/v${major_version}/rpm"
+      $crio_url = "${crio_package_base}:/v${major_version}/rpm"
 
       yumrepo { 'libcontainers:stable':
         ensure => absent,
@@ -59,7 +63,7 @@ class k8s::repo (
         descr    => 'Stable releases of Kubernetes',
         baseurl  => $core_url,
         gpgcheck => 1,
-        gpgkey   => "${core_url}repodata/repomd.xml.key",
+        gpgkey   => "${core_url}/repodata/repomd.xml.key",
       }
 
       if $manage_container_manager {
@@ -72,7 +76,7 @@ class k8s::repo (
               descr    => 'Stable releases of CRI-o',
               baseurl  => $crio_url,
               gpgcheck => 1,
-              gpgkey   => "${crio_url}repodata/repomd.xml.key",
+              gpgkey   => "${crio_url}/repodata/repomd.xml.key",
             }
           }
           'containerd': {
