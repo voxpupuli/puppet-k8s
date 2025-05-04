@@ -71,7 +71,7 @@ class k8s::node (
       'Debian' => 'conntrack',
       default  => 'conntrack-tools',
     }
-    ensure_packages([$_conntrack,])
+    stdlib::ensure_packages([$_conntrack,])
   }
 
   if $manage_crictl {
