@@ -44,7 +44,7 @@ class k8s::server::tls (
     }
 
     if $ensure == 'present' {
-      ensure_packages(['openssl'])
+      stdlib::ensure_packages(['openssl'])
       # Additional non-CA certs that should also only be generated on one node
       if $generate_ca {
         Package <| title == 'openssl' |>

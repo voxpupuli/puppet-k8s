@@ -96,7 +96,7 @@ class k8s::install::cni_plugins (
           require => Package[$_package_name],
         }
       }
-      ensure_packages([$_package_name,])
+      stdlib::ensure_packages([$_package_name,])
 
       if $k8s::manage_repo {
         Class['k8s::repo'] -> Package[$_package_name]
