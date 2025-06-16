@@ -18,20 +18,23 @@ class k8s::install::container_runtime (
   case $container_manager {
     'crio': {
       if fact('os.family') == 'Debian' {
-        # This is required for cri-o, but it is not guaranteed to be a dependency of the package
-        package { 'runc':
-          ensure => $runc_version,
-        }
+        # Prior to 1.28 crio depended on runc https://github.com/cri-o/cri-o/issues/8626
+        if versioncmp('1.27', $k8s::version) >= 0 {
+          # This is required for cri-o < 1.28, but it is not guaranteed to be a dependency of the package
+          package { 'runc':
+            ensure => $runc_version,
+          }
 
-        # Avoid a potential packaging issue
-        file { ['/usr/lib/cri-o-runc/sbin', '/usr/lib/cri-o-runc']:
-          ensure => directory,
-        }
+          # Avoid a potential packaging issue
+          file { ['/usr/lib/cri-o-runc/sbin', '/usr/lib/cri-o-runc']:
+            ensure => directory,
+          }
 
-        file { '/usr/lib/cri-o-runc/sbin/runc':
-          ensure  => link,
-          target  => '/usr/sbin/runc',
-          replace => false,
+          file { '/usr/lib/cri-o-runc/sbin/runc':
+            ensure  => link,
+            target  => '/usr/sbin/runc',
+            replace => false,
+          }
         }
       } elsif fact('os.family') == 'Suse' {
         file { '/usr/libexec/crio':
