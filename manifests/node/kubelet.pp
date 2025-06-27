@@ -6,6 +6,7 @@
 # @param ca_cert path to the ca cert
 # @param cert path to node cert file
 # @param cert_path path to cert files
+# @param cluster_domain cluster domain name
 # @param labels node labels to be set on initial node registration
 # @param config additional config to pass to kubelet
 # @param control_plane_url cluster API connection
@@ -56,6 +57,8 @@ class k8s::node::kubelet (
   Optional[Sensitive[String]] $token  = $k8s::node::node_token,
 
   Optional[K8s::Firewall] $firewall_type = $k8s::node::firewall_type,
+
+  Stdlib::Fqdn $cluster_domain = $k8s::cluster_domain,
 ) {
   assert_private()
 
@@ -164,7 +167,7 @@ class k8s::node::kubelet (
     'tlsPrivateKeyFile'  => $key,
     'rotateCertificates' => $auth == 'bootstrap',
     'serverTLSBootstrap' => $rotate_server_tls,
-    'clusterDomain'      => $k8s::cluster_domain,
+    'clusterDomain'      => $cluster_domain,
     'clusterDNS'         => [
       $k8s::dns_service_address,
     ].flatten,
