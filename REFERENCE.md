@@ -1022,6 +1022,8 @@ Sets up a Kubernetes server instance
 
 The following parameters are available in the `k8s::server` class:
 
+* [`admin_cert`](#-k8s--server--admin_cert)
+* [`admin_key`](#-k8s--server--admin_key)
 * [`aggregator_ca_cert`](#-k8s--server--aggregator_ca_cert)
 * [`aggregator_ca_key`](#-k8s--server--aggregator_ca_key)
 * [`api_port`](#-k8s--server--api_port)
@@ -1048,6 +1050,22 @@ The following parameters are available in the `k8s::server` class:
 * [`manage_signing`](#-k8s--server--manage_signing)
 * [`node_on_server`](#-k8s--server--node_on_server)
 * [`puppetdb_discovery_tag`](#-k8s--server--puppetdb_discovery_tag)
+
+##### <a name="-k8s--server--admin_cert"></a>`admin_cert`
+
+Data type: `Stdlib::Unixpath`
+
+path to the admin cert
+
+Default value: `"${cert_path}/admin.pem"`
+
+##### <a name="-k8s--server--admin_key"></a>`admin_key`
+
+Data type: `Stdlib::Unixpath`
+
+path to the admin key
+
+Default value: `"${cert_path}/admin.key"`
 
 ##### <a name="-k8s--server--aggregator_ca_cert"></a>`aggregator_ca_cert`
 
