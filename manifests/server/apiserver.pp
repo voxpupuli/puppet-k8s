@@ -64,7 +64,7 @@ class k8s::server::apiserver (
   Optional[K8s::Firewall] $firewall_type           = $k8s::server::firewall_type,
   String[1] $etcd_cluster_name                     = $k8s::server::etcd_cluster_name,
 
-  Stdlib::Fqdn $cluster_domain = $k8s::cluster_domain,
+  Stdlib::Fqdn $cluster_domain = $k8s::server::cluster_domain,
 ) {
   assert_private()
 
