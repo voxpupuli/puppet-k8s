@@ -35,7 +35,7 @@ class k8s::server::resources (
 
   K8s::CIDR $cluster_cidr                = $k8s::server::cluster_cidr,
   K8s::IP_addresses $dns_service_address = $k8s::server::dns_service_address,
-  Stdlib::Unixpath $ca_cert              = $k8s::server::tls::ca_cert,
+  Optional[Stdlib::Unixpath] $ca_cert    = $k8s::server::tls::ca_cert,
   String[1] $cluster_domain              = $k8s::server::cluster_domain,
   String[1] $control_plane_url           = $k8s::server::control_plane_url,
 
