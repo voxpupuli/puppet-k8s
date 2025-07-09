@@ -5,7 +5,6 @@ require 'tmpdir'
 
 RSpec.shared_examples 'a kubeconfig provider' do |provider_class|
   describe provider_class do
-    include PuppetlabsSpec::Files
     let(:tmpfile) do
       tmpfilename('kubeconfig_test')
     end

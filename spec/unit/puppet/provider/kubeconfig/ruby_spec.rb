@@ -8,7 +8,6 @@ RSpec.describe ruby_provider do
   it_behaves_like 'a kubeconfig provider', ruby_provider
 
   describe 'ruby provider' do
-    include PuppetlabsSpec::Files
     let(:tmpfile) do
       tmpfilename('kubeconfig_test')
     end

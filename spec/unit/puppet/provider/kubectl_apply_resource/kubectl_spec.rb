@@ -6,7 +6,6 @@ kubectl_provider = Puppet::Type.type(:kubectl_apply).provider(:kubectl)
 
 RSpec.describe kubectl_provider do
   describe 'kubectl provider' do
-    include PuppetlabsSpec::Files
     let(:tmpfile) do
       tmpfilename('kubeconfig_test')
     end
