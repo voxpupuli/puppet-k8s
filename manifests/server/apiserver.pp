@@ -10,6 +10,7 @@
 # @param arguments additional arguments for the apiserver
 # @param ca_cert path to the ca cert
 # @param cert_path path to cert files
+# @param cluster_domain cluster domain name
 # @param container_image container image to use for the apiserver
 # @param container_image_tag container image tag to use for the apiserver
 # @param container_registry container registry to pull the image from
@@ -62,6 +63,8 @@ class k8s::server::apiserver (
   Stdlib::IP::Address::Nosubnet $advertise_address = fact('networking.ip'),
   Optional[K8s::Firewall] $firewall_type           = $k8s::server::firewall_type,
   String[1] $etcd_cluster_name                     = $k8s::server::etcd_cluster_name,
+
+  Stdlib::Fqdn $cluster_domain = $k8s::server::cluster_domain,
 ) {
   assert_private()
 
@@ -113,7 +116,7 @@ class k8s::server::apiserver (
   if versioncmp($k8s::version, '1.20') >= 0 {
     $_service_account = {
       service_account_signing_key_file => $serviceaccount_private,
-      service_account_issuer           => 'https://kubernetes.default.svc.cluster.local',
+      service_account_issuer           => "https://kubernetes.default.svc.${cluster_domain}",
     }
   } else {
     $_service_account = {}
