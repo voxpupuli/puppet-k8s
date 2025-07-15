@@ -22,7 +22,6 @@ RSpec.describe kubectl_provider do
   it_behaves_like 'a kubeconfig provider', kubectl_provider
 
   describe 'kubectl provider' do
-    include PuppetlabsSpec::Files
     let(:tmpfile) do
       tmpfilename('kubeconfig_test')
     end
