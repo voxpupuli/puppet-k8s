@@ -89,6 +89,7 @@ class k8s::server::controller_manager (
       ca_cert         => $ca_cert,
       client_cert     => $cert,
       client_key      => $key,
+      require         => File['/srv/kubernetes'],
     }
 
     file { "${k8s::sysconfig_path}/kube-controller-manager":
