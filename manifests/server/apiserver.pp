@@ -41,7 +41,7 @@ class k8s::server::apiserver (
   Boolean $discover_etcd_servers                 = $k8s::puppetdb_discovery,
   Boolean $manage_firewall                       = $k8s::server::manage_firewall,
   String[1] $puppetdb_discovery_tag              = $k8s::server::puppetdb_discovery_tag,
-  Stdlib::Unixpath $cert_path              = $k8s::server::tls::cert_path,
+  Optional[Stdlib::Unixpath] $cert_path          = $k8s::server::tls::cert_path,
   Stdlib::Unixpath $ca_cert                = $k8s::server::tls::ca_cert,
   Stdlib::Unixpath $aggregator_ca_cert     = $k8s::server::tls::aggregator_ca_cert,
   Stdlib::Unixpath $serviceaccount_public  = "${cert_path}/service-account.pub",
