@@ -22,6 +22,7 @@
 # @param incluster_control_plane_url URL for the control plane from within the cluster
 # @param manage_container_manager whether to manage the container manager
 # @param manage_etcd whether to manage etcd
+# @param manage_facter whether to manage facter facts.d folders
 # @param manage_firewall whether to manage the firewall
 # @param manage_image whether to manage the image
 # @param manage_kernel_modules A flag to manage required Kernel modules.
@@ -64,6 +65,7 @@ class k8s (
   String[1] $runc_version                    = 'installed',
 
   Boolean $manage_etcd                 = true,
+  Boolean $manage_facter               = true,
   Boolean $manage_firewall             = false,
   Boolean $manage_kernel_modules       = true,
   Boolean $manage_sysctl_settings      = true,
