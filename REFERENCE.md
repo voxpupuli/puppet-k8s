@@ -114,6 +114,7 @@ The following parameters are available in the `k8s` class:
 * [`incluster_control_plane_url`](#-k8s--incluster_control_plane_url)
 * [`manage_container_manager`](#-k8s--manage_container_manager)
 * [`manage_etcd`](#-k8s--manage_etcd)
+* [`manage_facter`](#-k8s--manage_facter)
 * [`manage_firewall`](#-k8s--manage_firewall)
 * [`manage_image`](#-k8s--manage_image)
 * [`manage_kernel_modules`](#-k8s--manage_kernel_modules)
@@ -311,6 +312,14 @@ Default value: `true`
 Data type: `Boolean`
 
 whether to manage etcd
+
+Default value: `true`
+
+##### <a name="-k8s--manage_facter"></a>`manage_facter`
+
+Data type: `Boolean`
+
+whether to manage facter facts.d folders
 
 Default value: `true`
 
