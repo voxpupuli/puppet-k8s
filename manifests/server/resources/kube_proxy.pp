@@ -209,7 +209,7 @@ class k8s::server::resources::kube_proxy (
                     {
                       mountPath => '/run/xtables.lock',
                       name      => 'iptables-lock',
-                      readOnly  => false,
+                      readOnly  => undef,
                     },
                     {
                       mountPath => '/lib/modules',
