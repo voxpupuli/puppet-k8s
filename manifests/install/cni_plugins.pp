@@ -25,7 +25,7 @@ class k8s::install::cni_plugins (
   case $method {
     'tarball', 'loose': {
       $_url = k8s::format_url($download_url_template, {
-          version => $version,
+        version => $version,
       })
       $_target = "/opt/k8s/cni-${version}";
       $_tarball_target = '/opt/k8s/archives';

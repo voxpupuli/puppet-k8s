@@ -59,21 +59,21 @@ class k8s::server::resources::bootstrap (
         data     => {
           ca         => String(Binary.new($facts['k8s_ca']), '%s'),
           kubeconfig => to_yaml({
-              apiVersion        => 'v1',
-              kind              => 'Config',
-              clusters          => [
-                {
-                  name    => 'default',
-                  cluster => {
-                    server                       => $control_plane_url,
-                    'certificate-authority-data' => $facts['k8s_ca'],
-                  },
+            apiVersion        => 'v1',
+            kind              => 'Config',
+            clusters          => [
+              {
+                name    => 'default',
+                cluster => {
+                  server                       => $control_plane_url,
+                  'certificate-authority-data' => $facts['k8s_ca'],
                 },
-              ],
-              users             => [],
-              contexts          => [],
-              preferences       => {},
-              'current-context' => '',
+              },
+            ],
+            users             => [],
+            contexts          => [],
+            preferences       => {},
+            'current-context' => '',
           }),
         },
       },

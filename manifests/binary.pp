@@ -45,8 +45,8 @@ define k8s::binary (
     'package': {
       $_template = $k8s::package_template
       $_name = k8s::format_url($_template, {
-          version => $version,
-          component => $_component,
+        version => $version,
+        component => $_component,
       })
       package { "kubernetes-${name}":
         ensure => $ensure,
@@ -64,8 +64,8 @@ define k8s::binary (
     'tarball': {
       $_template = $k8s::tarball_url_template
       $_url = k8s::format_url($_template, {
-          version => $version,
-          component => $_component,
+        version => $version,
+        component => $_component,
       })
       $_file = "${tarball_target}/${basename($_url)}"
       if !defined(File[$tarball_target]) {
@@ -97,9 +97,9 @@ define k8s::binary (
     'loose': {
       $_template = $k8s::native_url_template
       $_url = k8s::format_url($_template, {
-          version   => $version,
-          component => $_component,
-          binary    => $name,
+        version   => $version,
+        component => $_component,
+        binary    => $name,
       })
       file { "${target}/${name}":
         ensure => $ensure,
@@ -110,9 +110,9 @@ define k8s::binary (
     'hyperkube': {
       $_template = $k8s::native_url_template
       $_url = k8s::format_url($_template, {
-          version   => $version,
-          component => $_component,
-          binary    => $k8s::hyperkube_name,
+        version   => $version,
+        component => $_component,
+        binary    => $k8s::hyperkube_name,
       })
       if !defined(File["${target}/${k8s::hyperkube_name}"]) {
         file { "${target}/${k8s::hyperkube_name}":

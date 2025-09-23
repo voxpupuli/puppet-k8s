@@ -176,35 +176,35 @@ class k8s::server::resources (
         },
         data     => {
           kubeconfig => to_yaml({
-              apiVersion        => 'v1',
-              kind              => 'Config',
-              'current-context' => 'local',
-              clusters          => [
-                {
-                  name    => 'local',
-                  cluster => {
-                    server                  => $control_plane_url,
-                    'certificate-authority' => '/var/run/secrets/kubernetes.io/serviceaccount/ca.crt',
-                  },
+            apiVersion        => 'v1',
+            kind              => 'Config',
+            'current-context' => 'local',
+            clusters          => [
+              {
+                name    => 'local',
+                cluster => {
+                  server                  => $control_plane_url,
+                  'certificate-authority' => '/var/run/secrets/kubernetes.io/serviceaccount/ca.crt',
                 },
-              ],
-              users             => [
-                {
-                  name => 'local',
-                  user => {
-                    tokenFile => '/var/run/secrets/kubernetes.io/serviceaccount/token',
-                  },
+              },
+            ],
+            users             => [
+              {
+                name => 'local',
+                user => {
+                  tokenFile => '/var/run/secrets/kubernetes.io/serviceaccount/token',
                 },
-              ],
-              contexts          => [
-                {
-                  name    => 'local',
-                  context => {
-                    cluster => 'local',
-                    user    => 'local',
-                  },
+              },
+            ],
+            contexts          => [
+              {
+                name    => 'local',
+                context => {
+                  cluster => 'local',
+                  user    => 'local',
                 },
-              ],
+              },
+            ],
           }),
         },
       };

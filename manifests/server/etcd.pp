@@ -142,8 +142,8 @@ class k8s::server::etcd (
         "${node['parameters']['etcd_name']}=${node['parameters']['initial_advertise_peer_urls'][0]}"
       },
       initial_cluster_state => ($cluster_nodes.size() ? {
-          0       => 'new',
-          default => 'existing',
+        0       => 'new',
+        default => 'existing',
       }),
     }
 

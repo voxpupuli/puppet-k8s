@@ -97,7 +97,7 @@ class k8s::server::apiserver (
     $cluster_nodes = puppetdb_query($pql_query)
     $_discovery = {
       etcd_servers => sort(flatten($cluster_nodes.map |$node| {
-            $node['parameters']['advertise_client_urls']
+        $node['parameters']['advertise_client_urls']
       })),
     }
   } else {
@@ -123,43 +123,43 @@ class k8s::server::apiserver (
   }
 
   $_args = k8s::format_arguments({
-      enable_admission_plugins           => [
-        'NamespaceLifecycle',
-        'LimitRanger',
-        'ServiceAccount',
-        'PersistentVolumeClaimResize',
-        'DefaultStorageClass',
-        'DefaultTolerationSeconds',
-        'MutatingAdmissionWebhook',
-        'ResourceQuota',
-        'Priority',
-        'NodeRestriction',
-      ],
-      advertise_address                  => $advertise_address,
-      allow_privileged                   => true,
-      anonymous_auth                     => true,
-      authorization_mode                 => ['Node', 'RBAC'],
-      bind_address                       => '::',
-      client_ca_file                     => $ca_cert,
-      enable_bootstrap_token_auth        => true,
-      requestheader_client_ca_file       => $aggregator_ca_cert,
-      requestheader_allowed_names        => 'front-proxy-client',
-      requestheader_extra_headers_prefix => 'X-Remote-Extra-',
-      requestheader_group_headers        => 'X-Remote-Group',
-      requestheader_username_headers     => 'X-Remote-User',
-      proxy_client_cert_file             => $front_proxy_cert,
-      proxy_client_key_file              => $front_proxy_key,
-      etcd_cafile                        => $etcd_ca,
-      etcd_certfile                      => $etcd_cert,
-      etcd_keyfile                       => $etcd_key,
-      etcd_servers                       => $etcd_servers,
-      kubelet_client_certificate         => $apiserver_client_cert,
-      kubelet_client_key                 => $apiserver_client_key,
-      secure_port                        => 6443,
-      service_account_key_file           => $serviceaccount_public,
-      service_cluster_ip_range           => $service_cluster_cidr,
-      tls_cert_file                      => $apiserver_cert,
-      tls_private_key_file               => $apiserver_key,
+    enable_admission_plugins           => [
+      'NamespaceLifecycle',
+      'LimitRanger',
+      'ServiceAccount',
+      'PersistentVolumeClaimResize',
+      'DefaultStorageClass',
+      'DefaultTolerationSeconds',
+      'MutatingAdmissionWebhook',
+      'ResourceQuota',
+      'Priority',
+      'NodeRestriction',
+    ],
+    advertise_address                  => $advertise_address,
+    allow_privileged                   => true,
+    anonymous_auth                     => true,
+    authorization_mode                 => ['Node', 'RBAC'],
+    bind_address                       => '::',
+    client_ca_file                     => $ca_cert,
+    enable_bootstrap_token_auth        => true,
+    requestheader_client_ca_file       => $aggregator_ca_cert,
+    requestheader_allowed_names        => 'front-proxy-client',
+    requestheader_extra_headers_prefix => 'X-Remote-Extra-',
+    requestheader_group_headers        => 'X-Remote-Group',
+    requestheader_username_headers     => 'X-Remote-User',
+    proxy_client_cert_file             => $front_proxy_cert,
+    proxy_client_key_file              => $front_proxy_key,
+    etcd_cafile                        => $etcd_ca,
+    etcd_certfile                      => $etcd_cert,
+    etcd_keyfile                       => $etcd_key,
+    etcd_servers                       => $etcd_servers,
+    kubelet_client_certificate         => $apiserver_client_cert,
+    kubelet_client_key                 => $apiserver_client_key,
+    secure_port                        => 6443,
+    service_account_key_file           => $serviceaccount_public,
+    service_cluster_ip_range           => $service_cluster_cidr,
+    tls_cert_file                      => $apiserver_cert,
+    tls_private_key_file               => $apiserver_key,
   } + $_discovery + $_addn_args + $_service_account + $arguments)
 
   if $k8s::packaging == 'container' {
@@ -167,127 +167,127 @@ class k8s::server::apiserver (
     file { '/etc/kubernetes/manifests/kube-apiserver.yaml':
       ensure  => $ensure,
       content => to_yaml({
-          apiVersion => 'apps/v1',
-          kind       => 'DaemonSet',
-          metadata   => {
-            name      => 'kube-apiserver',
-            namespace => 'kube-system',
-            labels    => {
+        apiVersion => 'apps/v1',
+        kind       => 'DaemonSet',
+        metadata   => {
+          name      => 'kube-apiserver',
+          namespace => 'kube-system',
+          labels    => {
+            'tier'    => 'control-plane',
+            'k8s-app' => 'kube-apiserver',
+          },
+        },
+        spec       => {
+          selector       => {
+            matchLabels => {
               'tier'    => 'control-plane',
               'k8s-app' => 'kube-apiserver',
             },
           },
-          spec       => {
-            selector       => {
-              matchLabels => {
+          template       => {
+            metadata => {
+              labels => {
                 'tier'    => 'control-plane',
                 'k8s-app' => 'kube-apiserver',
               },
             },
-            template       => {
-              metadata => {
-                labels => {
-                  'tier'    => 'control-plane',
-                  'k8s-app' => 'kube-apiserver',
-                },
-              },
-              spec     => {
-                containers      => [
-                  {
-                    name         => 'kube-apiserver',
-                    image        => $_image,
-                    command      => [
-                      '/hyperkube',
-                      'kube-apiserver',
-                    ] + $_args,
-                    env          => [
-                      {
-                        name      => 'POD_IP',
-                        valueFrom => {
-                          fieldRef => {
-                            fieldPath => 'status.podIP',
-                          },
+            spec     => {
+              containers      => [
+                {
+                  name         => 'kube-apiserver',
+                  image        => $_image,
+                  command      => [
+                    '/hyperkube',
+                    'kube-apiserver',
+                  ] + $_args,
+                  env          => [
+                    {
+                      name      => 'POD_IP',
+                      valueFrom => {
+                        fieldRef => {
+                          fieldPath => 'status.podIP',
                         },
                       },
-                    ],
-                    volumeMounts => [
-                      {
-                        mountPath => '/etc/ssl/certs',
-                        name      => 'ssl-certs-host',
-                        readOnly  => true,
-                      },
-                      {
-                        mountPath => $cert_path,
-                        name      => 'ssl-certs',
-                        readOnly  => true,
-                      },
-                    ],
-                  },
-                ],
-                hostNetwork     => true,
-                nodeSelector    => {
-                  'node-role.kubernetes.io/control-plane' => '',
-                },
-                tolerations     => [
-                  {
-                    key      => 'node-role.kubernetes.io/control-plane',
-                    operator => 'Exists',
-                    effect   => 'NoSchedule',
-                  },
-                ],
-                volumes         => [
-                  {
-                    name     => 'ssl-certs-host',
-                    hostPath => {
-                      path => '/etc/ssl/certs',
                     },
-                  },
-                  {
-                    name     => 'ssl-certs',
-                    hostPath => {
-                      path => $cert_path,
+                  ],
+                  volumeMounts => [
+                    {
+                      mountPath => '/etc/ssl/certs',
+                      name      => 'ssl-certs-host',
+                      readOnly  => true,
                     },
-                  },
-                ],
-                securityContext => {
-                  runAsNonRoot => true,
-                  runAsGroup   => $k8s::uid,
-                  runAsUser    => $k8s::gid,
+                    {
+                      mountPath => $cert_path,
+                      name      => 'ssl-certs',
+                      readOnly  => true,
+                    },
+                  ],
                 },
+              ],
+              hostNetwork     => true,
+              nodeSelector    => {
+                'node-role.kubernetes.io/control-plane' => '',
               },
-            },
-            updateStrategy => {
-              rollingUpdate => {
-                maxUnavailable => 1,
+              tolerations     => [
+                {
+                  key      => 'node-role.kubernetes.io/control-plane',
+                  operator => 'Exists',
+                  effect   => 'NoSchedule',
+                },
+              ],
+              volumes         => [
+                {
+                  name     => 'ssl-certs-host',
+                  hostPath => {
+                    path => '/etc/ssl/certs',
+                  },
+                },
+                {
+                  name     => 'ssl-certs',
+                  hostPath => {
+                    path => $cert_path,
+                  },
+                },
+              ],
+              securityContext => {
+                runAsNonRoot => true,
+                runAsGroup   => $k8s::uid,
+                runAsUser    => $k8s::gid,
               },
-              type          => 'RollingUpdate',
             },
           },
+          updateStrategy => {
+            rollingUpdate => {
+              maxUnavailable => 1,
+            },
+            type          => 'RollingUpdate',
+          },
+        },
       }),
     }
     # TODO: Create a dummy kube-apiserver service that just requires kubelet
   } else {
     file { "${k8s::sysconfig_path}/kube-apiserver":
       content => epp('k8s/sysconfig.epp', {
-          comment               => 'Kubernetes API Server configuration',
-          environment_variables => {
-            'KUBE_APISERVER_ARGS' => $_args.join(' '),
-          },
+        comment               => 'Kubernetes API Server configuration',
+        environment_variables => {
+          'KUBE_APISERVER_ARGS' => $_args.join(' '),
+        },
       }),
       notify  => Service['kube-apiserver'],
     }
     systemd::unit_file { 'kube-apiserver.service':
       ensure  => $ensure,
       content => epp('k8s/service.epp', {
-          name  => 'kube-apiserver',
+        name  => 'kube-apiserver',
 
-          desc  => 'Kubernetes API Server',
-          doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
+        desc  => 'Kubernetes API Server',
+        doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
 
-          dir   => '/srv/kubernetes',
-          bin   => 'kube-apiserver',
-          user  => $k8s::user,
-          group => $k8s::group,
+        dir   => '/srv/kubernetes',
+        bin   => 'kube-apiserver',
+        user  => $k8s::user,
+        group => $k8s::group,
       }),
       require => [
         File["${k8s::sysconfig_path}/kube-apiserver"],

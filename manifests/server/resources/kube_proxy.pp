@@ -131,12 +131,12 @@ class k8s::server::resources::kube_proxy (
         },
         data     => {
           'kube-proxy.conf' => to_yaml({
-              apiVersion       => 'kubeproxy.config.k8s.io/v1alpha1',
-              kind             => 'KubeProxyConfiguration',
-              clusterCIDR      => flatten($cluster_cidr).join(','),
-              clientConnection => {
-                kubeconfig => '/var/lib/kube-proxy/kubeconfig',
-              },
+            apiVersion       => 'kubeproxy.config.k8s.io/v1alpha1',
+            kind             => 'KubeProxyConfiguration',
+            clusterCIDR      => flatten($cluster_cidr).join(','),
+            clientConnection => {
+              kubeconfig => '/var/lib/kube-proxy/kubeconfig',
+            },
           } + $extra_config),
         },
       };
@@ -178,8 +178,8 @@ class k8s::server::resources::kube_proxy (
                   command         => [
                     '/go-runner',
                     k8s::format_arguments({
-                        log_file    => '/var/log/kube-proxy.log',
-                        also_stdout => true,
+                      log_file    => '/var/log/kube-proxy.log',
+                      also_stdout => true,
                     }),
                     '--',
                     '/usr/local/bin/kube-proxy',

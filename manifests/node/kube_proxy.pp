@@ -95,8 +95,8 @@ class k8s::node::kube_proxy (
   }
 
   $_args = k8s::format_arguments({
-      config     => '/etc/kubernetes/kube-proxy.conf',
-      kubeconfig => $kubeconfig,
+    config     => '/etc/kubernetes/kube-proxy.conf',
+    kubeconfig => $kubeconfig,
   } + $arguments)
 
   if $k8s::packaging == 'container' {
@@ -104,10 +104,10 @@ class k8s::node::kube_proxy (
     file { "${k8s::sysconfig_path}/kube-proxy":
       ensure  => $_ensure,
       content => epp('k8s/sysconfig.epp', {
-          comment               => 'Kubernetes kube-proxy configuration',
-          environment_variables => {
-            'KUBE_PROXY_ARGS' => $_args.join(' '),
-          },
+        comment               => 'Kubernetes kube-proxy configuration',
+        environment_variables => {
+          'KUBE_PROXY_ARGS' => $_args.join(' '),
+        },
       }),
       notify  => Service['kube-proxy'],
     }
@@ -115,11 +115,11 @@ class k8s::node::kube_proxy (
     systemd::unit_file { 'kube-proxy.service':
       ensure  => $_ensure,
       content => epp('k8s/service.epp', {
-          name => 'kube-proxy',
+        name => 'kube-proxy',
 
-          desc => 'Kubernetes Network Proxy',
-          doc  => 'https://github.com/GoogleCloudPlatform/kubernetes',
-          bin  => 'kube-proxy',
+        desc => 'Kubernetes Network Proxy',
+        doc  => 'https://github.com/GoogleCloudPlatform/kubernetes',
+        bin  => 'kube-proxy',
       }),
       require => [
         File["${k8s::sysconfig_path}/kube-proxy"],
