@@ -22,6 +22,6 @@ permissions:
 jobs:
   puppet:
     name: Puppet
-    uses: voxpupuli/gha-puppet/.github/workflows/basic.yml@v3
+    uses: voxpupuli/gha-puppet/.github/workflows/basic.yml@v4
     with:
       rubocop: false
