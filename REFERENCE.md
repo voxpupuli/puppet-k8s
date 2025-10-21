@@ -12,6 +12,7 @@
 * [`k8s::install::cni_plugins`](#k8s--install--cni_plugins): Manages the installation of CNI plugins
 * [`k8s::install::container_runtime`](#k8s--install--container_runtime): Manages the installation of a container runtime / CRI
 * [`k8s::install::crictl`](#k8s--install--crictl): installs the crictl debugging tool
+* [`k8s::install::fluxcd`](#k8s--install--fluxcd): Installs the FluxCD CLI, and optionally also installs Flux into on the cluster
 * [`k8s::install::kubeadm`](#k8s--install--kubeadm): Installs the kubeadm binary
 * [`k8s::install::kubectl`](#k8s--install--kubectl): Installs the kubectl binary
 * [`k8s::node`](#k8s--node): Installs a Kubernetes node
@@ -689,6 +690,90 @@ Data type: `Stdlib::HTTPUrl`
 template string for the URL to download tar.gz from
 
 Default value: `'https://github.com/kubernetes-sigs/cri-tools/releases/download/%{version}/crictl-%{version}-linux-%{arch}.tar.gz'`
+
+### <a name="k8s--install--fluxcd"></a>`k8s::install::fluxcd`
+
+Installs the FluxCD CLI, and optionally also installs Flux into on the cluster
+
+#### Examples
+
+##### Install - and automatically update - latest version of Flux
+
+```puppet
+class { 'k8s::install::fluxcd':
+  ensure => latest,
+}
+```
+
+##### Install flux with different components
+
+```puppet
+class { 'k8s::install::fluxcd':
+  install_options => {
+    components       => ['source-controller', 'kustomize-controller']
+    components_extra => ['source-watcher', 'image-reflector-controller']
+  }
+}
+```
+
+#### Parameters
+
+The following parameters are available in the `k8s::install::fluxcd` class:
+
+* [`ensure`](#-k8s--install--fluxcd--ensure)
+* [`install`](#-k8s--install--fluxcd--install)
+* [`install_options`](#-k8s--install--fluxcd--install_options)
+* [`upgrade`](#-k8s--install--fluxcd--upgrade)
+* [`install_dir`](#-k8s--install--fluxcd--install_dir)
+* [`kubeconfig`](#-k8s--install--fluxcd--kubeconfig)
+
+##### <a name="-k8s--install--fluxcd--ensure"></a>`ensure`
+
+Data type: `Variant[Enum['absent', 'present', 'latest'], String[1]]`
+
+The FluxCD version to install, or present/latest for the latest at the time
+
+Default value: `'present'`
+
+##### <a name="-k8s--install--fluxcd--install"></a>`install`
+
+Data type: `Optional[Boolean]`
+
+If FluxCD should be installed into the local cluster, will default to true on k8s::server nodes
+
+Default value: `undef`
+
+##### <a name="-k8s--install--fluxcd--install_options"></a>`install_options`
+
+Data type: `Hash[String, Data]`
+
+Additional options to provide to the `flux install` invocation
+
+Default value: `{}`
+
+##### <a name="-k8s--install--fluxcd--upgrade"></a>`upgrade`
+
+Data type: `Boolean`
+
+Upgrade FluxCD on the local cluster if the version changes
+
+Default value: `true`
+
+##### <a name="-k8s--install--fluxcd--install_dir"></a>`install_dir`
+
+Data type: `Stdlib::Unixpath`
+
+Where to install the FluxCD binary
+
+Default value: `'/usr/local/bin'`
+
+##### <a name="-k8s--install--fluxcd--kubeconfig"></a>`kubeconfig`
+
+Data type: `Stdlib::Unixpath`
+
+The kubeconfig file to use when installing/upgrading FluxCD
+
+Default value: `'/root/.kube/config'`
 
 ### <a name="k8s--install--kubeadm"></a>`k8s::install::kubeadm`
 
