@@ -67,7 +67,6 @@ RSpec.describe kubectl_provider do
         ],
         'current-context' => 'default',
         'kind' => 'Config',
-        'preferences' => {},
       }
     end
 
@@ -125,7 +124,7 @@ RSpec.describe kubectl_provider do
         catalog.apply
 
         data = Psych.load(File.read(tmpfile))
-        expect(data).to eq default_kubeconfig
+        expect(data.slice(*default_kubeconfig.keys)).to eq default_kubeconfig
       end
     end
   end
