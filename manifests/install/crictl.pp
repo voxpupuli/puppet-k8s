@@ -33,7 +33,7 @@ class k8s::install::crictl (
     $config_require = Package[$pkg]
   } else {
     $_url = k8s::format_url($download_url_template, {
-        version => $version,
+      version => $version,
     })
     $_target = "/opt/k8s/crictl-${version}";
     $_tarball_target = '/opt/k8s/archives';

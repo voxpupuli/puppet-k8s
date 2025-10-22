@@ -138,8 +138,8 @@ class k8s::server::etcd::setup (
       home       => $storage_path,
       managehome => false,
       shell      => (fact('os.family') ? {
-          'Debian' => '/usr/sbin/nologin',
-          default  => '/sbin/nologin',
+        'Debian' => '/usr/sbin/nologin',
+        default  => '/sbin/nologin',
       }),
       system     => true,
       uid        => $uid,
@@ -183,7 +183,7 @@ class k8s::server::etcd::setup (
   }
 
   $_initial_cluster = ([
-      "${etcd_name}=${initial_advertise_peer_urls[0]}"
+    "${etcd_name}=${initial_advertise_peer_urls[0]}"
   ] + $initial_cluster).unique
 
   file {
@@ -194,26 +194,26 @@ class k8s::server::etcd::setup (
 
     '/etc/etcd/etcd.conf':
       content => epp('k8s/server/etcd/etcd.conf.epp', {
-          etcd_name                   => $etcd_name,
-          data_dir                    => $data_dir,
-          proxy                       => $proxy,
-          listen_client_urls          => $listen_client_urls,
-          advertise_client_urls       => $advertise_client_urls,
-          listen_peer_urls            => $listen_peer_urls,
-          initial_advertise_peer_urls => $initial_advertise_peer_urls,
-          cert_file                   => $_cert_file,
-          key_file                    => $_key_file,
-          trusted_ca_file             => $_trusted_ca_file,
-          client_cert_auth            => $_client_cert_auth,
-          auto_tls                    => $_auto_tls,
-          peer_cert_file              => $_peer_cert_file,
-          peer_key_file               => $_peer_key_file,
-          peer_trusted_ca_file        => $_peer_trusted_ca_file,
-          peer_client_cert_auth       => $_peer_client_cert_auth,
-          peer_auto_tls               => $_peer_auto_tls,
-          auto_compaction_retention   => $auto_compaction_retention,
-          initial_cluster_state       => $initial_cluster_state,
-          initial_cluster_token       => $initial_cluster_token,
+        etcd_name                   => $etcd_name,
+        data_dir                    => $data_dir,
+        proxy                       => $proxy,
+        listen_client_urls          => $listen_client_urls,
+        advertise_client_urls       => $advertise_client_urls,
+        listen_peer_urls            => $listen_peer_urls,
+        initial_advertise_peer_urls => $initial_advertise_peer_urls,
+        cert_file                   => $_cert_file,
+        key_file                    => $_key_file,
+        trusted_ca_file             => $_trusted_ca_file,
+        client_cert_auth            => $_client_cert_auth,
+        auto_tls                    => $_auto_tls,
+        peer_cert_file              => $_peer_cert_file,
+        peer_key_file               => $_peer_key_file,
+        peer_trusted_ca_file        => $_peer_trusted_ca_file,
+        peer_client_cert_auth       => $_peer_client_cert_auth,
+        peer_auto_tls               => $_peer_auto_tls,
+        auto_compaction_retention   => $auto_compaction_retention,
+        initial_cluster_state       => $initial_cluster_state,
+        initial_cluster_token       => $initial_cluster_token,
       }),
       notify  => Service['etcd'];
 
@@ -222,7 +222,7 @@ class k8s::server::etcd::setup (
     # as it only matters before the cluster has been established.
     '/etc/etcd/cluster.conf':
       content => epp('k8s/server/etcd/cluster.conf.epp', {
-          initial_cluster => $_initial_cluster,
+        initial_cluster => $_initial_cluster,
       });
   }
 
@@ -237,9 +237,9 @@ class k8s::server::etcd::setup (
   systemd::unit_file { 'etcd.service':
     ensure  => $ensure,
     content => epp('k8s/etcd.service.epp', {
-        binary_path  => $_binary_path,
-        workdir_path => $storage_path,
-        user         => $user,
+      binary_path  => $_binary_path,
+      workdir_path => $storage_path,
+      user         => $user,
     }),
     notify  => Service['etcd'],
   }

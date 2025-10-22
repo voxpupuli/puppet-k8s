@@ -235,22 +235,22 @@ class k8s::node::kubelet (
   $_labels = $labels.map |$k, $v| { "${k}=${v}" }.join(',')
 
   $_args = k8s::format_arguments({
-      config                     => '/etc/kubernetes/kubelet.conf',
-      kubeconfig                 => $kubeconfig,
-      bootstrap_kubeconfig       => $_bootstrap_kubeconfig,
-      cert_dir                   => $cert_path,
-      container_runtime_endpoint => $_runtime_endpoint,
-      hostname_override          => fact('networking.fqdn'),
-      node_ip                    => $_node_ip,
-      node_labels                => $_labels,
+    config                     => '/etc/kubernetes/kubelet.conf',
+    kubeconfig                 => $kubeconfig,
+    bootstrap_kubeconfig       => $_bootstrap_kubeconfig,
+    cert_dir                   => $cert_path,
+    container_runtime_endpoint => $_runtime_endpoint,
+    hostname_override          => fact('networking.fqdn'),
+    node_ip                    => $_node_ip,
+    node_labels                => $_labels,
   } + $arguments)
 
   file { "${k8s::sysconfig_path}/kubelet":
     content => epp('k8s/sysconfig.epp', {
-        comment               => 'Kubernetes Kubelet configuration',
-        environment_variables => {
-          'KUBELET_ARGS' => $_args.join(' '),
-        },
+      comment               => 'Kubernetes Kubelet configuration',
+      environment_variables => {
+        'KUBELET_ARGS' => $_args.join(' '),
+      },
     }),
     notify  => Service['kubelet'],
   }
@@ -258,11 +258,11 @@ class k8s::node::kubelet (
   systemd::unit_file { 'kubelet.service':
     ensure  => $ensure,
     content => epp('k8s/service.epp', {
-        name  => 'kubelet',
-        desc  => 'Kubernetes Kubelet Server',
-        doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
-        needs => [$runtime_service,],
-        bin   => 'kubelet',
+      name  => 'kubelet',
+      desc  => 'Kubernetes Kubelet Server',
+      doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
+      needs => [$runtime_service,],
+      bin   => 'kubelet',
     }),
     require => [
       File["${k8s::sysconfig_path}/kubelet", '/etc/kubernetes/kubelet.conf'],

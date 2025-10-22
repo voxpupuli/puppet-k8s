@@ -16,8 +16,8 @@ class k8s::common {
     home       => '/srv/kubernetes',
     managehome => false,
     shell      => (fact('os.family') ? {
-        'Debian' => '/usr/sbin/nologin',
-        default  => '/sbin/nologin',
+      'Debian' => '/usr/sbin/nologin',
+      default  => '/sbin/nologin',
     }),
     system     => true,
     uid        => $k8s::uid,
@@ -48,10 +48,10 @@ class k8s::common {
   file { "${k8s::sysconfig_path}/kube-common":
     ensure  => file,
     content => epp('k8s/sysconfig.epp', {
-        comment               => 'General Kubernetes Configuration',
-        environment_variables => {
-          'KUBE_LOG_LEVEL'   => '',
-        },
+      comment               => 'General Kubernetes Configuration',
+      environment_variables => {
+        'KUBE_LOG_LEVEL'   => '',
+      },
     }),
   }
 

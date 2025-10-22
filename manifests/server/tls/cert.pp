@@ -50,10 +50,10 @@ define k8s::server::tls::cert (
     owner   => $owner,
     group   => $group,
     content => epp('k8s/server/tls/openssl.cnf.epp', {
-        extended_key_usage => $extended_key_usage,
-        distinguished_name => $distinguished_name,
-        dns_altnames       => $_dns_altnames,
-        ip_altnames        => $_ip_altnames,
+      extended_key_usage => $extended_key_usage,
+      distinguished_name => $distinguished_name,
+      dns_altnames       => $_dns_altnames,
+      ip_altnames        => $_ip_altnames,
     }),
   }
   ~> Exec <| title == "Create K8s ${title} CSR" |>

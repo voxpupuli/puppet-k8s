@@ -19,25 +19,25 @@ define k8s::server::etcd::member (
   $environment = [
     'ETCDCTL_API=3',
   ] + ($cluster_urls ? {
-      undef   => [],
-      default => [
-        "ETCDCTL_ENDPOINTS=${cluster_urls.join(',')}",
-      ],
+    undef   => [],
+    default => [
+      "ETCDCTL_ENDPOINTS=${cluster_urls.join(',')}",
+    ],
   }) + ($cluster_ca ? {
-      undef   => [],
-      default => [
-        "ETCDCTL_CACERT=${cluster_ca}",
-      ],
+    undef   => [],
+    default => [
+      "ETCDCTL_CACERT=${cluster_ca}",
+    ],
   }) + ($cluster_cert ? {
-      undef   => [],
-      default => [
-        "ETCDCTL_CERT=${cluster_cert}",
-      ],
+    undef   => [],
+    default => [
+      "ETCDCTL_CERT=${cluster_cert}",
+    ],
   }) + ($cluster_key ? {
-      undef   => [],
-      default => [
-        "ETCDCTL_KEY=${cluster_key}",
-      ],
+    undef   => [],
+    default => [
+      "ETCDCTL_KEY=${cluster_key}",
+    ],
   })
 
   Service <| title == 'etcd' |>

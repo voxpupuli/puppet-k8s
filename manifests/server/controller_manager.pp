@@ -53,19 +53,19 @@ class k8s::server::controller_manager (
   # For container;
   # use_service_account_credentials => true,
   $_args = k8s::format_arguments({
-      allocate_node_cidrs              => true,
-      controllers                      => [
-        '*',
-        'bootstrapsigner',
-        'tokencleaner',
-      ],
-      cluster_cidr                     => $cluster_cidr,
-      service_cluster_ip_range         => $service_cluster_cidr,
-      cluster_signing_cert_file        => $ca_cert,
-      cluster_signing_key_file         => $ca_key,
-      leader_elect                     => true,
-      root_ca_file                     => $ca_cert,
-      service_account_private_key_file => "${cert_path}/service-account.key",
+    allocate_node_cidrs              => true,
+    controllers                      => [
+      '*',
+      'bootstrapsigner',
+      'tokencleaner',
+    ],
+    cluster_cidr                     => $cluster_cidr,
+    service_cluster_ip_range         => $service_cluster_cidr,
+    cluster_signing_cert_file        => $ca_cert,
+    cluster_signing_key_file         => $ca_key,
+    leader_elect                     => true,
+    root_ca_file                     => $ca_cert,
+    service_account_private_key_file => "${cert_path}/service-account.key",
   } + $_addn_args + $arguments)
 
   if $k8s::packaging == 'container' {
@@ -93,26 +93,26 @@ class k8s::server::controller_manager (
 
     file { "${k8s::sysconfig_path}/kube-controller-manager":
       content => epp('k8s/sysconfig.epp', {
-          comment               => 'Kubernetes Controller Manager configuration',
-          environment_variables => {
-            'KUBE_CONTROLLER_MANAGER_ARGS' => $_args.join(' '),
-          },
+        comment               => 'Kubernetes Controller Manager configuration',
+        environment_variables => {
+          'KUBE_CONTROLLER_MANAGER_ARGS' => $_args.join(' '),
+        },
       }),
       notify  => Service['kube-controller-manager'],
     }
     systemd::unit_file { 'kube-controller-manager.service':
       ensure  => $ensure,
       content => epp('k8s/service.epp', {
-          name  => 'kube-controller-manager',
+        name  => 'kube-controller-manager',
 
-          desc  => 'Kubernetes Controller Manager',
-          doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
+        desc  => 'Kubernetes Controller Manager',
+        doc   => 'https://github.com/GoogleCloudPlatform/kubernetes',
 
-          dir   => '/srv/kubernetes',
-          bin   => 'kube-controller-manager',
-          needs => ['kube-apiserver.service'],
-          user  => $k8s::user,
-          group => $k8s::group,
+        dir   => '/srv/kubernetes',
+        bin   => 'kube-controller-manager',
+        needs => ['kube-apiserver.service'],
+        user  => $k8s::user,
+        group => $k8s::group,
       }),
       require => [
         File["${k8s::sysconfig_path}/kube-controller-manager"],
