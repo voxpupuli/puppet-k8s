@@ -41,7 +41,7 @@ spec:
           readOnly: true
         - mountPath: "/run/xtables.lock"
           name: iptables-lock
-          readOnly: false
+          readOnly: null
         - mountPath: "/lib/modules"
           name: lib-modules
           readOnly: true
