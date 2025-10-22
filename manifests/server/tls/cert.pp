@@ -61,18 +61,17 @@ define k8s::server::tls::cert (
   if $ensure == 'present' {
     Package <| title == 'openssl' |>
     -> exec {
-      default:
-        path => $facts['path'];
-
       "Create K8s ${title} key":
         command => "openssl genrsa -out '${key}' ${key_bits}; echo > '${cert}'",
         unless  => "openssl pkey -in '${key}' -text | grep '${key_bits} bit'",
+        path    => $facts['path'],
         before  => File[$key],
         notify  => Exec["Create K8s ${title} CSR"];
 
       "Create K8s ${title} CSR":
         command     => "openssl req -new -key '${key}' \
           -out '${csr}' -config '${$config}'; echo > '${cert}'",
+        path        => $facts['path'],
         refreshonly => true,
         notify      => Exec["Sign K8s ${title} cert"],
         require     => File[$key],
@@ -84,6 +83,7 @@ define k8s::server::tls::cert (
           -out '${cert}' -days '${valid_days}' \
           -extensions v3_req -extfile '${config}'",
         unless  => "openssl verify -CAfile '${ca_cert}' '${cert}'",
+        path    => $facts['path'],
         require => [
           File[$csr],
           File[$key],
