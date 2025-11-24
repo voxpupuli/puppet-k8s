@@ -1803,7 +1803,9 @@ The following parameters are available in the `k8s::binary` defined type:
 * [`packaging`](#-k8s--binary--packaging)
 * [`target`](#-k8s--binary--target)
 * [`tarball_target`](#-k8s--binary--tarball_target)
+* [`binary_target`](#-k8s--binary--binary_target)
 * [`active`](#-k8s--binary--active)
+* [`manage_system`](#-k8s--binary--manage_system)
 * [`component`](#-k8s--binary--component)
 
 ##### <a name="-k8s--binary--ensure"></a>`ensure`
@@ -1832,7 +1834,7 @@ Default value: `$k8s::packaging`
 
 ##### <a name="-k8s--binary--target"></a>`target`
 
-Data type: `String[1]`
+Data type: `Stdlib::Unixpath`
 
 The directory to deploy the binary to
 
@@ -1840,17 +1842,33 @@ Default value: `"/opt/k8s/${$version}"`
 
 ##### <a name="-k8s--binary--tarball_target"></a>`tarball_target`
 
-Data type: `String[1]`
+Data type: `Stdlib::Unixpath`
 
 The directory to download tarballs to
 
 Default value: `'/opt/k8s/archives'`
+
+##### <a name="-k8s--binary--binary_target"></a>`binary_target`
+
+Data type: `Stdlib::Unixpath`
+
+The directory to place active binary symlinks into
+
+Default value: `'/opt/k8s/bin'`
 
 ##### <a name="-k8s--binary--active"></a>`active`
 
 Data type: `Boolean`
 
 Whether the binary should be active
+
+Default value: `true`
+
+##### <a name="-k8s--binary--manage_system"></a>`manage_system`
+
+Data type: `Boolean`
+
+Whether the binary should be installed system-wide
 
 Default value: `true`
 

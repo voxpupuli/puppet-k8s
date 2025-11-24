@@ -5,17 +5,22 @@
 # @param packaging The packaging method to use
 # @param target The directory to deploy the binary to
 # @param tarball_target The directory to download tarballs to
+# @param binary_target The directory to place active binary symlinks into
 # @param active Whether the binary should be active
+# @param manage_system Whether the binary should be installed system-wide
 # @param component The component to deploy
 #
 define k8s::binary (
   K8s::Ensure $ensure       = $k8s::ensure,
   String[1] $version        = $k8s::version,
   String[1] $packaging      = $k8s::packaging,
-  String[1] $target         = "/opt/k8s/${$version}",
-  String[1] $tarball_target = '/opt/k8s/archives',
 
-  Boolean $active = true,
+  Stdlib::Unixpath $target         = "/opt/k8s/${$version}",
+  Stdlib::Unixpath $tarball_target = '/opt/k8s/archives',
+  Stdlib::Unixpath $binary_target  = '/opt/k8s/bin',
+
+  Boolean $active        = true,
+  Boolean $manage_system = true,
 
   Optional[String] $component = undef,
 ) {
@@ -136,7 +141,16 @@ define k8s::binary (
     }
   }
 
-  if $active and $packaging != 'container' and $_packaging != 'manual' and !defined(File["/usr/bin/${name}"]) {
+  if $active and $_packaging =~ Enum['tarball', 'loose', 'hyperkube'] {
+    file { "${binary_target}/${name}":
+      ensure  => link,
+      mode    => '0755',
+      replace => true,
+      target  => "${target}/${name}",
+    }
+  }
+
+  if $manage_system and $active and $packaging != 'container' and $_packaging != 'manual' and !defined(File["/usr/bin/${name}"]) {
     if $packaging == 'package' {
       file { "/usr/bin/${name}":
         ensure  => $ensure,
