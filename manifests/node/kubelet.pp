@@ -14,6 +14,7 @@
 # @param firewall_type define the type of firewall to use
 # @param key path to node key file
 # @param kubeconfig path to kubeconfig
+# @param binary_target path to the installed k8s binary symlinks
 # @param manage_firewall whether to manage firewall or not
 # @param manage_kernel_modules whether to load kernel modules or not
 # @param manage_sysctl_settings whether to manage sysctl settings or not
@@ -45,8 +46,9 @@ class k8s::node::kubelet (
   Boolean $support_dualstack                 = $k8s::cluster_cidr =~ Array[Data, 2],
   Enum['IPv4','IPv6'] $main_dualstack_family = 'IPv4',
 
-  Stdlib::Unixpath $cert_path  = $k8s::node::cert_path,
-  Stdlib::Unixpath $kubeconfig = '/srv/kubernetes/kubelet.kubeconf',
+  Stdlib::Unixpath $cert_path     = $k8s::node::cert_path,
+  Stdlib::Unixpath $kubeconfig    = '/srv/kubernetes/kubelet.kubeconf',
+  Stdlib::Unixpath $binary_target = "/opt/k8s/${k8s::version}",
 
   # For cert auth
   Optional[Stdlib::Unixpath] $ca_cert = $k8s::node::ca_cert,
@@ -76,19 +78,14 @@ class k8s::node::kubelet (
   case $auth {
     'bootstrap': {
       $_ca_cert = pick($ca_cert, '/var/lib/kubelet/pki/ca.pem')
-      stdlib::ensure_packages(['jq'])
-      if !defined(K8s::Binary['kubectl']) {
-        k8s::binary { 'kubectl':
-          ensure => $ensure,
-        }
-      }
+      include k8s::node::kubectl
       exec { 'Remove broken CA':
         path    => ['/usr/local/bin','/usr/bin','/bin'],
         command => "rm '${_ca_cert}'",
         onlyif  => "stat '${_ca_cert}' | grep 'Size: 0'",
       }
       ~> exec { 'Retrieve K8s CA':
-        path    => ['/usr/local/bin','/usr/bin','/bin'],
+        path    => [$binary_target,'/usr/local/bin','/usr/bin','/bin'],
         command => "kubectl --server='${control_plane_url}' --username=anonymous --insecure-skip-tls-verify=true \
           get --namespace=kube-system configmap cluster-info --output=jsonpath={.data.ca} > '${_ca_cert}'",
         creates => $_ca_cert,
