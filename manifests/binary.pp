@@ -7,6 +7,7 @@
 # @param tarball_target The directory to download tarballs to
 # @param binary_target The directory to place active binary symlinks into
 # @param active Whether the binary should be active
+# @param manage_system Whether the binary should be installed system-wide
 # @param component The component to deploy
 #
 define k8s::binary (
@@ -19,6 +20,7 @@ define k8s::binary (
   Stdlib::Unixpath $binary_target  = '/opt/k8s/bin',
 
   Boolean $active        = true,
+  Boolean $manage_system = true,
 
   Optional[String] $component = undef,
 ) {
@@ -148,7 +150,7 @@ define k8s::binary (
     }
   }
 
-  if $active and $packaging != 'container' and $_packaging != 'manual' and !defined(File["/usr/bin/${name}"]) {
+  if $manage_system and $active and $packaging != 'container' and $_packaging != 'manual' and !defined(File["/usr/bin/${name}"]) {
     if $packaging == 'package' {
       file { "/usr/bin/${name}":
         ensure  => $ensure,
