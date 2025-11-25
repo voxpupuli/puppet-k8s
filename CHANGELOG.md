@@ -4,6 +4,64 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v3.0.0](https://github.com/voxpupuli/puppet-k8s/tree/v3.0.0) (2025-11-24)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-k8s/compare/v2.0.1...v3.0.0)
+
+**Breaking changes:**
+
+- Drop puppet, update openvox minimum version to 8.19 [\#137](https://github.com/voxpupuli/puppet-k8s/pull/137) ([TheMeier](https://github.com/TheMeier))
+- Update list of OSes to non-EoL versions [\#104](https://github.com/voxpupuli/puppet-k8s/pull/104) ([ananace](https://github.com/ananace))
+- Unpack cni\_plugins, crictl & etcd to folders in /opt and use symlinks [\#96](https://github.com/voxpupuli/puppet-k8s/pull/96) ([olavst-spk](https://github.com/olavst-spk))
+- Initial work on hiera-ifying and Puppet 8 support for standalone etcd [\#66](https://github.com/voxpupuli/puppet-k8s/pull/66) ([ananace](https://github.com/ananace))
+
+**Implemented enhancements:**
+
+- Add posibility for aditional arguments without values for k8s components [\#129](https://github.com/voxpupuli/puppet-k8s/issues/129)
+- Custom CNI binaries do not survive CNI plugin updates [\#107](https://github.com/voxpupuli/puppet-k8s/issues/107)
+- Latest Kubernetes binaries are only available on the new repo [\#100](https://github.com/voxpupuli/puppet-k8s/issues/100)
+- Replace dependency on kubic \(or provide other alternative\) [\#77](https://github.com/voxpupuli/puppet-k8s/issues/77)
+- Add parameter to defer management of /etc/facter/facts.d [\#141](https://github.com/voxpupuli/puppet-k8s/pull/141) ([ananace](https://github.com/ananace))
+- puppet/archive Allow 8.x [\#136](https://github.com/voxpupuli/puppet-k8s/pull/136) ([TheMeier](https://github.com/TheMeier))
+- Add option to specify main IP family for dualstack [\#123](https://github.com/voxpupuli/puppet-k8s/pull/123) ([ananace](https://github.com/ananace))
+- Improve handling of manage\_\* parameters [\#121](https://github.com/voxpupuli/puppet-k8s/pull/121) ([ananace](https://github.com/ananace))
+- Make etcd initial\_cluster unique list [\#120](https://github.com/voxpupuli/puppet-k8s/pull/120) ([zezav-cz](https://github.com/zezav-cz))
+- metadata.json: Add OpenVox [\#119](https://github.com/voxpupuli/puppet-k8s/pull/119) ([jstraw](https://github.com/jstraw))
+- Kubelet labels [\#117](https://github.com/voxpupuli/puppet-k8s/pull/117) ([zezav-cz](https://github.com/zezav-cz))
+- Resync bundled resources to modern versions [\#116](https://github.com/voxpupuli/puppet-k8s/pull/116) ([ananace](https://github.com/ananace))
+- Retain custom CNI plugins over upgrades [\#114](https://github.com/voxpupuli/puppet-k8s/pull/114) ([ananace](https://github.com/ananace))
+- Namespace calls to ensure\_packages [\#113](https://github.com/voxpupuli/puppet-k8s/pull/113) ([ananace](https://github.com/ananace))
+- Support configuration of waiting times [\#110](https://github.com/voxpupuli/puppet-k8s/pull/110) ([deric](https://github.com/deric))
+- Use pkgs.k8s.io repos instead of kubic [\#103](https://github.com/voxpupuli/puppet-k8s/pull/103) ([ananace](https://github.com/ananace))
+- puppetlabs/firewall: Allow 8.x [\#89](https://github.com/voxpupuli/puppet-k8s/pull/89) ([zilchms](https://github.com/zilchms))
+- puppet/systemd: Allow 6.x [\#88](https://github.com/voxpupuli/puppet-k8s/pull/88) ([zilchms](https://github.com/zilchms))
+- Preliminary SUSE support [\#71](https://github.com/voxpupuli/puppet-k8s/pull/71) ([ananace](https://github.com/ananace))
+- Add Puppet 8 support [\#61](https://github.com/voxpupuli/puppet-k8s/pull/61) ([bastelfreak](https://github.com/bastelfreak))
+
+**Fixed bugs:**
+
+- Fix a convergence issue [\#139](https://github.com/voxpupuli/puppet-k8s/pull/139) ([ananace](https://github.com/ananace))
+- Fix incompatible key usage errors for etcd v3.5 [\#132](https://github.com/voxpupuli/puppet-k8s/pull/132) ([jorhett](https://github.com/jorhett))
+- Breakfix: flannel forbidden to query pod [\#126](https://github.com/voxpupuli/puppet-k8s/pull/126) ([jorhett](https://github.com/jorhett))
+- Fix crio package repository, allow data adjustment [\#125](https://github.com/voxpupuli/puppet-k8s/pull/125) ([jorhett](https://github.com/jorhett))
+- Correctly handle default name/discovery tag for etcd [\#108](https://github.com/voxpupuli/puppet-k8s/pull/108) ([ananace](https://github.com/ananace))
+
+**Closed issues:**
+
+- Unknown function: puppetdb\_query [\#106](https://github.com/voxpupuli/puppet-k8s/issues/106)
+- K8s failes due to service-account.key not being found. [\#105](https://github.com/voxpupuli/puppet-k8s/issues/105)
+- cni-plugins, crictl & etcd cannot be updated  [\#95](https://github.com/voxpupuli/puppet-k8s/issues/95)
+
+**Merged pull requests:**
+
+- Un-DRY execs to avoid puppet-lint failures [\#144](https://github.com/voxpupuli/puppet-k8s/pull/144) ([ananace](https://github.com/ananace))
+- Fix missing vars for domain cluster [\#135](https://github.com/voxpupuli/puppet-k8s/pull/135) ([zezav-cz](https://github.com/zezav-cz))
+- Prevent incorrect installation of runc on 1.28+ crio [\#133](https://github.com/voxpupuli/puppet-k8s/pull/133) ([jorhett](https://github.com/jorhett))
+- Bump systemd requirement to support latest [\#115](https://github.com/voxpupuli/puppet-k8s/pull/115) ([ananace](https://github.com/ananace))
+- Update binary repos and versions to support modern Kubernetes [\#101](https://github.com/voxpupuli/puppet-k8s/pull/101) ([ananace](https://github.com/ananace))
+- update puppet-systemd upper bound to 8.0.0 [\#92](https://github.com/voxpupuli/puppet-k8s/pull/92) ([TheMeier](https://github.com/TheMeier))
+- Update Readme - fix table of contents, add badges [\#87](https://github.com/voxpupuli/puppet-k8s/pull/87) ([rwaffen](https://github.com/rwaffen))
+
 ## [v2.0.1](https://github.com/voxpupuli/puppet-k8s/tree/v2.0.1) (2024-02-23)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-k8s/compare/v2.0.0...v2.0.1)
