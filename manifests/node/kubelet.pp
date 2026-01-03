@@ -200,7 +200,7 @@ class k8s::node::kubelet (
       Kmod::Load['br_netfilter']
       -> [
         Sysctl['net.bridge.bridge-nf-call-iptables'],
-        Sysctl['net.bridge.bridge-nf-call-ip6tables']
+        Sysctl['net.bridge.bridge-nf-call-ip6tables'],
       ]
     }
   }

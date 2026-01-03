@@ -183,7 +183,7 @@ class k8s::server::etcd::setup (
   }
 
   $_initial_cluster = ([
-    "${etcd_name}=${initial_advertise_peer_urls[0]}"
+    "${etcd_name}=${initial_advertise_peer_urls[0]}",
   ] + $initial_cluster).unique
 
   file {
