@@ -55,6 +55,13 @@ describe 'k8s::server::etcd::setup' do
           replace: true,
           target: '/opt/k8s/etcd-3.6.0/etcdctl'
         )
+
+        is_expected.to contain_file('/usr/local/bin/etcdutl').with(
+          ensure: 'link',
+          mode: '0755',
+          replace: true,
+          target: '/opt/k8s/etcd-3.6.0/etcdutl'
+        )
       end
 
       it { is_expected.to contain_user('etcd') }
