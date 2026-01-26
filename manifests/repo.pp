@@ -91,6 +91,36 @@ class k8s::repo (
         }
       }
     }
+    'Suse': {
+      $core_url = "${core_package_base}:/v${major_version}/rpm"
+      $crio_url = "${crio_package_base}:/v${major_version}/rpm"
+
+      zypprepo { 'k8s-core':
+        descr    => 'Stable releases of Kubernetes',
+        baseurl  => $core_url,
+        gpgcheck => 1,
+        gpgkey   => "${core_url}/repodata/repomd.xml.key",
+      }
+
+      if $manage_container_manager {
+        case $container_manager {
+          'crio': {
+            zypprepo { 'libcontainers:stable:cri-o':
+              ensure => absent,
+            }
+            zypprepo { 'k8s-crio':
+              descr    => 'Stable releases of CRI-o',
+              baseurl  => $crio_url,
+              gpgcheck => 1,
+              gpgkey   => "${crio_url}/repodata/repomd.xml.key",
+            }
+          }
+          default: {
+            # SLES containerd packages are only built for 15.X and s390x
+          }
+        }
+      }
+    }
     default: {}
   }
 }
