@@ -90,4 +90,9 @@ ETCD_PEER_AUTO_TLS="<%= $peer_auto_tls %>"
 <% } -%>
 
 #[logging]
+# Depricated in etcd v3.5.0
 ETCD_DEBUG=<%= $debug %>
+# Supported from etcd v3.4.0
+<% if $debug { -%>
+ETCD_LOG_LEVEL="debug"
+<% } -%>
