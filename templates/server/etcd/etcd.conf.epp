@@ -28,7 +28,7 @@
   Optional[Enum['existing', 'new']] $initial_cluster_state = undef,
   Optional[String] $initial_cluster_token = undef,
 
-  Boolean $debug = false,
+  Enum['debug', 'info', 'warn', 'error', 'panic', 'fatal'] $logging_level,
 | -%>
 # Managed by Puppet
 
@@ -90,9 +90,4 @@ ETCD_PEER_AUTO_TLS="<%= $peer_auto_tls %>"
 <% } -%>
 
 #[logging]
-# Depricated in etcd v3.5.0
-ETCD_DEBUG=<%= $debug %>
-# Supported from etcd v3.4.0
-<% if $debug { -%>
-ETCD_LOG_LEVEL="debug"
-<% } -%>
+ETCD_LOG_LEVEL="<%= $logging_level %>"
