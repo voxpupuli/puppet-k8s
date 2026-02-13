@@ -59,19 +59,19 @@ class k8s::server::controller_manager (
   # For container;
   # use_service_account_credentials => true,
   $_args = k8s::format_arguments({
-      allocate_node_cidrs              => true,
-      controllers                      => [
-        '*',
-        'bootstrapsigner',
-        'tokencleaner',
-      ],
-      cluster_cidr                     => $cluster_cidr,
-      service_cluster_ip_range         => $service_cluster_cidr,
-      cluster_signing_cert_file        => $ca_sign_cert,
-      cluster_signing_key_file         => $ca_sign_key,
-      leader_elect                     => true,
-      root_ca_file                     => $ca_cert,
-      service_account_private_key_file => $sa_key,
+    allocate_node_cidrs              => true,
+    controllers                      => [
+      '*',
+      'bootstrapsigner',
+      'tokencleaner',
+    ],
+    cluster_cidr                     => $cluster_cidr,
+    service_cluster_ip_range         => $service_cluster_cidr,
+    cluster_signing_cert_file        => $ca_sign_cert,
+    cluster_signing_key_file         => $ca_sign_key,
+    leader_elect                     => true,
+    root_ca_file                     => $ca_cert,
+    service_account_private_key_file => $sa_key,
   } + $_addn_args + $arguments)
 
   if $k8s::packaging == 'container' {
