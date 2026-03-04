@@ -17,6 +17,7 @@
 # @param key The path to the controller manager key.
 # @param sa_key The path to the service account key.
 # @param service_cluster_cidr The CIDR of the service cluster.
+# @param use_internal_ca Whether to use the internal CA for signing certificates. (This is helper in case cluster CA is not used)
 #
 class k8s::server::controller_manager (
   K8s::Ensure $ensure = $k8s::server::ensure,
@@ -31,6 +32,8 @@ class k8s::server::controller_manager (
   Optional[Stdlib::Unixpath] $cert_path = $k8s::server::tls::cert_path,
   Stdlib::Unixpath $ca_sign_cert        = $k8s::server::tls::ca_cert,
   Stdlib::Unixpath $ca_sign_key         = $k8s::server::tls::ca_key,
+  Boolean $use_internal_ca              = true,
+
   Stdlib::Unixpath $ca_cert             = $k8s::server::tls::ca_cert,
   Stdlib::Unixpath $ca_key              = $k8s::server::tls::ca_key,
   Stdlib::Unixpath $cert                = "${cert_path}/kube-controller-manager.pem",
@@ -56,6 +59,14 @@ class k8s::server::controller_manager (
     $_addn_args = {}
   }
 
+  $_cluster_ca_args = $use_internal_ca ? {
+    true => {
+      cluster_signing_cert_file => $ca_sign_cert,
+      cluster_signing_key_file  => $ca_sign_key,
+    },
+    default => {},
+  }
+
   # For container;
   # use_service_account_credentials => true,
   $_args = k8s::format_arguments({
@@ -67,12 +78,10 @@ class k8s::server::controller_manager (
     ],
     cluster_cidr                     => $cluster_cidr,
     service_cluster_ip_range         => $service_cluster_cidr,
-    cluster_signing_cert_file        => $ca_sign_cert,
-    cluster_signing_key_file         => $ca_sign_key,
     leader_elect                     => true,
     root_ca_file                     => $ca_cert,
     service_account_private_key_file => $sa_key,
-  } + $_addn_args + $arguments)
+  } + $_cluster_ca_args + $_addn_args + $arguments)
 
   if $k8s::packaging == 'container' {
     fail('Not implemented yet')
