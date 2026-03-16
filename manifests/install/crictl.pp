@@ -65,7 +65,7 @@ class k8s::install::crictl (
 
   file { '/etc/crictl.yaml':
     ensure  => $k8s::ensure,
-    content => $config.to_yaml,
+    content => $config.stdlib::to_yaml,
     require => $config_require,
   }
 }

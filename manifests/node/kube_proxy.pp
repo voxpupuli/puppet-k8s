@@ -88,7 +88,7 @@ class k8s::node::kube_proxy (
 
   file { '/etc/kubernetes/kube-proxy.conf':
     ensure  => $_ensure,
-    content => to_yaml($config_hash),
+    content => stdlib::to_yaml($config_hash),
     owner   => $k8s::user,
     group   => $k8s::group,
     notify  => Service['kube-proxy'],

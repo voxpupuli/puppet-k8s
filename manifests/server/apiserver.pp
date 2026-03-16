@@ -166,7 +166,7 @@ class k8s::server::apiserver (
     $_image = "${container_registry}/${container_image}:${pick($container_image_tag, "v${k8s::version}")}"
     file { '/etc/kubernetes/manifests/kube-apiserver.yaml':
       ensure  => $ensure,
-      content => to_yaml({
+      content => stdlib::to_yaml({
         apiVersion => 'apps/v1',
         kind       => 'DaemonSet',
         metadata   => {

@@ -175,7 +175,7 @@ class k8s::server::resources (
           },
         },
         data     => {
-          kubeconfig => to_yaml({
+          kubeconfig => stdlib::to_yaml({
             apiVersion        => 'v1',
             kind              => 'Config',
             'current-context' => 'local',
