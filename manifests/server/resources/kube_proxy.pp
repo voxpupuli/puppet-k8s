@@ -130,7 +130,7 @@ class k8s::server::resources::kube_proxy (
           },
         },
         data     => {
-          'kube-proxy.conf' => to_yaml({
+          'kube-proxy.conf' => stdlib::to_yaml({
             apiVersion       => 'kubeproxy.config.k8s.io/v1alpha1',
             kind             => 'KubeProxyConfiguration',
             clusterCIDR      => flatten($cluster_cidr).join(','),

@@ -58,7 +58,7 @@ class k8s::server::resources::bootstrap (
         },
         data     => {
           ca         => String(Binary.new($facts['k8s_ca']), '%s'),
-          kubeconfig => to_yaml({
+          kubeconfig => stdlib::to_yaml({
             apiVersion        => 'v1',
             kind              => 'Config',
             clusters          => [
