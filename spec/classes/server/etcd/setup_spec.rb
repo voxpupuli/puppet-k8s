@@ -65,6 +65,26 @@ describe 'k8s::server::etcd::setup' do
       it { is_expected.to contain_file('/etc/etcd/cluster.conf') }
       it { is_expected.to contain_systemd__unit_file('etcd.service') }
       it { is_expected.to contain_service('etcd').with_ensure('running').that_subscribes_to('File[/etc/etcd/etcd.conf]') }
+
+      context 'with default logging_level' do
+        it {
+          is_expected.to contain_file('/etc/etcd/etcd.conf').with_content(%r{^ETCD_LOG_LEVEL="info"$})
+        }
+      end
+
+      context 'with logging_level => debug' do
+        let(:params) { super().merge(logging_level: 'debug') }
+
+        it {
+          is_expected.to contain_file('/etc/etcd/etcd.conf').with_content(%r{^ETCD_LOG_LEVEL="debug"$})
+        }
+      end
+
+      context 'with invalid logging_level' do
+        let(:params) { super().merge(logging_level: 'verbose') }
+
+        it { is_expected.to compile.and_raise_error(%r{parameter 'logging_level'}) }
+      end
     end
   end
 end
