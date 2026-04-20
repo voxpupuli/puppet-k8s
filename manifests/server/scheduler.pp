@@ -19,8 +19,8 @@ class k8s::server::scheduler (
 
   Hash[String, Data] $arguments = {},
 
-  Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
-  Stdlib::Unixpath $ca_cert   = $k8s::server::tls::ca_cert,
+  Stdlib::Unixpath $cert_path = $k8s::server::cert_path,
+  Stdlib::Unixpath $ca_cert   = $k8s::server::ca_cert,
   Stdlib::Unixpath $cert      = "${cert_path}/kube-scheduler.pem",
   Stdlib::Unixpath $key       = "${cert_path}/kube-scheduler.key",
 

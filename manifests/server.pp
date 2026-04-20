@@ -55,6 +55,11 @@ class k8s::server (
   Boolean $manage_crictl            = false,
   String[1] $puppetdb_discovery_tag = $k8s::puppetdb_discovery_tag,
 
+  Stdlib::Unixpath $node_cert  = "${cert_path}/node.pem",
+  Stdlib::Unixpath $node_key   = "${cert_path}/node.key",
+  Stdlib::Unixpath $proxy_cert = "${cert_path}/kube-proxy.pem",
+  Stdlib::Unixpath $proxy_key  = "${cert_path}/kube-proxy.key",
+
   Optional[Array[Stdlib::HTTPUrl]] $etcd_servers = undef,
   Optional[K8s::Firewall] $firewall_type         = $k8s::firewall_type,
   String[1] $etcd_cluster_name                   = $k8s::etcd_cluster_name,
@@ -131,18 +136,16 @@ class k8s::server (
   }
 
   if $node_on_server {
-    $_dir = $k8s::server::tls::cert_path
-
     class { 'k8s::node':
       ensure            => $ensure,
       control_plane_url => "https://localhost:${api_port}",
       node_auth         => 'cert',
       proxy_auth        => 'cert',
       ca_cert           => $ca_cert,
-      node_cert         => "${_dir}/node.pem",
-      node_key          => "${_dir}/node.key",
-      proxy_cert        => "${_dir}/kube-proxy.pem",
-      proxy_key         => "${_dir}/kube-proxy.key",
+      node_cert         => $node_cert,
+      node_key          => $node_key,
+      proxy_cert        => $proxy_cert,
+      proxy_key         => $proxy_key,
     }
   }
 }
