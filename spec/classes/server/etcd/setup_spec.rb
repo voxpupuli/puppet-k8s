@@ -69,7 +69,7 @@ describe 'k8s::server::etcd::setup' do
       context 'with a populated extra_config hash' do
         let(:params) do
           super().merge(
-            extra_config: {
+            extra_env: {
               'ETCD_FOO' => 'bar',
               'ETCD_BAZ' => 'qux',
             }
@@ -83,16 +83,16 @@ describe 'k8s::server::etcd::setup' do
         }
       end
 
-      context 'with a non-hash extra_config' do
-        let(:params) { super().merge(extra_config: 'not-a-hash') }
+      context 'with a non-hash extra_env' do
+        let(:params) { super().merge(extra_env: 'not-a-hash') }
 
-        it { is_expected.to compile.and_raise_error(%r{extra_config}) }
+        it { is_expected.to compile.and_raise_error(%r{extra_env}) }
       end
 
-      context 'with a nested hash in extra_config' do
-        let(:params) { super().merge(extra_config: { 'ETCD_FOO' => { 'nested' => 'value' } }) }
+      context 'with a nested hash in extra_env' do
+        let(:params) { super().merge(extra_env: { 'ETCD_FOO' => { 'nested' => 'value' } }) }
 
-        it { is_expected.to compile.and_raise_error(%r{extra_config}) }
+        it { is_expected.to compile.and_raise_error(%r{extra_env}) }
       end
     end
   end

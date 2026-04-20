@@ -28,7 +28,7 @@
   Optional[Enum['existing', 'new']] $initial_cluster_state = undef,
   Optional[String] $initial_cluster_token = undef,
 
-  Hash[String[1], String] $extra_config = {},
+  Hash[String[1], String] $extra_env = {},
 
   Boolean $debug = false,
 | -%>
@@ -94,6 +94,6 @@ ETCD_PEER_AUTO_TLS="<%= $peer_auto_tls %>"
 #[logging]
 ETCD_DEBUG=<%= $debug %>
 
-<% $extra_config.each |$key, $value| { -%>
+<% $extra_env.each |$key, $value| { -%>
 <%= $key %>="<%= $value %>"
 <% } -%>
