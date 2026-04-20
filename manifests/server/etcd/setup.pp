@@ -21,7 +21,7 @@
 # @param key_file path to the key file
 # @param listen_client_urls The client urls to listen on
 # @param listen_peer_urls The peer urls to listen on
-# @param logging_level The logging level for etcd
+# @param log_level The logging level for etcd
 # @param package etcd package name
 # @param peer_auto_tls Use peer auto tls
 # @param peer_cert_file path to the peer cert file
@@ -78,7 +78,7 @@ class k8s::server::etcd::setup (
   Optional[Integer[0, 65535]] $uid        = undef,
   Optional[Integer[0, 65535]] $gid        = undef,
 
-  Enum['debug', 'info', 'warn', 'error', 'panic', 'fatal'] $logging_level = 'info',
+  Enum['debug', 'info', 'warn', 'error', 'panic', 'fatal'] $log_level = 'info',
 ) {
   if defined(Class['k8s::server::etcd']) {
     $_k8s_server_etcd_self_signed_tls = $k8s::server::etcd::self_signed_tls
@@ -217,7 +217,7 @@ class k8s::server::etcd::setup (
         auto_compaction_retention   => $auto_compaction_retention,
         initial_cluster_state       => $initial_cluster_state,
         initial_cluster_token       => $initial_cluster_token,
-        logging_level               => $logging_level,
+        log_level                   => $log_level,
       }),
       notify  => Service['etcd'];
 
