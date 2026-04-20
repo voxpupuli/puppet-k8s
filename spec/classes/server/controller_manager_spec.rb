@@ -83,6 +83,23 @@ describe 'k8s::server::controller_manager' do
         end
       end
 
+      context 'with custom serviceaccount_private' do
+        let(:params) do
+          {
+            serviceaccount_private: '/etc/kubernetes/pki/sa.key',
+          }
+        end
+
+        it do
+          sysconf = '/etc/sysconfig'
+          sysconf = '/etc/default' if os_facts['os']['family'] == 'Debian'
+
+          is_expected.to contain_file(File.join(sysconf, 'kube-controller-manager')).
+            with_content(%r{--service-account-private-key-file=/etc/kubernetes/pki/sa\.key }).
+            without_content(%r{--service-account-private-key-file=/etc/kubernetes/certs/service-account\.key})
+        end
+      end
+
       context 'with dual-stack' do
         let(:params) do
           {
