@@ -65,6 +65,35 @@ describe 'k8s::server::etcd::setup' do
       it { is_expected.to contain_file('/etc/etcd/cluster.conf') }
       it { is_expected.to contain_systemd__unit_file('etcd.service') }
       it { is_expected.to contain_service('etcd').with_ensure('running').that_subscribes_to('File[/etc/etcd/etcd.conf]') }
+
+      context 'with a populated extra_config hash' do
+        let(:params) do
+          super().merge(
+            extra_env: {
+              'ETCD_FOO' => 'bar',
+              'ETCD_BAZ' => 'qux',
+            }
+          )
+        end
+
+        it {
+          is_expected.to contain_file('/etc/etcd/etcd.conf')
+            .with_content(%r{^ETCD_FOO="bar"$})
+            .with_content(%r{^ETCD_BAZ="qux"$})
+        }
+      end
+
+      context 'with a non-hash extra_env' do
+        let(:params) { super().merge(extra_env: 'not-a-hash') }
+
+        it { is_expected.to compile.and_raise_error(%r{extra_env}) }
+      end
+
+      context 'with a nested hash in extra_env' do
+        let(:params) { super().merge(extra_env: { 'ETCD_FOO' => { 'nested' => 'value' } }) }
+
+        it { is_expected.to compile.and_raise_error(%r{extra_env}) }
+      end
     end
   end
 end
