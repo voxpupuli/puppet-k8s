@@ -65,6 +65,24 @@ describe 'k8s::server::controller_manager' do
         )
       end
 
+      context 'with cluster_signing => false' do
+        let(:params) do
+          {
+            cluster_signing: false,
+          }
+        end
+
+        it do
+          sysconf = '/etc/sysconfig'
+          sysconf = '/etc/default' if os_facts['os']['family'] == 'Debian'
+
+          is_expected.to contain_file(File.join(sysconf, 'kube-controller-manager')).
+            with_content(%r{KUBE_CONTROLLER_MANAGER_ARGS=".*"}).
+            without_content(%r{--cluster-signing-cert-file}).
+            without_content(%r{--cluster-signing-key-file})
+        end
+      end
+
       context 'with dual-stack' do
         let(:params) do
           {
