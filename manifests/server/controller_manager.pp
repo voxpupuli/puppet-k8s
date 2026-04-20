@@ -15,6 +15,7 @@
 # @param ensure Whether the controller manager should be configured.
 # @param key The path to the controller manager key.
 # @param service_cluster_cidr The CIDR of the service cluster.
+# @param serviceaccount_private path to the service account private key file
 #
 class k8s::server::controller_manager (
   K8s::Ensure $ensure = $k8s::server::ensure,
@@ -26,11 +27,12 @@ class k8s::server::controller_manager (
   K8s::CIDR $service_cluster_cidr = $k8s::service_cluster_cidr,
   K8s::CIDR $cluster_cidr         = $k8s::cluster_cidr,
 
-  Stdlib::Unixpath $cert_path = $k8s::server::cert_path,
-  Stdlib::Unixpath $ca_cert   = $k8s::server::ca_cert,
-  Stdlib::Unixpath $ca_key    = $k8s::server::ca_key,
-  Stdlib::Unixpath $cert      = "${cert_path}/kube-controller-manager.pem",
-  Stdlib::Unixpath $key       = "${cert_path}/kube-controller-manager.key",
+  Stdlib::Unixpath $cert_path              = $k8s::server::cert_path,
+  Stdlib::Unixpath $ca_cert                = $k8s::server::ca_cert,
+  Stdlib::Unixpath $ca_key                 = $k8s::server::ca_key,
+  Stdlib::Unixpath $cert                   = "${cert_path}/kube-controller-manager.pem",
+  Stdlib::Unixpath $key                    = "${cert_path}/kube-controller-manager.key",
+  Stdlib::Unixpath $serviceaccount_private = "${cert_path}/service-account.key",
 
   Boolean $cluster_signing = true,
 
@@ -74,7 +76,7 @@ class k8s::server::controller_manager (
     service_cluster_ip_range         => $service_cluster_cidr,
     leader_elect                     => true,
     root_ca_file                     => $ca_cert,
-    service_account_private_key_file => "${cert_path}/service-account.key",
+    service_account_private_key_file => $serviceaccount_private,
   } + $_signing_args + $_addn_args + $arguments)
 
   if $k8s::packaging == 'container' {
