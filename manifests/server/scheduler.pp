@@ -68,6 +68,7 @@ class k8s::server::scheduler (
       ca_cert         => $ca_cert,
       client_cert     => $cert,
       client_key      => $key,
+      require         => File['/srv/kubernetes'],
     }
     file { "${k8s::sysconfig_path}/kube-scheduler":
       content => epp('k8s/sysconfig.epp', {
