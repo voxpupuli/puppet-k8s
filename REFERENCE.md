@@ -1475,7 +1475,7 @@ The following parameters are available in the `k8s::server::etcd::setup` class:
 * [`key_file`](#-k8s--server--etcd--setup--key_file)
 * [`listen_client_urls`](#-k8s--server--etcd--setup--listen_client_urls)
 * [`listen_peer_urls`](#-k8s--server--etcd--setup--listen_peer_urls)
-* [`logging_level`](#-k8s--server--etcd--setup--logging_level)
+* [`log_level`](#-k8s--server--etcd--setup--log_level)
 * [`package`](#-k8s--server--etcd--setup--package)
 * [`peer_auto_tls`](#-k8s--server--etcd--setup--peer_auto_tls)
 * [`peer_cert_file`](#-k8s--server--etcd--setup--peer_cert_file)
@@ -1657,7 +1657,7 @@ The peer urls to listen on
 
 Default value: `['https://[::]:2380']`
 
-##### <a name="-k8s--server--etcd--setup--logging_level"></a>`logging_level`
+##### <a name="-k8s--server--etcd--setup--log_level"></a>`log_level`
 
 Data type: `Enum['debug', 'info', 'warn', 'error', 'panic', 'fatal']`
 
