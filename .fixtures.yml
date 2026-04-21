@@ -4,6 +4,7 @@ fixtures:
     archive: https://github.com/voxpupuli/puppet-archive
     augeasproviders_core: https://github.com/voxpupuli/puppet-augeasproviders_core
     augeasproviders_sysctl: https://github.com/voxpupuli/puppet-augeasproviders_sysctl
+    extlib: https://github.com/voxpupuli/puppet-extlib
     kmod: https://github.com/voxpupuli/puppet-kmod
     stdlib: https://github.com/puppetlabs/puppetlabs-stdlib
     systemd: https://github.com/voxpupuli/puppet-systemd
