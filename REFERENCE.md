@@ -1057,6 +1057,10 @@ The following parameters are available in the `k8s::server` class:
 * [`manage_signing`](#-k8s--server--manage_signing)
 * [`node_on_server`](#-k8s--server--node_on_server)
 * [`puppetdb_discovery_tag`](#-k8s--server--puppetdb_discovery_tag)
+* [`node_cert`](#-k8s--server--node_cert)
+* [`node_key`](#-k8s--server--node_key)
+* [`proxy_cert`](#-k8s--server--proxy_cert)
+* [`proxy_key`](#-k8s--server--proxy_key)
 
 ##### <a name="-k8s--server--aggregator_ca_cert"></a>`aggregator_ca_cert`
 
@@ -1265,6 +1269,38 @@ Data type: `String[1]`
 enable puppetdb resource searching
 
 Default value: `$k8s::puppetdb_discovery_tag`
+
+##### <a name="-k8s--server--node_cert"></a>`node_cert`
+
+Data type: `Stdlib::Unixpath`
+
+
+
+Default value: `"${cert_path}/node.pem"`
+
+##### <a name="-k8s--server--node_key"></a>`node_key`
+
+Data type: `Stdlib::Unixpath`
+
+
+
+Default value: `"${cert_path}/node.key"`
+
+##### <a name="-k8s--server--proxy_cert"></a>`proxy_cert`
+
+Data type: `Stdlib::Unixpath`
+
+
+
+Default value: `"${cert_path}/kube-proxy.pem"`
+
+##### <a name="-k8s--server--proxy_key"></a>`proxy_key`
+
+Data type: `Stdlib::Unixpath`
+
+
+
+Default value: `"${cert_path}/kube-proxy.key"`
 
 ### <a name="k8s--server--etcd"></a>`k8s::server::etcd`
 

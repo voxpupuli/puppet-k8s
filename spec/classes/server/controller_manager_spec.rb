@@ -51,7 +51,7 @@ describe 'k8s::server::controller_manager' do
               ## Kubernetes Controller Manager configuration
               #
 
-              KUBE_CONTROLLER_MANAGER_ARGS="--allocate-node-cidrs=true --controllers=*,bootstrapsigner,tokencleaner --cluster-cidr=10.0.0.0/16 --service-cluster-ip-range=10.1.0.0/24 --cluster-signing-cert-file=/etc/kubernetes/certs/ca.pem --cluster-signing-key-file=/etc/kubernetes/certs/ca.key --leader-elect=true --root-ca-file=/etc/kubernetes/certs/ca.pem --service-account-private-key-file=/etc/kubernetes/certs/service-account.key --kubeconfig=/srv/kubernetes/kube-controller-manager.kubeconf"
+              KUBE_CONTROLLER_MANAGER_ARGS="--allocate-node-cidrs=true --controllers=*,bootstrapsigner,tokencleaner --cluster-cidr=10.0.0.0/16 --service-cluster-ip-range=10.1.0.0/24 --leader-elect=true --root-ca-file=/etc/kubernetes/certs/ca.pem --service-account-private-key-file=/etc/kubernetes/certs/service-account.key --cluster-signing-cert-file=/etc/kubernetes/certs/ca.pem --cluster-signing-key-file=/etc/kubernetes/certs/ca.key --kubeconfig=/srv/kubernetes/kube-controller-manager.kubeconf"
             SYSCONF
           ).that_notifies('Service[kube-controller-manager]')
       end
@@ -63,6 +63,41 @@ describe 'k8s::server::controller_manager' do
           ensure: 'running',
           enable: true
         )
+      end
+
+      context 'with cluster_signing => false' do
+        let(:params) do
+          {
+            cluster_signing: false,
+          }
+        end
+
+        it do
+          sysconf = '/etc/sysconfig'
+          sysconf = '/etc/default' if os_facts['os']['family'] == 'Debian'
+
+          is_expected.to contain_file(File.join(sysconf, 'kube-controller-manager')).
+            with_content(%r{KUBE_CONTROLLER_MANAGER_ARGS=".*"}).
+            without_content(%r{--cluster-signing-cert-file}).
+            without_content(%r{--cluster-signing-key-file})
+        end
+      end
+
+      context 'with custom serviceaccount_private' do
+        let(:params) do
+          {
+            serviceaccount_private: '/etc/kubernetes/pki/sa.key',
+          }
+        end
+
+        it do
+          sysconf = '/etc/sysconfig'
+          sysconf = '/etc/default' if os_facts['os']['family'] == 'Debian'
+
+          is_expected.to contain_file(File.join(sysconf, 'kube-controller-manager')).
+            with_content(%r{--service-account-private-key-file=/etc/kubernetes/pki/sa\.key }).
+            without_content(%r{--service-account-private-key-file=/etc/kubernetes/certs/service-account\.key})
+        end
       end
 
       context 'with dual-stack' do
@@ -92,7 +127,7 @@ describe 'k8s::server::controller_manager' do
                 ## Kubernetes Controller Manager configuration
                 #
 
-                KUBE_CONTROLLER_MANAGER_ARGS="--allocate-node-cidrs=true --controllers=*,bootstrapsigner,tokencleaner --cluster-cidr=10.0.0.0/16,fc00:cafe:42:0::/64 --service-cluster-ip-range=10.1.0.0/24,fc00:cafe:42:1::/64 --cluster-signing-cert-file=/etc/kubernetes/certs/ca.pem --cluster-signing-key-file=/etc/kubernetes/certs/ca.key --leader-elect=true --root-ca-file=/etc/kubernetes/certs/ca.pem --service-account-private-key-file=/etc/kubernetes/certs/service-account.key --kubeconfig=/srv/kubernetes/kube-controller-manager.kubeconf"
+                KUBE_CONTROLLER_MANAGER_ARGS="--allocate-node-cidrs=true --controllers=*,bootstrapsigner,tokencleaner --cluster-cidr=10.0.0.0/16,fc00:cafe:42:0::/64 --service-cluster-ip-range=10.1.0.0/24,fc00:cafe:42:1::/64 --leader-elect=true --root-ca-file=/etc/kubernetes/certs/ca.pem --service-account-private-key-file=/etc/kubernetes/certs/service-account.key --cluster-signing-cert-file=/etc/kubernetes/certs/ca.pem --cluster-signing-key-file=/etc/kubernetes/certs/ca.key --kubeconfig=/srv/kubernetes/kube-controller-manager.kubeconf"
               SYSCONF
             ).that_notifies('Service[kube-controller-manager]')
         end
