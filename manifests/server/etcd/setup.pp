@@ -108,21 +108,22 @@ class k8s::server::etcd::setup (
       creates         => ["${_target}/etcd", "${_target}/etcdctl"],
     }
 
-    file { '/usr/local/bin/etcd':
-      ensure  => stdlib::ensure($ensure, 'link'),
-      mode    => '0755',
-      replace => true,
-      target  => "${_target}/etcd",
-      require => Archive['etcd'],
-      notify  => Service['etcd'],
-    }
+    file {
+      default:
+        ensure  => stdlib::ensure($ensure, 'link'),
+        mode    => '0755',
+        replace => true,
+        require => Archive['etcd'];
 
-    file { '/usr/local/bin/etcdctl':
-      ensure  => stdlib::ensure($ensure, 'link'),
-      mode    => '0755',
-      replace => true,
-      target  => "${_target}/etcdctl",
-      require => Archive['etcd'],
+      '/usr/local/bin/etcd':
+        target  => "${_target}/etcd",
+        notify  => Service['etcd'];
+
+      '/usr/local/bin/etcdctl':
+        target  => "${_target}/etcdctl";
+
+      '/usr/local/bin/etcdutl':
+        target  => "${_target}/etcdutl";
     }
 
     group { $group:
