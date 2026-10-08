@@ -8,6 +8,7 @@
 # @param ca_cert The path to the CA certificate.
 # @param cert The path to the scheduler certificate.
 # @param key The path to the scheduler key.
+# @param embed_certs Whether the kubeconfig embeds the cert/key bytes or references the files by path (path references are reloaded from disk by client-go on rotation).
 # @param container_registry The container registry to pull images from.
 # @param container_image The container image to use for the scheduler.
 # @param container_image_tag The container image tag to use for the scheduler.
@@ -23,6 +24,7 @@ class k8s::server::scheduler (
   Stdlib::Unixpath $ca_cert   = $k8s::server::tls::ca_cert,
   Stdlib::Unixpath $cert      = "${cert_path}/kube-scheduler.pem",
   Stdlib::Unixpath $key       = "${cert_path}/kube-scheduler.key",
+  Boolean $embed_certs        = $k8s::kubeconfig_embed_certs,
 
   String[1] $container_registry            = $k8s::container_registry,
   String[1] $container_image               = 'kube-scheduler',
@@ -68,6 +70,8 @@ class k8s::server::scheduler (
       ca_cert         => $ca_cert,
       client_cert     => $cert,
       client_key      => $key,
+      embed_certs     => $embed_certs,
+      notify          => Service['kube-scheduler'],
     }
     file { "${k8s::sysconfig_path}/kube-scheduler":
       content => epp('k8s/sysconfig.epp', {
