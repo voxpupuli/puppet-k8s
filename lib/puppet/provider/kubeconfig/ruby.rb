@@ -94,8 +94,10 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
       if resource[:embed_certs] == :true
         wanted = Base64.strict_encode64(File.read(resource[:ca_cert]))
         return false unless cluster['cluster']['certificate-authority-data'] == wanted
+        return false if cluster['cluster'].key?('certificate-authority')
       else
         return false unless cluster['cluster']['certificate-authority'] == resource[:ca_cert]
+        return false if cluster['cluster'].key?('certificate-authority-data')
       end
     end
 
@@ -114,10 +116,14 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
 
     return unless resource[:ca_cert]
 
+    # client-go rejects a kubeconfig that carries both the inline data and the
+    # file path for the same item, so drop the representation we don't manage.
     if resource[:embed_certs] == :true
       cluster['cluster']['certificate-authority-data'] = Base64.strict_encode64(File.read(resource[:ca_cert]))
+      cluster['cluster'].delete('certificate-authority')
     else
       cluster['cluster']['certificate-authority'] = resource[:ca_cert]
+      cluster['cluster'].delete('certificate-authority-data')
     end
   end
 
@@ -153,16 +159,20 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
       if resource[:embed_certs] == :true
         wanted = Base64.strict_encode64(File.read(resource[:client_cert]))
         return false unless user['user']['client-certificate-data'] == wanted
+        return false if user['user'].key?('client-certificate')
       else
         return false unless user['user']['client-certificate'] == resource[:client_cert]
+        return false if user['user'].key?('client-certificate-data')
       end
     end
     if resource[:client_key]
       if resource[:embed_certs] == :true
         wanted = Base64.strict_encode64(File.read(resource[:client_key]))
         return false unless user['user']['client-key-data'] == wanted
+        return false if user['user'].key?('client-key')
       else
         return false unless user['user']['client-key'] == resource[:client_key]
+        return false if user['user'].key?('client-key-data')
       end
     end
     return false if resource[:token] && user['user']['token'] != resource[:token]
@@ -179,18 +189,23 @@ Puppet::Type.type(:kubeconfig).provide(:ruby) do
     user['name'] = resource[:user]
     user['user'] ||= {}
 
+    # See update_cluster: never leave both the inline data and the path behind.
     if resource[:client_cert]
       if resource[:embed_certs] == :true
         user['user']['client-certificate-data'] = Base64.strict_encode64(File.read(resource[:client_cert]))
+        user['user'].delete('client-certificate')
       else
         user['user']['client-certificate'] = resource[:client_cert]
+        user['user'].delete('client-certificate-data')
       end
     end
     if resource[:client_key]
       if resource[:embed_certs] == :true
         user['user']['client-key-data'] = Base64.strict_encode64(File.read(resource[:client_key]))
+        user['user'].delete('client-key')
       else
         user['user']['client-key'] = resource[:client_key]
+        user['user'].delete('client-key-data')
       end
     end
 

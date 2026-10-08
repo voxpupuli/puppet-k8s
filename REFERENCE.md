@@ -112,6 +112,7 @@ The following parameters are available in the `k8s` class:
 * [`group`](#-k8s--group)
 * [`hyperkube_name`](#-k8s--hyperkube_name)
 * [`incluster_control_plane_url`](#-k8s--incluster_control_plane_url)
+* [`kubeconfig_embed_certs`](#-k8s--kubeconfig_embed_certs)
 * [`manage_container_manager`](#-k8s--manage_container_manager)
 * [`manage_etcd`](#-k8s--manage_etcd)
 * [`manage_facter`](#-k8s--manage_facter)
@@ -298,6 +299,15 @@ Data type: `Stdlib::HTTPUrl`
 URL for the control plane from within the cluster
 
 Default value: `'https://kubernetes.default.svc'`
+
+##### <a name="-k8s--kubeconfig_embed_certs"></a>`kubeconfig_embed_certs`
+
+Data type: `Boolean`
+
+whether component kubeconfigs embed the certificate/key bytes (true) or reference the files by path (false).
+Path references let client-go reload rotated client certificates from disk without a service restart.
+
+Default value: `true`
 
 ##### <a name="-k8s--manage_container_manager"></a>`manage_container_manager`
 
@@ -1042,6 +1052,7 @@ The following parameters are available in the `k8s::server` class:
 * [`control_plane_url`](#-k8s--server--control_plane_url)
 * [`direct_control_plane_url`](#-k8s--server--direct_control_plane_url)
 * [`dns_service_address`](#-k8s--server--dns_service_address)
+* [`embed_certs`](#-k8s--server--embed_certs)
 * [`ensure`](#-k8s--server--ensure)
 * [`etcd_cluster_name`](#-k8s--server--etcd_cluster_name)
 * [`etcd_servers`](#-k8s--server--etcd_servers)
@@ -1145,6 +1156,14 @@ Data type: `K8s::IP_addresses`
 cluster dns service address
 
 Default value: `$k8s::dns_service_address`
+
+##### <a name="-k8s--server--embed_certs"></a>`embed_certs`
+
+Data type: `Boolean`
+
+whether /root/.kube/config embeds the admin cert/key bytes or references the files by path
+
+Default value: `$k8s::kubeconfig_embed_certs`
 
 ##### <a name="-k8s--server--ensure"></a>`ensure`
 
@@ -2800,4 +2819,3 @@ Alias of `Pattern[/^[a-z]+:\/\//]`
 A type for handling Kubernetes version numbers
 
 Alias of `Pattern[/^(\d+\.){2}\d+$/]`
-

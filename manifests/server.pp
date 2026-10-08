@@ -11,6 +11,7 @@
 # @param control_plane_url cluster API connection
 # @param direct_control_plane_url direct clust API connection
 # @param dns_service_address cluster dns service address
+# @param embed_certs whether /root/.kube/config embeds the admin cert/key bytes or references the files by path
 # @param ensure set ensure for installation or deinstallation
 # @param etcd_cluster_name name of the etcd cluster for searching its nodes in the puppetdb
 # @param etcd_servers list etcd servers if no puppetdb is used
@@ -44,6 +45,7 @@ class k8s::server (
   Stdlib::Unixpath $aggregator_ca_cert = "${cert_path}/aggregator-ca.pem",
 
   Boolean $generate_ca              = false,
+  Boolean $embed_certs              = $k8s::kubeconfig_embed_certs,
   Boolean $manage_etcd              = $k8s::manage_etcd,
   Boolean $manage_firewall          = $k8s::manage_firewall,
   Boolean $manage_certs             = true,
@@ -128,6 +130,7 @@ class k8s::server (
     ca_cert         => $ca_cert,
     client_cert     => "${cert_path}/admin.pem",
     client_key      => "${cert_path}/admin.key",
+    embed_certs     => $embed_certs,
   }
 
   if $node_on_server {
