@@ -7,6 +7,7 @@
 # @param cert The path to the controller manager certificate.
 # @param cert_path The path to the TLS certificates.
 # @param cluster_cidr The CIDR of the cluster.
+# @param cluster_signing Whether the controller manager should sign cluster CSRs using the provided CA (sets --cluster-signing-cert-file and --cluster-signing-key-file). Disable when CSR signing is delegated to an external signer.
 # @param container_image The container image to use for the controller manager.
 # @param container_image_tag The container image tag to use for the controller manager.
 # @param container_registry The container registry to pull the controller manager image from.
@@ -14,6 +15,7 @@
 # @param ensure Whether the controller manager should be configured.
 # @param key The path to the controller manager key.
 # @param service_cluster_cidr The CIDR of the service cluster.
+# @param serviceaccount_private path to the service account private key file
 #
 class k8s::server::controller_manager (
   K8s::Ensure $ensure = $k8s::server::ensure,
@@ -25,11 +27,14 @@ class k8s::server::controller_manager (
   K8s::CIDR $service_cluster_cidr = $k8s::service_cluster_cidr,
   K8s::CIDR $cluster_cidr         = $k8s::cluster_cidr,
 
-  Stdlib::Unixpath $cert_path = $k8s::server::tls::cert_path,
-  Stdlib::Unixpath $ca_cert   = $k8s::server::tls::ca_cert,
-  Stdlib::Unixpath $ca_key    = $k8s::server::tls::ca_key,
-  Stdlib::Unixpath $cert      = "${cert_path}/kube-controller-manager.pem",
-  Stdlib::Unixpath $key       = "${cert_path}/kube-controller-manager.key",
+  Stdlib::Unixpath $cert_path              = $k8s::server::cert_path,
+  Stdlib::Unixpath $ca_cert                = $k8s::server::ca_cert,
+  Stdlib::Unixpath $ca_key                 = $k8s::server::ca_key,
+  Stdlib::Unixpath $cert                   = "${cert_path}/kube-controller-manager.pem",
+  Stdlib::Unixpath $key                    = "${cert_path}/kube-controller-manager.key",
+  Stdlib::Unixpath $serviceaccount_private = "${cert_path}/service-account.key",
+
+  Boolean $cluster_signing = true,
 
   String[1] $container_registry            = $k8s::container_registry,
   String[1] $container_image               = 'kube-controller-manager',
@@ -50,6 +55,14 @@ class k8s::server::controller_manager (
     $_addn_args = {}
   }
 
+  $_signing_args = $cluster_signing ? {
+    true  => {
+      cluster_signing_cert_file => $ca_cert,
+      cluster_signing_key_file  => $ca_key,
+    },
+    false => {},
+  }
+
   # For container;
   # use_service_account_credentials => true,
   $_args = k8s::format_arguments({
@@ -61,12 +74,10 @@ class k8s::server::controller_manager (
     ],
     cluster_cidr                     => $cluster_cidr,
     service_cluster_ip_range         => $service_cluster_cidr,
-    cluster_signing_cert_file        => $ca_cert,
-    cluster_signing_key_file         => $ca_key,
     leader_elect                     => true,
     root_ca_file                     => $ca_cert,
-    service_account_private_key_file => "${cert_path}/service-account.key",
-  } + $_addn_args + $arguments)
+    service_account_private_key_file => $serviceaccount_private,
+  } + $_signing_args + $_addn_args + $arguments)
 
   if $k8s::packaging == 'container' {
     fail('Not implemented yet')
