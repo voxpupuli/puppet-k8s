@@ -1464,6 +1464,7 @@ The following parameters are available in the `k8s::server::etcd::setup` class:
 * [`data_dir`](#-k8s--server--etcd--setup--data_dir)
 * [`ensure`](#-k8s--server--etcd--setup--ensure)
 * [`etcd_name`](#-k8s--server--etcd--setup--etcd_name)
+* [`extra_env`](#-k8s--server--etcd--setup--extra_env)
 * [`fqdn`](#-k8s--server--etcd--setup--fqdn)
 * [`gid`](#-k8s--server--etcd--setup--gid)
 * [`group`](#-k8s--server--etcd--setup--group)
@@ -1567,6 +1568,14 @@ Data type: `String[1]`
 The etcd instance name
 
 Default value: `$facts['networking']['hostname']`
+
+##### <a name="-k8s--server--etcd--setup--extra_env"></a>`extra_env`
+
+Data type: `Hash[String[1], String]`
+
+Extra etcd environment vaiables injected into config file - key-value pairs
+
+Default value: `{}`
 
 ##### <a name="-k8s--server--etcd--setup--fqdn"></a>`fqdn`
 

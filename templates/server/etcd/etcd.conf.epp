@@ -28,6 +28,8 @@
   Optional[Enum['existing', 'new']] $initial_cluster_state = undef,
   Optional[String] $initial_cluster_token = undef,
 
+  Hash[String[1], String] $extra_env = {},
+
   Boolean $debug = false,
 | -%>
 # Managed by Puppet
@@ -91,3 +93,7 @@ ETCD_PEER_AUTO_TLS="<%= $peer_auto_tls %>"
 
 #[logging]
 ETCD_DEBUG=<%= $debug %>
+
+<% $extra_env.each |$key, $value| { -%>
+<%= $key %>="<%= $value %>"
+<% } -%>

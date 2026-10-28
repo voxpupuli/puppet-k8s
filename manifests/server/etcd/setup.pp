@@ -10,6 +10,7 @@
 # @param data_dir path to the data dir
 # @param ensure set ensure for installation or deinstallation
 # @param etcd_name The etcd instance name
+# @param extra_env Extra etcd environment vaiables injected into config file - key-value pairs
 # @param fqdn fully qualified domain name
 # @param gid The group system id
 # @param group etcd system user group
@@ -69,6 +70,8 @@ class k8s::server::etcd::setup (
   Optional[Enum['existing', 'new']] $initial_cluster_state = undef,
   Optional[String[1]] $initial_cluster_token               = undef,
   Array[String[1]] $initial_cluster                        = [],
+
+  Hash[String[1], String] $extra_env = {},
 
   Optional[Stdlib::Unixpath] $binary_path = undef,
   Stdlib::Unixpath $storage_path          = '/var/lib/etcd',
@@ -214,6 +217,7 @@ class k8s::server::etcd::setup (
         auto_compaction_retention   => $auto_compaction_retention,
         initial_cluster_state       => $initial_cluster_state,
         initial_cluster_token       => $initial_cluster_token,
+        extra_env                   => $extra_env,
       }),
       notify  => Service['etcd'];
 
