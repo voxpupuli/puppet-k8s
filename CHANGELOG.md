@@ -4,7 +4,20 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
-## [v3.0.0](https://github.com/voxpupuli/puppet-k8s/tree/v3.0.0) (2025-11-24)
+## [v3.1.0](https://github.com/voxpupuli/puppet-k8s/tree/v3.1.0) (2026-10-28)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-k8s/compare/v3.0.0...v3.1.0)
+
+**Implemented enhancements:**
+
+- puppet/systemd: Allow 11.x [\#163](https://github.com/voxpupuli/puppet-k8s/pull/163) ([bastelfreak](https://github.com/bastelfreak))
+- Fix deprecation warning for to\_yaml [\#154](https://github.com/voxpupuli/puppet-k8s/pull/154) ([ananace](https://github.com/ananace))
+
+**Merged pull requests:**
+
+- Inject default facts into all tests [\#158](https://github.com/voxpupuli/puppet-k8s/pull/158) ([zezav-cz](https://github.com/zezav-cz))
+
+## [v3.0.0](https://github.com/voxpupuli/puppet-k8s/tree/v3.0.0) (2025-11-25)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-k8s/compare/v2.0.1...v3.0.0)
 
@@ -12,7 +25,6 @@ These should not affect the functionality of the module.
 
 - Drop puppet, update openvox minimum version to 8.19 [\#137](https://github.com/voxpupuli/puppet-k8s/pull/137) ([TheMeier](https://github.com/TheMeier))
 - Update list of OSes to non-EoL versions [\#104](https://github.com/voxpupuli/puppet-k8s/pull/104) ([ananace](https://github.com/ananace))
-- Unpack cni\_plugins, crictl & etcd to folders in /opt and use symlinks [\#96](https://github.com/voxpupuli/puppet-k8s/pull/96) ([olavst-spk](https://github.com/olavst-spk))
 - Initial work on hiera-ifying and Puppet 8 support for standalone etcd [\#66](https://github.com/voxpupuli/puppet-k8s/pull/66) ([ananace](https://github.com/ananace))
 
 **Implemented enhancements:**
@@ -21,6 +33,8 @@ These should not affect the functionality of the module.
 - Custom CNI binaries do not survive CNI plugin updates [\#107](https://github.com/voxpupuli/puppet-k8s/issues/107)
 - Latest Kubernetes binaries are only available on the new repo [\#100](https://github.com/voxpupuli/puppet-k8s/issues/100)
 - Replace dependency on kubic \(or provide other alternative\) [\#77](https://github.com/voxpupuli/puppet-k8s/issues/77)
+- Support modern single-binary Kubernetes packages [\#14](https://github.com/voxpupuli/puppet-k8s/issues/14)
+- Binary target [\#147](https://github.com/voxpupuli/puppet-k8s/pull/147) ([ananace](https://github.com/ananace))
 - Add parameter to defer management of /etc/facter/facts.d [\#141](https://github.com/voxpupuli/puppet-k8s/pull/141) ([ananace](https://github.com/ananace))
 - puppet/archive Allow 8.x [\#136](https://github.com/voxpupuli/puppet-k8s/pull/136) ([TheMeier](https://github.com/TheMeier))
 - Add option to specify main IP family for dualstack [\#123](https://github.com/voxpupuli/puppet-k8s/pull/123) ([ananace](https://github.com/ananace))
@@ -65,10 +79,6 @@ These should not affect the functionality of the module.
 ## [v2.0.1](https://github.com/voxpupuli/puppet-k8s/tree/v2.0.1) (2024-02-23)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-k8s/compare/v2.0.0...v2.0.1)
-
-**Fixed bugs:**
-
-- kubectl\_apply: add missing require [\#85](https://github.com/voxpupuli/puppet-k8s/pull/85) ([h-haaks](https://github.com/h-haaks))
 
 ## [v2.0.0](https://github.com/voxpupuli/puppet-k8s/tree/v2.0.0) (2024-02-21)
 
