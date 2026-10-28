@@ -2800,4 +2800,3 @@ Alias of `Pattern[/^[a-z]+:\/\//]`
 A type for handling Kubernetes version numbers
 
 Alias of `Pattern[/^(\d+\.){2}\d+$/]`
-
