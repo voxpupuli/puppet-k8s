@@ -10,6 +10,7 @@
 # @param labels node labels to be set on initial node registration
 # @param config additional config to pass to kubelet
 # @param control_plane_url cluster API connection
+# @param embed_certs whether the cert-auth kubeconfig embeds the node cert/key bytes or references the files by path
 # @param ensure set ensure for installation or deinstallation
 # @param firewall_type define the type of firewall to use
 # @param key path to node key file
@@ -54,6 +55,7 @@ class k8s::node::kubelet (
   Optional[Stdlib::Unixpath] $ca_cert = $k8s::node::ca_cert,
   Optional[Stdlib::Unixpath] $cert    = $k8s::node::node_cert,
   Optional[Stdlib::Unixpath] $key     = $k8s::node::node_key,
+  Boolean $embed_certs                = $k8s::kubeconfig_embed_certs,
 
   # For token and bootstrap auth
   Optional[Sensitive[String]] $token  = $k8s::node::node_token,
@@ -135,6 +137,7 @@ class k8s::node::kubelet (
         ca_cert         => $ca_cert,
         client_cert     => $cert,
         client_key      => $key,
+        embed_certs     => $embed_certs,
         notify          => Service['kubelet'],
       }
       $_authentication_hash = {

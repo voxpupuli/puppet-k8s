@@ -20,6 +20,8 @@
 # @param group groupname for kubernetes files and services
 # @param hyperkube_name name of the hyperkube binary
 # @param incluster_control_plane_url URL for the control plane from within the cluster
+# @param kubeconfig_embed_certs whether component kubeconfigs embed the certificate/key bytes (true) or reference the files by path (false).
+#   Path references let client-go reload rotated client certificates from disk without a service restart.
 # @param manage_container_manager whether to manage the container manager
 # @param manage_etcd whether to manage etcd
 # @param manage_facter whether to manage facter facts.d folders
@@ -87,6 +89,8 @@ class k8s (
   Stdlib::Unixpath $sysconfig_path           = '/etc/sysconfig',
 
   K8s::Node_auth $node_auth = 'bootstrap',
+
+  Boolean $kubeconfig_embed_certs = true,
 
   Stdlib::HTTPUrl $incluster_control_plane_url       = 'https://kubernetes.default.svc',
   Stdlib::HTTPUrl $control_plane_url                 = 'https://kubernetes:6443',

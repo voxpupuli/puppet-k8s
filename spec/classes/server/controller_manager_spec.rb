@@ -34,7 +34,13 @@ describe 'k8s::server::controller_manager' do
 
       it { is_expected.to compile }
 
-      it { is_expected.to contain_kubeconfig('/srv/kubernetes/kube-controller-manager.kubeconf') }
+      it { is_expected.to contain_kubeconfig('/srv/kubernetes/kube-controller-manager.kubeconf').with_embed_certs(true).that_notifies('Service[kube-controller-manager]') }
+
+      context 'with embed_certs => false' do
+        let(:params) { { embed_certs: false } }
+
+        it { is_expected.to contain_kubeconfig('/srv/kubernetes/kube-controller-manager.kubeconf').with_embed_certs(false) }
+      end
 
       it { is_expected.not_to contain_file('/etc/kubernetes/manifests/kube-controller-manager.yaml') }
 

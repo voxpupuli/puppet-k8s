@@ -23,7 +23,14 @@ describe 'k8s::server::scheduler' do
       let(:facts) { os_facts }
 
       it { is_expected.to compile }
-      it { is_expected.to contain_kubeconfig('/srv/kubernetes/kube-scheduler.kubeconf') }
+      it { is_expected.to contain_kubeconfig('/srv/kubernetes/kube-scheduler.kubeconf').with_embed_certs(true).that_notifies('Service[kube-scheduler]') }
+
+      context 'with embed_certs => false' do
+        let(:params) { { embed_certs: false } }
+
+        it { is_expected.to contain_kubeconfig('/srv/kubernetes/kube-scheduler.kubeconf').with_embed_certs(false) }
+      end
+
       it { is_expected.not_to contain_file('/etc/kubernetes/manifests/kube-scheduler.yaml') }
 
       it do
